@@ -1,13 +1,22 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.bytecode.Assignment;
+import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
+import me.tomassetti.turin.compiler.bytecode.JvmTypeCategory;
 import me.tomassetti.turin.implicit.BasicTypes;
+import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.ast.statements.Statement;
+import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import org.objectweb.asm.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -158,7 +167,7 @@ public class Compiler {
         private List<ClassFileDefinition> compile(TypeDefinition typeDefinition) {
             String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
 
-            cw = new ClassWriter(0);
+            cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
 
             for (Property property : typeDefinition.getDirectProperties(resolver)){
@@ -179,10 +188,63 @@ public class Compiler {
             for (Node node : turinFile.getChildren()) {
                 if (node instanceof TypeDefinition) {
                     classFileDefinitions.addAll(compile((TypeDefinition)node));
+                } else if (node instanceof Program) {
+                    classFileDefinitions.addAll(compile((Program) node));   
+                }
+            }
+            
+
+            return classFileDefinitions;
+        }
+
+        private int nParams = 0;
+        private int nLocalVars = 0;
+
+        private List<ClassFileDefinition> compile(Program program) {
+            String qname = program.getQualifiedName();
+            String className = qname.replaceAll("\\.", "/");
+
+            cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
+
+            MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+
+            nParams = 1;
+            nLocalVars = 0;
+
+            mv.visitCode();
+
+            for (Statement statement : program.getStatements()) {
+                for (BytecodeSequence bytecodeSequence : compile(statement)){
+                    bytecodeSequence.operate(mv);
                 }
             }
 
-            return classFileDefinitions;
+            // Implicit return
+            mv.visitInsn(RETURN);
+
+            // calculated for us
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
+
+            byte[] programBytecode = cw.toByteArray();
+            ClassFileDefinition classFileDefinition = new ClassFileDefinition(qname, programBytecode);
+            return ImmutableList.of(classFileDefinition);
+        }
+
+        private List<BytecodeSequence> compile(Statement statement) {
+            if (statement instanceof VariableDeclaration) {
+                VariableDeclaration variableDeclaration = (VariableDeclaration)statement;
+                int pos = nParams + nLocalVars;
+                nLocalVars += 1;
+                return ImmutableList.of(compile(variableDeclaration.getValue()), new Assignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver))));
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        private BytecodeSequence compile(Expression expression) {
+            throw new UnsupportedOperationException();
         }
 
     }
@@ -194,29 +256,18 @@ public class Compiler {
     public static void main(String[] args) throws IOException {
         System.out.println("Turin Compiler - " + VERSION);
 
-        TurinFile turinFile = new TurinFile();
-
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("Int");
-
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
-
-        turinFile.add(nameProperty);
-
-        TypeDefinition mangaCharacter = new TypeDefinition("MangaCharacter");
-        PropertyDefinition ageProperty = new PropertyDefinition("age", intType);
-        PropertyReference nameRef = new PropertyReference("name");
-        mangaCharacter.add(nameRef);
-        mangaCharacter.add(ageProperty);
-
-        turinFile.add(mangaCharacter);
+        File file = new File("/home/federico/repos/turin-programming-language/samples/ranma.to");
+        TurinFile turinFile = new Parser().parse(new FileInputStream(file));
 
         Compiler instance = new Compiler();
-        byte[] bytecode = instance.compile(turinFile).get(0).getBytecode();
-
-        FileOutputStream fos = new FileOutputStream("dst/tests/MyMangaCharacter.class");
-        fos.write(bytecode);
-        fos.close();
+        for (ClassFileDefinition classFileDefinition : instance.compile(turinFile)) {
+            System.out.println(" [" + classFileDefinition.getName() + "]");
+            File classFile = new File("dst/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
+            classFile.getParentFile().mkdirs();
+            FileOutputStream fos = new FileOutputStream(classFile);
+            fos.write(classFileDefinition.getBytecode());
+            fos.close();
+        }
 
     }
 

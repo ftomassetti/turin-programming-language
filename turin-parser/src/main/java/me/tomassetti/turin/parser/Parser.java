@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser;
 
 import me.tomassetti.parser.antlr.TurinLexer;
 import me.tomassetti.parser.antlr.TurinParser;
+import me.tomassetti.turin.parser.ast.TurinFile;
 import org.antlr.v4.runtime.*;
 
 import java.io.File;
@@ -25,10 +26,8 @@ public class Parser {
         return turinFileContext;
     }
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("/home/federico/repos/turin-programming-language//samples/ranma.to");
-        TurinParser.TurinFileContext turinFileContext = new Parser().produceParseTree(new FileInputStream(file));
-        System.out.println(turinFileContext.toStringTree());
+    public TurinFile parse(InputStream inputStream) throws IOException {
+        return new ParseTreeToAst().toAst(produceParseTree(inputStream));
     }
 
 }

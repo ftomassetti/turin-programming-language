@@ -1,7 +1,9 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TypeUsage;
 
 /**
  * Created by federico on 29/08/15.
@@ -41,5 +43,10 @@ public class StringLiteral extends Expression {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of();
+    }
+
+    @Override
+    public TypeUsage calcType(Resolver resolver) {
+        throw new UnsupportedOperationException();
     }
 }

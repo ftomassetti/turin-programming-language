@@ -18,6 +18,14 @@ public class Program extends Node {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public List<Statement> getStatements() {
+        return ImmutableList.copyOf(statements);
+    }
+
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.copyOf(statements);
@@ -54,5 +62,9 @@ public class Program extends Node {
         int result = name.hashCode();
         result = 31 * result + statements.hashCode();
         return result;
+    }
+
+    public String getQualifiedName() {
+        return contextName() + "." + name;
     }
 }

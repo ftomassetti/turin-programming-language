@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.statements;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -15,10 +16,23 @@ public class VariableDeclaration extends Statement {
     private String name;
     private Expression value;
 
+    public TypeUsage getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Expression getValue() {
+        return value;
+    }
+
     public VariableDeclaration(String name, Expression value) {
         this.name = name;
         this.value = value;
         this.value.setParent(this);
+
     }
 
     @Override
@@ -66,6 +80,14 @@ public class VariableDeclaration extends Statement {
             return ImmutableList.of(type, value);
         } else {
             return ImmutableList.of(value);
+        }
+    }
+
+    public TypeUsage varType(Resolver resolver) {
+        if (type != null) {
+            return type;
+        } else {
+            return value.calcType(resolver);
         }
     }
 }
