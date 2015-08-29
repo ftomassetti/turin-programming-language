@@ -12,6 +12,14 @@ public class PropertyDefinition extends Node {
         this.type = type;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public TypeUsage getType() {
+        return type;
+    }
+
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of();

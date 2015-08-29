@@ -48,4 +48,11 @@ public class TypeDefinitionTest {
         assertEquals("manga.MangaCharacter", mangaCharacter.getQualifiedName());
     }
 
+    @Test
+    public void getDirectProperties() {
+        assertEquals(2, mangaCharacter.getDirectProperties().size());
+        assertEquals("name", mangaCharacter.getDirectProperties().get(0).getName());
+        assertEquals("age", mangaCharacter.getDirectProperties().get(1).getName());
+    }
+
 }
