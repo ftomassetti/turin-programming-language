@@ -87,7 +87,7 @@ public class Compiler {
             mv.visitMaxs(3, 2);
             mv.visitEnd();
         }
-        
+
         private void generateContructor(TypeDefinition typeDefinition, String className) {
             List<Property> directPropertis = typeDefinition.getDirectProperties(resolver);
             String paramsSignature = String.join("", directPropertis.stream().map((dp)->dp.getTypeUsage().jvmType(resolver)).collect(Collectors.toList()));
@@ -104,7 +104,12 @@ public class Compiler {
                 if (propIndex == directPropertis.size()) {
                     mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
                 } else {
-                    mv.visitFrame(Opcodes.F_FULL, 3, new Object[] {className, "java/lang/String", Opcodes.INTEGER}, 0, new Object[] {});
+                    List<Object> frameObject = new ArrayList<>();
+                    frameObject.add(className);
+                    for (Property p : directPropertis) {
+                        frameObject.add(toFrameObject(p.getTypeUsage().jvmType(resolver)));
+                    }
+                    mv.visitFrame(Opcodes.F_FULL, 1 + directPropertis.size(), frameObject.toArray(), 0, new Object[] {});
                 }
             }
 
@@ -120,6 +125,21 @@ public class Compiler {
             mv.visitInsn(RETURN);
             mv.visitMaxs(3, 1 + directPropertis.size());
             mv.visitEnd();
+        }
+
+        private Object toFrameObject(String jvmType) {
+            switch (jvmType) {
+                case "I":
+                    return Opcodes.INTEGER;
+                default:
+                    if (jvmType.charAt(0) != 'L') {
+                        throw new UnsupportedOperationException();
+                    }
+                    if (jvmType.charAt(jvmType.length() - 1) != ';') {
+                        throw new UnsupportedOperationException();
+                    }
+                    return jvmType.substring(1, jvmType.length() - 1);
+            }
         }
 
         private int returnTypeFor(String jvmType) {
@@ -152,44 +172,6 @@ public class Compiler {
             }
 
             generateContructor(typeDefinition, className);
-
-            /*{
-                mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/String;I)V", null, null);
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-                mv.visitVarInsn(ALOAD, 1);
-                Label l0 = new Label();
-                mv.visitJumpInsn(IFNONNULL, l0);
-                mv.visitTypeInsn(NEW, "java/lang/NullPointerException");
-                mv.visitInsn(DUP);
-                mv.visitLdcInsn("name cannot be null");
-                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/NullPointerException", "<init>", "(Ljava/lang/String;)V", false);
-                mv.visitInsn(ATHROW);
-                mv.visitLabel(l0);
-                mv.visitFrame(Opcodes.F_FULL, 3, new Object[] {className, "java/lang/String", Opcodes.INTEGER}, 0, new Object[] {});
-
-                mv.visitVarInsn(ILOAD, 2);
-                Label l1 = new Label();
-                mv.visitJumpInsn(IFGE, l1);
-                mv.visitTypeInsn(NEW, "java/lang/IllegalArgumentException");
-                mv.visitInsn(DUP);
-                mv.visitLdcInsn("age should be positive");
-                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
-                mv.visitInsn(ATHROW);
-                mv.visitLabel(l1);
-                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitFieldInsn(PUTFIELD, className, "name", "Ljava/lang/String;");
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 2);
-                mv.visitFieldInsn(PUTFIELD, className, "age", "I");
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(3, 3);
-                mv.visitEnd();
-            }*/
             cw.visitEnd();
 
             return ImmutableList.of(new ClassFileDefinition(className.replaceAll("/", "."), cw.toByteArray()));

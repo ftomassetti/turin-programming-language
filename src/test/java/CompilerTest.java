@@ -40,6 +40,26 @@ public class CompilerTest {
         return turinFile;
     }
 
+    private TurinFile registryAst() {
+        // define AST
+        TurinFile turinFile = new TurinFile();
+
+        NamespaceDefinition namespaceDefinition = new NamespaceDefinition("registry");
+
+        turinFile.setNameSpace(namespaceDefinition);
+
+        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
+
+        TypeDefinition person = new TypeDefinition("Person");
+        PropertyDefinition firstNameProperty = new PropertyDefinition("firstName", stringType);
+        person.add(firstNameProperty);
+        PropertyDefinition lastNameProperty = new PropertyDefinition("lastName", stringType);
+        person.add(lastNameProperty);
+
+        turinFile.add(person);
+        return turinFile;
+    }
+
     @Test
     public void compileAstManga() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         TurinFile turinFile = mangaAst();
@@ -60,6 +80,28 @@ public class CompilerTest {
 
         Method getAge = mangaCharacterClass.getMethod("getAge");
         assertEquals(16, getAge.invoke(ranma));
+    }
+
+    @Test
+    public void compileAstRegistry() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        TurinFile turinFile = registryAst();
+
+        // generate bytecode
+        Compiler instance = new Compiler();
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class personClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, personClass.getConstructors().length);
+        Object federico = personClass.getConstructors()[0].newInstance("Federico", "Tomassetti");
+
+        Method getFirstName = personClass.getMethod("getFirstName");
+        assertEquals("Federico", getFirstName.invoke(federico));
+
+        Method getLastName = personClass.getMethod("getLastName");
+        assertEquals("Tomassetti", getLastName.invoke(federico));
     }
 
     @Test(expected = InvocationTargetException.class)
