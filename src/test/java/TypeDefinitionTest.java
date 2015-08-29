@@ -55,4 +55,12 @@ public class TypeDefinitionTest {
         assertEquals(new ReferenceTypeUsage("UInt"), mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage());
     }
 
+    @Test
+    public void getDirectPropertiesOnRegistryExample() {
+        Resolver resolver = new InFileResolver();
+        TurinFile turinFile = ExamplesAst.registryAst();
+        TypeDefinition person = turinFile.getTopTypeDefinition("Person").get();
+        assertEquals(2, person.getDirectProperties(resolver).size());
+    }
+
 }

@@ -27,7 +27,7 @@ public class Compiler {
 
     private class Compilation {
 
-        private ClassWriter cw = new ClassWriter(0);
+        private ClassWriter cw;
 
         private void generateField(Property property) {
             FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver), null, null);
@@ -157,12 +157,9 @@ public class Compiler {
         }
 
         private List<ClassFileDefinition> compile(TypeDefinition typeDefinition) {
-
-            MethodVisitor mv;
-            AnnotationVisitor av0;
-
             String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
 
+            cw = new ClassWriter(0);
             cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
 
             for (Property property : typeDefinition.getDirectProperties(resolver)){

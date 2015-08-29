@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TurinFile extends Node {
 
@@ -39,5 +40,14 @@ public class TurinFile extends Node {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.<Node>builder().add(namespaceDefinition).addAll(topNodes).build();
+    }
+
+    public Optional<TypeDefinition> getTopTypeDefinition(String name) {
+        Optional<Node> res = topNodes.stream().filter((n)-> (n instanceof TypeDefinition) && ((TypeDefinition)n).getName().equals(name)).findFirst();
+        if (res.isPresent()) {
+            return Optional.of((TypeDefinition)res.get());
+        } else {
+            return Optional.empty();
+        }
     }
 }
