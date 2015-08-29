@@ -6,7 +6,6 @@ import me.tomassetti.turin.analysis.Property;
 import me.tomassetti.turin.analysis.Resolver;
 import me.tomassetti.turin.ast.*;
 import org.objectweb.asm.*;
-import tests.MyMangaCharacter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,9 +26,32 @@ public class Compiler {
 
         private ClassWriter cw = new ClassWriter(0);
 
+        private void generateField(Property property) {
+            FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver), null, null);
+            fv.visitEnd();
+        }
+
+        private void generateGetter(Property property, String className) {
+            String getterName = "get" + Character.toUpperCase(property.getName().charAt(0)) + property.getName().substring(1);
+            String jvmType = property.getTypeUsage().jvmType(resolver);
+            MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType, null, null);
+            mv.visitCode();
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, className, property.getName(), jvmType);
+            mv.visitInsn(returnTypeFor(jvmType));
+            mv.visitMaxs(1, 1);
+            mv.visitEnd();
+        }
+
+        private int returnTypeFor(String jvmType) {
+            if (jvmType.equals("I")) {
+                return IRETURN;
+            }
+            return ARETURN;
+        }
+
         private List<ClassFileDefinition> compile(TypeDefinition typeDefinition) {
 
-            FieldVisitor fv;
             MethodVisitor mv;
             AnnotationVisitor av0;
 
@@ -38,8 +60,8 @@ public class Compiler {
             cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
 
             for (Property property : typeDefinition.getDirectProperties(resolver)){
-                fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver), null, null);
-                fv.visitEnd();
+                generateField(property);
+                generateGetter(property, className);
             }
 
             {
@@ -80,15 +102,6 @@ public class Compiler {
                 mv.visitEnd();
             }
             {
-                mv = cw.visitMethod(ACC_PUBLIC, "getAge", "()I", null, null);
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, className, "age", "I");
-                mv.visitInsn(IRETURN);
-                mv.visitMaxs(1, 1);
-                mv.visitEnd();
-            }
-            {
                 mv = cw.visitMethod(ACC_PUBLIC, "setAge", "(I)V", null, null);
                 mv.visitCode();
                 mv.visitVarInsn(ILOAD, 1);
@@ -106,15 +119,6 @@ public class Compiler {
                 mv.visitFieldInsn(PUTFIELD, className, "age", "I");
                 mv.visitInsn(RETURN);
                 mv.visitMaxs(3, 2);
-                mv.visitEnd();
-            }
-            {
-                mv = cw.visitMethod(ACC_PUBLIC, "getName", "()Ljava/lang/String;", null, null);
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, className, "name", "Ljava/lang/String;");
-                mv.visitInsn(ARETURN);
-                mv.visitMaxs(1, 1);
                 mv.visitEnd();
             }
             {
@@ -187,8 +191,6 @@ public class Compiler {
         fos.write(bytecode);
         fos.close();
 
-        tests.MyMangaCharacter myMangaCharacter;
-        myMangaCharacter = new MyMangaCharacter("ciao", 100);
     }
 
 }
