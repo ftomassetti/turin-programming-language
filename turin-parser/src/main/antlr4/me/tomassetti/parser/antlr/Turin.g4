@@ -25,7 +25,7 @@ namespaceDecl:
 
 typeUsage:
     ref=TID
-    | typeUsage '[]';
+    | arrayBase=typeUsage '[]';
 
 //
 
@@ -73,7 +73,7 @@ creation:
     name=TID '(' params+=actualParam (',' params+=actualParam)*  ')' ;
 
 varDecl :
-    'val' name=ID '=' value=expression nls;
+    'val' (type=typeUsage ':')? name=ID '=' value=expression nls;
 
 expressionStmt:
     expression nls;

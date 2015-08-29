@@ -5,13 +5,14 @@ import me.tomassetti.parser.antlr.TurinParser;
 import org.antlr.v4.runtime.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Parser {
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("/home/federico/repos/turin-programming-language//samples/ranma.to");
-        CharStream charStream = new ANTLRFileStream(file.getPath());
+    public TurinParser.TurinFileContext produceParseTree(InputStream inputStream) throws IOException {
+        CharStream charStream = new ANTLRInputStream(inputStream);
         TurinLexer l = new TurinLexer(charStream);
         TurinParser p = new TurinParser(new CommonTokenStream(l));
         p.addErrorListener(new BaseErrorListener() {
@@ -21,6 +22,12 @@ public class Parser {
             }
         });
         TurinParser.TurinFileContext turinFileContext = p.turinFile();
+        return turinFileContext;
+    }
+
+    public static void main(String[] args) throws IOException {
+        File file = new File("/home/federico/repos/turin-programming-language//samples/ranma.to");
+        TurinParser.TurinFileContext turinFileContext = new Parser().produceParseTree(new FileInputStream(file));
         System.out.println(turinFileContext.toStringTree());
     }
 

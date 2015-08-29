@@ -25,4 +25,28 @@ public class PropertyReference extends Node {
     public TypeUsage getType(Resolver resolver) {
         return resolver.findDefinition(this).getType();
     }
+
+    @Override
+    public String toString() {
+        return "PropertyReference{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PropertyReference that = (PropertyReference) o;
+
+        if (!name.equals(that.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

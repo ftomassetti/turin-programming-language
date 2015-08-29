@@ -10,6 +10,10 @@ public abstract class Node {
 
     public abstract Iterable<Node> getChildren();
 
+    public void setParent(Node parent){
+        this.parent = parent;
+    }
+
     public String contextName() {
         if (parent == null) {
             return "";

@@ -24,15 +24,16 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public String toString() {
-        return "ReferenceTypeUsage{" +
-                "name='" + name + '\'' +
-                '}';
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Override
-    public int hashCode() {
-        return name.hashCode();
+    public String toString() {
+        return "ReferenceTypeUsage{" +
+                "name='" + name + '\'' +
+
+                '}';
     }
 
     @Override

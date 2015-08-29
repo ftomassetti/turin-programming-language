@@ -30,6 +30,34 @@ public class TypeDefinition extends Node {
     }
 
     @Override
+    public String toString() {
+        return "TypeDefinition{" +
+                "name='" + name + '\'' +
+                ", members=" + members +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TypeDefinition that = (TypeDefinition) o;
+
+        if (!members.equals(that.members)) return false;
+        if (!name.equals(that.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + members.hashCode();
+        return result;
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.copyOf(members);
     }
