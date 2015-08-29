@@ -1,10 +1,10 @@
-package me.tomassetti.turin.analysis;
+package me.tomassetti.turin.parser.analysis;
 
-import me.tomassetti.turin.ast.Node;
-import me.tomassetti.turin.ast.PropertyDefinition;
-import me.tomassetti.turin.ast.PropertyReference;
-import me.tomassetti.turin.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.implicit.BasicTypes;
+import me.tomassetti.turin.parser.ast.PropertyReference;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.Optional;
 

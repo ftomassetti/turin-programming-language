@@ -1,4 +1,4 @@
-import me.tomassetti.turin.ast.*;
+import me.tomassetti.turin.parser.ast.*;
 
 /**
  * Created by federico on 29/08/15.

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.implicit;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.Optional;
 

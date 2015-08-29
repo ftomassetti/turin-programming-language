@@ -1,8 +1,8 @@
-package me.tomassetti.turin.ast;
+package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.analysis.Property;
-import me.tomassetti.turin.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.Property;
+import me.tomassetti.turin.parser.analysis.Resolver;
 
 import java.util.ArrayList;
 import java.util.List;

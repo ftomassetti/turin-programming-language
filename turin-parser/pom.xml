@@ -2,11 +2,18 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.tomassetti</groupId>
-  <artifactId>turin-programming-language</artifactId>
+  <artifactId>turin-parser</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>turin-programming-language</name>
   <url>https://github.com/ftomassetti/turin-programming-language</url>
+
+
+    <parent>
+        <groupId>me.tomassetti</groupId>
+        <artifactId>turin-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
 
   <licenses>
     <license>
@@ -50,6 +57,11 @@
           <artifactId>asm-tree</artifactId>
           <version>5.0.4</version>
       </dependency>
+      <dependency>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-runtime</artifactId>
+          <version>4.3</version>
+      </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -61,6 +73,19 @@
             <source>1.8</source>
             <target>1.8</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.3</version>
+        <executions>
+            <execution>
+                <id>antlr</id>
+                <goals>
+                    <goal>antlr4</goal>
+                </goals>
+            </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -1,6 +1,6 @@
-package me.tomassetti.turin.ast;
+package me.tomassetti.turin.parser.ast;
 
-import me.tomassetti.turin.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.Resolver;
 
 public abstract class TypeUsage extends Node {
 

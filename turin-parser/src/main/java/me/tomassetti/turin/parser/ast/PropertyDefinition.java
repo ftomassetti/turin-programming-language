@@ -1,4 +1,4 @@
-package me.tomassetti.turin.ast;
+package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 

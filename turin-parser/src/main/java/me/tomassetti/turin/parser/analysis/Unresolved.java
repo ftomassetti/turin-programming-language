@@ -1,6 +1,6 @@
-package me.tomassetti.turin.analysis;
+package me.tomassetti.turin.parser.analysis;
 
-import me.tomassetti.turin.ast.Node;
+import me.tomassetti.turin.parser.ast.Node;
 
 /**
  * Created by federico on 29/08/15.

@@ -4,7 +4,7 @@ property String : name
 
 type MangaCharacter {
     property name
-    property UInt age
+    property UInt : age
 }
 
 program MangaExample(String[] args) {

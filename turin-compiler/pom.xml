@@ -4,9 +4,15 @@
   <groupId>me.tomassetti</groupId>
   <artifactId>turin-compiler</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>turin-compiler</name>
   <url>https://github.com/ftomassetti/turin-programming-language</url>
+
+    <parent>
+        <groupId>me.tomassetti</groupId>
+        <artifactId>turin-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
 
   <licenses>
     <license>
@@ -49,6 +55,11 @@
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm-tree</artifactId>
           <version>5.0.4</version>
+      </dependency>
+      <dependency>
+          <groupId>me.tomassetti</groupId>
+          <artifactId>turin-parser</artifactId>
+          <version>${project.version}</version>
       </dependency>
   </dependencies>
   <build>
