@@ -25,4 +25,9 @@ public class TurinFile extends Node {
     public void setNameSpace(NamespaceDefinition namespaceDefinition) {
         this.namespaceDefinition = namespaceDefinition;
     }
+
+    @Override
+    public Iterable<Node> getChildren() {
+        return ImmutableList.<Node>builder().add(namespaceDefinition).addAll(topNodes).build();
+    }
 }

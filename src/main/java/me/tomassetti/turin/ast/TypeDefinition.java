@@ -24,4 +24,9 @@ public class TypeDefinition extends Node {
     public void add(PropertyReference propertyReference) {
         members.add(propertyReference);
     }
+
+    @Override
+    public Iterable<Node> getChildren() {
+        return ImmutableList.copyOf(members);
+    }
 }
