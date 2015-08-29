@@ -24,7 +24,7 @@ public class CompilerTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("Int");
+        ReferenceTypeUsage intType = new ReferenceTypeUsage("UInt");
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
 

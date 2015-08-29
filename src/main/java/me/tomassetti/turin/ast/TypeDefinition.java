@@ -2,6 +2,7 @@ package me.tomassetti.turin.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.analysis.Property;
+import me.tomassetti.turin.analysis.Resolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +38,13 @@ public class TypeDefinition extends Node {
         return contextName() + "." + name;
     }
 
-    public List<Property> getDirectProperties() {
+    public List<Property> getDirectProperties(Resolver resolver) {
         List<Property> properties = new ArrayList<>();
         for (Node member : members) {
             if (member instanceof PropertyDefinition) {
                 properties.add(Property.fromDefinition((PropertyDefinition)member));
             } else if (member instanceof PropertyReference) {
-                properties.add(Property.fromReference((PropertyReference)member));
+                properties.add(Property.fromReference((PropertyReference) member, resolver));
             }
         }
         return properties;

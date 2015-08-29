@@ -1,13 +1,8 @@
-import me.tomassetti.turin.TurinClassLoader;
+import me.tomassetti.turin.analysis.InFileResolver;
+import me.tomassetti.turin.analysis.Resolver;
 import me.tomassetti.turin.ast.*;
-import me.tomassetti.turin.compiler.ClassFileDefinition;
-import me.tomassetti.turin.compiler.Compiler;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -28,7 +23,7 @@ public class TypeDefinitionTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("Int");
+        ReferenceTypeUsage intType = new ReferenceTypeUsage("UInt");
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
 
@@ -50,9 +45,14 @@ public class TypeDefinitionTest {
 
     @Test
     public void getDirectProperties() {
-        assertEquals(2, mangaCharacter.getDirectProperties().size());
-        assertEquals("name", mangaCharacter.getDirectProperties().get(0).getName());
-        assertEquals("age", mangaCharacter.getDirectProperties().get(1).getName());
+        Resolver resolver = new InFileResolver();
+        assertEquals(2, mangaCharacter.getDirectProperties(resolver).size());
+
+        assertEquals("name", mangaCharacter.getDirectProperties(resolver).get(0).getName());
+        assertEquals(new ReferenceTypeUsage("String"), mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage());
+
+        assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
+        assertEquals(new ReferenceTypeUsage("UInt"), mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage());
     }
 
 }
