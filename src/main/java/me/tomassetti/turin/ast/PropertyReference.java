@@ -1,6 +1,7 @@
 package me.tomassetti.turin.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.analysis.Resolver;
 
 /**
  * Created by federico on 28/08/15.
@@ -19,5 +20,9 @@ public class PropertyReference extends Node {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of();
+    }
+
+    public TypeUsage getType(Resolver resolver) {
+        return resolver.findDefinition(this).getType();
     }
 }

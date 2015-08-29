@@ -1,6 +1,7 @@
 package me.tomassetti.turin.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.analysis.Resolver;
 
 public class ReferenceTypeUsage extends TypeUsage {
 
@@ -38,5 +39,11 @@ public class ReferenceTypeUsage extends TypeUsage {
     public Iterable<Node> getChildren() {
         return ImmutableList.of();
 
+    }
+
+    @Override
+    public String jvmType(Resolver resolver) {
+        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
+        return typeDefinition.jvmType();
     }
 }

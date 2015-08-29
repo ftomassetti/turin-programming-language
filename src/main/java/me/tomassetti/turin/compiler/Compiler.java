@@ -1,6 +1,9 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.analysis.InFileResolver;
+import me.tomassetti.turin.analysis.Property;
+import me.tomassetti.turin.analysis.Resolver;
 import me.tomassetti.turin.ast.*;
 import org.objectweb.asm.*;
 import tests.MyMangaCharacter;
@@ -18,6 +21,8 @@ public class Compiler {
 
     private static final int JAVA_8_CLASS_VERSION = 52;
 
+    private Resolver resolver = new InFileResolver();
+
     private class Compilation {
 
         private ClassWriter cw = new ClassWriter(0);
@@ -31,14 +36,12 @@ public class Compiler {
             String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
 
             cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
-            {
-                fv = cw.visitField(ACC_PRIVATE, "age", "I", null, null);
+
+            for (Property property : typeDefinition.getDirectProperties(resolver)){
+                fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver), null, null);
                 fv.visitEnd();
             }
-            {
-                fv = cw.visitField(ACC_PRIVATE, "name", "Ljava/lang/String;", null, null);
-                fv.visitEnd();
-            }
+
             {
                 mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/String;I)V", null, null);
                 mv.visitCode();

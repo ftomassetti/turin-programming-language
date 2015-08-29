@@ -49,4 +49,12 @@ public class TypeDefinition extends Node {
         }
         return properties;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String jvmType() {
+        throw new UnsupportedOperationException();
+    }
 }
