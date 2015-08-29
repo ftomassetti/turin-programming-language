@@ -26,6 +26,10 @@ public class MangaCharacter {
         this.age = age;
     }
 
+    public void setAge2(int age) {
+        this.age = age;
+    }
+
     public String getName() {
         return name;
     }

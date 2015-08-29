@@ -5,12 +5,15 @@ import me.tomassetti.turin.analysis.InFileResolver;
 import me.tomassetti.turin.analysis.Property;
 import me.tomassetti.turin.analysis.Resolver;
 import me.tomassetti.turin.ast.*;
+import me.tomassetti.turin.implicit.BasicTypes;
 import org.objectweb.asm.*;
 
+import javax.lang.model.type.ReferenceType;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -43,11 +46,94 @@ public class Compiler {
             mv.visitEnd();
         }
 
+        private void enforceConstraint(Property property, MethodVisitor mv, String className, String jvmType, int varIndex) {
+            if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(BasicTypes.UINT.getQualifiedName())) {
+                mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
+                Label label = new Label();
+                mv.visitJumpInsn(IFGE, label);
+                mv.visitTypeInsn(NEW, "java/lang/IllegalArgumentException");
+                mv.visitInsn(DUP);
+                mv.visitLdcInsn(property.getName() + " should be positive");
+                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
+                mv.visitInsn(ATHROW);
+                mv.visitLabel(label);
+            } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(BasicTypes.STRING.getQualifiedName())) {
+                mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
+                Label label = new Label();
+                mv.visitJumpInsn(IFNONNULL, label);
+                mv.visitTypeInsn(NEW, "java/lang/NullPointerException");
+                mv.visitInsn(DUP);
+                mv.visitLdcInsn(property.getName() + " cannot be null");
+                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/NullPointerException", "<init>", "(Ljava/lang/String;)V", false);
+                mv.visitInsn(ATHROW);
+                mv.visitLabel(label);
+            }
+        }
+
+        private void generateSetter(Property property, String className) {
+            String setterName = "set" + Character.toUpperCase(property.getName().charAt(0)) + property.getName().substring(1);
+            String jvmType = property.getTypeUsage().jvmType(resolver);
+            MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType + ")V", null, null);
+            mv.visitCode();
+
+            enforceConstraint(property, mv, className, jvmType, 0);
+
+            // Assignment
+            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitVarInsn(loadTypeFor(jvmType), 1);
+            mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(3, 2);
+            mv.visitEnd();
+        }
+        
+        private void generateContructor(TypeDefinition typeDefinition, String className) {
+            List<Property> directPropertis = typeDefinition.getDirectProperties(resolver);
+            String paramsSignature = String.join("", directPropertis.stream().map((dp)->dp.getTypeUsage().jvmType(resolver)).collect(Collectors.toList()));
+            MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + paramsSignature + ")V", null, null);
+            mv.visitCode();
+
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+
+            int propIndex = 0;
+            for (Property property : directPropertis) {
+                enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver), propIndex);
+                propIndex++;
+                if (propIndex == directPropertis.size()) {
+                    mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                } else {
+                    mv.visitFrame(Opcodes.F_FULL, 3, new Object[] {className, "java/lang/String", Opcodes.INTEGER}, 0, new Object[] {});
+                }
+            }
+
+            propIndex = 0;
+            for (Property property : directPropertis) {
+                String jvmType = property.getTypeUsage().jvmType(resolver);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(loadTypeFor(jvmType), propIndex + 1);
+                mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
+                propIndex++;
+            }
+
+            mv.visitInsn(RETURN);
+            mv.visitMaxs(3, 1 + directPropertis.size());
+            mv.visitEnd();
+        }
+
         private int returnTypeFor(String jvmType) {
             if (jvmType.equals("I")) {
                 return IRETURN;
             }
             return ARETURN;
+        }
+
+        private int loadTypeFor(String jvmType) {
+            if (jvmType.equals("I")) {
+                return ILOAD;
+            }
+            return ALOAD;
         }
 
         private List<ClassFileDefinition> compile(TypeDefinition typeDefinition) {
@@ -62,9 +148,12 @@ public class Compiler {
             for (Property property : typeDefinition.getDirectProperties(resolver)){
                 generateField(property);
                 generateGetter(property, className);
+                generateSetter(property, className);
             }
 
-            {
+            generateContructor(typeDefinition, className);
+
+            /*{
                 mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(Ljava/lang/String;I)V", null, null);
                 mv.visitCode();
                 mv.visitVarInsn(ALOAD, 0);
@@ -100,47 +189,7 @@ public class Compiler {
                 mv.visitInsn(RETURN);
                 mv.visitMaxs(3, 3);
                 mv.visitEnd();
-            }
-            {
-                mv = cw.visitMethod(ACC_PUBLIC, "setAge", "(I)V", null, null);
-                mv.visitCode();
-                mv.visitVarInsn(ILOAD, 1);
-                Label l0 = new Label();
-                mv.visitJumpInsn(IFGE, l0);
-                mv.visitTypeInsn(NEW, "java/lang/IllegalArgumentException");
-                mv.visitInsn(DUP);
-                mv.visitLdcInsn("age should be positive");
-                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
-                mv.visitInsn(ATHROW);
-                mv.visitLabel(l0);
-                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ILOAD, 1);
-                mv.visitFieldInsn(PUTFIELD, className, "age", "I");
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(3, 2);
-                mv.visitEnd();
-            }
-            {
-                mv = cw.visitMethod(ACC_PUBLIC, "setName", "(Ljava/lang/String;)V", null, null);
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 1);
-                Label l0 = new Label();
-                mv.visitJumpInsn(IFNONNULL, l0);
-                mv.visitTypeInsn(NEW, "java/lang/NullPointerException");
-                mv.visitInsn(DUP);
-                mv.visitLdcInsn("name cannot be null");
-                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/NullPointerException", "<init>", "(Ljava/lang/String;)V", false);
-                mv.visitInsn(ATHROW);
-                mv.visitLabel(l0);
-                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitFieldInsn(PUTFIELD, className, "name", "Ljava/lang/String;");
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(3, 2);
-                mv.visitEnd();
-            }
+            }*/
             cw.visitEnd();
 
             return ImmutableList.of(new ClassFileDefinition(className.replaceAll("/", "."), cw.toByteArray()));

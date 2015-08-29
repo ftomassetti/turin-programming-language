@@ -20,11 +20,21 @@ public class BasicTypes {
             public String jvmType() {
                 return "Ljava/lang/String;";
             }
+
+            @Override
+            public String getQualifiedName() {
+                return "java.lang.String";
+            }
         };
         UINT = new TypeDefinition("UInt") {
             @Override
             public String jvmType() {
                 return "I";
+            }
+
+            @Override
+            public String getQualifiedName() {
+                return "turin.UInt";
             }
         };
         BASIC_TYPES = ImmutableList.of(STRING, UINT);

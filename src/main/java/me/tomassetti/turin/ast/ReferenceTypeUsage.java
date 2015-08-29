@@ -46,4 +46,19 @@ public class ReferenceTypeUsage extends TypeUsage {
         TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
         return typeDefinition.jvmType();
     }
+
+    public String getQualifiedName(Resolver resolver) {
+        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
+        return typeDefinition.getQualifiedName();
+    }
+
+    @Override
+    public boolean isReferenceTypeUsage() {
+        return true;
+    }
+
+    @Override
+    public ReferenceTypeUsage asReferenceTypeUsage() {
+        return this;
+    }
 }
