@@ -12,10 +12,16 @@ public class TurinFile extends Node {
 
     public void add(PropertyDefinition propertyDefinition) {
         topNodes.add(propertyDefinition);
+        propertyDefinition.parent = this;
+    }
+
+    public NamespaceDefinition getNamespaceDefinition() {
+        return namespaceDefinition;
     }
 
     public void add(TypeDefinition typeDefinition) {
         topNodes.add(typeDefinition);
+        typeDefinition.parent = this;
     }
 
     public ImmutableList<Node> getNodes() {
@@ -23,7 +29,11 @@ public class TurinFile extends Node {
     }
 
     public void setNameSpace(NamespaceDefinition namespaceDefinition) {
+        if (this.namespaceDefinition != null) {
+            this.namespaceDefinition.parent = null;
+        }
         this.namespaceDefinition = namespaceDefinition;
+        this.namespaceDefinition.parent = this;
     }
 
     @Override

@@ -6,12 +6,17 @@ public class NamespaceDefinition extends Node {
 
     private String name;
 
-    public NamespaceDefinition(String manga) {
+    public NamespaceDefinition(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
     public Iterable<Node> getChildren() {
+
         return ImmutableList.of();
     }
 

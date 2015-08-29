@@ -28,7 +28,7 @@ public class Compiler {
             MethodVisitor mv;
             AnnotationVisitor av0;
 
-            String className = "manga/MyMangaCharacter";
+            String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
 
             cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
             {

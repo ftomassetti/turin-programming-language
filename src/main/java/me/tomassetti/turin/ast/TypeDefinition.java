@@ -11,6 +11,7 @@ public class TypeDefinition extends Node {
 
     public void add(PropertyDefinition propertyDefinition){
         members.add(propertyDefinition);
+        propertyDefinition.parent = this;
     }
 
     public TypeDefinition(String name) {
@@ -23,10 +24,15 @@ public class TypeDefinition extends Node {
 
     public void add(PropertyReference propertyReference) {
         members.add(propertyReference);
+        propertyReference.parent = this;
     }
 
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.copyOf(members);
+    }
+
+    public String getQualifiedName() {
+        return contextName() + "." + name;
     }
 }

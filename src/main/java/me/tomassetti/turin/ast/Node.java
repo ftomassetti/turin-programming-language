@@ -1,12 +1,24 @@
 package me.tomassetti.turin.ast;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class Node {
 
+    protected Node parent;
+
+    public Node getParent() {
+        return parent;
+    }
+
     public abstract Iterable<Node> getChildren();
+
+    public String contextName() {
+        if (parent == null) {
+            return "";
+        }
+        if (parent instanceof TurinFile) {
+            TurinFile turinFile = (TurinFile)parent;
+            return turinFile.getNamespaceDefinition().getName();
+        }
+        return parent.contextName();
+    }
 
 }
