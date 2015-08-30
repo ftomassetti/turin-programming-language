@@ -1,6 +1,5 @@
 package me.tomassetti.turin.parser;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -10,13 +9,9 @@ import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-/**
- * Created by federico on 29/08/15.
- */
-public class ParseTreeToAst {
+class ParseTreeToAst {
 
     private Position getPosition(ParserRuleContext ctx) {
         return new Position(getStartPoint(ctx.start), getEndPoint(ctx.stop));

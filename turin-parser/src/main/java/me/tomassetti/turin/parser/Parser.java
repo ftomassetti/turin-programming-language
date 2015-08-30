@@ -1,17 +1,21 @@
 package me.tomassetti.turin.parser;
 
+import com.google.common.annotations.VisibleForTesting;
 import me.tomassetti.parser.antlr.TurinLexer;
 import me.tomassetti.parser.antlr.TurinParser;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.antlr.v4.runtime.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class Parser {
 
+    /**
+     * parse should be used instead.
+     * @throws IOException
+     */
+    @VisibleForTesting
     public TurinParser.TurinFileContext produceParseTree(InputStream inputStream) throws IOException {
         CharStream charStream = new ANTLRInputStream(inputStream);
         TurinLexer l = new TurinLexer(charStream);

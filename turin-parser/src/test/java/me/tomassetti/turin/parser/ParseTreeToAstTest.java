@@ -1,7 +1,7 @@
+package me.tomassetti.turin.parser;
+
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
-import me.tomassetti.turin.parser.ParseTreeToAst;
-import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
@@ -11,11 +11,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class ParseTreeToAstTest {
 
     private TurinFile basicMangaAst() {
