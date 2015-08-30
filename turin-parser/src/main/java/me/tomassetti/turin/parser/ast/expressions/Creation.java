@@ -3,20 +3,19 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.ResolvedTypeUsage;
 import me.tomassetti.turin.parser.ast.TypeUsage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 
 /**
  * Created by federico on 29/08/15.
  */
-public class Creation extends Expression {
+public class Creation extends Invokable {
 
     private String typeName;
-    private List<ActualParam> actualParams;
 
     public String getTypeName() {
         return typeName;
@@ -50,11 +49,6 @@ public class Creation extends Expression {
         return result;
     }
 
-    public List<ActualParam> getActualParams() {
-
-        return actualParams;
-    }
-
     public Creation(String typeName, List<ActualParam> actualParams) {
         this.typeName = typeName;
         this.actualParams = actualParams;
@@ -70,6 +64,11 @@ public class Creation extends Expression {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        // this node will not have a context so we resolve the type already
+        return new ResolvedTypeUsage(resolver.findTypeDefinitionIn(typeName, this));
+    }
+
+    public String jvmSignature(Resolver resolver) {
+        return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams);
     }
 }

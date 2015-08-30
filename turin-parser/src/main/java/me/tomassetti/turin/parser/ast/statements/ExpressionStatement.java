@@ -43,4 +43,8 @@ public class ExpressionStatement extends Statement {
     public Iterable<Node> getChildren() {
         return ImmutableList.of(expression);
     }
+
+    public Expression getExpression() {
+        return expression;
+    }
 }

@@ -3,9 +3,11 @@ package me.tomassetti.turin.parser.ast;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TypeDefinition extends Node {
     private String name;
@@ -83,6 +85,15 @@ public class TypeDefinition extends Node {
     }
 
     public String jvmType() {
-        throw new UnsupportedOperationException();
+        return "L" + getQualifiedName().replaceAll("\\.", "/") + ";";
+    }
+
+    public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+        // We generate one single constructor so call that ibe
+        List<String> paramSignatures = getDirectProperties(resolver).stream()
+                .map((p) -> p.getTypeUsage()
+                .jvmType(resolver))
+                .collect(Collectors.toList());
+        return "(" + String.join("", paramSignatures) + ")V";
     }
 }

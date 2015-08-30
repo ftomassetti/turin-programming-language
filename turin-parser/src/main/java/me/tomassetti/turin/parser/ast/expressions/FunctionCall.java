@@ -12,17 +12,12 @@ import java.util.List;
 /**
  * Created by federico on 29/08/15.
  */
-public class FunctionCall extends Expression {
+public class FunctionCall extends Invokable {
 
     private String name;
-    private List<ActualParam> actualParams;
 
     public String getName() {
         return name;
-    }
-
-    public List<ActualParam> getActualParams() {
-        return actualParams;
     }
 
     @Override
@@ -68,6 +63,10 @@ public class FunctionCall extends Expression {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String jvmSignature(Resolver resolver) {
         throw new UnsupportedOperationException();
     }
 }

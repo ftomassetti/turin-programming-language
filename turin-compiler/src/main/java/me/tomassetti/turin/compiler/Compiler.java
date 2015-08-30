@@ -1,16 +1,16 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.bytecode.Assignment;
-import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
-import me.tomassetti.turin.compiler.bytecode.JvmTypeCategory;
+import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypes;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
+import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.ast.expressions.*;
+import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import org.objectweb.asm.*;
@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -234,17 +235,64 @@ public class Compiler {
 
         private List<BytecodeSequence> compile(Statement statement) {
             if (statement instanceof VariableDeclaration) {
-                VariableDeclaration variableDeclaration = (VariableDeclaration)statement;
+                VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
                 int pos = nParams + nLocalVars;
                 nLocalVars += 1;
-                return ImmutableList.of(compile(variableDeclaration.getValue()), new Assignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver))));
+                return ImmutableList.of(compile(variableDeclaration.getValue()), new Assignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver)));
+            } else if (statement instanceof ExpressionStatement) {
+                return executeEpression(((ExpressionStatement)statement).getExpression());
+            } else {
+                throw new UnsupportedOperationException(statement.toString());
+            }
+        }
+
+        private BytecodeSequence compile(Expression expression) {
+            if (expression instanceof IntLiteral) {
+                throw new UnsupportedOperationException();
+            } else if (expression instanceof StringLiteral) {
+                throw new UnsupportedOperationException();
+            } else if (expression instanceof FunctionCall) {
+                throw new UnsupportedOperationException();
+            } else if (expression instanceof Creation) {
+                Creation creation = (Creation)expression;
+                String type = creation.calcType(resolver).jvmType(resolver);
+                List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
+                        .map((ap)->pushEpression(ap))
+                        .collect(Collectors.toList());
+                String signature = creation.jvmSignature(resolver);
+                return new NewInvocation(type, argumentsPush, signature);
             } else {
                 throw new UnsupportedOperationException();
             }
         }
 
-        private BytecodeSequence compile(Expression expression) {
-            throw new UnsupportedOperationException();
+        private List<BytecodeSequence> executeEpression(Expression expr) {
+            if (expr instanceof IntLiteral) {
+                // no op
+                return Collections.emptyList();
+            } else if (expr instanceof StringLiteral) {
+                // no op
+                return Collections.emptyList();
+            } else if (expr instanceof FunctionCall) {
+                FunctionCall functionCall = (FunctionCall)expr;
+                List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
+                        .map((ap)->pushEpression(ap))
+                        .collect(Collectors.toList());
+                JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
+                return ImmutableList.<BytecodeSequence>builder().addAll(argumentsPush).add(new MethodInvocation(methodDefinition)).build();
+            } else {
+                throw new UnsupportedOperationException(expr.toString());
+            }
+        }
+
+        private BytecodeSequence pushEpression(Expression expr) {
+            if (expr instanceof IntLiteral) {
+                return new PushIntConst(((IntLiteral)expr).getValue());
+            } else if (expr instanceof StringLiteral) {
+                return new PushStringConst(((StringLiteral)expr).getValue());
+            } else {
+                throw new UnsupportedOperationException();
+            }
         }
 
     }

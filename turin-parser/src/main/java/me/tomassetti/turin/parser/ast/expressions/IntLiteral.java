@@ -49,4 +49,8 @@ public class IntLiteral extends Expression {
     public TypeUsage calcType(Resolver resolver) {
         throw new UnsupportedOperationException();
     }
+
+    public int getValue() {
+        return value;
+    }
 }

@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.implicit.BasicTypes;
 import me.tomassetti.turin.parser.ast.PropertyReference;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 
 import java.util.Optional;
 
@@ -36,6 +37,16 @@ public class InFileResolver implements Resolver {
     @Override
     public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
         return findTypeDefinitionInHelper(typeName, context, context);
+    }
+
+    @Override
+    public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
+        if (functionCall.getName().equals("print")) {
+            JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition("java/lang/System", "out", "Ljava/io/PrintStream;", true);
+            jvmMethodDefinition.setStaticField(new JvmStaticFieldDefinition("java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
+            return jvmMethodDefinition;
+        }
+        throw new UnsupportedOperationException();
     }
 
     private TypeDefinition findTypeDefinitionInHelper(String typeName, Node context, Node startContext) {

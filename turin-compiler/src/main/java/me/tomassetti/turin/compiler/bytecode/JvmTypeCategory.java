@@ -1,11 +1,9 @@
 package me.tomassetti.turin.compiler.bytecode;
 
+import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.TypeUsage;
 import org.objectweb.asm.Opcodes;
 
-/**
- * Created by federico on 29/08/15.
- */
 public enum JvmTypeCategory {
     INT,
     LONG,
@@ -13,7 +11,7 @@ public enum JvmTypeCategory {
     DOUBLE,
     REFERENCE;
 
-    public int storeOpcode(){
+    public int loadOpcode(){
         switch (this){
             case INT:
                 return Opcodes.ILOAD;
@@ -30,7 +28,31 @@ public enum JvmTypeCategory {
         }
     }
 
-    public static JvmTypeCategory from(TypeUsage typeUsage) {
-        throw new UnsupportedOperationException();
+    public int storeOpcode(){
+        switch (this){
+            case INT:
+                return Opcodes.ISTORE;
+            case LONG:
+                return Opcodes.LSTORE;
+            case FLOAT:
+                return Opcodes.FSTORE;
+            case DOUBLE:
+                return Opcodes.DSTORE;
+            case REFERENCE:
+                return Opcodes.ASTORE;
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    public static JvmTypeCategory from(TypeUsage typeUsage, Resolver resolver) {
+        String jvmType = typeUsage.jvmType(resolver);
+        if (jvmType.startsWith("L")){
+            return REFERENCE;
+        } else if (jvmType.equals("I")){
+            return INT;
+        } else {
+            throw new UnsupportedOperationException(jvmType);
+        }
     }
 }

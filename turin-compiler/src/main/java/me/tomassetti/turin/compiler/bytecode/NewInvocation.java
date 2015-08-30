@@ -2,6 +2,8 @@ package me.tomassetti.turin.compiler.bytecode;
 
 import org.objectweb.asm.MethodVisitor;
 
+import java.util.List;
+
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Opcodes.ASTORE;
 
@@ -10,13 +12,25 @@ import static org.objectweb.asm.Opcodes.ASTORE;
  */
 public class NewInvocation extends BytecodeSequence {
 
+    private String type;
+    private List<BytecodeSequence> argumentsPush;
+    private String signature;
+
+    public NewInvocation(String type, List<BytecodeSequence> argumentsPush, String signature) {
+        this.type = type;
+        this.argumentsPush = argumentsPush;
+        this.signature = signature;
+    }
+
     @Override
+
     public void operate(MethodVisitor mv) {
-        mv.visitTypeInsn(NEW, "manga/MangaCharacter");
+        mv.visitTypeInsn(NEW, type);
         mv.visitInsn(DUP);
-        mv.visitLdcInsn("ciao");
-        mv.visitIntInsn(BIPUSH, 16);
-        mv.visitMethodInsn(INVOKESPECIAL, "manga/MangaCharacter", "<init>", "(Ljava/lang/String;I)V", false);
+        argumentsPush.forEach((ap)->ap.operate(mv));
+        //mv.visitLdcInsn("ciao");
+        //mv.visitIntInsn(BIPUSH, 16);
+        mv.visitMethodInsn(INVOKESPECIAL, type, "<init>", signature, false);
     }
 
 }
