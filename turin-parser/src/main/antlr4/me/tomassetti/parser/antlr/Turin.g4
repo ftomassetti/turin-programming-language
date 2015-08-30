@@ -55,7 +55,7 @@ expression:
     functionCall | creation | stringLiteral | intLiteral;
 
 stringLiteral:
-    STRING_START -> pushMode(IN_STRING);
+    STRING;
 
 intLiteral:
     INT;
@@ -106,5 +106,3 @@ STRING_START: '"';
 
 WS: (' ' | '\t')+ -> skip;
 NL: '\r'? '\n';
-
-mode IN_STRING;
