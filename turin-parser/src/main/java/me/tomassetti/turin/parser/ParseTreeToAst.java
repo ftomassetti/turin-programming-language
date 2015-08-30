@@ -7,6 +7,8 @@ import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -16,8 +18,25 @@ import java.util.stream.Collectors;
  */
 public class ParseTreeToAst {
 
+    private Position getPosition(ParserRuleContext ctx) {
+        return new Position(getStartPoint(ctx.start), getEndPoint(ctx.stop));
+    }
+
+    private void getPositionFrom(Node node, ParserRuleContext ctx) {
+        node.setPosition(getPosition(ctx));
+    }
+
+    private Point getStartPoint(Token token) {
+        return new Point(token.getLine(), token.getCharPositionInLine());
+    }
+
+    private Point getEndPoint(Token token) {
+        return new Point(token.getLine(), token.getCharPositionInLine() + token.getText().length());
+    }
+
     public TurinFile toAst(TurinParser.TurinFileContext turinFileContext){
         TurinFile turinFile = new TurinFile();
+        getPositionFrom(turinFile, turinFileContext);
         turinFile.setNameSpace(toAst(turinFileContext.namespace));
         for (TurinParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
             Node memberNode = toAst(memberCtx);
@@ -48,6 +67,7 @@ public class ParseTreeToAst {
 
     private TypeDefinition toAst(TurinParser.TypeDeclarationContext typeDeclarationContext) {
         TypeDefinition typeDefinition = new TypeDefinition(typeDeclarationContext.name.getText());
+        getPositionFrom(typeDefinition, typeDeclarationContext);
         for (TurinParser.TypeMemberContext memberCtx : typeDeclarationContext.typeMember()) {
             Node memberNode = toAst(memberCtx);
             if (memberNode instanceof PropertyReference) {

@@ -3,6 +3,15 @@ package me.tomassetti.turin.parser.ast;
 public abstract class Node {
 
     protected Node parent;
+    private Position position;
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 
     public Node getParent() {
         return parent;
