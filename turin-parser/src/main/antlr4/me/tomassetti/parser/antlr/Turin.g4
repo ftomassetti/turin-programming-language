@@ -14,42 +14,42 @@ turinFile:
 nls: NL+;
 
 qualifiedId:
-    (parts+=ID '.')* parts+=ID;
+    (parts+=ID POINT)* parts+=ID;
 
 //
 
 namespaceDecl:
-    'namespace' name=qualifiedId;
+    NAMESPACE_KW name=qualifiedId;
 
 //
 
 typeUsage:
     ref=TID
-    | arrayBase=typeUsage '[]';
+    | arrayBase=typeUsage LSQUARE RSQUARE;
 
 //
 
 propertyDeclaration:
-    'property' type=typeUsage ':' name=ID nls;
+    PROPERTY_KW type=typeUsage COLON name=ID nls;
 
 propertyReference:
-    'property' name=ID nls;
+    PROPERTY_KW name=ID nls;
 
 typeMember:
     propertyDeclaration | propertyReference;
 
 typeDeclaration:
-    'type' name=TID '{' nls
+    TYPE_KW name=TID LBRACKET nls
     (typeMembers += typeMember)*
-    '}' nls;
+    RBRACKET nls;
 
 //
 
 actualParam:
-    expression | name='ID' '=' expression;
+    expression | name=ID ASSIGNMENT expression;
 
 functionCall:
-    name=ID '(' params+=actualParam (',' params+=actualParam)*  ')' ;
+    name=ID LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
 
 expression:
     functionCall | creation | stringLiteral | intLiteral;
@@ -70,10 +70,10 @@ StringCharacter
 	;
 
 creation:
-    name=TID '(' params+=actualParam (',' params+=actualParam)*  ')' ;
+    name=TID LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
 
 varDecl :
-    'val' (type=typeUsage ':')? name=ID '=' value=expression nls;
+    VAL_KW (type=typeUsage COLON)? name=ID ASSIGNMENT value=expression nls;
 
 expressionStmt:
     expression nls;
@@ -87,14 +87,32 @@ formalParam :
 //
 
 program:
-    'program' name=TID '(' params+=formalParam (',' params+=formalParam)* ')' '{' nls
+    PROGRAM_KW name=TID LPAREN params+=formalParam (COMMA params+=formalParam)* RPAREN LBRACKET nls
     (statements += statement)*
-    '}' nls;
+    RBRACKET nls;
 
 //
 
 fileMember:
     propertyDeclaration | typeDeclaration | program;
+
+NAMESPACE_KW: 'namespace';
+PROGRAM_KW: 'program';
+PROPERTY_KW: 'property';
+TYPE_KW: 'type';
+VAL_KW: 'val';
+
+LPAREN: '(';
+RPAREN: ')';
+LBRACKET: '{';
+RBRACKET: '}';
+LSQUARE: '[';
+RSQUARE: ']';
+COMMA: ',';
+POINT: '.';
+COLON: ':';
+EQUAL: '==';
+ASSIGNMENT: '=';
 
 ID: 'a'..'z' ('A'..'Z' | 'a'..'z' | '_')*;
 // Only for types
