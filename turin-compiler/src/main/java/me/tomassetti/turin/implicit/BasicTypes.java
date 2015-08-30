@@ -5,9 +5,6 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.Optional;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class BasicTypes {
 
     public static TypeDefinition STRING;

@@ -78,14 +78,14 @@ public class ParseTreeToAstTest {
     @Test
     public void convertBasicMangaExample() throws IOException {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("basicManga.to");
-        TurinParser.TurinFileContext root = new Parser().produceParseTree(inputStream);
+        TurinParser.TurinFileContext root = new InternalParser().produceParseTree(inputStream);
         assertEquals(basicMangaAst(), new ParseTreeToAst().toAst(root));
     }
 
     @Test
     public void convertMangaExample() throws IOException {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("manga.to");
-        TurinParser.TurinFileContext root = new Parser().produceParseTree(inputStream);
+        TurinParser.TurinFileContext root = new InternalParser().produceParseTree(inputStream);
         assertEquals(mangaAst(), new ParseTreeToAst().toAst(root));
     }
 

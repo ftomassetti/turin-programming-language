@@ -3,7 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypes;
-import me.tomassetti.turin.parser.Parser;
+import me.tomassetti.turin.parser.InternalParser;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
+
+import me.tomassetti.turin.parser.Parser;
 
 public class Compiler {
 

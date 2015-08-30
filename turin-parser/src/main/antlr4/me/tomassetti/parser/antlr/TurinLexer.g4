@@ -1,9 +1,10 @@
 lexer grammar Turin;
 
+// UNUSED FOR NOW
+
 @header {
 
 }
-
 
 NAMESPACE_KW      : 'namespace';
 PROPERTY_KW       : 'property';

@@ -106,3 +106,11 @@ STRING_START: '"';
 
 WS: (' ' | '\t')+ -> skip;
 NL: '\r'? '\n';
+
+COMMENT
+    :   '/*' .*? '*/' -> skip
+    ;
+
+LINE_COMMENT
+    :   '//' ~[\r\n]* -> skip
+    ;
