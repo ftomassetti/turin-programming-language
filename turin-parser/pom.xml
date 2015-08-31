@@ -60,7 +60,7 @@
       <dependency>
           <groupId>org.antlr</groupId>
           <artifactId>antlr4-runtime</artifactId>
-          <version>4.3</version>
+          <version>4.5.1-1</version>
       </dependency>
   </dependencies>
   <build>
@@ -77,7 +77,7 @@
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.3</version>
+        <version>4.5.1-1</version>
         <executions>
             <execution>
                 <id>antlr</id>
