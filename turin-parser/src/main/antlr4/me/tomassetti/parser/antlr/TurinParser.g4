@@ -1,4 +1,4 @@
-grammar Turin;
+grammar TurinParser;
 
 @header {
 
@@ -29,14 +29,17 @@ typeUsage:
 
 //
 
-propertyDeclaration:
+topLevelPropertyDeclaration:
     PROPERTY_KW type=typeUsage COLON name=ID nls;
 
+inTypePropertyDeclaration:
+    HAS_KW type=typeUsage COLON name=ID nls;
+
 propertyReference:
-    PROPERTY_KW name=ID nls;
+    HAS_KW name=ID nls;
 
 typeMember:
-    propertyDeclaration | propertyReference;
+    inTypePropertyDeclaration | propertyReference;
 
 typeDeclaration:
     TYPE_KW name=TID LBRACKET nls
@@ -94,13 +97,16 @@ program:
 //
 
 fileMember:
-    propertyDeclaration | typeDeclaration | program;
+    topLevelPropertyDeclaration | typeDeclaration | program;
 
 NAMESPACE_KW: 'namespace';
 PROGRAM_KW: 'program';
 PROPERTY_KW: 'property';
 TYPE_KW: 'type';
 VAL_KW: 'val';
+HAS_KW: 'has';
+ABSTRACT_KW: 'abstract';
+SHARED_KW: 'shared';
 
 LPAREN: '(';
 RPAREN: ')';

@@ -1,34 +1,48 @@
-lexer grammar Turin;
-
-// UNUSED FOR NOW
+lexer grammar TurinLexer;
 
 @header {
 
 }
 
-NAMESPACE_KW      : 'namespace';
-PROPERTY_KW       : 'property';
-TYPE_KW           : 'type';
-VAL_KW            : 'val';
-PROGRAM_KW        : 'program';
-ARRAY_DECORATOR   : '[]';
-ID_TYPE_SEPARATOR : ':';
-LCURLY            : '{';
-RCURLY            : '}';
-ASSIGNMENT        : '=';
-COMMA             : ',';
-LPAREN            : '(';
-RPAREN            : ')';
+NAMESPACE_KW: 'namespace';
+PROGRAM_KW: 'program';
+PROPERTY_KW: 'property';
+TYPE_KW: 'type';
+VAL_KW: 'val';
+HAS_KW: 'has';
+ABSTRACT_KW: 'abstract';
+SHARED_KW: 'shared';
 
-ID: 'a'..'z' ('A'..'Z' | 'a'..'z' | '_')*;
+LPAREN: '(';
+RPAREN: ')';
+LBRACKET: '{';
+RBRACKET: '}';
+LSQUARE: '[';
+RSQUARE: ']';
+COMMA: ',';
+POINT: '.';
+COLON: ':';
+EQUAL: '==';
+ASSIGNMENT: '=';
+
+ID: ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
-TID: 'A'..'Z' ('A'..'Z' | 'a'..'z' | '_')*;
-INT: '0'|('1'..'9')('0'..'9')*;
+TID: ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+INT: '0'|(('1'..'9')('0'..'9')*);
 
-STRING_START: '"' -> pushMode(IN_STRING);
+STRING:  '"' ~["]* '"';
+STRING_START: '"';
 
 WS: (' ' | '\t')+ -> skip;
 NL: '\r'? '\n';
+
+COMMENT
+    :   '/*' .*? '*/' -> skip
+    ;
+
+LINE_COMMENT
+    :   '//' ~[\r\n]* -> skip
+    ;
 
 mode IN_STRING;
 
