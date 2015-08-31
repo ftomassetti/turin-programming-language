@@ -55,6 +55,42 @@ public class TurinLexerTest {
         assertTrue(errors.size() > 0);
     }
 
+    private void verifyModeIsNotInitial(String code) throws IOException {
+        InputStream stream = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
+
+        CharStream charStream = new ANTLRInputStream(stream);
+        TurinLexer turinLexer = new TurinLexer(charStream);
+        turinLexer.removeErrorListeners();
+        turinLexer.addErrorListener(new ANTLRErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer, Object o, int i, int i1, String s, RecognitionException e) {
+                throw new RuntimeException("Syntax error found "+ i + " " + i1 + " "+s+" "+e.getMessage());
+            }
+
+            @Override
+            public void reportAmbiguity(Parser parser, DFA dfa, int i, int i1, boolean b, BitSet bitSet, ATNConfigSet atnConfigSet) {
+
+            }
+
+            @Override
+            public void reportAttemptingFullContext(Parser parser, DFA dfa, int i, int i1, BitSet bitSet, ATNConfigSet atnConfigSet) {
+
+            }
+
+            @Override
+            public void reportContextSensitivity(Parser parser, DFA dfa, int i, int i1, int i2, ATNConfigSet atnConfigSet) {
+
+            }
+        });
+
+        List<Token> tokens = new ArrayList<>();
+        Token token;
+        while ((token = turinLexer.nextToken()).getType() != -1) {
+            tokens.add(token);
+        }
+        assertTrue(turinLexer._mode != 0);
+    }
+
     private List<Token> parseCode(String code) throws IOException {
         InputStream stream = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
 
@@ -158,7 +194,7 @@ public class TurinLexerTest {
     @Test
     public void parseStringWithUnclosedInterpolationAtTheEndWithErrors() throws IOException {
         String code = "\"Hello!#{\"";
-        verifyError(code);
+        verifyModeIsNotInitial(code);
     }
 
     @Test
@@ -170,7 +206,15 @@ public class TurinLexerTest {
     @Test
     public void parseStringWithEmptyInterpolation() throws IOException {
         String code = "\"Hel#{}lo!\"";
-        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.INTERPOLATION_START, TurinLexer.INTERPOLATION_END, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+    }
+
+    @Test
+    public void parseStringWithInterpolationContainingID() throws IOException {
+        String code = "\"Hel#{foo}lo!\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.INTERPOLATION_START,
+                TurinLexer.ID,
+                TurinLexer.INTERPOLATION_END, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 
     @Test

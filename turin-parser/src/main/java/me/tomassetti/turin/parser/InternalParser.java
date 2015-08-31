@@ -20,6 +20,9 @@ public class InternalParser {
             }
         });
         TurinParserParser.TurinFileContext turinFileContext = p.turinFile();
+        if (l._mode != 0) {
+            throw new RuntimeException("Lexical error");
+        }
         return turinFileContext;
     }
 
