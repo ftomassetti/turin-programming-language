@@ -122,7 +122,9 @@ public class TurinLexerTest {
         List<Token> tokens = new ArrayList<>();
         Token token;
         while ((token = turinLexer.nextToken()).getType() != -1) {
-            tokens.add(token);
+            if (token.getChannel() == 0) {
+                tokens.add(token);
+            }
         }
         return tokens;
     }

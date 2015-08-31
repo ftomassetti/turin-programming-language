@@ -4,6 +4,11 @@ lexer grammar TurinLexer;
 
 }
 
+@lexer::members {
+    public static final int WHITESPACE = 1;
+    public static final int COMMENTS = 2;
+}
+
 tokens { ID, TID, INT, LPAREN, RPAREN, COMMA }
 
 NAMESPACE_KW: 'namespace';
@@ -34,15 +39,15 @@ INT: F_INT;
 
 STRING_START: '"' -> pushMode(IN_STRING);
 
-WS: (' ' | '\t')+ -> skip;
+WS: (' ' | '\t')+ -> channel(WHITESPACE);
 NL: '\r'? '\n';
 
 COMMENT
-    :   '/*' .*? '*/' -> skip
+    :   '/*' .*? '*/' -> channel(COMMENTS)
     ;
 
 LINE_COMMENT
-    :   '//' ~[\r\n]* -> skip
+    :   '//' ~[\r\n]* -> channel(COMMENTS)
     ;
 
 fragment F_ID: ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
@@ -75,6 +80,6 @@ I_RSQUARE : ']' -> type(RSQUARE);
 I_POINT : '.' -> type(POINT);
 I_EQUAL : '==' -> type(EQUAL);
 I_STRING_START : '"' -> type(STRING_START), pushMode(IN_STRING);
-I_WS: (' ' | '\t')+ -> type(WS), skip;
+I_WS: (' ' | '\t')+ -> type(WS), channel(WHITESPACE);
 
 
