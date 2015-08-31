@@ -30,8 +30,7 @@ ID: ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 TID: ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 INT: '0'|(('1'..'9')('0'..'9')*);
 
-STRING:  '"' ~["]* '"';
-STRING_START: '"';
+STRING_START: '"' -> pushMode(IN_STRING);
 
 WS: (' ' | '\t')+ -> skip;
 NL: '\r'? '\n';
@@ -46,10 +45,8 @@ LINE_COMMENT
 
 mode IN_STRING;
 
-STRING_STOP         : '"' -> popMode ;
-ESCAPED_STRING_STOP : '\"';
-ESCAPED_SLASH       : '\\';
-CONTENT             : ~["\\#]+;
+STRING_STOP         : '"' -> popMode;
+STRING_CONTENT      : (~["\\#]|'\\r'|'\\n'|'\\t'|'\\"'|'\\\\'|'#'{ _input.LA(2)!='{' }?)+;
 INTERPOLATION_START : '#{' -> pushMode(IN_INTERPOLATION);
 
 mode IN_INTERPOLATION;

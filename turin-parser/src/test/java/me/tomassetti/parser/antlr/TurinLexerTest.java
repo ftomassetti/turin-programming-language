@@ -17,6 +17,44 @@ import static org.junit.Assert.*;
 
 public class TurinLexerTest {
 
+    private void verifyError(String code) throws IOException {
+        InputStream stream = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
+
+        final List<Integer> errors = new ArrayList<>();
+
+        CharStream charStream = new ANTLRInputStream(stream);
+        TurinLexer turinLexer = new TurinLexer(charStream);
+        turinLexer.removeErrorListeners();
+        turinLexer.addErrorListener(new ANTLRErrorListener() {
+            @Override
+            public void syntaxError(Recognizer<?, ?> recognizer, Object o, int i, int i1, String s, RecognitionException e) {
+                errors.add(i);
+            }
+
+            @Override
+            public void reportAmbiguity(Parser parser, DFA dfa, int i, int i1, boolean b, BitSet bitSet, ATNConfigSet atnConfigSet) {
+
+            }
+
+            @Override
+            public void reportAttemptingFullContext(Parser parser, DFA dfa, int i, int i1, BitSet bitSet, ATNConfigSet atnConfigSet) {
+
+            }
+
+            @Override
+            public void reportContextSensitivity(Parser parser, DFA dfa, int i, int i1, int i2, ATNConfigSet atnConfigSet) {
+
+            }
+        });
+
+        List<Token> tokens = new ArrayList<>();
+        Token token;
+        while ((token = turinLexer.nextToken()).getType() != -1) {
+            tokens.add(token);
+        }
+        assertTrue(errors.size() > 0);
+    }
+
     private List<Token> parseCode(String code) throws IOException {
         InputStream stream = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
 
@@ -52,6 +90,8 @@ public class TurinLexerTest {
         }
         return tokens;
     }
+
+
 
     private List<Integer> getTokenTypes(String code) throws IOException {
         return parseCode(code).stream().map((t)->t.getType()).collect(Collectors.toList());
@@ -95,6 +135,48 @@ public class TurinLexerTest {
     public void parseIDsAndTIDsStartingWithUnderscore() throws IOException {
         String code = "_a __B";
         verify(code, TurinLexer.ID, TurinLexer.TID);
+    }
+
+    @Test
+    public void parseSimpleString() throws IOException {
+        String code = "\"Hello!\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+    }
+
+    @Test
+    public void parseStringWithStringEndEscape() throws IOException {
+        String code = "\"Hel\\\"lo!\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+    }
+
+    @Test
+    public void parseStringWithUnclosedInterpolationInTheMiddleWithErrors() throws IOException {
+        String code = "\"Hel#{lo!\"";
+        verifyError(code);
+    }
+
+    @Test
+    public void parseStringWithUnclosedInterpolationAtTheEndWithErrors() throws IOException {
+        String code = "\"Hello!#{\"";
+        verifyError(code);
+    }
+
+    @Test
+    public void parseStringWithUnknownEscapeSequenceWithErrors() throws IOException {
+        String code = "\"\\z\"";
+        verifyError(code);
+    }
+
+    @Test
+    public void parseStringWithEmptyInterpolation() throws IOException {
+        String code = "\"Hel#{}lo!\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+    }
+
+    @Test
+    public void parseStringWithSharpSymbol() throws IOException {
+        String code = "\"Hel#lo!\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 
 }

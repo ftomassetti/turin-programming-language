@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser;
 
 import me.tomassetti.parser.antlr.TurinParser;
+import me.tomassetti.parser.antlr.TurinParserParser;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
@@ -29,11 +30,11 @@ class ParseTreeToAst {
         return new Point(token.getLine(), token.getCharPositionInLine() + token.getText().length());
     }
 
-    public TurinFile toAst(TurinParser.TurinFileContext turinFileContext){
+    public TurinFile toAst(TurinParserParser.TurinFileContext turinFileContext){
         TurinFile turinFile = new TurinFile();
         getPositionFrom(turinFile, turinFileContext);
         turinFile.setNameSpace(toAst(turinFileContext.namespace));
-        for (TurinParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
+        for (TurinParserParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
             Node memberNode = toAst(memberCtx);
             if (memberNode instanceof TypeDefinition) {
                 turinFile.add((TypeDefinition)memberNode);
@@ -48,7 +49,7 @@ class ParseTreeToAst {
         return turinFile;
     }
 
-    private Node toAst(TurinParser.FileMemberContext memberCtx) {
+    private Node toAst(TurinParserParser.FileMemberContext memberCtx) {
         if (memberCtx.typeDeclaration() != null) {
             return toAst(memberCtx.typeDeclaration());
         } else if (memberCtx.propertyDeclaration() != null) {
