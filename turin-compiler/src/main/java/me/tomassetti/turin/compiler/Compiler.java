@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypes;
 import me.tomassetti.turin.parser.InternalParser;
-import me.tomassetti.turin.parser.analysis.InFileResolver;
-import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
-import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
@@ -41,17 +38,17 @@ public class Compiler {
         private ClassWriter cw;
 
         private void generateField(Property property) {
-            FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver), null, null);
+            FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver).getSignature(), null, null);
             fv.visitEnd();
         }
 
         private void generateGetter(Property property, String className) {
             String getterName = "get" + Character.toUpperCase(property.getName().charAt(0)) + property.getName().substring(1);
-            String jvmType = property.getTypeUsage().jvmType(resolver);
-            MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType, null, null);
+            JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+            MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getSignature(), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, property.getName(), jvmType);
+            mv.visitFieldInsn(GETFIELD, className, property.getName(), jvmType.getSignature());
             mv.visitInsn(returnTypeFor(jvmType));
             mv.visitMaxs(1, 1);
             mv.visitEnd();
@@ -83,7 +80,7 @@ public class Compiler {
 
         private void generateSetter(Property property, String className) {
             String setterName = "set" + Character.toUpperCase(property.getName().charAt(0)) + property.getName().substring(1);
-            String jvmType = property.getTypeUsage().jvmType(resolver);
+            String jvmType = property.getTypeUsage().jvmType(resolver).getSignature();
             MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType + ")V", null, null);
             mv.visitCode();
 
@@ -101,7 +98,7 @@ public class Compiler {
 
         private void generateContructor(TypeDefinition typeDefinition, String className) {
             List<Property> directPropertis = typeDefinition.getDirectProperties(resolver);
-            String paramsSignature = String.join("", directPropertis.stream().map((dp)->dp.getTypeUsage().jvmType(resolver)).collect(Collectors.toList()));
+            String paramsSignature = String.join("", directPropertis.stream().map((dp)->dp.getTypeUsage().jvmType(resolver).getSignature()).collect(Collectors.toList()));
             MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + paramsSignature + ")V", null, null);
             mv.visitCode();
 
@@ -110,7 +107,7 @@ public class Compiler {
 
             int propIndex = 0;
             for (Property property : directPropertis) {
-                enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver), propIndex);
+                enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver).getSignature(), propIndex);
                 propIndex++;
                 if (propIndex == directPropertis.size()) {
                     mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
@@ -118,7 +115,7 @@ public class Compiler {
                     List<Object> frameObject = new ArrayList<>();
                     frameObject.add(className);
                     for (Property p : directPropertis) {
-                        frameObject.add(toFrameObject(p.getTypeUsage().jvmType(resolver)));
+                        frameObject.add(toFrameObject(p.getTypeUsage().jvmType(resolver).getSignature()));
                     }
                     mv.visitFrame(Opcodes.F_FULL, 1 + directPropertis.size(), frameObject.toArray(), 0, new Object[] {});
                 }
@@ -126,7 +123,7 @@ public class Compiler {
 
             propIndex = 0;
             for (Property property : directPropertis) {
-                String jvmType = property.getTypeUsage().jvmType(resolver);
+                String jvmType = property.getTypeUsage().jvmType(resolver).getSignature();
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(loadTypeFor(jvmType), propIndex + 1);
                 mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
@@ -153,8 +150,8 @@ public class Compiler {
             }
         }
 
-        private int returnTypeFor(String jvmType) {
-            if (jvmType.equals("I")) {
+        private int returnTypeFor(JvmType jvmType) {
+            if (jvmType.getSignature().equals("I")) {
                 return IRETURN;
             }
             return ARETURN;
@@ -257,7 +254,7 @@ public class Compiler {
                 throw new UnsupportedOperationException();
             } else if (expression instanceof Creation) {
                 Creation creation = (Creation)expression;
-                String type = creation.calcType(resolver).jvmType(resolver);
+                String type = creation.calcType(resolver).jvmType(resolver).getSignature();
                 List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
                         .map((ap)->pushEpression(ap))
                         .collect(Collectors.toList());

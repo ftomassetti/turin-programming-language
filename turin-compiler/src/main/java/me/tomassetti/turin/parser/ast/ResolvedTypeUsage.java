@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast;
 
+import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ public class ResolvedTypeUsage extends TypeUsage {
     }
 
     @Override
-    public String jvmType(Resolver resolver) {
+    public JvmType jvmType(Resolver resolver) {
         return typeDefinition.jvmType();
     }
 

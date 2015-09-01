@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 
 public class ReferenceTypeUsage extends TypeUsage {
@@ -43,7 +44,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public String jvmType(Resolver resolver) {
+    public JvmType jvmType(Resolver resolver) {
         TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
         return typeDefinition.jvmType();
     }

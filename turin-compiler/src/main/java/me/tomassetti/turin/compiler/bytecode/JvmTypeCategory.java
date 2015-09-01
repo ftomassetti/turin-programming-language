@@ -46,7 +46,7 @@ public enum JvmTypeCategory {
     }
 
     public static JvmTypeCategory from(TypeUsage typeUsage, Resolver resolver) {
-        String jvmType = typeUsage.jvmType(resolver);
+        String jvmType = typeUsage.jvmType(resolver).getSignature();
         if (jvmType.startsWith("L")){
             return REFERENCE;
         } else if (jvmType.equals("I")){

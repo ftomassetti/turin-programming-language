@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -84,15 +85,15 @@ public class TypeDefinition extends Node {
         return name;
     }
 
-    public String jvmType() {
-        return "L" + getQualifiedName().replaceAll("\\.", "/") + ";";
+    public JvmType jvmType() {
+        return new JvmType("L" + getQualifiedName().replaceAll("\\.", "/") + ";");
     }
 
     public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
         // We generate one single constructor so call that ibe
         List<String> paramSignatures = getDirectProperties(resolver).stream()
                 .map((p) -> p.getTypeUsage()
-                .jvmType(resolver))
+                .jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
         return "(" + String.join("", paramSignatures) + ")V";
     }

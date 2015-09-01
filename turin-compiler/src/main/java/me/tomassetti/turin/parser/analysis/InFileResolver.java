@@ -7,7 +7,9 @@ import me.tomassetti.turin.parser.ast.PropertyReference;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by federico on 29/08/15.
@@ -41,6 +43,7 @@ public class InFileResolver implements Resolver {
 
     @Override
     public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
+        List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream().map((ap)->ap.calcType(this).jvmType(this)).collect(Collectors.toList());
         /*if (functionCall.getFunction().equals("print")) {
             JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition("java/lang/System", "out", "Ljava/io/PrintStream;", true);
             jvmMethodDefinition.setStaticField(new JvmStaticFieldDefinition("java/io/PrintStream", "println", "(Ljava/lang/String;)V"));

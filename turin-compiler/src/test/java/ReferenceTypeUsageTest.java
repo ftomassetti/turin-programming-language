@@ -42,8 +42,8 @@ public class ReferenceTypeUsageTest {
     @Test
     public void javaType() {
         Resolver resolver = new InFileResolver();
-        assertEquals("Ljava/lang/String;", nameRef.getType(resolver).jvmType(resolver));
-        assertEquals("I", ageProperty.getType().jvmType(resolver));
+        assertEquals("Ljava/lang/String;", nameRef.getType(resolver).jvmType(resolver).getSignature());
+        assertEquals("I", ageProperty.getType().jvmType(resolver).getSignature());
     }
 
 }
