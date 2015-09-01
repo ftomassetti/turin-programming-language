@@ -1,0 +1,7 @@
+namespace foo
+
+import java.lang.System
+import java.lang.System.out
+import java.lang.System.out.println
+import java.lang.System.out as out
+import java.lang.System.*
