@@ -6,6 +6,7 @@ import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.ast.*;
 import org.junit.Test;
 
+import java.lang.instrument.ClassDefinition;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -32,6 +33,21 @@ public class CompilerOnProgramTest {
         return turinFile;
     }
 
+    private void invokeProgram(Class<?> programClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method main = programClass.getMethod("main", String[].class);
+        assertEquals("main", main.getName());
+        assertEquals(true, Modifier.isStatic(main.getModifiers()));
+        assertEquals(1, main.getParameterTypes().length);
+        assertEquals(String[].class, main.getParameterTypes()[0]);
+        main.invoke(null, (Object)new String[]{});
+    }
+
+    private void loadAndInvoke(ClassFileDefinition classFileDefinition) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class programClass = turinClassLoader.addClass(classFileDefinition.getName(),
+                classFileDefinition.getBytecode());
+        invokeProgram(programClass);
+    }
 
     @Test
     public void compileAnEmptyProgram() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
@@ -42,16 +58,7 @@ public class CompilerOnProgramTest {
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
 
-        TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class programClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
-                classFileDefinitions.get(0).getBytecode());
-
-        Method main = programClass.getMethod("main", String[].class);
-        assertEquals("main", main.getName());
-        assertEquals(true, Modifier.isStatic(main.getModifiers()));
-        assertEquals(1, main.getParameterTypes().length);
-        assertEquals(String[].class, main.getParameterTypes()[0]);
-        main.invoke(null, (Object)new String[]{});
+        loadAndInvoke(classFileDefinitions.get(0));
     }
 
 
