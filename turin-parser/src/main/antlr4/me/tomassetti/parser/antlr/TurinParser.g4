@@ -90,7 +90,7 @@ valueReference:
     name=ID;
 
 typeReference:
-    (packag=qualifiedId)? name=TID;
+    (packag=qualifiedId)? POINT name=TID;
 
 stringLiteral:
     STRING_START (content=STRING_CONTENT)? STRING_STOP;
