@@ -19,6 +19,8 @@ VAL_KW: 'val';
 HAS_KW: 'has';
 ABSTRACT_KW: 'abstract';
 SHARED_KW: 'shared';
+IMPORT_KW: 'import';
+AS_KW: 'as';
 
 LPAREN: '(';
 RPAREN: ')';
@@ -31,6 +33,10 @@ POINT: '.';
 COLON: ':';
 EQUAL: '==';
 ASSIGNMENT: '=';
+ASTERISK: '*';
+SLASH:    '/';
+PLUS:     '+';
+MINUS:    '-';
 
 ID: F_ID;
 // Only for types
@@ -76,6 +82,11 @@ I_LPAREN  : '(' -> type(LPAREN);
 I_RPAREN  : ')' -> type(RPAREN);
 I_LSQUARE : '[' -> type(LSQUARE);
 I_RSQUARE : ']' -> type(RSQUARE);
+
+I_ASTERISK: '*' -> type(ASTERISK);
+I_SLASH:    '/' -> type(SLASH);
+I_PLUS:     '+' -> type(PLUS);
+I_MINUS:    '-' -> type(MINUS);
 
 I_POINT : '.' -> type(POINT);
 I_EQUAL : '==' -> type(EQUAL);

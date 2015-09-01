@@ -6,7 +6,8 @@ grammar TurinParser;
 
 turinFile:
     namespace=namespaceDecl nls
-    (members=fileMember)+
+    (imports+=importDeclaration)*
+    (members+=fileMember)+
     EOF;
 
 // Base
@@ -16,10 +17,24 @@ nls: NL+;
 qualifiedId:
     (parts+=ID POINT)* parts+=ID;
 
-//
+// Namespace
 
 namespaceDecl:
     NAMESPACE_KW name=qualifiedId;
+
+// Imports
+
+importDeclaration:
+    typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration;
+
+typeImportDeclaration:
+    packagePart=qualifiedId POINT typeName=ID nls;
+
+singleFieldImportDeclaration:
+    packagePart=qualifiedId POINT typeName=ID POINT fieldName=ID nls;
+
+allFieldsImportDeclaration:
+    packagePart=qualifiedId POINT typeName=ID POINT ASTERISK nls;
 
 //
 
