@@ -3,6 +3,6 @@ namespace manga
 property String : name
 
 type MangaCharacter {
-    property name
-    property UInt : age
+    has name
+    has UInt : age
 }

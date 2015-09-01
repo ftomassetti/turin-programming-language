@@ -68,7 +68,10 @@ public class ParseTreeToAstTest {
         VariableDeclaration varDecl = new VariableDeclaration("ranma", value);
         program.add(varDecl);
         // print("The protagonist is #{ranma}")
-        FunctionCall functionCall = new FunctionCall("print", ImmutableList.of(new ActualParam(new StringLiteral("The protagonist is #{ranma}"))));
+        StringInterpolation string = new StringInterpolation();
+        string.add(new StringLiteral("The protagonist is "));
+        string.add(new ValueReference("ranma"));
+        FunctionCall functionCall = new FunctionCall("print", ImmutableList.of(new ActualParam(string)));
         program.add(new ExpressionStatement(functionCall));
         turinFile.add(program);
 

@@ -72,10 +72,22 @@ functionCall:
     name=ID LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
 
 expression:
-    functionCall | creation | stringLiteral | intLiteral;
+    functionCall | creation | stringLiteral | intLiteral | interpolatedStringLiteral | valueReference;
+
+valueReference:
+    name=ID;
 
 stringLiteral:
-    STRING;
+    STRING_START (content=STRING_CONTENT)? STRING_STOP;
+
+interpolatedStringLiteral:
+    STRING_START (elements+=stringElement)+ STRING_STOP;
+
+stringElement:
+    STRING_CONTENT | stringInterpolationElement;
+
+stringInterpolationElement:
+   INTERPOLATION_START value=expression INTERPOLATION_END;
 
 intLiteral:
     INT;

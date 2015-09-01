@@ -1,7 +1,6 @@
 package me.tomassetti.turin.parser;
 
 import me.tomassetti.parser.antlr.TurinParser;
-import me.tomassetti.parser.antlr.TurinParserParser;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
@@ -30,11 +29,11 @@ class ParseTreeToAst {
         return new Point(token.getLine(), token.getCharPositionInLine() + token.getText().length());
     }
 
-    public TurinFile toAst(TurinParserParser.TurinFileContext turinFileContext){
+    public TurinFile toAst(TurinParser.TurinFileContext turinFileContext){
         TurinFile turinFile = new TurinFile();
         getPositionFrom(turinFile, turinFileContext);
         turinFile.setNameSpace(toAst(turinFileContext.namespace));
-        for (TurinParserParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
+        for (TurinParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
             Node memberNode = toAst(memberCtx);
             if (memberNode instanceof TypeDefinition) {
                 turinFile.add((TypeDefinition)memberNode);
@@ -49,16 +48,21 @@ class ParseTreeToAst {
         return turinFile;
     }
 
-    private Node toAst(TurinParserParser.FileMemberContext memberCtx) {
+    private Node toAst(TurinParser.FileMemberContext memberCtx) {
         if (memberCtx.typeDeclaration() != null) {
             return toAst(memberCtx.typeDeclaration());
-        } else if (memberCtx.propertyDeclaration() != null) {
-            return toAst(memberCtx.propertyDeclaration());
+        } else if (memberCtx.topLevelPropertyDeclaration() != null) {
+            return toAst(memberCtx.topLevelPropertyDeclaration());
         } else if (memberCtx.program() != null) {
             return toAst(memberCtx.program());
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    private Node toAst(TurinParser.TopLevelPropertyDeclarationContext topLevelPropertyDeclarationContext) {
+        PropertyDefinition propertyDefinition = new PropertyDefinition(topLevelPropertyDeclarationContext.name.getText(), toAst(topLevelPropertyDeclarationContext.type));
+        return propertyDefinition;
     }
 
     private TypeDefinition toAst(TurinParser.TypeDeclarationContext typeDeclarationContext) {
@@ -78,8 +82,8 @@ class ParseTreeToAst {
     }
 
     private Node toAst(TurinParser.TypeMemberContext memberCtx) {
-        if (memberCtx.propertyDeclaration() != null) {
-            return toAst(memberCtx.propertyDeclaration());
+        if (memberCtx.inTypePropertyDeclaration() != null) {
+            return toAst(memberCtx.inTypePropertyDeclaration());
         } else if (memberCtx.propertyReference() != null) {
             return toAst(memberCtx.propertyReference());
         } else {
@@ -87,13 +91,13 @@ class ParseTreeToAst {
         }
     }
 
-    private PropertyReference toAst(TurinParser.PropertyReferenceContext propertyReferenceContext) {
-        return new PropertyReference(propertyReferenceContext.name.getText());
+    private Node toAst(TurinParser.InTypePropertyDeclarationContext inTypePropertyDeclarationContext) {
+        PropertyDefinition propertyDefinition = new PropertyDefinition(inTypePropertyDeclarationContext.name.getText(), toAst(inTypePropertyDeclarationContext.type));
+        return propertyDefinition;
     }
 
-    private PropertyDefinition toAst(TurinParser.PropertyDeclarationContext propertyDeclarationContext) {
-        PropertyDefinition propertyDefinition = new PropertyDefinition(propertyDeclarationContext.name.getText(), toAst(propertyDeclarationContext.type));
-        return propertyDefinition;
+    private PropertyReference toAst(TurinParser.PropertyReferenceContext propertyReferenceContext) {
+        return new PropertyReference(propertyReferenceContext.name.getText());
     }
 
     private TypeUsage toAst(TurinParser.TypeUsageContext type) {
@@ -139,9 +143,35 @@ class ParseTreeToAst {
             return toAst(exprCtx.functionCall());
         } else if (exprCtx.creation() != null) {
             return toAst(exprCtx.creation());
+        } else if (exprCtx.interpolatedStringLiteral() != null) {
+            return toAst(exprCtx.interpolatedStringLiteral());
+        } else if (exprCtx.valueReference() != null) {
+            return toAst(exprCtx.valueReference());
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    private Expression toAst(TurinParser.ValueReferenceContext valueReferenceContext) {
+        return new ValueReference(valueReferenceContext.getText());
+    }
+
+    private Expression toAst(TurinParser.InterpolatedStringLiteralContext interpolatedStringLiteralContext) {
+        StringInterpolation stringInterpolation = new StringInterpolation();
+        for (TurinParser.StringElementContext element :interpolatedStringLiteralContext.elements){
+            if (element.stringInterpolationElement() != null) {
+                stringInterpolation.add(toAst(element.stringInterpolationElement()));
+            } else if (element.STRING_CONTENT() != null) {
+                stringInterpolation.add(new StringLiteral(element.STRING_CONTENT().getText()));
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+        return stringInterpolation;
+    }
+
+    private Expression toAst(TurinParser.StringInterpolationElementContext stringInterpolationElementContext) {
+        return toAst(stringInterpolationElementContext.expression());
     }
 
     private Creation toAst(TurinParser.CreationContext creation) {
