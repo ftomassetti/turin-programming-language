@@ -71,7 +71,7 @@ public class ParseTreeToAstTest {
         StringInterpolation string = new StringInterpolation();
         string.add(new StringLiteral("The protagonist is "));
         string.add(new ValueReference("ranma"));
-        FunctionCall functionCall = new FunctionCall("print", ImmutableList.of(new ActualParam(string)));
+        FunctionCall functionCall = new FunctionCall(new ValueReference("print"), ImmutableList.of(new ActualParam(string)));
         program.add(new ExpressionStatement(functionCall));
         turinFile.add(program);
 

@@ -68,14 +68,29 @@ typeDeclaration:
 actualParam:
     expression | name=ID ASSIGNMENT expression;
 
-functionCall:
-    name=ID LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
+parenExpression:
+    LPAREN internal=expression RPAREN;
+
+basicExpression:
+    stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression;
 
 expression:
-    functionCall | creation | stringLiteral | intLiteral | interpolatedStringLiteral | valueReference;
+    invokation | creation | basicExpression | fieldAccess | staticFieldReference;
+
+invokation:
+    function=basicExpression LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
+
+fieldAccess:
+    subject=basicExpression POINT name=ID;
+
+staticFieldReference:
+    typeReference POINT name=ID;
 
 valueReference:
     name=ID;
+
+typeReference:
+    (packag=qualifiedId)? name=TID;
 
 stringLiteral:
     STRING_START (content=STRING_CONTENT)? STRING_STOP;

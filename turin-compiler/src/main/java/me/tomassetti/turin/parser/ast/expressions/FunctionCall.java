@@ -14,17 +14,17 @@ import java.util.List;
  */
 public class FunctionCall extends Invokable {
 
-    private String name;
+    private Expression function;
 
-    public String getName() {
-        return name;
+    public Expression getFunction() {
+        return function;
     }
 
     @Override
     public String toString() {
 
         return "FunctionCall{" +
-                "name='" + name + '\'' +
+                "function='" + function + '\'' +
                 ", actualParams=" + actualParams +
                 '}';
     }
@@ -37,20 +37,20 @@ public class FunctionCall extends Invokable {
         FunctionCall that = (FunctionCall) o;
 
         if (!actualParams.equals(that.actualParams)) return false;
-        if (!name.equals(that.name)) return false;
+        if (!function.equals(that.function)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
+        int result = function.hashCode();
         result = 31 * result + actualParams.hashCode();
         return result;
     }
 
-    public FunctionCall(String name, List<ActualParam> actualParams) {
-        this.name = name;
+    public FunctionCall(Expression name, List<ActualParam> actualParams) {
+        this.function = name;
         this.actualParams = new ArrayList<>();
         this.actualParams.addAll(actualParams);
         this.actualParams.forEach((p) ->p.setParent(FunctionCall.this));

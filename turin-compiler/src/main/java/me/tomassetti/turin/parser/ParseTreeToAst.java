@@ -135,18 +135,28 @@ class ParseTreeToAst {
     }
 
     private Expression toAst(TurinParser.ExpressionContext exprCtx) {
-        if (exprCtx.stringLiteral() != null) {
-            return toAst(exprCtx.stringLiteral());
-        } else if (exprCtx.intLiteral() != null) {
-            return toAst(exprCtx.intLiteral());
-        } else if (exprCtx.functionCall() != null) {
-            return toAst(exprCtx.functionCall());
+        if (exprCtx.basicExpression() != null) {
+            return toAst(exprCtx.basicExpression());
         } else if (exprCtx.creation() != null) {
             return toAst(exprCtx.creation());
+        } else if (exprCtx.invokation() != null) {
+            return toAst(exprCtx.invokation());
+        } else {
+            throw new UnsupportedOperationException(exprCtx.getText());
+        }
+    }
+
+    private Expression toAst(TurinParser.BasicExpressionContext exprCtx) {
+        if (exprCtx.valueReference() != null) {
+            return toAst(exprCtx.valueReference());
         } else if (exprCtx.interpolatedStringLiteral() != null) {
             return toAst(exprCtx.interpolatedStringLiteral());
-        } else if (exprCtx.valueReference() != null) {
-            return toAst(exprCtx.valueReference());
+        } else if (exprCtx.intLiteral() != null) {
+            return toAst(exprCtx.intLiteral());
+        } else if (exprCtx.parenExpression() != null) {
+            return toAst(exprCtx.parenExpression().internal);
+        } else if (exprCtx.stringLiteral() != null) {
+            return toAst(exprCtx.stringLiteral());
         } else {
             throw new UnsupportedOperationException();
         }
@@ -186,8 +196,8 @@ class ParseTreeToAst {
         }
     }
 
-    private FunctionCall toAst(TurinParser.FunctionCallContext functionCallContext) {
-        return new FunctionCall(functionCallContext.name.getText(), functionCallContext.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+    private FunctionCall toAst(TurinParser.InvokationContext functionCallContext) {
+        return new FunctionCall(toAst(functionCallContext.basicExpression()), functionCallContext.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
     }
 
     private IntLiteral toAst(TurinParser.IntLiteralContext intLiteralContext) {

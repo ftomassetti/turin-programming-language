@@ -41,7 +41,7 @@ public class InFileResolver implements Resolver {
 
     @Override
     public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
-        if (functionCall.getName().equals("print")) {
+        if (functionCall.getFunction().equals("print")) {
             JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition("java/lang/System", "out", "Ljava/io/PrintStream;", true);
             jvmMethodDefinition.setStaticField(new JvmStaticFieldDefinition("java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
             return jvmMethodDefinition;
