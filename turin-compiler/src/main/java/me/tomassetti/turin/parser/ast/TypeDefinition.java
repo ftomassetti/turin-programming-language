@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
@@ -66,7 +67,12 @@ public class TypeDefinition extends Node {
     }
 
     public String getQualifiedName() {
-        return contextName() + "." + name;
+        String contextName = contextName();
+        if (contextName.isEmpty()) {
+            return name;
+        } else {
+            return contextName + "." + name;
+        }
     }
 
     public List<Property> getDirectProperties(Resolver resolver) {
@@ -87,6 +93,10 @@ public class TypeDefinition extends Node {
 
     public JvmType jvmType() {
         return new JvmType("L" + getQualifiedName().replaceAll("\\.", "/") + ";");
+    }
+
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {

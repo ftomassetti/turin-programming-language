@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.expressions.TypeIdentifier;
 
 public interface Resolver {
 

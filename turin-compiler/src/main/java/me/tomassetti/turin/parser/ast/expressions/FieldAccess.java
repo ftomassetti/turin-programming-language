@@ -1,9 +1,13 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
+import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeUsage;
+
+import java.util.List;
 
 /**
  * Created by federico on 01/09/15.
@@ -44,6 +48,11 @@ public class FieldAccess extends Expression {
         int result = subject.hashCode();
         result = 31 * result + field.hashCode();
         return result;
+    }
+
+    @Override
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
+        return subject.calcType(resolver).findMethodFor(argsTypes, resolver);
     }
 
     @Override

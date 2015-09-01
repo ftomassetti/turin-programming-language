@@ -1,14 +1,22 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 
+import java.util.List;
+
 public class ReferenceTypeUsage extends TypeUsage {
+
+    public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
 
     private String name;
 
     public ReferenceTypeUsage(String name) {
+        if (name.startsWith(".")) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
     }
 
@@ -35,6 +43,12 @@ public class ReferenceTypeUsage extends TypeUsage {
                 "name='" + name + '\'' +
 
                 '}';
+    }
+
+    @Override
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
+        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
+        return typeDefinition.findMethodFor(argsTypes, resolver);
     }
 
     @Override

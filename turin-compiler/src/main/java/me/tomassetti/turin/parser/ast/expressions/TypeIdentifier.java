@@ -24,4 +24,12 @@ public class TypeIdentifier extends Node {
     public Iterable<Node> getChildren() {
         return ImmutableList.of(packageName);
     }
+
+    public String qualifiedName() {
+        if (packageName == null) {
+            return typeName;
+        } else {
+            return packageName.qualifiedName() + "." + typeName;
+        }
+    }
 }

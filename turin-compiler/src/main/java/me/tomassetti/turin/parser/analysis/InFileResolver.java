@@ -1,10 +1,8 @@
 package me.tomassetti.turin.parser.analysis;
 
-import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypes;
-import me.tomassetti.turin.parser.ast.PropertyReference;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 
 import java.util.List;
@@ -44,15 +42,20 @@ public class InFileResolver implements Resolver {
     @Override
     public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
         List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream().map((ap)->ap.calcType(this).jvmType(this)).collect(Collectors.toList());
+        Expression function = functionCall.getFunction();
+        return function.findMethodFor(argsTypes, this);
         /*if (functionCall.getFunction().equals("print")) {
             JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition("java/lang/System", "out", "Ljava/io/PrintStream;", true);
             jvmMethodDefinition.setStaticField(new JvmStaticFieldDefinition("java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
             return jvmMethodDefinition;
         }*/
-        throw new UnsupportedOperationException(functionCall.toString());
+        //throw new UnsupportedOperationException(functionCall.toString());
     }
 
     private TypeDefinition findTypeDefinitionInHelper(String typeName, Node context, Node startContext) {
+        if (typeName.startsWith(".")) {
+            throw new IllegalArgumentException(typeName);
+        }
         for (Node child : context.getChildren()) {
             if (child instanceof TypeDefinition) {
                 TypeDefinition typeDefinition = (TypeDefinition)child;
@@ -66,10 +69,17 @@ public class InFileResolver implements Resolver {
             if (basicType.isPresent()) {
                 return basicType.get();
             } else {
-                throw new UnresolvedType(typeName, startContext);
+                return resolveAbsoluteTypeName(typeName, startContext);
             }
         }
         return findTypeDefinitionInHelper(typeName, context.getParent(), startContext);
+    }
+
+    private TypeDefinition resolveAbsoluteTypeName(String typeName, Node startContext) {
+        if (typeName.equals("java.lang.String") || typeName.equals("java.lang.System")) {
+            return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(typeName);
+        }
+        throw new UnresolvedType(typeName, startContext);
     }
 
 }
