@@ -28,10 +28,10 @@ importDeclaration:
     typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration;
 
 typeImportDeclaration:
-    packagePart=qualifiedId POINT typeName=ID nls;
+    packagePart=qualifiedId POINT typeName=ID (AS alternativeName=ID)? nls ;
 
 singleFieldImportDeclaration:
-    packagePart=qualifiedId POINT typeName=ID POINT fieldName=ID nls;
+    packagePart=qualifiedId POINT typeName=ID POINT fieldName=qualifiedId (AS alternativeName=ID)? nls;
 
 allFieldsImportDeclaration:
     packagePart=qualifiedId POINT typeName=ID POINT ASTERISK nls;
