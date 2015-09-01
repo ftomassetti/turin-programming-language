@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -25,44 +26,32 @@ public class CompilerOnProgramTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("UInt");
+        Program program = new Program("SuperSimple");
+        turinFile.add(program);
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
-
-        turinFile.add(nameProperty);
-
-        TypeDefinition mangaCharacter = new TypeDefinition("MangaCharacter");
-        PropertyDefinition ageProperty = new PropertyDefinition("age", intType);
-        PropertyReference nameRef = new PropertyReference("name");
-        mangaCharacter.add(nameRef);
-        mangaCharacter.add(ageProperty);
-
-        turinFile.add(mangaCharacter);
         return turinFile;
     }
 
 
     @Test
-    public void compileASimpleProgram() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+    public void compileAnEmptyProgram() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         TurinFile turinFile = simpleProgram();
 
         // generate bytecode
         Compiler instance = new Compiler();
-        /*List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+        Class programClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
-        assertEquals(1, mangaCharacterClass.getConstructors().length);
-        Object ranma = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", 16);
 
-        Method getName = mangaCharacterClass.getMethod("getFunction");
-        assertEquals("Ranma", getName.invoke(ranma));
-
-        Method getAge = mangaCharacterClass.getMethod("getAge");
-        assertEquals(16, getAge.invoke(ranma));*/
+        Method main = programClass.getMethod("main", String[].class);
+        assertEquals("main", main.getName());
+        assertEquals(true, Modifier.isStatic(main.getModifiers()));
+        assertEquals(1, main.getParameterTypes().length);
+        assertEquals(String[].class, main.getParameterTypes()[0]);
+        main.invoke(null, (Object)new String[]{});
     }
 
 
