@@ -23,7 +23,8 @@ public class StaticFieldAccess extends Expression {
     @Override
     public TypeUsage calcType(Resolver resolver) {
         TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(subject.qualifiedName(), this);
-        return new ReferenceTypeUsage(typeDefinition.getQualifiedName());
+        TypeUsage fieldType = typeDefinition.getField(field, true);
+        return fieldType;
     }
 
     @Override

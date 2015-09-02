@@ -46,9 +46,9 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
-        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
-        return typeDefinition.findMethodFor(argsTypes, resolver);
+    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(this.name, this);
+        return typeDefinition.findMethodFor(methodName, argsTypes, resolver, staticContext);
     }
 
     @Override

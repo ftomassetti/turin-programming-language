@@ -95,7 +95,7 @@ public class TypeDefinition extends Node {
         return new JvmType("L" + getQualifiedName().replaceAll("\\.", "/") + ";");
     }
 
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
@@ -106,5 +106,9 @@ public class TypeDefinition extends Node {
                 .jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
         return "(" + String.join("", paramSignatures) + ")V";
+    }
+
+    public TypeUsage getField(String fieldName, boolean staticContext) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

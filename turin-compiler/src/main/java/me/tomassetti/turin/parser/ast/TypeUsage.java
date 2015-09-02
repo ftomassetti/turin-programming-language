@@ -18,7 +18,7 @@ public abstract class TypeUsage extends Node {
         throw new UnsupportedOperationException();
     }
 
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolve, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

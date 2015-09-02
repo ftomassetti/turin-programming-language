@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
+import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
@@ -18,7 +19,14 @@ public abstract class Expression extends Node {
      * When the expression corresponds to something invokable this method find which Jvm method corresponds to the call
      * with the given parameters.
      */
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver) {
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    /**
+     * This expression represents a type?
+     */
+    public boolean isType(Resolver resolver) {
+        return false;
     }
 }
