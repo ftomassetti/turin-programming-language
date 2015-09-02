@@ -17,6 +17,14 @@ public class FieldAccess extends Expression {
     private Expression subject;
     private String field;
 
+    public Expression getSubject() {
+        return subject;
+    }
+
+    public String getField() {
+        return field;
+    }
+
     public FieldAccess(Expression subject, String field) {
         this.subject = subject;
         this.field = field;

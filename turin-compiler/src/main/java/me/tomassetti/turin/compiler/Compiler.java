@@ -3,7 +3,6 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypes;
-import me.tomassetti.turin.parser.InternalParser;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -256,13 +255,24 @@ public class Compiler {
                 Creation creation = (Creation)expression;
                 String type = creation.calcType(resolver).jvmType(resolver).getSignature();
                 List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
-                        .map((ap)->pushEpression(ap))
+                        .map((ap)-> pushExpression(ap))
                         .collect(Collectors.toList());
                 String signature = creation.jvmSignature(resolver);
                 return new NewInvocation(type, argumentsPush, signature);
             } else {
                 throw new UnsupportedOperationException();
             }
+        }
+
+        private List<BytecodeSequence> pushInstance(FunctionCall functionCall) {
+            Expression function = functionCall.getFunction();
+            if (function instanceof FieldAccess) {
+                return ImmutableList.of(pushExpression(((FieldAccess) function).getSubject()));
+            } else {
+                throw new UnsupportedOperationException(functionCall.getFunction().getClass().getCanonicalName());
+            }
+            //ImmutableList.of(new PushStaticField());
+            //if (functionCall.ge)
         }
 
         private List<BytecodeSequence> executeEpression(Expression expr) {
@@ -274,23 +284,27 @@ public class Compiler {
                 return Collections.emptyList();
             } else if (expr instanceof FunctionCall) {
                 FunctionCall functionCall = (FunctionCall)expr;
+                List<BytecodeSequence> instancePush = pushInstance(functionCall);
                 List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
-                        .map((ap)->pushEpression(ap))
+                        .map((ap)-> pushExpression(ap))
                         .collect(Collectors.toList());
                 JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
-                return ImmutableList.<BytecodeSequence>builder().addAll(argumentsPush).add(new MethodInvocation(methodDefinition)).build();
+                return ImmutableList.<BytecodeSequence>builder().addAll(instancePush).addAll(argumentsPush).add(new MethodInvocation(methodDefinition)).build();
             } else {
                 throw new UnsupportedOperationException(expr.toString());
             }
         }
 
-        private BytecodeSequence pushEpression(Expression expr) {
+        private BytecodeSequence pushExpression(Expression expr) {
             if (expr instanceof IntLiteral) {
                 return new PushIntConst(((IntLiteral)expr).getValue());
             } else if (expr instanceof StringLiteral) {
                 return new PushStringConst(((StringLiteral)expr).getValue());
+            } else if (expr instanceof StaticFieldAccess) {
+                StaticFieldAccess staticFieldAccess = (StaticFieldAccess)expr;
+                return new PushStaticField(staticFieldAccess.toJvmField(resolver));
             } else {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
             }
         }
 

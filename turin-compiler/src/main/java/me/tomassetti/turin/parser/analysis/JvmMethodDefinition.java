@@ -1,8 +1,5 @@
 package me.tomassetti.turin.parser.analysis;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class JvmMethodDefinition {
 
     private boolean _static;
@@ -22,6 +19,12 @@ public class JvmMethodDefinition {
     }
 
     public JvmMethodDefinition(String jvmType, String name, String signature, boolean _static) {
+        if (jvmType.contains(".")) {
+            jvmType = jvmType.replaceAll("\\.", "/");
+        }
+        if (signature.contains(".")) {
+            signature = signature.replaceAll("\\.", "/");
+        }
         this.signature = signature;
         this.name = name;
         this.jvmType = jvmType;
@@ -42,5 +45,10 @@ public class JvmMethodDefinition {
 
     public String getSignature() {
         return signature;
+    }
+
+    public boolean isOnInterface() {
+        // TODO to be correctly implemented
+        return false;
     }
 }
