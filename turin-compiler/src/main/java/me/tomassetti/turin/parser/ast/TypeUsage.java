@@ -18,7 +18,23 @@ public abstract class TypeUsage extends Node {
         throw new UnsupportedOperationException();
     }
 
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolve, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    public boolean canBeAssignedTo(TypeUsage type, Resolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    public boolean isArray() {
+        return this instanceof ArrayTypeUsage;
+    }
+
+    public boolean isPrimitive() {
+        return this instanceof PrimitiveTypeUsage;
+    }
+
+    public boolean isReference() {
+        return this instanceof ReferenceTypeUsage;
     }
 }

@@ -28,13 +28,18 @@ public class ReflectionTypeDefinitionFactory {
 
         private Class<?> clazz;
 
-        public ReflectionBasedTypeDefinition(String name) {
+        private ReflectionBasedTypeDefinition(String name) {
             super(name);
             try {
                 this.clazz = this.getClass().getClassLoader().loadClass(name);
             } catch (ClassNotFoundException e){
                 throw new RuntimeException(e);
             }
+        }
+
+        private ReflectionBasedTypeDefinition(Class<?> clazz) {
+            super(clazz.getCanonicalName());
+            this.clazz = clazz;
         }
 
         @Override
@@ -44,7 +49,17 @@ public class ReflectionTypeDefinitionFactory {
                 if (method.getName().equals(name)) {
                     if (method.getParameterCount() == argsTypes.size()) {
                         if (Modifier.isStatic(method.getModifiers()) == staticContext) {
-                            suitableMethods.add(method);
+                            boolean match = true;
+                            for (int i=0; i<argsTypes.size(); i++) {
+                                TypeUsage actualType = argsTypes.get(i).toTypeUsage();
+                                TypeUsage formalType = toTypeUsage(method.getParameterTypes()[i]);
+                                if (!actualType.canBeAssignedTo(formalType, resolver)) {
+                                    match = false;
+                                }
+                            }
+                            if (match) {
+                                suitableMethods.add(method);
+                            }
                         }
                     }
                 }
@@ -69,6 +84,20 @@ public class ReflectionTypeDefinitionFactory {
                 }
             }
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<TypeDefinition> getAllAncestors(Resolver resolver) {
+            List<TypeDefinition> ancestors = new ArrayList<>();
+            if (clazz.getSuperclass() != null) {
+                TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(clazz.getSuperclass());
+                ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+            }
+            for (Class<?> interfaze : clazz.getInterfaces()) {
+                TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(interfaze);
+                ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+            }
+            return ancestors;
         }
     }
 
@@ -95,6 +124,8 @@ public class ReflectionTypeDefinitionFactory {
                     return "F";
                 case "double":
                     return "D";
+                case "void":
+                    return "V";
                 default:
                     throw new UnsupportedOperationException(clazz.getCanonicalName());
             }
@@ -114,9 +145,9 @@ public class ReflectionTypeDefinitionFactory {
 
     public static TypeUsage toTypeUsage(Class<?> type) {
         if (type.isArray()) {
-            throw new UnsupportedOperationException();
+            return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
         } else if (type.isPrimitive()) {
-            throw new UnsupportedOperationException();
+            return PrimitiveTypeUsage.getByName(type.getName());
         } else {
             return new ReferenceTypeUsage(type.getCanonicalName());
         }

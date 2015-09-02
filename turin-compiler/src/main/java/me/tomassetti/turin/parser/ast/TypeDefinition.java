@@ -111,4 +111,8 @@ public class TypeDefinition extends Node {
     public TypeUsage getField(String fieldName, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
+
+    public List<TypeDefinition> getAllAncestors(Resolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 }

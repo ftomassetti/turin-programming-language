@@ -36,6 +36,9 @@ public class InFileResolver implements Resolver {
 
     @Override
     public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
+        if (typeName.contains("/")) {
+            throw new IllegalArgumentException(typeName);
+        }
         return findTypeDefinitionInHelper(typeName, context, context);
     }
 
@@ -54,6 +57,9 @@ public class InFileResolver implements Resolver {
     }
 
     private TypeDefinition findTypeDefinitionInHelper(String typeName, Node context, Node startContext) {
+        if (typeName.contains("/")) {
+            throw new IllegalArgumentException(typeName);
+        }
         if (typeName.startsWith(".")) {
             throw new IllegalArgumentException(typeName);
         }
@@ -77,6 +83,9 @@ public class InFileResolver implements Resolver {
     }
 
     private TypeDefinition resolveAbsoluteTypeName(String typeName, Node startContext) {
+        if (typeName.contains("/")) {
+            throw new IllegalArgumentException(typeName);
+        }
         if (typeName.equals("java.lang.String") || typeName.equals("java.lang.System") || typeName.equals("java.io.PrintStream")) {
             return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(typeName);
         }
