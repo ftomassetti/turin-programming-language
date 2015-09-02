@@ -13,13 +13,13 @@ public class ExamplesAst {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        TypeDefinition person = new TypeDefinition("Person");
+        TurinTypeDefinition person = new TurinTypeDefinition("Person");
         PropertyDefinition firstNameProperty = new PropertyDefinition("firstName", new ReferenceTypeUsage("String"));
         person.add(firstNameProperty);
         PropertyDefinition lastNameProperty = new PropertyDefinition("lastName", new ReferenceTypeUsage("String"));
         person.add(lastNameProperty);
 
-        TypeDefinition address = new TypeDefinition("Address");
+        TurinTypeDefinition address = new TurinTypeDefinition("Address");
         PropertyDefinition streetProperty = new PropertyDefinition("street", new ReferenceTypeUsage("String"));
         address.add(streetProperty);
         PropertyDefinition numberProperty = new PropertyDefinition("number", new ReferenceTypeUsage("UInt"));

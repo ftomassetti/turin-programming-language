@@ -35,8 +35,8 @@ class ParseTreeToAst {
         turinFile.setNameSpace(toAst(turinFileContext.namespace));
         for (TurinParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
             Node memberNode = toAst(memberCtx);
-            if (memberNode instanceof TypeDefinition) {
-                turinFile.add((TypeDefinition)memberNode);
+            if (memberNode instanceof TurinTypeDefinition) {
+                turinFile.add((TurinTypeDefinition)memberNode);
             } else if (memberNode instanceof PropertyDefinition) {
                 turinFile.add((PropertyDefinition) memberNode);
             } else if (memberNode instanceof Program) {
@@ -65,8 +65,8 @@ class ParseTreeToAst {
         return propertyDefinition;
     }
 
-    private TypeDefinition toAst(TurinParser.TypeDeclarationContext typeDeclarationContext) {
-        TypeDefinition typeDefinition = new TypeDefinition(typeDeclarationContext.name.getText());
+    private TurinTypeDefinition toAst(TurinParser.TypeDeclarationContext typeDeclarationContext) {
+        TurinTypeDefinition typeDefinition = new TurinTypeDefinition(typeDeclarationContext.name.getText());
         getPositionFrom(typeDefinition, typeDeclarationContext);
         for (TurinParser.TypeMemberContext memberCtx : typeDeclarationContext.typeMember()) {
             Node memberNode = toAst(memberCtx);

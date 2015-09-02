@@ -3,7 +3,6 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
-import me.tomassetti.turin.parser.analysis.Unresolved;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -24,7 +23,7 @@ public class ReflectionTypeDefinitionFactory {
         return INSTANCE;
     }
 
-    private static class ReflectionBasedTypeDefinition extends TypeDefinition {
+    private static class ReflectionBasedTypeDefinition extends TurinTypeDefinition {
 
         private Class<?> clazz;
 
@@ -87,14 +86,14 @@ public class ReflectionTypeDefinitionFactory {
         }
 
         @Override
-        public List<TypeDefinition> getAllAncestors(Resolver resolver) {
-            List<TypeDefinition> ancestors = new ArrayList<>();
+        public List<TurinTypeDefinition> getAllAncestors(Resolver resolver) {
+            List<TurinTypeDefinition> ancestors = new ArrayList<>();
             if (clazz.getSuperclass() != null) {
-                TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(clazz.getSuperclass());
+                TurinTypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(clazz.getSuperclass());
                 ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
             }
             for (Class<?> interfaze : clazz.getInterfaces()) {
-                TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(interfaze);
+                TurinTypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(interfaze);
                 ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
             }
             return ancestors;
@@ -153,7 +152,7 @@ public class ReflectionTypeDefinitionFactory {
         }
     }
 
-    public TypeDefinition getTypeDefinition(String name) {
+    public TurinTypeDefinition getTypeDefinition(String name) {
         if (name.equals("java.lang.String") || name.equals("java.lang.System") || name.equals("java.io.PrintStream")) {
             return new ReflectionBasedTypeDefinition(name);
         }

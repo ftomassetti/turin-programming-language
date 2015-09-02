@@ -20,7 +20,7 @@ public class TurinFile extends Node {
         return namespaceDefinition;
     }
 
-    public void add(TypeDefinition typeDefinition) {
+    public void add(TurinTypeDefinition typeDefinition) {
         topNodes.add(typeDefinition);
         typeDefinition.parent = this;
     }
@@ -70,10 +70,10 @@ public class TurinFile extends Node {
         return ImmutableList.<Node>builder().add(namespaceDefinition).addAll(topNodes).build();
     }
 
-    public Optional<TypeDefinition> getTopTypeDefinition(String name) {
-        Optional<Node> res = topNodes.stream().filter((n)-> (n instanceof TypeDefinition) && ((TypeDefinition)n).getName().equals(name)).findFirst();
+    public Optional<TurinTypeDefinition> getTopTypeDefinition(String name) {
+        Optional<Node> res = topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition) && ((TurinTypeDefinition)n).getName().equals(name)).findFirst();
         if (res.isPresent()) {
-            return Optional.of((TypeDefinition)res.get());
+            return Optional.of((TurinTypeDefinition)res.get());
         } else {
             return Optional.empty();
         }

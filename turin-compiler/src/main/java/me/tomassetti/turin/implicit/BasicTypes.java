@@ -2,6 +2,7 @@ package me.tomassetti.turin.implicit;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.JvmType;
+import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class BasicTypes {
     private static ImmutableList<TypeDefinition> BASIC_TYPES;
 
     static {
-        STRING = new TypeDefinition("String") {
+        STRING = new TurinTypeDefinition("String") {
             @Override
             public JvmType jvmType() {
                 return new JvmType("Ljava/lang/String;");
@@ -24,7 +25,7 @@ public class BasicTypes {
                 return "java.lang.String";
             }
         };
-        UINT = new TypeDefinition("UInt") {
+        UINT = new TurinTypeDefinition("UInt") {
             @Override
             public JvmType jvmType() {
                 return new JvmType("I");

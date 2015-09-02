@@ -30,7 +30,7 @@ public class ReferenceTypeUsageTest {
 
         turinFile.add(nameProperty);
 
-        TypeDefinition mangaCharacter = new TypeDefinition("MangaCharacter");
+        TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
         ageProperty = new PropertyDefinition("age", intType);
         nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);

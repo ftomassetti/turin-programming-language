@@ -32,7 +32,7 @@ public class CompilerTest {
 
         turinFile.add(nameProperty);
 
-        TypeDefinition mangaCharacter = new TypeDefinition("MangaCharacter");
+        TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
         PropertyDefinition ageProperty = new PropertyDefinition("age", intType);
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);

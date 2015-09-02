@@ -48,12 +48,6 @@ public class InFileResolver implements Resolver {
         Expression function = functionCall.getFunction();
         boolean staticContext = function.isType(this);
         return function.findMethodFor(argsTypes, this, staticContext);
-        /*if (functionCall.getFunction().equals("print")) {
-            JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition("java/lang/System", "out", "Ljava/io/PrintStream;", true);
-            jvmMethodDefinition.setStaticField(new JvmStaticFieldDefinition("java/io/PrintStream", "println", "(Ljava/lang/String;)V"));
-            return jvmMethodDefinition;
-        }*/
-        //throw new UnsupportedOperationException(functionCall.toString());
     }
 
     private TypeDefinition findTypeDefinitionInHelper(String typeName, Node context, Node startContext) {
@@ -64,8 +58,8 @@ public class InFileResolver implements Resolver {
             throw new IllegalArgumentException(typeName);
         }
         for (Node child : context.getChildren()) {
-            if (child instanceof TypeDefinition) {
-                TypeDefinition typeDefinition = (TypeDefinition)child;
+            if (child instanceof TurinTypeDefinition) {
+                TurinTypeDefinition typeDefinition = (TurinTypeDefinition)child;
                 if (typeDefinition.getName().equals(typeName)) {
                     return typeDefinition;
                 }

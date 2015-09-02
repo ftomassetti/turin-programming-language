@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TypeDefinitionTest {
 
-    private TypeDefinition mangaCharacter;
+    private TurinTypeDefinition mangaCharacter;
 
     @Before
     public void setup() {
@@ -29,7 +29,7 @@ public class TypeDefinitionTest {
 
         turinFile.add(nameProperty);
 
-        mangaCharacter = new TypeDefinition("MangaCharacter");
+        mangaCharacter = new TurinTypeDefinition("MangaCharacter");
         PropertyDefinition ageProperty = new PropertyDefinition("age", intType);
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
@@ -59,7 +59,7 @@ public class TypeDefinitionTest {
     public void getDirectPropertiesOnRegistryExample() {
         Resolver resolver = new InFileResolver();
         TurinFile turinFile = ExamplesAst.registryAst();
-        TypeDefinition person = turinFile.getTopTypeDefinition("Person").get();
+        TurinTypeDefinition person = turinFile.getTopTypeDefinition("Person").get();
         assertEquals(2, person.getDirectProperties(resolver).size());
     }
 

@@ -95,7 +95,7 @@ public class Compiler {
             mv.visitEnd();
         }
 
-        private void generateContructor(TypeDefinition typeDefinition, String className) {
+        private void generateContructor(TurinTypeDefinition typeDefinition, String className) {
             List<Property> directPropertis = typeDefinition.getDirectProperties(resolver);
             String paramsSignature = String.join("", directPropertis.stream().map((dp)->dp.getTypeUsage().jvmType(resolver).getSignature()).collect(Collectors.toList()));
             MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + paramsSignature + ")V", null, null);
@@ -163,7 +163,7 @@ public class Compiler {
             return ALOAD;
         }
 
-        private List<ClassFileDefinition> compile(TypeDefinition typeDefinition) {
+        private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
             String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
 
             cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -185,8 +185,8 @@ public class Compiler {
             List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
 
             for (Node node : turinFile.getChildren()) {
-                if (node instanceof TypeDefinition) {
-                    classFileDefinitions.addAll(compile((TypeDefinition)node));
+                if (node instanceof TurinTypeDefinition) {
+                    classFileDefinitions.addAll(compile((TurinTypeDefinition)node));
                 } else if (node instanceof Program) {
                     classFileDefinitions.addAll(compile((Program) node));   
                 }
