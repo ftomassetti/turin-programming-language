@@ -2,33 +2,39 @@ package me.tomassetti.turin.implicit;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.JvmType;
-import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
+import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class BasicTypes {
 
-    public static TypeDefinition STRING;
+    public static TypeDefinition STRING = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
     public static TypeDefinition UINT;
+
     private static ImmutableList<TypeDefinition> BASIC_TYPES;
 
     static {
-        STRING = new TurinTypeDefinition("String") {
+        UINT = new TypeDefinition("UInt") {
             @Override
-            public JvmType jvmType() {
-                return new JvmType("Ljava/lang/String;");
+            public Iterable<Node> getChildren() {
+                return Collections.emptyList();
             }
 
             @Override
-            public String getQualifiedName() {
-                return "java.lang.String";
-            }
-        };
-        UINT = new TurinTypeDefinition("UInt") {
-            @Override
             public JvmType jvmType() {
                 return new JvmType("I");
+            }
+
+            @Override
+            public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+                throw new UnsupportedOperationException();
             }
 
             @Override

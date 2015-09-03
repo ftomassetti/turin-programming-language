@@ -40,7 +40,12 @@ public class InFileResolver implements Resolver {
         if (typeName.contains("/")) {
             throw new IllegalArgumentException(typeName);
         }
-        return findTypeDefinitionInHelper(typeName, context, context);
+        Optional<TypeDefinition> result = findTypeDefinitionInHelper(typeName, context);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new UnresolvedType(typeName, context);
+        }
     }
 
     @Override
@@ -51,7 +56,7 @@ public class InFileResolver implements Resolver {
         return function.findMethodFor(argsTypes, this, staticContext);
     }
 
-    private TypeDefinition findTypeDefinitionInHelper(String typeName, Node context, Node startContext) {
+    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context) {
         if (typeName.contains("/")) {
             throw new IllegalArgumentException(typeName);
         }
@@ -59,32 +64,35 @@ public class InFileResolver implements Resolver {
             throw new IllegalArgumentException(typeName);
         }
         for (Node child : context.getChildren()) {
-            if (child instanceof TurinTypeDefinition) {
-                TurinTypeDefinition typeDefinition = (TurinTypeDefinition)child;
+            if (child instanceof TypeDefinition) {
+                TypeDefinition typeDefinition = (TypeDefinition)child;
                 if (typeDefinition.getName().equals(typeName)) {
-                    return typeDefinition;
+                    return Optional.of(typeDefinition);
                 }
             }
         }
         if (context.getParent() == null) {
             Optional<TypeDefinition> basicType = BasicTypes.getBasicType(typeName);
             if (basicType.isPresent()) {
-                return basicType.get();
+                return basicType;
             } else {
-                return resolveAbsoluteTypeName(typeName, startContext);
+                // implicitly look into java.lang package
+                Optional<TypeDefinition> result = resolveAbsoluteTypeName("java.lang." + typeName);
+                if (result.isPresent()) {
+                    return result;
+                }
+
+                return resolveAbsoluteTypeName(typeName);
             }
         }
-        return findTypeDefinitionInHelper(typeName, context.getParent(), startContext);
+        return findTypeDefinitionInHelper(typeName, context.getParent());
     }
 
-    private TypeDefinition resolveAbsoluteTypeName(String typeName, Node startContext) {
+    private Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
         if (typeName.contains("/")) {
             throw new IllegalArgumentException(typeName);
         }
-        if (typeName.equals("java.lang.String") || typeName.equals("java.lang.System") || typeName.equals("java.io.PrintStream")) {
-            return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(typeName);
-        }
-        throw new UnresolvedType(typeName, startContext);
+        return ReflectionTypeDefinitionFactory.getInstance().findTypeDefinition(typeName);
     }
 
 }

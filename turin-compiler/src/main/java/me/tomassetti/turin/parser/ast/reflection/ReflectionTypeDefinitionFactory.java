@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReflectionTypeDefinitionFactory {
@@ -67,11 +68,25 @@ public class ReflectionTypeDefinitionFactory {
         }
     }
 
-    public TurinTypeDefinition getTypeDefinition(String name) {
-        if (name.equals("java.lang.String") || name.equals("java.lang.System") || name.equals("java.io.PrintStream")) {
-            return new ReflectionBasedTypeDefinition(name);
+    public TypeDefinition getTypeDefinition(String name) {
+        Optional<TypeDefinition> result = findTypeDefinition(name);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new UnsolvedTypeException(name);
         }
-        throw new UnsupportedOperationException();
     }
 
+    public TypeDefinition getTypeDefinition(Class<?> clazz) {
+        return new ReflectionBasedTypeDefinition(clazz);
+    }
+
+    public Optional<TypeDefinition> findTypeDefinition(String typeName) {
+        try {
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(typeName);
+            return Optional.of(getTypeDefinition(clazz));
+        } catch (ClassNotFoundException e) {
+           return Optional.empty();
+        }
+    }
 }

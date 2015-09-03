@@ -38,7 +38,7 @@ public abstract class TypeDefinition extends Node {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    public List<TurinTypeDefinition> getAllAncestors(Resolver resolver) {
+    public List<TypeDefinition> getAllAncestors(Resolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }
