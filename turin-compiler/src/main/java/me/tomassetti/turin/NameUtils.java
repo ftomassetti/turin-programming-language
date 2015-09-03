@@ -13,6 +13,10 @@ public final class NameUtils {
         if (name.isEmpty()) {
             return false;
         }
+        // the part would be discarded, we have to check explicitly
+        if (name.endsWith(".")){
+            return false;
+        }
         String[] parts = name.split("\\.");
         for (String part : parts) {
             if (!isValidJavaIdentifier(part)) {
