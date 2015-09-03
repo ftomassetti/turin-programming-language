@@ -58,7 +58,9 @@ class Compilation {
     }
 
     private void generateField(Property property) {
-        FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), property.getTypeUsage().jvmType(resolver).getSignature(), null, null);
+        // TODO understand how to use description and signature (which is used for generics)
+        JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+        FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), jvmType.getDescriptor(), null, null);
         fv.visitEnd();
     }
 
