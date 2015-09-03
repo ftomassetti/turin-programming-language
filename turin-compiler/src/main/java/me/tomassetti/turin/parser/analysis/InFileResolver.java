@@ -4,6 +4,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypes;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 
 import java.util.List;
 import java.util.Optional;
