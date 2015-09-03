@@ -11,7 +11,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.List;
 
 /**
- * Definition of a reference type (a Class, an Interface or an Enum).
+ * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
  */
 public abstract class TypeDefinition extends Node {
     protected String name;

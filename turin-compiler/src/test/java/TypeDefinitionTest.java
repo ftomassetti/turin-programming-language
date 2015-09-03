@@ -1,3 +1,4 @@
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -24,7 +25,7 @@ public class TypeDefinitionTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("UInt");
+        BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
 
@@ -53,7 +54,7 @@ public class TypeDefinitionTest {
         assertEquals(new ReferenceTypeUsage("String"), mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage());
 
         assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
-        assertEquals(new ReferenceTypeUsage("UInt"), mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage());
+        assertEquals(BasicTypeUsage.UINT, mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage());
     }
 
     @Test

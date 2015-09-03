@@ -3,12 +3,15 @@ package me.tomassetti.turin.parser.analysis;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 public interface Resolver {
 
-    public PropertyDefinition findDefinition(PropertyReference propertyReference);
+    PropertyDefinition findDefinition(PropertyReference propertyReference);
 
-    public TypeDefinition findTypeDefinitionIn(String typeName, Node context);
+    TypeDefinition findTypeDefinitionIn(String typeName, Node context);
+
+    TypeUsage findTypeUsageIn(String typeName, Node context);
 
     JvmMethodDefinition findJvmDefinition(FunctionCall functionCall);
 }

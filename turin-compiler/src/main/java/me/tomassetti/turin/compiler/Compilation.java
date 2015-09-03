@@ -2,7 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
-import me.tomassetti.turin.implicit.BasicTypes;
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
@@ -80,7 +80,7 @@ class Compilation {
 
     private void enforceConstraint(Property property, MethodVisitor mv, String className, JvmType jvmType, int varIndex) {
         // TODO enforce also arbitrary constraints associated to the property
-        if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(BasicTypes.UINT.getQualifiedName())) {
+        if (property.getTypeUsage().equals(BasicTypeUsage.UINT)) {
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
             mv.visitJumpInsn(IFGE, label);
@@ -90,7 +90,7 @@ class Compilation {
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
             mv.visitInsn(ATHROW);
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(BasicTypes.STRING.getQualifiedName())) {
+        } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
             mv.visitJumpInsn(IFNONNULL, label);

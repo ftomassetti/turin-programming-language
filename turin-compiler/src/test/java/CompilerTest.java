@@ -1,6 +1,7 @@
 import me.tomassetti.turin.*;
 import me.tomassetti.turin.compiler.ClassFileDefinition;
 import me.tomassetti.turin.compiler.Compiler;
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
 import me.tomassetti.turin.parser.ast.*;
@@ -26,7 +27,7 @@ public class CompilerTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("UInt");
+        BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
 

@@ -1,3 +1,4 @@
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -25,7 +26,7 @@ public class ReferenceTypeUsageTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
-        ReferenceTypeUsage intType = new ReferenceTypeUsage("UInt");
+        BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
 

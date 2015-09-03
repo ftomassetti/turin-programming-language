@@ -1,3 +1,4 @@
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
@@ -23,11 +24,11 @@ public class ExamplesAst {
         TurinTypeDefinition address = new TurinTypeDefinition("Address");
         PropertyDefinition streetProperty = new PropertyDefinition("street", new ReferenceTypeUsage("String"));
         address.add(streetProperty);
-        PropertyDefinition numberProperty = new PropertyDefinition("number", new ReferenceTypeUsage("UInt"));
+        PropertyDefinition numberProperty = new PropertyDefinition("number", BasicTypeUsage.UINT);
         address.add(numberProperty);
         PropertyDefinition cityProperty = new PropertyDefinition("city", new ReferenceTypeUsage("String"));
         address.add(cityProperty);
-        PropertyDefinition zipProperty = new PropertyDefinition("zip", new ReferenceTypeUsage("UInt"));
+        PropertyDefinition zipProperty = new PropertyDefinition("zip", BasicTypeUsage.UINT);
         address.add(zipProperty);
 
         turinFile.add(person);

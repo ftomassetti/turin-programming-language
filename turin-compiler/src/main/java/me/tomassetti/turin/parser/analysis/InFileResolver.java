@@ -3,10 +3,13 @@ package me.tomassetti.turin.parser.analysis;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.implicit.BasicTypes;
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +51,20 @@ public class InFileResolver implements Resolver {
     }
 
     @Override
+    public TypeUsage findTypeUsageIn(String typeName, Node context) {
+        if (PrimitiveTypeUsage.isPrimitiveTypeName(typeName)){
+            return PrimitiveTypeUsage.getByName(typeName);
+        }
+
+        Optional<BasicTypeUsage> basicType = BasicTypeUsage.getBasicType(typeName);
+        if (basicType.isPresent()) {
+            return basicType.get();
+        }
+
+        return new ReferenceTypeUsage(findTypeDefinitionIn(typeName, context));
+    }
+
+    @Override
     public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
         List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream().map((ap)->ap.calcType(this).jvmType(this)).collect(Collectors.toList());
         Expression function = functionCall.getFunction();
@@ -71,18 +88,13 @@ public class InFileResolver implements Resolver {
             }
         }
         if (context.getParent() == null) {
-            Optional<TypeDefinition> basicType = BasicTypes.getBasicType(typeName);
-            if (basicType.isPresent()) {
-                return basicType;
-            } else {
-                // implicitly look into java.lang package
-                Optional<TypeDefinition> result = resolveAbsoluteTypeName("java.lang." + typeName);
-                if (result.isPresent()) {
-                    return result;
-                }
-
-                return resolveAbsoluteTypeName(typeName);
+            // implicitly look into java.lang package
+            Optional<TypeDefinition> result = resolveAbsoluteTypeName("java.lang." + typeName);
+            if (result.isPresent()) {
+                return result;
             }
+
+            return resolveAbsoluteTypeName(typeName);
         }
         return findTypeDefinitionInHelper(typeName, context.getParent());
     }

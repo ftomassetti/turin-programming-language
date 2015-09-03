@@ -39,7 +39,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
 
     public static Optional<PrimitiveTypeUsage> findByJvmType(JvmType jvmType) {
         for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
-            if (primitiveTypeUsage.equals(jvmType)) {
+            if (primitiveTypeUsage.jvmType.equals(jvmType)) {
                 return Optional.of(primitiveTypeUsage);
             }
         }
@@ -68,5 +68,14 @@ public class PrimitiveTypeUsage extends TypeUsage {
             }
         }
         throw new IllegalArgumentException(name);
+    }
+
+    public static boolean isPrimitiveTypeName(String typeName) {
+        for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
+            if (primitiveTypeUsage.name.equals(typeName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
