@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.bytecode.JvmFieldDefinition;
+import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;

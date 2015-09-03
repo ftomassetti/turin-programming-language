@@ -1,4 +1,4 @@
-package me.tomassetti.turin.compiler.bytecode;
+package me.tomassetti.turin.jvm;
 
 public class JvmFieldDefinition {
     private String declaringType;

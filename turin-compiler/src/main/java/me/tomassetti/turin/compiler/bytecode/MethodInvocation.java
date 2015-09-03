@@ -5,9 +5,6 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class MethodInvocation extends BytecodeSequence {
 
     private JvmMethodDefinition jvmMethodDefinition;
@@ -18,7 +15,12 @@ public class MethodInvocation extends BytecodeSequence {
 
     @Override
     public void operate(MethodVisitor mv) {
-        mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getJvmType().replaceAll("\\.", "/"), jvmMethodDefinition.getName(), jvmMethodDefinition.getSignature(), jvmMethodDefinition.isOnInterface());
+        // The difference between the invokespecial and the invokevirtual instructions is that invokevirtual invokes
+        // a method based on the class of the object. The invokespecial instruction is used to invoke instance
+        // initialization methods as well as private methods and methods of a superclass of the current class.
+        // ref.: http://zeroturnaround.com/rebellabs/java-bytecode-fundamentals-using-objects-and-calling-methods/
+        mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getJvmType().replaceAll("\\.", "/"),
+                jvmMethodDefinition.getName(), jvmMethodDefinition.getSignature(), jvmMethodDefinition.isOnInterface());
     }
 
 }

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.compiler;
 
 /**
- * Created by federico on 29/08/15.
+ * Elements necessary to define a class file.
  */
 public class ClassFileDefinition {
 

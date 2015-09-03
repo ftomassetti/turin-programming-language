@@ -1,5 +1,6 @@
 package me.tomassetti.turin.compiler.bytecode;
 
+import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;

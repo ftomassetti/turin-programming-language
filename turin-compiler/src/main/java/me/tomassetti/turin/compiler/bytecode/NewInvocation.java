@@ -22,8 +22,10 @@ public class NewInvocation extends BytecodeSequence {
     @Override
     public void operate(MethodVisitor mv) {
         mv.visitTypeInsn(NEW, type);
+        // The first type is consumed by new, the second by the constructor
         mv.visitInsn(DUP);
         argumentsPush.forEach((ap)->ap.operate(mv));
+        // false because the method is not declared on an interface
         mv.visitMethodInsn(INVOKESPECIAL, type, "<init>", signature, false);
     }
 

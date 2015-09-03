@@ -1,5 +1,7 @@
 package me.tomassetti.turin.compiler;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypes;
@@ -36,6 +38,9 @@ public class Compiler {
 
     private Resolver resolver = new InFileResolver();
 
+    /**
+     * Wrap the status of the compilation process, like the class being currently written.
+     */
     private class Compilation {
 
         private ClassWriter cw;
@@ -274,8 +279,6 @@ public class Compiler {
             } else {
                 throw new UnsupportedOperationException(functionCall.getFunction().getClass().getCanonicalName());
             }
-            //ImmutableList.of(new PushStaticField());
-            //if (functionCall.ge)
         }
 
         private List<BytecodeSequence> executeEpression(Expression expr) {
@@ -317,16 +320,31 @@ public class Compiler {
         return new Compilation().compile(turinFile);
     }
 
+    private static class Options {
+
+        @Parameter(names = {"-d", "--destination"})
+        private String destinationDir = "dst";
+
+        @Parameter(names = {"--verbose"})
+        private boolean verbose = false;
+
+    }
+
     public static void main(String[] args) throws IOException {
         System.out.println("Turin Compiler - " + VERSION);
+
+        Options options = new Options();
+        new JCommander(options, args);
 
         File file = new File("/home/federico/repos/turin-programming-language/samples/ranma.to");
         TurinFile turinFile = new Parser().parse(new FileInputStream(file));
 
         Compiler instance = new Compiler();
         for (ClassFileDefinition classFileDefinition : instance.compile(turinFile)) {
-            System.out.println(" [" + classFileDefinition.getName() + "]");
-            File classFile = new File("dst/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
+            if (options.verbose) {
+                System.out.println(" Writing [" + classFileDefinition.getName() + "]");
+            }
+            File classFile = new File(options.destinationDir +"/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
             classFile.getParentFile().mkdirs();
             FileOutputStream fos = new FileOutputStream(classFile);
             fos.write(classFileDefinition.getBytecode());

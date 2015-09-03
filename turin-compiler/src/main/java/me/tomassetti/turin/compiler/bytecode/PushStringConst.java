@@ -4,7 +4,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
- * Created by federico on 29/08/15.
+ * Push a String into the stack.
  */
 public class PushStringConst extends BytecodeSequence {
 
