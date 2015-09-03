@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.compiler.ClassFileDefinition;
 import me.tomassetti.turin.compiler.Compiler;
+import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
@@ -79,7 +80,7 @@ public class CompilerOnProgramTest {
         TurinFile turinFile = emptyProgram();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
 
@@ -91,7 +92,7 @@ public class CompilerOnProgramTest {
         TurinFile turinFile = simpleProgram();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
         assertEquals("myProgram.SuperSimple", classFileDefinitions.get(0).getName());

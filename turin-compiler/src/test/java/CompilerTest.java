@@ -1,6 +1,7 @@
 import me.tomassetti.turin.*;
 import me.tomassetti.turin.compiler.ClassFileDefinition;
 import me.tomassetti.turin.compiler.Compiler;
+import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.TurinFile;
@@ -13,9 +14,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class CompilerTest {
 
     private TurinFile mangaAst() {
@@ -49,7 +47,7 @@ public class CompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
 
@@ -71,7 +69,7 @@ public class CompilerTest {
         TurinFile turinFile = ExamplesAst.registryAst();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(2, classFileDefinitions.size());
 
@@ -96,7 +94,7 @@ public class CompilerTest {
         TurinFile turinFile = ExamplesAst.registryAst();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(2, classFileDefinitions.size());
 
@@ -120,7 +118,7 @@ public class CompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
 
@@ -136,7 +134,7 @@ public class CompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler();
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
 

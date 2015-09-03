@@ -27,7 +27,7 @@ public class Compiler {
         return new Compilation(resolver).compile(turinFile);
     }
 
-    private static class Options {
+    public static class Options {
 
         @Parameter(names = {"-d", "--destination"})
         private String destinationDir = "turin_classes";
