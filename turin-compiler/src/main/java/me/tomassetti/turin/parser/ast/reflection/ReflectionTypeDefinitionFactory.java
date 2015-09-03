@@ -45,8 +45,6 @@ public class ReflectionTypeDefinitionFactory {
                 default:
                     throw new UnsupportedOperationException(clazz.getCanonicalName());
             }
-        } else if (Void.class.equals(clazz)) {
-            return "V";
         } else if (clazz.isArray()){
             return "[" + calcSignature(clazz.getComponentType());
         } else {
