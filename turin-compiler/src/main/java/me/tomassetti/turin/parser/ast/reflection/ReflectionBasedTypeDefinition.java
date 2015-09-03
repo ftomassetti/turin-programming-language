@@ -84,10 +84,12 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         List<TypeDefinition> ancestors = new ArrayList<>();
         if (clazz.getSuperclass() != null) {
             TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(clazz.getSuperclass());
+            ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
         for (Class<?> interfaze : clazz.getInterfaces()) {
             TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(interfaze);
+            ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
         return ancestors;

@@ -73,6 +73,12 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public TypeDefinition getTypeDefinition(Class<?> clazz) {
+        if (clazz.isArray()) {
+            throw new IllegalArgumentException();
+        }
+        if (clazz.isPrimitive()) {
+            throw new IllegalArgumentException();
+        }
         return new ReflectionBasedTypeDefinition(clazz);
     }
 
