@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -40,7 +41,6 @@ public class CompilerTest {
         turinFile.add(mangaCharacter);
         return turinFile;
     }
-
 
     @Test
     public void compileAstManga() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
@@ -111,6 +111,35 @@ public class CompilerTest {
         assertEquals(86, addressClass.getMethod("getNumber").invoke(address));
         assertEquals("Lyon", addressClass.getMethod("getCity").invoke(address));
         assertEquals(69006, addressClass.getMethod("getZip").invoke(address));
+    }
+
+    @Test
+    public void compileAstRegistryAddressSetters() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        TurinFile turinFile = ExamplesAst.registryAst();
+
+        // generate bytecode
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(2, classFileDefinitions.size());
+
+        assertEquals("registry.Address", classFileDefinitions.get(1).getName());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class addressClass = turinClassLoader.addClass(classFileDefinitions.get(1).getName(),
+                classFileDefinitions.get(1).getBytecode());
+        assertEquals(1, addressClass.getConstructors().length);
+        assertEquals(4, addressClass.getConstructors()[0].getParameterTypes().length);
+        Object address = addressClass.getConstructors()[0].newInstance("Rue de Seze", 86, "Lyon", 69006);
+
+        addressClass.getMethod("setStreet", String.class).invoke(address, "Piazza Emanuele Filiberto");
+        addressClass.getMethod("setNumber", int.class).invoke(address, 4);
+        addressClass.getMethod("setCity", String.class).invoke(address, "Torino");
+        addressClass.getMethod("setZip", int.class).invoke(address, 10136);
+
+        assertEquals("Piazza Emanuele Filiberto", addressClass.getMethod("getStreet").invoke(address));
+        assertEquals(4, addressClass.getMethod("getNumber").invoke(address));
+        assertEquals("Torino", addressClass.getMethod("getCity").invoke(address));
+        assertEquals(10136, addressClass.getMethod("getZip").invoke(address));
     }
 
     @Test(expected = InvocationTargetException.class)

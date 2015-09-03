@@ -31,14 +31,29 @@ import static org.objectweb.asm.Opcodes.*;
  */
 class Compilation {
 
-    private ClassWriter cw;
-    private Resolver resolver;
-
     private static final int JAVA_8_CLASS_VERSION = 52;
 
+    private ClassWriter cw;
+    private Resolver resolver;
+    private int nParams = 0;
+    private int nLocalVars = 0;
 
     public Compilation(Resolver resolver) {
         this.resolver = resolver;
+    }
+
+    public List<ClassFileDefinition> compile(TurinFile turinFile) {
+        List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
+
+        for (Node node : turinFile.getChildren()) {
+            if (node instanceof TurinTypeDefinition) {
+                classFileDefinitions.addAll(compile((TurinTypeDefinition)node));
+            } else if (node instanceof Program) {
+                classFileDefinitions.addAll(compile((Program) node));
+            }
+        }
+
+        return classFileDefinitions;
     }
 
     private void generateField(Property property) {
@@ -54,7 +69,8 @@ class Compilation {
         mv.visitVarInsn(ALOAD, 0);
         mv.visitFieldInsn(GETFIELD, className, property.getName(), jvmType.getSignature());
         mv.visitInsn(returnTypeFor(jvmType));
-        mv.visitMaxs(1, 1);
+        // calculated for us
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
@@ -91,12 +107,13 @@ class Compilation {
         enforceConstraint(property, mv, className, jvmType, 0);
 
         // Assignment
-        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+        //mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(loadTypeFor(jvmType), 1);
         mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
         mv.visitInsn(RETURN);
-        mv.visitMaxs(3, 2);
+        // calculated for us
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
@@ -114,14 +131,14 @@ class Compilation {
             enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver).getSignature(), propIndex);
             propIndex++;
             if (propIndex == directPropertis.size()) {
-                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                //mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             } else {
                 List<Object> frameObject = new ArrayList<>();
                 frameObject.add(className);
                 for (Property p : directPropertis) {
                     frameObject.add(toFrameObject(p.getTypeUsage().jvmType(resolver).getSignature()));
                 }
-                mv.visitFrame(Opcodes.F_FULL, 1 + directPropertis.size(), frameObject.toArray(), 0, new Object[] {});
+                //mv.visitFrame(Opcodes.F_FULL, 1 + directPropertis.size(), frameObject.toArray(), 0, new Object[] {});
             }
         }
 
@@ -135,7 +152,8 @@ class Compilation {
         }
 
         mv.visitInsn(RETURN);
-        mv.visitMaxs(3, 1 + directPropertis.size());
+        // calculated for us
+        mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
@@ -171,7 +189,8 @@ class Compilation {
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
         String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
 
-        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
 
         for (Property property : typeDefinition.getDirectProperties(resolver)){
@@ -185,24 +204,6 @@ class Compilation {
 
         return ImmutableList.of(new ClassFileDefinition(className.replaceAll("/", "."), cw.toByteArray()));
     }
-
-    public List<ClassFileDefinition> compile(TurinFile turinFile) {
-        List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
-
-        for (Node node : turinFile.getChildren()) {
-            if (node instanceof TurinTypeDefinition) {
-                classFileDefinitions.addAll(compile((TurinTypeDefinition)node));
-            } else if (node instanceof Program) {
-                classFileDefinitions.addAll(compile((Program) node));
-            }
-        }
-
-
-        return classFileDefinitions;
-    }
-
-    private int nParams = 0;
-    private int nLocalVars = 0;
 
     private List<ClassFileDefinition> compile(Program program) {
         String qname = program.getQualifiedName();
