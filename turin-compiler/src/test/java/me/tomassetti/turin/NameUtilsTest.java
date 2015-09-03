@@ -36,7 +36,32 @@ public class NameUtilsTest {
     }
 
     @Test
-    public void isValidJavaIdentifierContainingDollor(){
+    public void isValidJavaIdentifierContainingDollar(){
         assertEquals(true, NameUtils.isValidJavaIdentifier("fo$o"));
+    }
+
+    @Test
+    public void isValidJavaIdentifierMadeOnlyByDollarsAndUnderscores(){
+        assertEquals(true, NameUtils.isValidJavaIdentifier("_$__$$"));
+    }
+
+    @Test
+    public void isValidJavaIdentifierContainingPercent(){
+        assertEquals(false, NameUtils.isValidJavaIdentifier("foo%zilla"));
+    }
+
+    @Test
+    public void isValidJavaIdentifierContainingSpace(){
+        assertEquals(false, NameUtils.isValidJavaIdentifier("foo zilla"));
+    }
+
+    @Test
+    public void isValidJavaIdentifierCorrespondToKeyword(){
+        assertEquals(false, NameUtils.isValidJavaIdentifier("for"));
+    }
+
+    @Test
+    public void isValidJavaIdentifierCorrespondToKeywordButDifferentCase(){
+        assertEquals(true, NameUtils.isValidJavaIdentifier("For"));
     }
 }
