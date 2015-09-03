@@ -1,13 +1,16 @@
 package me.tomassetti.turin.implicit;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +36,23 @@ public class BasicTypes {
             }
 
             @Override
+            public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+                throw new UnsolvedMethodException(this, name, argsTypes, staticContext);
+            }
+
+            @Override
             public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
                 throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public TypeUsage getField(String fieldName, boolean staticContext) {
+                throw new IllegalArgumentException(fieldName);
+            }
+
+            @Override
+            public List<TypeDefinition> getAllAncestors(Resolver resolver) {
+                return Collections.emptyList();
             }
 
             @Override

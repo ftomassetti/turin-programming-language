@@ -1,10 +1,8 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
-import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
-import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.compiler.UnsolvedConstructorException;
+import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -26,6 +24,12 @@ public class TurinTypeDefinition extends TypeDefinition {
         } else {
             return contextName + "." + name;
         }
+    }
+
+    @Override
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+        // TODO this should be implemented
+        throw new UnsupportedOperationException();
     }
 
     public void add(PropertyDefinition propertyDefinition){
@@ -78,6 +82,18 @@ public class TurinTypeDefinition extends TypeDefinition {
                 .map((p) -> p.jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
         return new JvmConstructorDefinition(jvmType().getSignature(), "(" + String.join("", paramSignatures) + ")V");
+    }
+
+    @Override
+    public TypeUsage getField(String fieldName, boolean staticContext) {
+        // TODO to be implemented
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TypeDefinition> getAllAncestors(Resolver resolver) {
+        // TODO to be implemented
+        throw new UnsupportedOperationException();
     }
 
     private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, Resolver resolver) {

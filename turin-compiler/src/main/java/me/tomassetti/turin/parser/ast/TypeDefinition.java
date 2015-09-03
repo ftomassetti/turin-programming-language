@@ -29,17 +29,11 @@ public abstract class TypeDefinition extends Node {
         return new JvmType("L" + getQualifiedName().replaceAll("\\.", "/") + ";");
     }
 
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
+    public abstract JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext);
 
     public abstract JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams);
 
-    public TypeUsage getField(String fieldName, boolean staticContext) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
+    public abstract TypeUsage getField(String fieldName, boolean staticContext);
 
-    public List<TypeDefinition> getAllAncestors(Resolver resolver) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
+    public abstract List<TypeDefinition> getAllAncestors(Resolver resolver);
 }
