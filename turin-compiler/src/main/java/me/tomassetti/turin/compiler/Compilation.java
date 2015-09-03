@@ -62,7 +62,7 @@ class Compilation {
     }
 
     private void generateGetter(Property property, String className) {
-        String getterName = "get" + Character.toUpperCase(property.getName().charAt(0)) + property.getName().substring(1);
+        String getterName = property.getterName();
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getSignature(), null, null);
         mv.visitCode();
@@ -75,6 +75,7 @@ class Compilation {
     }
 
     private void enforceConstraint(Property property, MethodVisitor mv, String className, String jvmType, int varIndex) {
+        // TODO enforce also arbitrary constraints associated to the property
         if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(BasicTypes.UINT.getQualifiedName())) {
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
@@ -99,7 +100,7 @@ class Compilation {
     }
 
     private void generateSetter(Property property, String className) {
-        String setterName = "set" + Character.toUpperCase(property.getName().charAt(0)) + property.getName().substring(1);
+        String setterName = property.setterName();
         String jvmType = property.getTypeUsage().jvmType(resolver).getSignature();
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType + ")V", null, null);
         mv.visitCode();

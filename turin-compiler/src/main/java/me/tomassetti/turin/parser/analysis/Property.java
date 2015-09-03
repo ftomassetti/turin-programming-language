@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 /**
@@ -34,4 +35,12 @@ public class Property {
         return new Property(propertyReference.getName(), propertyDefinition.getType());
     }
 
+    public String getterName() {
+        String prefix = getTypeUsage().equals(PrimitiveTypeUsage.BOOLEAN) ? "is" : "get";
+        return prefix + Character.toUpperCase(getName().charAt(0)) + getName().substring(1);
+    }
+
+    public String setterName() {
+        return "set" + Character.toUpperCase(getName().charAt(0)) + getName().substring(1);
+    }
 }
