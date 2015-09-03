@@ -25,6 +25,23 @@ public class ReflectionBasedTypeDefinitionTest {
         assertTrue(names.contains(Serializable.class.getCanonicalName()));
         assertTrue(names.contains(CharSequence.class.getCanonicalName()));
         assertTrue(names.contains(Comparable.class.getCanonicalName()));
+        // TODO verify the parameter of Comparable is String
+    }
+
+    @Test
+    public void getAllAncestorsOfObject(){
+        Resolver resolver = new InFileResolver();
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        List<TypeDefinition> ancestors = typeDefinition.getAllAncestors(resolver);
+        assertEquals(0, ancestors.size());
+    }
+
+    @Test
+    public void getAllAncestorsOfSerializable(){
+        Resolver resolver = new InFileResolver();
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        List<TypeDefinition> ancestors = typeDefinition.getAllAncestors(resolver);
+        assertEquals(0, ancestors.size());
     }
 
 }
