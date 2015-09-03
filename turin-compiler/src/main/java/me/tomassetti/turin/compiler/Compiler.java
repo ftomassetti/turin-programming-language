@@ -323,18 +323,37 @@ public class Compiler {
     private static class Options {
 
         @Parameter(names = {"-d", "--destination"})
-        private String destinationDir = "dst";
+        private String destinationDir = "turin_classes";
 
         @Parameter(names = {"--verbose"})
         private boolean verbose = false;
 
+        @Parameter(names = {"-h", "--help"})
+        private boolean help = false;
+
+        @Parameter(description = "Files or directories to compile")
+        private List<String> sources = new ArrayList<>();
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Turin Compiler - " + VERSION);
+        System.out.println("-------------------------------------");
+        System.out.println(" Turin Compiler - version " + VERSION);
+        System.out.println("-------------------------------------\n");
 
         Options options = new Options();
-        new JCommander(options, args);
+        JCommander commander = new JCommander(options, args);
+
+        if (options.help) {
+            System.out.println("Help demanded - printing usage");
+            commander.usage();
+            return;
+        }
+
+        if (options.sources.isEmpty()) {
+            System.err.println("No sources specified");
+            commander.usage();
+            return;
+        }
 
         File file = new File("/home/federico/repos/turin-programming-language/samples/ranma.to");
         TurinFile turinFile = new Parser().parse(new FileInputStream(file));
