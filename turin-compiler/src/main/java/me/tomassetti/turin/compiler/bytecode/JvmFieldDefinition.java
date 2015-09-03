@@ -1,6 +1,5 @@
 package me.tomassetti.turin.compiler.bytecode;
 
-
 public class JvmFieldDefinition {
     private String declaringType;
     private String name;

@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import me.tomassetti.turin.parser.analysis.JvmType;
+import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;

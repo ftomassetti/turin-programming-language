@@ -1,15 +1,14 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.jvm;
 
 /**
- * Created by federico on 29/08/15.
+ * Created by federico on 03/09/15.
  */
-public class JvmStaticFieldDefinition {
+public class JvmInvokableDefinition {
+    protected String jvmType;
+    protected String name;
+    protected String signature;
 
-    private String jvmType;
-    private String name;
-    private String signature;
-
-    public JvmStaticFieldDefinition(String jvmType, String name, String signature) {
+    public JvmInvokableDefinition(String signature, String name, String jvmType) {
         this.signature = signature;
         this.name = name;
         this.jvmType = jvmType;

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.JvmNameUtils;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 
 public class NamespaceDefinition extends Node {
 

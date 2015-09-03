@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.analysis;
 
+import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 

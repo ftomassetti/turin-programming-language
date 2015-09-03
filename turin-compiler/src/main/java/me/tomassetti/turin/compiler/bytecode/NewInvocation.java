@@ -1,12 +1,11 @@
 package me.tomassetti.turin.compiler.bytecode;
 
-import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
+import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.ASTORE;
 
 public class NewInvocation extends BytecodeSequence {
 

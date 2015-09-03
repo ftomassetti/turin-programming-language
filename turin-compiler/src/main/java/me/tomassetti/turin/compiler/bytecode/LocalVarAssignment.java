@@ -1,18 +1,19 @@
 package me.tomassetti.turin.compiler.bytecode;
 
+import me.tomassetti.turin.jvm.JvmTypeCategory;
 import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.ASTORE;
 
-/**
- * Created by federico on 29/08/15.
- */
-public class Assignment extends BytecodeSequence {
+public class LocalVarAssignment extends BytecodeSequence {
 
     private int assignmentTarget;
     private JvmTypeCategory jvmTypeCategory;
 
-    public Assignment(int assignmentTarget, JvmTypeCategory jvmTypeCategory) {
+    /**
+     * @param assignmentTarget the local variable index of the value being assigned
+     * @param jvmTypeCategory
+     */
+    public LocalVarAssignment(int assignmentTarget, JvmTypeCategory jvmTypeCategory) {
         this.assignmentTarget = assignmentTarget;
         this.jvmTypeCategory = jvmTypeCategory;
     }

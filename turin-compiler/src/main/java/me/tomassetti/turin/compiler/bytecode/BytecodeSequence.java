@@ -1,12 +1,10 @@
 package me.tomassetti.turin.compiler.bytecode;
 
-import me.tomassetti.turin.compiler.*;
-import me.tomassetti.turin.compiler.Compiler;
 import org.objectweb.asm.MethodVisitor;
 
 /**
-* Created by federico on 29/08/15.
-*/
+ * A sequence of instructions to be performed inside of a method.
+ */
 public abstract class BytecodeSequence {
     public abstract void operate(MethodVisitor mv);
 }

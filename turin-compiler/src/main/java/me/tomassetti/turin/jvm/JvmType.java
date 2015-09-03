@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.jvm;
 
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;

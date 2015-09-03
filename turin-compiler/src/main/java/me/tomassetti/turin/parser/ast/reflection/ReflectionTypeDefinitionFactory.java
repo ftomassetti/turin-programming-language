@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
-import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;

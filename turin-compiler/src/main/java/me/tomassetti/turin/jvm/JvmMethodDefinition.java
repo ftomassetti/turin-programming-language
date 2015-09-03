@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.jvm;
 
 public class JvmMethodDefinition extends JvmInvokableDefinition {
 
@@ -17,12 +17,6 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
 
     public JvmMethodDefinition(String jvmType, String name, String signature, boolean _static) {
         super(signature, name, jvmType);
-        if (jvmType.contains(".")) {
-            jvmType = jvmType.replaceAll("\\.", "/");
-        }
-        if (signature.contains(".")) {
-            signature = signature.replaceAll("\\.", "/");
-        }
         this._static = _static;
     }
 

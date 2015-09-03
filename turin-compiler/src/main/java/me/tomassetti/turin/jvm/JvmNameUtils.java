@@ -1,4 +1,4 @@
-package me.tomassetti.turin;
+package me.tomassetti.turin.jvm;
 
 import java.util.Arrays;
 

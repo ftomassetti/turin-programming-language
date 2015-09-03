@@ -1,4 +1,4 @@
-package me.tomassetti.turin.compiler.bytecode;
+package me.tomassetti.turin.jvm;
 
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;

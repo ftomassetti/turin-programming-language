@@ -3,6 +3,10 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypes;
+import me.tomassetti.turin.jvm.JvmConstructorDefinition;
+import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.turin.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -236,7 +240,7 @@ public class Compiler {
                 VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
                 int pos = nParams + nLocalVars;
                 nLocalVars += 1;
-                return ImmutableList.of(compile(variableDeclaration.getValue()), new Assignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver)));
+                return ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver)));
             } else if (statement instanceof ExpressionStatement) {
                 return executeEpression(((ExpressionStatement)statement).getExpression());
             } else {
