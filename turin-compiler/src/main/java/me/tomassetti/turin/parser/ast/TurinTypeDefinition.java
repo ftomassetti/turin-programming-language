@@ -39,8 +39,17 @@ public class TurinTypeDefinition extends TypeDefinition {
         return ImmutableList.copyOf(members);
     }
 
+    private int numberOfProperties(Resolver resolver){
+        // TODO consider inherited properties
+        return getDirectProperties(resolver).size();
+    }
+
     @Override
     public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+        if (actualParams.size() != numberOfProperties(resolver)) {
+            throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+        }
+
         // For type defined in Turin we generate one single constructor so
         // it is easy to find it
         List<String> paramSignatures = getDirectProperties(resolver).stream()

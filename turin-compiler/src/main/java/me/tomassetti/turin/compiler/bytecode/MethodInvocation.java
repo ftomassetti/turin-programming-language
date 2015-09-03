@@ -3,8 +3,6 @@ package me.tomassetti.turin.compiler.bytecode;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import org.objectweb.asm.MethodVisitor;
 
-import java.util.List;
-
 import static org.objectweb.asm.Opcodes.*;
 
 /**

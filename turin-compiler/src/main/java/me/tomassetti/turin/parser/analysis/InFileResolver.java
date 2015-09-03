@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class InFileResolver implements Resolver {
 
     @Override
