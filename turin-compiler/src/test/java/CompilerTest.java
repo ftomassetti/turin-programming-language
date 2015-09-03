@@ -159,7 +159,7 @@ public class CompilerTest {
         Object ranma = mangaCharacterClass.getConstructors()[0].newInstance(null, 16);
     }
 
-    @Test(expected = InvocationTargetException.class)
+    @Test
     public void negativeAgeIsNotAcceptedForNameProperty() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         TurinFile turinFile = mangaAst();
 
@@ -172,7 +172,13 @@ public class CompilerTest {
         Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
         assertEquals(1, mangaCharacterClass.getConstructors().length);
-        Object ranma = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", -16);
+        try {
+            Object ranma = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", -16);
+            fail("exception expected");
+        } catch (InvocationTargetException e) {
+            assertTrue(e.getTargetException() instanceof IllegalArgumentException);
+            assertEquals("age should be positive", e.getTargetException().getMessage());
+        }
     }
 
 }

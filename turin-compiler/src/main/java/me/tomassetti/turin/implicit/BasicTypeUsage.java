@@ -17,6 +17,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
+ *       parent.
+ */
 public class BasicTypeUsage extends TypeUsage {
 
     public static BasicTypeUsage UINT = new BasicTypeUsage("UInt", "I");

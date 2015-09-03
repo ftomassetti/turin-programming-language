@@ -11,6 +11,9 @@ import java.util.Optional;
 
 /**
  * Usage of a primitive type.
+ *
+ * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
+ *       parent.
  */
 public class PrimitiveTypeUsage extends TypeUsage {
 

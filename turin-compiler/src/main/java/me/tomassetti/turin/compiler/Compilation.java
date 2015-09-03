@@ -81,16 +81,17 @@ class Compilation {
     private void enforceConstraint(Property property, MethodVisitor mv, String className, JvmType jvmType, int varIndex) {
         // TODO enforce also arbitrary constraints associated to the property
         if (property.getTypeUsage().equals(BasicTypeUsage.UINT)) {
+            // index 0 is the "this"
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
+            // if the value is >= 0 we jump and skip the throw exception
             mv.visitJumpInsn(IFGE, label);
-            mv.visitTypeInsn(NEW, "java/lang/IllegalArgumentException");
-            mv.visitInsn(DUP);
-            mv.visitLdcInsn(property.getName() + " should be positive");
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalArgumentException", "<init>", "(Ljava/lang/String;)V", false);
-            mv.visitInsn(ATHROW);
+            JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+            BytecodeSequence instantiateException = new NewInvocation(constructor, ImmutableList.of(new PushStringConst(property.getName() + " should be positive")));
+            new Throw(instantiateException).operate(mv);
             mv.visitLabel(label);
         } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
+            // index 0 is the "this"
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
             mv.visitJumpInsn(IFNONNULL, label);
