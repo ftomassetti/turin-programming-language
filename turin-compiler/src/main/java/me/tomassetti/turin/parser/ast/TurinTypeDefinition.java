@@ -183,4 +183,12 @@ public class TurinTypeDefinition extends TypeDefinition {
         return properties;
     }
 
+    /**
+     * Get direct and inherited properties.
+     */
+    public List<Property> getAllProperties(Resolver resolver) {
+        // TODO consider also inherited properties
+        return getDirectProperties(resolver);
+    }
+
 }

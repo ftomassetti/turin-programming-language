@@ -29,10 +29,10 @@ import static org.objectweb.asm.Opcodes.*;
 /**
  * Wrap the status of the compilation process, like the class being currently written.
  */
-class Compilation {
+public class Compilation {
 
     private static final int JAVA_8_CLASS_VERSION = 52;
-    private static final int LOCALVAR_INDEX_FOR_THIS_IN_METHOD = 0;
+    public static final int LOCALVAR_INDEX_FOR_THIS_IN_METHOD = 0;
 
     private ClassWriter cw;
     private Resolver resolver;
@@ -107,41 +107,43 @@ class Compilation {
         }
     }
 
-    private void generateSetter(Property property, String className) {
+    private void generateSetter(Property property, String internalClassName) {
         String setterName = property.setterName();
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType.getDescriptor() + ")V", "(" + jvmType.getSignature() + ")V", null);
         mv.visitCode();
 
-        enforceConstraint(property, mv, className, jvmType, 0);
+        enforceConstraint(property, mv, internalClassName, jvmType, 0);
 
         // Assignment
-        mv.visitVarInsn(ALOAD, 0);
+        PushThis.getInstance().operate(mv);
         mv.visitVarInsn(loadTypeFor(jvmType), 1);
-        mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType.getDescriptor());
+        mv.visitFieldInsn(PUTFIELD, internalClassName, property.getName(), jvmType.getDescriptor());
         mv.visitInsn(RETURN);
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
 
-    private void generateContructor(TurinTypeDefinition typeDefinition, String className) {
-        List<Property> directPropertis = typeDefinition.getDirectProperties(resolver);
-        String paramsSignature = String.join("", directPropertis.stream().map((dp)->dp.getTypeUsage().jvmType(resolver).getSignature()).collect(Collectors.toList()));
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + paramsSignature + ")V", null, null);
+    private void generateConstructor(TurinTypeDefinition typeDefinition, String className) {
+        // TODO consider also inherited properties
+        List<Property> directProperties = typeDefinition.getDirectProperties(resolver);
+        String paramsDescriptor = String.join("", directProperties.stream().map((dp) -> dp.getTypeUsage().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", directProperties.stream().map((dp) -> dp.getTypeUsage().jvmType(resolver).getSignature()).collect(Collectors.toList()));
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + paramsDescriptor + ")V", "(" + paramsSignature + ")V", null);
         mv.visitCode();
 
-        mv.visitVarInsn(ALOAD, 0);
+        PushThis.getInstance().operate(mv);
         mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
 
         int propIndex = 0;
-        for (Property property : directPropertis) {
+        for (Property property : directProperties) {
             enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver), propIndex);
             propIndex++;
         }
 
         propIndex = 0;
-        for (Property property : directPropertis) {
+        for (Property property : directProperties) {
             JvmType jvmType = property.getTypeUsage().jvmType(resolver);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(loadTypeFor(jvmType), propIndex + 1);
@@ -156,17 +158,45 @@ class Compilation {
     }
 
     private int returnTypeFor(JvmType jvmType) {
-        if (jvmType.getSignature().equals("I")) {
-            return IRETURN;
+        switch (jvmType.getDescriptor()) {
+            case "Z":
+            case "B":
+            case "S":
+            case "C":
+            case "I":
+                // used for boolean, byte, short, char, or int
+                return IRETURN;
+            case "J":
+                return LRETURN;
+            case "F":
+                return FRETURN;
+            case "D":
+                return DRETURN;
+            case "V":
+                return RETURN;
+            default:
+                return ARETURN;
         }
-        return ARETURN;
     }
 
     private int loadTypeFor(JvmType jvmType) {
-        if (jvmType.getDescriptor().equals("I")) {
-            return ILOAD;
+        switch (jvmType.getDescriptor()) {
+            case "Z":
+            case "B":
+            case "S":
+            case "C":
+            case "I":
+                // used for boolean, byte, short, char, or int
+                return ILOAD;
+            case "J":
+                return LLOAD;
+            case "F":
+                return FLOAD;
+            case "D":
+                return DLOAD;
+            default:
+                return ALOAD;
         }
-        return ALOAD;
     }
 
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
@@ -182,7 +212,7 @@ class Compilation {
             generateSetter(property, className);
         }
 
-        generateContructor(typeDefinition, className);
+        generateConstructor(typeDefinition, className);
         cw.visitEnd();
 
         return ImmutableList.of(new ClassFileDefinition(className.replaceAll("/", "."), cw.toByteArray()));
