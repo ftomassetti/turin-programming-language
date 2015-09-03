@@ -68,15 +68,6 @@ public class ReflectionTypeDefinitionFactory {
         }
     }
 
-    public TypeDefinition getTypeDefinition(String name) {
-        Optional<TypeDefinition> result = findTypeDefinition(name);
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new UnsolvedTypeException(name);
-        }
-    }
-
     public TypeDefinition getTypeDefinition(Class<?> clazz) {
         return new ReflectionBasedTypeDefinition(clazz);
     }
