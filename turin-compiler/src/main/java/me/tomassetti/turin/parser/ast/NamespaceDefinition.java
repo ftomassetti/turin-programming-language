@@ -1,14 +1,14 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.NameUtils;
+import me.tomassetti.turin.JvmNameUtils;
 
 public class NamespaceDefinition extends Node {
 
     private String name;
 
     public NamespaceDefinition(String name) {
-        if (!NameUtils.isValidPackageName(name)) {
+        if (!JvmNameUtils.isValidPackageName(name)) {
             throw new IllegalArgumentException(name);
         }
         this.name = name;

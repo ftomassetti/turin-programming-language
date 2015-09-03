@@ -2,7 +2,7 @@ package me.tomassetti.turin;
 
 import java.util.Arrays;
 
-public final class NameUtils {
+public final class JvmNameUtils {
 
     /**
      * See http://docs.oracle.com/javase/specs/jls/se8/html/jls-3.html#jls-3.9
@@ -20,7 +20,7 @@ public final class NameUtils {
         "const", "float", "native", "super", "while"
     };
 
-    private NameUtils() {
+    private JvmNameUtils() {
         // prevent instantiation
     }
 
