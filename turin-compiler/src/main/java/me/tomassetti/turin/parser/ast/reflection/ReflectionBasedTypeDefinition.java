@@ -11,9 +11,7 @@ import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -132,16 +130,43 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
         List<ReferenceTypeUsage> ancestors = new ArrayList<>();
         if (clazz.getSuperclass() != null) {
-            TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(clazz.getSuperclass());
-            ancestors.add(new ReferenceTypeUsage(superTypeDefinition));
+            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
+            ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
+        int i = 0;
         for (Class<?> interfaze : clazz.getInterfaces()) {
-            TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(interfaze);
-            ancestors.add(new ReferenceTypeUsage(superTypeDefinition));
+            Type genericInterfaze = clazz.getGenericInterfaces()[i];
+            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+            ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+            i++;
         }
         return ancestors;
+    }
+
+    private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
+        TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
+        ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType)type;
+            for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {
+                TypeVariable<? extends Class<?>> typeVariable = clazz.getTypeParameters()[tp];
+                Type parameterType = parameterizedType.getActualTypeArguments()[tp];
+                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), toTypeUsage(parameterType));
+            }
+        }
+        return referenceTypeUsage;
+    }
+
+    private TypeUsage toTypeUsage(Type parameterType) {
+        if (parameterType instanceof Class){
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
+            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+            return referenceTypeUsage;
+        } else {
+            throw new UnsupportedOperationException(parameterType.getClass().getCanonicalName());
+        }
     }
 
     @Override

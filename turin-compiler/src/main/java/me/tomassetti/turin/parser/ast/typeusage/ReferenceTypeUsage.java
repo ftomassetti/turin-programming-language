@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,23 +17,38 @@ import java.util.stream.Collectors;
 public class ReferenceTypeUsage extends TypeUsage {
 
     public class TypeParameterValues {
+        private List<TypeUsage> usages = new ArrayList<>();
+        private List<String> names = new ArrayList<>();
+
+        public void add(String name, TypeUsage typeUsage) {
+            names.add(name);
+            usages.add(typeUsage);
+        }
+
         public List<TypeUsage> getInOrder() {
-            throw new UnsupportedOperationException();
+            return usages;
         }
 
         public List<String> getNamesInOrder() {
-            throw new UnsupportedOperationException();
+            return names;
         }
 
         public TypeUsage getByName(String name) {
-            throw new UnsupportedOperationException();
+            for (int i=0; i<names.size(); i++) {
+                if (names.get(i).equals(name)) {
+                    return usages.get(i);
+                }
+            }
+            throw new IllegalArgumentException(name);
         }
     }
+
+    private TypeParameterValues typeParameterValues = new TypeParameterValues();
 
     public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
 
     public TypeParameterValues getTypeParameterValues() {
-        throw new UnsupportedOperationException();
+        return typeParameterValues;
     }
 
     private String name;
@@ -130,7 +146,8 @@ public class ReferenceTypeUsage extends TypeUsage {
         return false;
     }
 
-    private List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+        // TODO perhaps some generic type substitution needs to be done
         return getTypeDefinition(resolver).getAllAncestors(resolver);
     }
 }
