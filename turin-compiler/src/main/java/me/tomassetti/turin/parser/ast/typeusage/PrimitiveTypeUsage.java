@@ -27,6 +27,16 @@ public class PrimitiveTypeUsage extends TypeUsage {
     public static PrimitiveTypeUsage DOUBLE = new PrimitiveTypeUsage("double",  new JvmType("D"));
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
+    @Override
+    public boolean canBeAssignedTo(TypeUsage other, Resolver resolver) {
+        // TODO auto-boxing/unboxing should be considered, probably not here
+        if (!other.isPrimitive()) {
+            return false;
+        }
+        // TODO consider promotions
+        return jvmType(resolver).equals(other.jvmType(resolver));
+    }
+
     public static Optional<PrimitiveTypeUsage> findByJvmType(JvmType jvmType) {
         for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
             if (primitiveTypeUsage.equals(jvmType)) {

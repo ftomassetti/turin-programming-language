@@ -61,4 +61,8 @@ public class ActualParam extends Node {
     public Iterable<Node> getChildren() {
         return ImmutableList.of(value);
     }
+
+    public boolean isNamed() {
+        return name != null;
+    }
 }

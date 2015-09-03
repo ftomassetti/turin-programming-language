@@ -6,8 +6,10 @@ import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,13 +52,65 @@ public class TurinTypeDefinition extends TypeDefinition {
             throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
         }
 
+        // no unnamed parameters after the named ones
+        boolean namedFound = false;
+        for (ActualParam actualParam : actualParams) {
+            if (namedFound && !actualParam.isNamed()){
+                throw new IllegalArgumentException();
+            }
+            if (!namedFound && actualParam.isNamed()){
+                namedFound = true;
+            }
+        }
+
+        List<TypeUsage> paramTypesInOrder = orderConstructorParamTypes(actualParams, resolver);
+
+        List<Property> properties = getDirectProperties(resolver);
+        for (int i=0;i<properties.size();i++){
+            if (!paramTypesInOrder.get(i).canBeAssignedTo(properties.get(i).getTypeUsage(), resolver)){
+                throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+            }
+        }
+
         // For type defined in Turin we generate one single constructor so
         // it is easy to find it
-        List<String> paramSignatures = getDirectProperties(resolver).stream()
-                .map((p) -> p.getTypeUsage()
-                        .jvmType(resolver).getSignature())
+        List<String> paramSignatures = paramTypesInOrder.stream()
+                .map((p) -> p.jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
         return new JvmConstructorDefinition(jvmType().getSignature(), "(" + String.join("", paramSignatures) + ")V");
+    }
+
+    private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, Resolver resolver) {
+        TypeUsage[] types = new TypeUsage[actualParams.size()];
+        int i = 0;
+        for (ActualParam actualParam : actualParams) {
+            if (actualParam.isNamed()) {
+                int pos = findPosOfProperty(actualParam.getName(), resolver);
+                if (types[pos] != null) {
+                    throw new IllegalArgumentException();
+                }
+                types[pos] = actualParam.getValue().calcType(resolver);
+            } else {
+                types[i] = actualParam.getValue().calcType(resolver);
+            }
+            i++;
+        }
+        for (TypeUsage tu : types) {
+            if (tu == null) {
+                throw new IllegalArgumentException();
+            }
+        }
+        return Arrays.asList(types);
+    }
+
+    private int findPosOfProperty(String name, Resolver resolver) {
+        List<Property> properties = getDirectProperties(resolver);
+        for (int i=0; i<properties.size(); i++){
+            if (properties.get(i).getName().equals(name)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException(name);
     }
 
     public void add(PropertyReference propertyReference) {
