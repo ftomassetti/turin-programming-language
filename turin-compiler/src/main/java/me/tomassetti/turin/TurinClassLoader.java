@@ -1,7 +1,7 @@
 package me.tomassetti.turin;
 
 /**
- * Created by federico on 29/08/15.
+ * ClassLoader use to load compiled classes.
  */
 public class TurinClassLoader extends ClassLoader {
 

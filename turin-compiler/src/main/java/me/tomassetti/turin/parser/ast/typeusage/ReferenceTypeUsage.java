@@ -10,9 +10,30 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * It could represent also a reference to a Type Variable.
+ */
 public class ReferenceTypeUsage extends TypeUsage {
 
+    public class TypeParameterValues {
+        public List<TypeUsage> getInOrder() {
+            throw new UnsupportedOperationException();
+        }
+
+        public List<String> getNamesInOrder() {
+            throw new UnsupportedOperationException();
+        }
+
+        public TypeUsage getByName(String name) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
+
+    public TypeParameterValues getTypeParameterValues() {
+        throw new UnsupportedOperationException();
+    }
 
     private String name;
 
@@ -109,7 +130,7 @@ public class ReferenceTypeUsage extends TypeUsage {
         return false;
     }
 
-    private List<TypeUsage> getAllAncestors(Resolver resolver) {
-        return getTypeDefinition(resolver).getAllAncestors(resolver).stream().map((td)-> new ReferenceTypeUsage(td)).collect(Collectors.toList());
+    private List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+        return getTypeDefinition(resolver).getAllAncestors(resolver);
     }
 }

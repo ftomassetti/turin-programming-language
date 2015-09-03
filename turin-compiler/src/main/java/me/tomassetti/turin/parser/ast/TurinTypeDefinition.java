@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<TypeDefinition> getAllAncestors(Resolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
         // TODO to be implemented
         throw new UnsupportedOperationException();
     }

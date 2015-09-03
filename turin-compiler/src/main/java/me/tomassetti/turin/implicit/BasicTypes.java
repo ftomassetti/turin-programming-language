@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
@@ -51,7 +52,7 @@ public class BasicTypes {
             }
 
             @Override
-            public List<TypeDefinition> getAllAncestors(Resolver resolver) {
+            public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
                 return Collections.emptyList();
             }
 

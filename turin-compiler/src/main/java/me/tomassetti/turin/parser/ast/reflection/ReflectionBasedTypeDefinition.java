@@ -129,16 +129,16 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<TypeDefinition> getAllAncestors(Resolver resolver) {
-        List<TypeDefinition> ancestors = new ArrayList<>();
+    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+        List<ReferenceTypeUsage> ancestors = new ArrayList<>();
         if (clazz.getSuperclass() != null) {
             TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(clazz.getSuperclass());
-            ancestors.add(superTypeDefinition);
+            ancestors.add(new ReferenceTypeUsage(superTypeDefinition));
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
         for (Class<?> interfaze : clazz.getInterfaces()) {
             TypeDefinition superTypeDefinition = new ReflectionBasedTypeDefinition(interfaze);
-            ancestors.add(superTypeDefinition);
+            ancestors.add(new ReferenceTypeUsage(superTypeDefinition));
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
         return ancestors;

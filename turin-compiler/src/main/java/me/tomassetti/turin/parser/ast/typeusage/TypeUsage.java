@@ -7,6 +7,10 @@ import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.List;
 
+/**
+ * A TypeUsage is the concrete usage of a type int the code.
+ * For example it can be a type definition with generic type parameter specified.
+ */
 public abstract class TypeUsage extends Node {
 
     public abstract JvmType jvmType(Resolver resolver);

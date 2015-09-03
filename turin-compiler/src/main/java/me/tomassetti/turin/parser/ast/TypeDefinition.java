@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
@@ -35,5 +36,5 @@ public abstract class TypeDefinition extends Node {
 
     public abstract TypeUsage getField(String fieldName, boolean staticContext);
 
-    public abstract List<TypeDefinition> getAllAncestors(Resolver resolver);
+    public abstract List<ReferenceTypeUsage> getAllAncestors(Resolver resolver);
 }

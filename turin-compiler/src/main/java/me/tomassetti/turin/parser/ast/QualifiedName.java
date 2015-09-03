@@ -1,21 +1,25 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.JvmNameUtils;
 
-/**
- * Created by federico on 01/09/15.
- */
 public class QualifiedName extends Node {
 
     private QualifiedName base;
     private String name;
 
     public QualifiedName(QualifiedName base, String name) {
+        if (!JvmNameUtils.isValidPackageName(name)) {
+            throw new IllegalArgumentException();
+        }
         this.base = base;
         this.name = name;
     }
 
     public QualifiedName(String name) {
+        if (!JvmNameUtils.isValidPackageName(name)) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
     }
 
