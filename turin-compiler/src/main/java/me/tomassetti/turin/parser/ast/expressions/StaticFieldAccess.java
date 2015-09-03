@@ -5,7 +5,7 @@ import me.tomassetti.turin.compiler.bytecode.JvmFieldDefinition;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 public class StaticFieldAccess extends Expression {
 

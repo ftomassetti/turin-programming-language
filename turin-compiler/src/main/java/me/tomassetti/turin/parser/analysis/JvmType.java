@@ -1,9 +1,9 @@
 package me.tomassetti.turin.parser.analysis;
 
-import me.tomassetti.turin.parser.ast.ArrayTypeUsage;
-import me.tomassetti.turin.parser.ast.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Optional;
 

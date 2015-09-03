@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 public class PropertyDefinition extends Node {
 

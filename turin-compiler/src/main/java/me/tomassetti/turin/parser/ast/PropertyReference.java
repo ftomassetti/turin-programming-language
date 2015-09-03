@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 /**
  * Created by federico on 28/08/15.

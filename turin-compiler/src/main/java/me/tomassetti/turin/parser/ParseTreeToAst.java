@@ -6,6 +6,8 @@ import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 

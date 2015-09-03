@@ -2,6 +2,10 @@ package me.tomassetti.turin.parser.ast.reflection;
 
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

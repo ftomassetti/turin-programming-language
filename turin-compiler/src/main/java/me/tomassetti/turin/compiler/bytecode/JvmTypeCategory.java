@@ -1,7 +1,7 @@
 package me.tomassetti.turin.compiler.bytecode;
 
 import me.tomassetti.turin.parser.analysis.Resolver;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.Opcodes;
 
 public enum JvmTypeCategory {

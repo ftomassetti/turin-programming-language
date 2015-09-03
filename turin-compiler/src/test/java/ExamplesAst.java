@@ -1,4 +1,5 @@
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
 /**
  * Created by federico on 29/08/15.

@@ -1,8 +1,9 @@
-package me.tomassetti.turin.parser.ast;
+package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.ast.Node;
 
 public class ArrayTypeUsage extends TypeUsage {
 

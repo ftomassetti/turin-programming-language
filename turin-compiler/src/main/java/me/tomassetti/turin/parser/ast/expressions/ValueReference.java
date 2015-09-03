@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 /**
  * Created by federico on 01/09/15.

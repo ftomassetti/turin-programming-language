@@ -3,9 +3,8 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.ResolvedTypeUsage;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ResolvedTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.*;
 

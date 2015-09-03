@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Test;
 
 import java.io.IOException;

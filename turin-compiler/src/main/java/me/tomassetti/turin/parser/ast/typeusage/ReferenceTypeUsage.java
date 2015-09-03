@@ -1,9 +1,11 @@
-package me.tomassetti.turin.parser.ast;
+package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -4,9 +4,9 @@ import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Definition of a reference type (a Class, an Interface or an Enum).

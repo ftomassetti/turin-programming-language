@@ -1,11 +1,10 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
-import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 

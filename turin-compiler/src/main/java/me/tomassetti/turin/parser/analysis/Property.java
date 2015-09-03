@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
-import me.tomassetti.turin.parser.ast.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 /**
  * A Property can be derived by a definition in the type (PropertyDefinition) or by a reference (PropertyReference)

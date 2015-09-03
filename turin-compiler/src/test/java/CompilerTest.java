@@ -4,6 +4,7 @@ import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.TurinFile;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
