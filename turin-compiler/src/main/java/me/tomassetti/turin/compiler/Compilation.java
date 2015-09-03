@@ -60,14 +60,15 @@ class Compilation {
     private void generateField(Property property) {
         // TODO understand how to use description and signature (which is used for generics)
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
-        FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), jvmType.getDescriptor(), null, null);
+        FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), jvmType.getDescriptor(), jvmType.getSignature(), null);
         fv.visitEnd();
     }
 
     private void generateGetter(Property property, String classInternalName) {
         String getterName = property.getterName();
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getSignature(), null, null);
+        // TODO understand how to use description and signature (which is used for generics)
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getDescriptor(), "()" + jvmType.getSignature(), null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
         mv.visitFieldInsn(GETFIELD, classInternalName, property.fieldName(), jvmType.getDescriptor());
@@ -77,7 +78,7 @@ class Compilation {
         mv.visitEnd();
     }
 
-    private void enforceConstraint(Property property, MethodVisitor mv, String className, String jvmType, int varIndex) {
+    private void enforceConstraint(Property property, MethodVisitor mv, String className, JvmType jvmType, int varIndex) {
         // TODO enforce also arbitrary constraints associated to the property
         if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(BasicTypes.UINT.getQualifiedName())) {
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
@@ -104,8 +105,8 @@ class Compilation {
 
     private void generateSetter(Property property, String className) {
         String setterName = property.setterName();
-        String jvmType = property.getTypeUsage().jvmType(resolver).getSignature();
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType + ")V", null, null);
+        JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType.getDescriptor() + ")V", "(" + jvmType.getSignature() + ")V", null);
         mv.visitCode();
 
         enforceConstraint(property, mv, className, jvmType, 0);
@@ -113,7 +114,7 @@ class Compilation {
         // Assignment
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(loadTypeFor(jvmType), 1);
-        mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
+        mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType.getDescriptor());
         mv.visitInsn(RETURN);
         // calculated for us
         mv.visitMaxs(0, 0);
@@ -131,16 +132,16 @@ class Compilation {
 
         int propIndex = 0;
         for (Property property : directPropertis) {
-            enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver).getSignature(), propIndex);
+            enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver), propIndex);
             propIndex++;
         }
 
         propIndex = 0;
         for (Property property : directPropertis) {
-            String jvmType = property.getTypeUsage().jvmType(resolver).getSignature();
+            JvmType jvmType = property.getTypeUsage().jvmType(resolver);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(loadTypeFor(jvmType), propIndex + 1);
-            mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
+            mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType.getDescriptor());
             propIndex++;
         }
 
@@ -157,8 +158,8 @@ class Compilation {
         return ARETURN;
     }
 
-    private int loadTypeFor(String jvmType) {
-        if (jvmType.equals("I")) {
+    private int loadTypeFor(JvmType jvmType) {
+        if (jvmType.getDescriptor().equals("I")) {
             return ILOAD;
         }
         return ALOAD;
