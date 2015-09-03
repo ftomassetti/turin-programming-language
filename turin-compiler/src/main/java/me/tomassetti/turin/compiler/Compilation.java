@@ -32,6 +32,7 @@ import static org.objectweb.asm.Opcodes.*;
 class Compilation {
 
     private static final int JAVA_8_CLASS_VERSION = 52;
+    private static final int LOCALVAR_INDEX_FOR_THIS_IN_METHOD = 0;
 
     private ClassWriter cw;
     private Resolver resolver;
@@ -61,13 +62,13 @@ class Compilation {
         fv.visitEnd();
     }
 
-    private void generateGetter(Property property, String className) {
+    private void generateGetter(Property property, String classInternalName) {
         String getterName = property.getterName();
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getSignature(), null, null);
         mv.visitCode();
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitFieldInsn(GETFIELD, className, property.getName(), jvmType.getSignature());
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
+        mv.visitFieldInsn(GETFIELD, classInternalName, property.fieldName(), jvmType.getDescriptor());
         mv.visitInsn(returnTypeFor(jvmType));
         // calculated for us
         mv.visitMaxs(0, 0);

@@ -51,4 +51,9 @@ public class JvmType {
             throw new UnsupportedOperationException(signature);
         }
     }
+
+    public String getDescriptor() {
+        // TODO differentiate
+        return signature;
+    }
 }
