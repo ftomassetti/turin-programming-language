@@ -143,7 +143,7 @@ public class CompilerTest {
         assertEquals(10136, addressClass.getMethod("getZip").invoke(address));
     }
 
-    @Test(expected = InvocationTargetException.class)
+    @Test
     public void nullIsNotAcceptedForNameProperty() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
         TurinFile turinFile = mangaAst();
 
@@ -156,7 +156,13 @@ public class CompilerTest {
         Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
         assertEquals(1, mangaCharacterClass.getConstructors().length);
-        Object ranma = mangaCharacterClass.getConstructors()[0].newInstance(null, 16);
+        try {
+            Object ranma = mangaCharacterClass.getConstructors()[0].newInstance(null, 16);
+            fail("exception expected");
+        } catch (InvocationTargetException e) {
+            assertTrue(e.getTargetException() instanceof IllegalArgumentException);
+            assertEquals("name cannot be null", e.getTargetException().getMessage());
+        }
     }
 
     @Test

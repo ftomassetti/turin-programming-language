@@ -84,22 +84,25 @@ class Compilation {
             // index 0 is the "this"
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
+
             // if the value is >= 0 we jump and skip the throw exception
             mv.visitJumpInsn(IFGE, label);
             JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
             BytecodeSequence instantiateException = new NewInvocation(constructor, ImmutableList.of(new PushStringConst(property.getName() + " should be positive")));
             new Throw(instantiateException).operate(mv);
+
             mv.visitLabel(label);
         } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
             // index 0 is the "this"
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
             Label label = new Label();
+
+            // if not null skip the throw
             mv.visitJumpInsn(IFNONNULL, label);
-            mv.visitTypeInsn(NEW, "java/lang/NullPointerException");
-            mv.visitInsn(DUP);
-            mv.visitLdcInsn(property.getName() + " cannot be null");
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/NullPointerException", "<init>", "(Ljava/lang/String;)V", false);
-            mv.visitInsn(ATHROW);
+            JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+            BytecodeSequence instantiateException = new NewInvocation(constructor, ImmutableList.of(new PushStringConst(property.getName() + " cannot be null")));
+            new Throw(instantiateException).operate(mv);
+
             mv.visitLabel(label);
         }
     }
