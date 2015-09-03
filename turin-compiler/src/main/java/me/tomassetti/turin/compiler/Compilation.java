@@ -107,7 +107,6 @@ class Compilation {
         enforceConstraint(property, mv, className, jvmType, 0);
 
         // Assignment
-        //mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
         mv.visitVarInsn(ALOAD, 0);
         mv.visitVarInsn(loadTypeFor(jvmType), 1);
         mv.visitFieldInsn(PUTFIELD, className, property.getName(), jvmType);
@@ -130,16 +129,6 @@ class Compilation {
         for (Property property : directPropertis) {
             enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver).getSignature(), propIndex);
             propIndex++;
-            if (propIndex == directPropertis.size()) {
-                //mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            } else {
-                List<Object> frameObject = new ArrayList<>();
-                frameObject.add(className);
-                for (Property p : directPropertis) {
-                    frameObject.add(toFrameObject(p.getTypeUsage().jvmType(resolver).getSignature()));
-                }
-                //mv.visitFrame(Opcodes.F_FULL, 1 + directPropertis.size(), frameObject.toArray(), 0, new Object[] {});
-            }
         }
 
         propIndex = 0;
@@ -155,21 +144,6 @@ class Compilation {
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();
-    }
-
-    private Object toFrameObject(String jvmType) {
-        switch (jvmType) {
-            case "I":
-                return Opcodes.INTEGER;
-            default:
-                if (jvmType.charAt(0) != 'L') {
-                    throw new UnsupportedOperationException();
-                }
-                if (jvmType.charAt(jvmType.length() - 1) != ';') {
-                    throw new UnsupportedOperationException();
-                }
-                return jvmType.substring(1, jvmType.length() - 1);
-        }
     }
 
     private int returnTypeFor(JvmType jvmType) {
