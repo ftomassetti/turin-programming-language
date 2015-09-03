@@ -17,6 +17,9 @@ public class ClassFileDefinition {
     }
 
     public ClassFileDefinition(String name, byte[] bytecode) {
+        if (name.contains("/")) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
         this.bytecode = bytecode;
 

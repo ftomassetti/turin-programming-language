@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
+import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
@@ -62,7 +63,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
         throw new UnsupportedOperationException();
     }
 

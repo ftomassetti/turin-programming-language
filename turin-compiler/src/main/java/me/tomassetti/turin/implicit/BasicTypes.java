@@ -1,6 +1,7 @@
 package me.tomassetti.turin.implicit;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
@@ -8,7 +9,6 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class BasicTypes {
             }
 
             @Override
-            public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+            public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
                 throw new UnsupportedOperationException();
             }
 

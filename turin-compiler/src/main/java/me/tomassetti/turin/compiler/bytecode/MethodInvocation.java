@@ -20,9 +20,7 @@ public class MethodInvocation extends BytecodeSequence {
 
     @Override
     public void operate(MethodVisitor mv) {
-        //mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-        //mv.visitLdcInsn("foo");
-        mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getJvmType(), jvmMethodDefinition.getName(), jvmMethodDefinition.getSignature(), jvmMethodDefinition.isOnInterface());
+        mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getJvmType().replaceAll("\\.", "/"), jvmMethodDefinition.getName(), jvmMethodDefinition.getSignature(), jvmMethodDefinition.isOnInterface());
     }
 
 }

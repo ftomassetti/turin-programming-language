@@ -253,12 +253,11 @@ public class Compiler {
                 throw new UnsupportedOperationException();
             } else if (expression instanceof Creation) {
                 Creation creation = (Creation)expression;
-                String type = creation.calcType(resolver).jvmType(resolver).getSignature();
                 List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
                         .map((ap)-> pushExpression(ap))
                         .collect(Collectors.toList());
-                String signature = creation.jvmSignature(resolver);
-                return new NewInvocation(type, argumentsPush, signature);
+                JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(resolver);
+                return new NewInvocation(constructorDefinition, argumentsPush);
             } else {
                 throw new UnsupportedOperationException();
             }

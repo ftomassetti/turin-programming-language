@@ -1,6 +1,8 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -37,14 +39,15 @@ public class TurinTypeDefinition extends TypeDefinition {
         return ImmutableList.copyOf(members);
     }
 
-    public String resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+    @Override
+    public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
         // For type defined in Turin we generate one single constructor so
         // it is easy to find it
         List<String> paramSignatures = getDirectProperties(resolver).stream()
                 .map((p) -> p.getTypeUsage()
                         .jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
-        return "(" + String.join("", paramSignatures) + ")V";
+        return new JvmConstructorDefinition(jvmType().getSignature(), "(" + String.join("", paramSignatures) + ")V");
     }
 
     public void add(PropertyReference propertyReference) {

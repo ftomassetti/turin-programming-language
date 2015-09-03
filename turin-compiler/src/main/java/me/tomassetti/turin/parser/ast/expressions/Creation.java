@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.ResolvedTypeUsage;
@@ -68,6 +69,10 @@ public class Creation extends Invokable {
     }
 
     public String jvmSignature(Resolver resolver) {
+        return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams).getSignature();
+    }
+
+    public JvmConstructorDefinition jvmDefinition(Resolver resolver) {
         return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams);
     }
 }

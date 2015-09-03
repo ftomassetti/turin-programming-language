@@ -94,6 +94,7 @@ public class CompilerOnProgramTest {
         Compiler instance = new Compiler();
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
+        assertEquals("myProgram.SuperSimple", classFileDefinitions.get(0).getName());
 
         loadAndInvoke(classFileDefinitions.get(0));
     }
