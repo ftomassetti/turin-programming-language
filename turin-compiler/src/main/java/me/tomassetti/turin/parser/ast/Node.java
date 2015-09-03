@@ -1,5 +1,10 @@
 package me.tomassetti.turin.parser.ast;
 
+/**
+ * A Node the Abstract Syntax Tree.
+ * Note that nodes are initially created by the parser but during compilation additional "virtual" nodes could be
+ * created.
+ */
 public abstract class Node {
 
     protected Node parent;

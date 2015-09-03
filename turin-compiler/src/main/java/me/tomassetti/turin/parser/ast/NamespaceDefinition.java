@@ -16,7 +16,6 @@ public class NamespaceDefinition extends Node {
 
     @Override
     public Iterable<Node> getChildren() {
-
         return ImmutableList.of();
     }
 

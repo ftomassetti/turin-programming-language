@@ -4,12 +4,13 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.JvmType;
 import me.tomassetti.turin.parser.analysis.Resolver;
 
-import javax.lang.model.type.PrimitiveType;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Usage of a primitive type.
+ */
 public class PrimitiveTypeUsage extends TypeUsage {
 
     private String name;

@@ -1,12 +1,40 @@
 package me.tomassetti.turin.parser.ast;
 
 /**
- * Created by federico on 30/08/15.
+ * The position of a Node in the source file.
  */
 public class Position {
 
     private Point start;
     private Point end;
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "start=" + start +
+                ", end=" + end +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Position position = (Position) o;
+
+        if (!end.equals(position.end)) return false;
+        if (!start.equals(position.start)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = start.hashCode();
+        result = 31 * result + end.hashCode();
+        return result;
+    }
 
     public Point getStart() {
         return start;
