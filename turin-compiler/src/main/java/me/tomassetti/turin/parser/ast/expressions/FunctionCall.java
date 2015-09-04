@@ -48,6 +48,7 @@ public class FunctionCall extends Invokable {
 
     public FunctionCall(Expression name, List<ActualParam> actualParams) {
         this.function = name;
+        this.function.setParent(this);
         this.actualParams = new ArrayList<>();
         this.actualParams.addAll(actualParams);
         this.actualParams.forEach((p) ->p.setParent(FunctionCall.this));

@@ -12,6 +12,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Solve considering TurinFiles.
@@ -60,4 +61,13 @@ public class SrcResolver implements Resolver {
         throw new UnsolvedMethodException(functionCall);
     }
 
+    @Override
+    public Optional<Node> findSymbol(String name, Node context) {
+        // TODO consider also static fields and methods
+        if (definitions.containsKey(name)) {
+            return Optional.of(definitions.get(name));
+        } else {
+            return Optional.empty();
+        }
+    }
 }

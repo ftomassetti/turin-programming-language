@@ -9,6 +9,7 @@ public class ExpressionStatement extends Statement {
 
     public ExpressionStatement(Expression expression) {
         this.expression = expression;
+        this.expression.setParent(this);
     }
 
     @Override

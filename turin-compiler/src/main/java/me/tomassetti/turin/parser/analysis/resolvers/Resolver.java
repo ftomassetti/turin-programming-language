@@ -3,7 +3,10 @@ package me.tomassetti.turin.parser.analysis.resolvers;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+
+import java.util.Optional;
 
 public interface Resolver {
 
@@ -27,4 +30,6 @@ public interface Resolver {
      * Find the JVM method to invoke.
      */
     JvmMethodDefinition findJvmDefinition(FunctionCall functionCall);
+
+    Optional<Node> findSymbol(String name, Node context);
 }

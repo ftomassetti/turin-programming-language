@@ -1,22 +1,20 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
-import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmNameUtils;
-import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.*;
-import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.analysis.UnsolvedException;
+import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
+import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
+import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
+import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.PropertyReference;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Combine several resolvers.
@@ -78,6 +76,17 @@ public class ComposedResolver implements Resolver {
             }
         }
         throw new UnsolvedMethodException(functionCall);
+    }
+
+    @Override
+    public Optional<Node> findSymbol(String name, Node context) {
+        for (Resolver element : elements) {
+            Optional<Node> res = element.findSymbol(name, context);
+            if (res.isPresent()) {
+                return res;
+            }
+        }
+        return Optional.empty();
     }
 
 }

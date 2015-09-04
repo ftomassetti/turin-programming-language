@@ -83,12 +83,14 @@ public class InFileResolver implements Resolver {
         return function.findMethodFor(argsTypes, this, staticContext);
     }
 
+    @Override
+    public Optional<Node> findSymbol(String name, Node context) {
+        return context.findSymbol(name);
+    }
+
     private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
-        }
-        if (typeName.equals("manga.MangaCharacter")) {
-            int a = 8 * 8;
         }
         for (Node child : context.getChildren()) {
             if (child instanceof TypeDefinition) {

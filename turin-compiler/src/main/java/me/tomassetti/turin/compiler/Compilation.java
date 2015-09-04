@@ -427,6 +427,8 @@ public class Compilation {
         if (function instanceof FieldAccess) {
             return pushExpression(((FieldAccess) function).getSubject());
         } else if (function instanceof ValueReference) {
+            ValueReference valueReference = (ValueReference)function;
+            valueReference.resolve(resolver);
             throw new UnsupportedOperationException(function.toString());
         } else {
             throw new UnsupportedOperationException(function.getClass().getCanonicalName());

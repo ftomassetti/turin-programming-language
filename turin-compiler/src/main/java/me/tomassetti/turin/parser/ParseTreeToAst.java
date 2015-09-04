@@ -6,6 +6,8 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
+import me.tomassetti.turin.parser.ast.imports.SingleFieldImportDeclaration;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
@@ -51,7 +53,34 @@ class ParseTreeToAst {
                 throw new UnsupportedOperationException();
             }
         }
+        for (TurinParser.ImportDeclarationContext importDeclarationContext : turinFileContext.importDeclaration()) {
+            turinFile.add(toAst(importDeclarationContext));
+        }
         return turinFile;
+    }
+
+    private ImportDeclaration toAst(TurinParser.ImportDeclarationContext importDeclarationContext) {
+        if (importDeclarationContext.allFieldsImportDeclaration() != null) {
+            throw new UnsupportedOperationException();
+        } else if (importDeclarationContext.singleFieldImportDeclaration() != null) {
+            return toAst(importDeclarationContext.singleFieldImportDeclaration());
+        } else if (importDeclarationContext.typeImportDeclaration() != null) {
+            throw new UnsupportedOperationException();
+        } else {
+            throw new UnsupportedOperationException(importDeclarationContext.toString());
+        }
+    }
+
+    private ImportDeclaration toAst(TurinParser.SingleFieldImportDeclarationContext ctx) {
+        if (ctx.alternativeName == null) {
+            return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName));
+        } else {
+            return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName), ctx.alternativeName);
+        }
+    }
+
+    private QualifiedName toAst(TurinParser.QualifiedIdContext qualifiedIdContext) {
+        throw new UnsupportedOperationException();
     }
 
     private Node toAst(TurinParser.FileMemberContext memberCtx) {

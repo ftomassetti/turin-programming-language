@@ -1,6 +1,8 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Import;
+import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +13,16 @@ public class TurinFile extends Node {
 
     private NamespaceDefinition namespaceDefinition;
     private List<Node> topNodes = new ArrayList<>();
+    private List<ImportDeclaration> imports = new ArrayList<>();
 
     public void add(PropertyDefinition propertyDefinition) {
         topNodes.add(propertyDefinition);
         propertyDefinition.parent = this;
+    }
+
+    public void add(ImportDeclaration importDeclaration) {
+        imports.add(importDeclaration);
+        importDeclaration.parent = this;
     }
 
     public NamespaceDefinition getNamespaceDefinition() {
@@ -68,7 +76,7 @@ public class TurinFile extends Node {
 
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.<Node>builder().add(namespaceDefinition).addAll(topNodes).build();
+        return ImmutableList.<Node>builder().add(namespaceDefinition).addAll(topNodes).addAll(imports).build();
     }
 
     public Optional<TurinTypeDefinition> getTopTypeDefinition(String name) {
@@ -87,5 +95,16 @@ public class TurinFile extends Node {
 
     public List<TypeDefinition> getTopTypeDefinitions() {
         return topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition)).map((n) -> (TypeDefinition)n).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Node> findSymbol(String name) {
+        for (ImportDeclaration importDeclaration : imports) {
+            Optional<Node> imported = importDeclaration.findAmongImported(name);
+            if (imported.isPresent()) {
+                return imported;
+            }
+        }
+        return Optional.empty();
     }
 }

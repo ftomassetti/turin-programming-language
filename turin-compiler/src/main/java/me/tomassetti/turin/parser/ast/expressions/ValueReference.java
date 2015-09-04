@@ -1,9 +1,12 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+
+import java.util.Optional;
 
 public class ValueReference extends Expression {
 
@@ -46,5 +49,14 @@ public class ValueReference extends Expression {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of();
+    }
+
+    public Node resolve(Resolver resolver) {
+        Optional<Node> declaration = resolver.findSymbol(name, this);
+        if (declaration.isPresent()) {
+            return declaration.get();
+        } else {
+            throw new UnsolvedSymbolException(this);
+        }
     }
 }
