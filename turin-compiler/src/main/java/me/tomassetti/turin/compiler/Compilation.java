@@ -198,6 +198,14 @@ public class Compilation {
         }
     }
 
+    private ClassFileDefinition endClass(String canonicalName) {
+        cw.visitEnd();
+
+        byte[] programBytecode = cw.toByteArray();
+        cw = null;
+        return new ClassFileDefinition(canonicalName, programBytecode);
+    }
+
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
         String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
 
@@ -213,18 +221,19 @@ public class Compilation {
         }
 
         generateConstructor(typeDefinition, internalClassName);
-        cw.visitEnd();
 
-        return ImmutableList.of(new ClassFileDefinition(typeDefinition.getQualifiedName(), cw.toByteArray()));
+        return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }
 
     private List<ClassFileDefinition> compile(Program program) {
-        String qname = program.getQualifiedName();
-        String className = qname.replaceAll("\\.", "/");
+        String canonicalClassName = program.getQualifiedName();
+        String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
 
-        cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, OBJECT_INTERNAL_NAME, null);
+        // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
 
+        // TODO consider exceptions
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
 
         nParams = 1;
@@ -245,9 +254,7 @@ public class Compilation {
         mv.visitMaxs(0, 0);
         mv.visitEnd();
 
-        byte[] programBytecode = cw.toByteArray();
-        ClassFileDefinition classFileDefinition = new ClassFileDefinition(qname, programBytecode);
-        return ImmutableList.of(classFileDefinition);
+        return ImmutableList.of(endClass(canonicalClassName));
     }
 
     private List<BytecodeSequence> compile(Statement statement) {
