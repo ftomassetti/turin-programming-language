@@ -1,4 +1,4 @@
-package me.tomassetti.turin.compiler;
+package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;

@@ -3,13 +3,13 @@ package me.tomassetti.turin.parser.analysis;
 import me.tomassetti.turin.parser.ast.Node;
 
 /**
- * Created by federico on 29/08/15.
+ * Some symbol of some sort has not being solved.
  */
-public class Unresolved extends RuntimeException {
+public class UnsolvedSymbol extends RuntimeException {
 
     private Node node;
 
-    public Unresolved(Node node) {
+    public UnsolvedSymbol(Node node) {
         super("Unresolved " + node);
         this.node = node;
     }

@@ -3,8 +3,8 @@ package me.tomassetti.turin.parser.analysis.resolvers;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.Unresolved;
-import me.tomassetti.turin.parser.analysis.UnresolvedType;
+import me.tomassetti.turin.parser.analysis.UnsolvedSymbol;
+import me.tomassetti.turin.parser.analysis.UnsolvedType;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -35,7 +35,7 @@ public class InFileResolver implements Resolver {
             }
         }
         if (context.getParent() == null) {
-            throw new Unresolved(propertyReference);
+            throw new UnsolvedSymbol(propertyReference);
         }
         return findDefinitionIn(propertyReference, context.getParent());
     }
@@ -50,7 +50,7 @@ public class InFileResolver implements Resolver {
         if (result.isPresent()) {
             return result.get();
         } else {
-            throw new UnresolvedType(typeName, context);
+            throw new UnsolvedType(typeName, context);
         }
     }
 
