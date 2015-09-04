@@ -4,9 +4,6 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class ExpressionStatement extends Statement {
     private Expression expression;
 

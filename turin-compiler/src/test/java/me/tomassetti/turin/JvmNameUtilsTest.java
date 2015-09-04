@@ -7,28 +7,28 @@ import static org.junit.Assert.*;
 public class JvmNameUtilsTest {
 
     @Test
-    public void isValidPackageNamePositiveCase(){
-        assertEquals(true, JvmNameUtils.isValidPackageName("me.tomassetti.turin"));
+    public void isValidQualifiedNamePositiveCase(){
+        assertEquals(true, JvmNameUtils.isValidQualifiedName("me.tomassetti.turin"));
     }
 
     @Test
-    public void isValidPackageNameWithAPieceStartingWithDigit(){
-        assertEquals(false, JvmNameUtils.isValidPackageName("me.0tomassetti.turin"));
+    public void isValidQualifiedNameWithAPieceStartingWithDigit(){
+        assertEquals(false, JvmNameUtils.isValidQualifiedName("me.0tomassetti.turin"));
     }
 
     @Test
-    public void isValidPackageNameWithAPieceEmptyInTheMiddle(){
-        assertEquals(false, JvmNameUtils.isValidPackageName("me..turin"));
+    public void isValidQualifiedNameWithAPieceEmptyInTheMiddle(){
+        assertEquals(false, JvmNameUtils.isValidQualifiedName("me..turin"));
     }
 
     @Test
-    public void isValidPackageNameWithAPieceEmptyAtStart(){
-        assertEquals(false, JvmNameUtils.isValidPackageName(".tomassetti.turin"));
+    public void isValidQualifiedNameWithAPieceEmptyAtStart(){
+        assertEquals(false, JvmNameUtils.isValidQualifiedName(".tomassetti.turin"));
     }
 
     @Test
-    public void isValidPackageNameWithAPieceEmptyAtEnd(){
-        assertEquals(false, JvmNameUtils.isValidPackageName("me.tomassetti."));
+    public void isValidQualifiedNameWithAPieceEmptyAtEnd(){
+        assertEquals(false, JvmNameUtils.isValidQualifiedName("me.tomassetti."));
     }
 
     @Test

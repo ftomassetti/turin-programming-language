@@ -8,7 +8,7 @@ public class NamespaceDefinition extends Node {
     private String name;
 
     public NamespaceDefinition(String name) {
-        if (!JvmNameUtils.isValidPackageName(name)) {
+        if (!JvmNameUtils.isValidQualifiedName(name)) {
             throw new IllegalArgumentException(name);
         }
         this.name = name;

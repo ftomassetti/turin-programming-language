@@ -9,7 +9,7 @@ public class QualifiedName extends Node {
     private String name;
 
     public QualifiedName(QualifiedName base, String name) {
-        if (!JvmNameUtils.isValidPackageName(name)) {
+        if (!JvmNameUtils.isValidQualifiedName(name)) {
             throw new IllegalArgumentException();
         }
         this.base = base;
@@ -17,7 +17,7 @@ public class QualifiedName extends Node {
     }
 
     public QualifiedName(String name) {
-        if (!JvmNameUtils.isValidPackageName(name)) {
+        if (!JvmNameUtils.isValidQualifiedName(name)) {
             throw new IllegalArgumentException();
         }
         this.name = name;

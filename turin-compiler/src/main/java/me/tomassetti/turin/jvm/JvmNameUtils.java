@@ -24,26 +24,6 @@ public final class JvmNameUtils {
         // prevent instantiation
     }
 
-    public static boolean isValidPackageName(String name){
-        if (name == null) {
-            throw new IllegalArgumentException();
-        }
-        if (name.isEmpty()) {
-            return false;
-        }
-        // the part would be discarded, we have to check explicitly
-        if (name.endsWith(".")){
-            return false;
-        }
-        String[] parts = name.split("\\.");
-        for (String part : parts) {
-            if (!isValidJavaIdentifier(part)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static boolean isValidJavaIdentifier(String name){
         if (name == null) {
             throw new IllegalArgumentException();
@@ -91,7 +71,23 @@ public final class JvmNameUtils {
         return true;
     }
 
-    public static boolean isValidQualifiedName(String typeName) {
-        return isValidPackageName(typeName);
+    public static boolean isValidQualifiedName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException();
+        }
+        if (name.isEmpty()) {
+            return false;
+        }
+        // the part would be discarded, we have to check explicitly
+        if (name.endsWith(".")){
+            return false;
+        }
+        String[] parts = name.split("\\.");
+        for (String part : parts) {
+            if (!isValidJavaIdentifier(part)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

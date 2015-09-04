@@ -6,9 +6,6 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class VariableDeclaration extends Statement {
     private TypeUsage type;
     private String name;
