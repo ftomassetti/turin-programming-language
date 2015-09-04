@@ -6,10 +6,7 @@ import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.Program;
-import me.tomassetti.turin.parser.ast.TurinFile;
-import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
+import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
@@ -207,6 +204,10 @@ public class Compilation {
         return new ClassFileDefinition(canonicalName, programBytecode);
     }
 
+    private void generateEqualsMethod(TypeDefinition typeDefinition, String internalClassName) {
+        // TODO implement me
+    }
+
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
         String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
 
@@ -222,6 +223,7 @@ public class Compilation {
         }
 
         generateConstructor(typeDefinition, internalClassName);
+        generateEqualsMethod(typeDefinition, internalClassName);
 
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }
