@@ -13,6 +13,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.*;
 
 import java.util.ArrayList;
@@ -28,8 +29,10 @@ public class Compilation {
 
     private static final int JAVA_8_CLASS_VERSION = 52;
     public static final int LOCALVAR_INDEX_FOR_THIS_IN_METHOD = 0;
+    private static final int LOCALVAR_INDEX_FOR_PARAM_0 = 1;
 
     private static final String OBJECT_INTERNAL_NAME = JvmNameUtils.canonicalToInternal(Object.class.getCanonicalName());
+    private static final String OBJECT_DESCRIPTOR = "L" + OBJECT_INTERNAL_NAME + ";";
 
     private ClassWriter cw;
     private Resolver resolver;
@@ -204,8 +207,81 @@ public class Compilation {
         return new ClassFileDefinition(canonicalName, programBytecode);
     }
 
-    private void generateEqualsMethod(TypeDefinition typeDefinition, String internalClassName) {
-        // TODO implement me
+    private void generateEqualsMethod(TurinTypeDefinition typeDefinition, String internalClassName) {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "equals", "(" + OBJECT_DESCRIPTOR + ")Z", "(" + OBJECT_DESCRIPTOR + ")Z", null);
+        mv.visitCode();
+
+        // if (this == o) return true;
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_PARAM_0);
+        Label paramAndThisAreNotTheSame = new Label();
+        mv.visitJumpInsn(IF_ACMPNE, paramAndThisAreNotTheSame);
+        new ReturnTrue().operate(mv);
+        mv.visitLabel(paramAndThisAreNotTheSame);
+
+        // if (o == null || getClass() != o.getClass()) return false;
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_PARAM_0);
+        Label paramIsNull = new Label();
+        mv.visitJumpInsn(IFNULL, paramIsNull);
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_PARAM_0);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false);
+        Label paramHasSameClassAsThis = new Label();
+        mv.visitJumpInsn(IF_ACMPEQ, paramHasSameClassAsThis);
+        mv.visitLabel(paramIsNull);
+        new ReturnFalse().operate(mv);
+        mv.visitLabel(paramHasSameClassAsThis);
+
+        // MyType other = (MyType) o;
+        mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_PARAM_0);
+        mv.visitTypeInsn(CHECKCAST, internalClassName);
+        final int localvar_index_for_other = 2;
+        mv.visitVarInsn(ASTORE, localvar_index_for_other);
+
+        // if (!this.aField.equals(other.aField)) return false;
+        for (Property property : typeDefinition.getDirectProperties(resolver)) {
+            TypeUsage propertyTypeUsage = property.getTypeUsage();
+            String fieldTypeDescription = propertyTypeUsage.jvmType(resolver).getDescriptor();
+
+            mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
+            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescription);
+            mv.visitVarInsn(ALOAD, localvar_index_for_other);
+            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescription);
+            Label propertyIsEqual = new Label();
+
+            if (propertyTypeUsage.isPrimitive()) {
+                if (propertyTypeUsage.asPrimitiveTypeUsage().isLong()) {
+                    mv.visitInsn(LCMP);
+                    mv.visitJumpInsn(IFEQ, propertyIsEqual);
+                } else if (propertyTypeUsage.asPrimitiveTypeUsage().isFloat()) {
+                    mv.visitInsn(FCMPL);
+                    mv.visitJumpInsn(IFEQ, propertyIsEqual);
+                } else if (propertyTypeUsage.asPrimitiveTypeUsage().isDouble()) {
+                    mv.visitInsn(DCMPL);
+                    mv.visitJumpInsn(IFEQ, propertyIsEqual);
+                } else {
+                    mv.visitJumpInsn(IF_ICMPEQ, propertyIsEqual);
+                }
+            } else {
+                boolean isInterface = propertyTypeUsage.asReferenceTypeUsage().isInterface(resolver);
+                if (isInterface) {
+                    mv.visitMethodInsn(INVOKEINTERFACE, propertyTypeUsage.jvmType(resolver).getInternalName(), "equals", "(Ljava/lang/Object;)Z", true);
+                } else {
+                    mv.visitMethodInsn(INVOKEVIRTUAL, propertyTypeUsage.jvmType(resolver).getInternalName(), "equals", "(Ljava/lang/Object;)Z", false);
+                }
+                mv.visitJumpInsn(IFNE, propertyIsEqual);
+            }
+
+            new ReturnFalse().operate(mv);
+            mv.visitLabel(propertyIsEqual);
+        }
+
+        new ReturnTrue().operate(mv);
+
+        // calculated for us
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {

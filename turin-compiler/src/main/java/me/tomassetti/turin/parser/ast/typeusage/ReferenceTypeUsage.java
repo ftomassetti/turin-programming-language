@@ -15,6 +15,22 @@ import java.util.List;
  */
 public class ReferenceTypeUsage extends TypeUsage {
 
+    public boolean isInterface(Resolver resolver) {
+        return getTypeDefinition(resolver).isInterface();
+    }
+
+    public boolean isClass(Resolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isEnum(Resolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean isTypeVariable(Resolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
     public class TypeParameterValues {
         private List<TypeUsage> usages = new ArrayList<>();
         private List<String> names = new ArrayList<>();

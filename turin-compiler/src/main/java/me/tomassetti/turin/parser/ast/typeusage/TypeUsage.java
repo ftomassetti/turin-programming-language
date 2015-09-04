@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
+import jdk.nashorn.internal.codegen.types.Type;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
@@ -41,5 +42,9 @@ public abstract class TypeUsage extends Node {
 
     public boolean isReference() {
         return this instanceof ReferenceTypeUsage;
+    }
+
+    public PrimitiveTypeUsage asPrimitiveTypeUsage() {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

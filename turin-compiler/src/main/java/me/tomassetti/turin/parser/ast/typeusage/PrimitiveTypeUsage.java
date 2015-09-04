@@ -81,4 +81,21 @@ public class PrimitiveTypeUsage extends TypeUsage {
         }
         return false;
     }
+
+    @Override
+    public PrimitiveTypeUsage asPrimitiveTypeUsage() {
+        return this;
+    }
+
+    public boolean isLong() {
+        return this == PrimitiveTypeUsage.LONG;
+    }
+
+    public boolean isFloat() {
+        return this == PrimitiveTypeUsage.FLOAT;
+    }
+
+    public boolean isDouble() {
+        return this == PrimitiveTypeUsage.DOUBLE;
+    }
 }

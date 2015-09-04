@@ -51,4 +51,16 @@ public class ReflectionBasedTypeDefinitionTest {
         assertEquals(0, ancestors.size());
     }
 
+    @Test
+    public void isInterfaceNegativeCase() {
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        assertEquals(false, typeDefinition.isInterface());
+    }
+
+    @Test
+    public void isInterfacePositiveCase() {
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
+        assertEquals(true, typeDefinition.isInterface());
+    }
+
 }

@@ -37,4 +37,7 @@ public abstract class TypeDefinition extends Node {
     public abstract TypeUsage getField(String fieldName, boolean staticContext);
 
     public abstract List<ReferenceTypeUsage> getAllAncestors(Resolver resolver);
+
+    public abstract boolean isInterface();
+
 }

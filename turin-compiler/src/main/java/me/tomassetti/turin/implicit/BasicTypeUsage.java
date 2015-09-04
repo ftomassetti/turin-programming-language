@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
@@ -15,16 +16,16 @@ import java.util.Optional;
  */
 public class BasicTypeUsage extends TypeUsage {
 
-    public static BasicTypeUsage UINT = new BasicTypeUsage("UInt", "I");
+    public static BasicTypeUsage UINT = new BasicTypeUsage("UInt", PrimitiveTypeUsage.INT);
 
     private static ImmutableList<BasicTypeUsage> BASIC_TYPES = ImmutableList.of(UINT);
 
     private String name;
-    private String jvmType;
+    private PrimitiveTypeUsage correspondingPrimitiveTypeUsage;
 
-    private BasicTypeUsage(String name, String jvmType) {
+    private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage) {
         this.name = name;
-        this.jvmType = jvmType;
+        this.correspondingPrimitiveTypeUsage = correspondingPrimitiveTypeUsage;
     }
 
     @Override
@@ -33,8 +34,13 @@ public class BasicTypeUsage extends TypeUsage {
     }
 
     @Override
+    public PrimitiveTypeUsage asPrimitiveTypeUsage() {
+        return correspondingPrimitiveTypeUsage;
+    }
+
+    @Override
     public JvmType jvmType(Resolver resolver) {
-        return new JvmType(jvmType);
+        return correspondingPrimitiveTypeUsage.jvmType(resolver);
     }
 
     @Override

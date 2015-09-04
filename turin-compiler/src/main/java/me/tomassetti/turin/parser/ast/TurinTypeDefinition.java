@@ -101,6 +101,12 @@ public class TurinTypeDefinition extends TypeDefinition {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public boolean isInterface() {
+        // TODO when it will be possible to declare interface fix this
+        return false;
+    }
+
     private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, Resolver resolver) {
         TypeUsage[] types = new TypeUsage[actualParams.size()];
         int i = 0;

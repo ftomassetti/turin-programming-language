@@ -1,1 +1,2 @@
-java -classpath "/home/federico/.m2/repository/org/ow2/asm/asm/5.0.4/asm-5.0.4.jar:/home/federico/.m2/repository/org/ow2/asm/asm-util/5.0.4/asm-util-5.0.4.jar:/home/federico/.m2/repository/org/ow2/asm/asm-tree/5.0.4/asm-tree-5.0.4.jar" org.objectweb.asm.util.ASMifier turin-compiler/target/classes/me/tomassetti/turin/Prova.class
+#!/usr/bin/env bash
+java -classpath "/home/federico/.m2/repository/org/ow2/asm/asm/5.0.4/asm-5.0.4.jar:/home/federico/.m2/repository/org/ow2/asm/asm-util/5.0.4/asm-util-5.0.4.jar:/home/federico/.m2/repository/org/ow2/asm/asm-tree/5.0.4/asm-tree-5.0.4.jar" org.objectweb.asm.util.ASMifier turin-compiler/target/classes/me/tomassetti/turin/parser/ast/expressions/Creation.class
