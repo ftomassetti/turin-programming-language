@@ -240,14 +240,14 @@ public class Compilation {
         mv.visitVarInsn(ASTORE, localvar_index_for_other);
 
         // if (!this.aField.equals(other.aField)) return false;
-        for (Property property : typeDefinition.getDirectProperties(resolver)) {
+        for (Property property : typeDefinition.getAllProperties(resolver)) {
             TypeUsage propertyTypeUsage = property.getTypeUsage();
-            String fieldTypeDescription = propertyTypeUsage.jvmType(resolver).getDescriptor();
+            String fieldTypeDescriptor = propertyTypeUsage.jvmType(resolver).getDescriptor();
 
             mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
-            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescription);
+            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescriptor);
             mv.visitVarInsn(ALOAD, localvar_index_for_other);
-            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescription);
+            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescriptor);
             Label propertyIsEqual = new Label();
 
             if (propertyTypeUsage.isPrimitive()) {
@@ -284,6 +284,61 @@ public class Compilation {
         mv.visitEnd();
     }
 
+    private void generateHashCodeMethod(TurinTypeDefinition typeDefinition, String internalClassName) {
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "hashCode", "()I", "()I", null);
+        mv.visitCode();
+
+        final int localvar_index_of_result = 1;
+
+        // int result = 1;
+        mv.visitInsn(ICONST_1);
+        mv.visitVarInsn(ISTORE, localvar_index_of_result);
+
+        for (Property property : typeDefinition.getAllProperties(resolver)) {
+            // result = 31 * result + this.aField.hashCode();
+            TypeUsage propertyTypeUsage = property.getTypeUsage();
+            String fieldTypeDescriptor = propertyTypeUsage.jvmType(resolver).getDescriptor();
+
+            // 31 is just a prime number by which we multiply the current value of result
+            mv.visitIntInsn(BIPUSH, 31);
+            mv.visitVarInsn(ILOAD, localvar_index_of_result);
+            mv.visitInsn(IMUL);
+
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, internalClassName, property.getName(), fieldTypeDescriptor);
+
+            if (propertyTypeUsage.isPrimitive()) {
+                if (propertyTypeUsage.asPrimitiveTypeUsage().isLong()) {
+                    mv.visitMethodInsn(INVOKESTATIC, "java/lang/Long", "hashCode", "(J)I", false);
+                } else if (propertyTypeUsage.asPrimitiveTypeUsage().isFloat()) {
+                    mv.visitMethodInsn(INVOKESTATIC, "java/lang/Float", "hashCode", "(F)I", false);
+                } else if (propertyTypeUsage.asPrimitiveTypeUsage().isDouble()) {
+                    mv.visitMethodInsn(INVOKESTATIC, "java/lang/Double", "hashCode", "(D)I", false);
+                } else {
+                    // nothing to do, the value is already on the stack and we can sum it directly
+                }
+            } else {
+                boolean isInterface = propertyTypeUsage.asReferenceTypeUsage().isInterface(resolver);
+                if (isInterface) {
+                    mv.visitMethodInsn(INVOKEINTERFACE, propertyTypeUsage.jvmType(resolver).getInternalName(), "hashCode", "()I", true);
+                } else {
+                    mv.visitMethodInsn(INVOKEVIRTUAL, propertyTypeUsage.jvmType(resolver).getInternalName(), "hashCode", "()I", false);
+                }
+            }
+
+            mv.visitInsn(IADD);
+            mv.visitVarInsn(ISTORE, localvar_index_of_result);
+        }
+
+        // return result;
+        mv.visitVarInsn(ILOAD, localvar_index_of_result);
+        mv.visitInsn(IRETURN);
+
+        // calculated for us
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+    }
+
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
         String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
 
@@ -300,6 +355,7 @@ public class Compilation {
 
         generateConstructor(typeDefinition, internalClassName);
         generateEqualsMethod(typeDefinition, internalClassName);
+        generateHashCodeMethod(typeDefinition, internalClassName);
 
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }

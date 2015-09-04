@@ -306,4 +306,65 @@ public class CompilerTest {
         assertTrue(ranma1.equals(ranma2));
     }
 
+    @Test
+    public void hashcodeIsGeneratedCorrectlyPositiveCase() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        TurinFile turinFile = mangaAst();
+
+        // generate bytecode
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, mangaCharacterClass.getConstructors().length);
+        Object ranma1 = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", 16);
+        Object ranma2 = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", 16);
+
+        assertTrue(ranma1.hashCode() == ranma2.hashCode());
+        assertTrue(ranma2.hashCode() == ranma1.hashCode());
+    }
+
+    @Test
+    public void hashcodeIsGeneratedCorrectlyDifferentName() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        TurinFile turinFile = mangaAst();
+
+        // generate bytecode
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, mangaCharacterClass.getConstructors().length);
+        Object ranma1 = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", 16);
+        Object ranma2 = mangaCharacterClass.getConstructors()[0].newInstance("Ranma Saotome", 16);
+
+        assertFalse(ranma1.hashCode() == ranma2.hashCode());
+        assertFalse(ranma2.hashCode() == ranma1.hashCode());
+    }
+
+    @Test
+    public void hashcodeIsGeneratedCorrectlyDifferentAge() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
+        TurinFile turinFile = mangaAst();
+
+        // generate bytecode
+        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, mangaCharacterClass.getConstructors().length);
+        Object ranma1 = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", 16);
+        Object ranma2 = mangaCharacterClass.getConstructors()[0].newInstance("Ranma", 18);
+
+        assertFalse(ranma1.hashCode() == ranma2.hashCode());
+        assertFalse(ranma2.hashCode() == ranma1.hashCode());
+    }
+
+
 }
