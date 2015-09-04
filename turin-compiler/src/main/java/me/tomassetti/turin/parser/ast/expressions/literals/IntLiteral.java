@@ -1,13 +1,11 @@
-package me.tomassetti.turin.parser.ast.expressions;
+package me.tomassetti.turin.parser.ast.expressions.literals;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class IntLiteral extends Expression {
 
     private int value;

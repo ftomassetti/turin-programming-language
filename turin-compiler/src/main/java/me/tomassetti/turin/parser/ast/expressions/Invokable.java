@@ -3,9 +3,6 @@ package me.tomassetti.turin.parser.ast.expressions;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by federico on 29/08/15.
- */
 public abstract class Invokable extends Expression {
     protected List<ActualParam> actualParams;
 

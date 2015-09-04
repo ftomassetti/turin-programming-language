@@ -5,9 +5,6 @@ import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-/**
- * Created by federico on 01/09/15.
- */
 public class ValueReference extends Expression {
 
     private String name;

@@ -9,9 +9,6 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 
-/**
- * Created by federico on 01/09/15.
- */
 public class FieldAccess extends Expression {
 
     private Expression subject;

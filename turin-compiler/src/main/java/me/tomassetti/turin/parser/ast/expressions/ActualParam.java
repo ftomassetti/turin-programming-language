@@ -3,9 +3,6 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.ast.Node;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class ActualParam extends Node {
     private String name;
     private Expression value;

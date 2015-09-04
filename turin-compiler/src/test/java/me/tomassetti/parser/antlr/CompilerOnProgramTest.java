@@ -7,6 +7,7 @@ import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
+import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import org.junit.Test;

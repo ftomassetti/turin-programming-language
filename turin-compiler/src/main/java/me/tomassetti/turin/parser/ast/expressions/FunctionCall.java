@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by federico on 29/08/15.
- */
 public class FunctionCall extends Invokable {
 
     private Expression function;
@@ -66,7 +63,4 @@ public class FunctionCall extends Invokable {
         throw new UnsupportedOperationException();
     }
 
-    public String jvmSignature(Resolver resolver) {
-        throw new UnsupportedOperationException();
-    }
 }

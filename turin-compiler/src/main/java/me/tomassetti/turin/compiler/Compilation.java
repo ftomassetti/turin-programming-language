@@ -11,6 +11,8 @@ import me.tomassetti.turin.parser.ast.Program;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
+import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
+import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;

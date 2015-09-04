@@ -8,9 +8,6 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by federico on 01/09/15.
- */
 public class StringInterpolation extends Expression {
 
     private List<Expression> elements = new ArrayList<>();

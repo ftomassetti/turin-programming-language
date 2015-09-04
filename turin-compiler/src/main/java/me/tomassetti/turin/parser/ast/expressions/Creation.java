@@ -9,9 +9,6 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.*;
 
 
-/**
- * Created by federico on 29/08/15.
- */
 public class Creation extends Invokable {
 
     private String typeName;
@@ -65,10 +62,6 @@ public class Creation extends Invokable {
     public TypeUsage calcType(Resolver resolver) {
         // this node will not have a context so we resolve the type already
         return resolver.findTypeUsageIn(typeName, this);
-    }
-
-    public String jvmSignature(Resolver resolver) {
-        return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams).getDescriptor();
     }
 
     public JvmConstructorDefinition jvmDefinition(Resolver resolver) {
