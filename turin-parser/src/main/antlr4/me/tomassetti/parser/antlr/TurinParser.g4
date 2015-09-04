@@ -42,7 +42,9 @@ allFieldsImportDeclaration:
 
 typeUsage:
     ref=TID
-    | arrayBase=typeUsage LSQUARE RSQUARE;
+    | arrayBase=typeUsage LSQUARE RSQUARE
+    | primitiveType = PRIMITIVE_TYPE
+    | basicType = BASIC_TYPE;
 
 //
 

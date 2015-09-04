@@ -65,7 +65,7 @@ public class InFileResolver implements Resolver {
         }
 
         // Note that our Turin basic types shadow other types
-        Optional<BasicTypeUsage> basicType = BasicTypeUsage.getBasicType(typeName);
+        Optional<BasicTypeUsage> basicType = BasicTypeUsage.findByName(typeName);
         if (basicType.isPresent()) {
             return basicType.get();
         }

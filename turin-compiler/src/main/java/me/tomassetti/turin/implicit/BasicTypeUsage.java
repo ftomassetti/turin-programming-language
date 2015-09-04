@@ -48,7 +48,15 @@ public class BasicTypeUsage extends TypeUsage {
         return Collections.emptyList();
     }
 
-    public static Optional<BasicTypeUsage> getBasicType(String typeName) {
+    @Override
+    public String toString() {
+        return "BasicTypeUsage{" +
+                "name='" + name + '\'' +
+                ", correspondingPrimitiveTypeUsage=" + correspondingPrimitiveTypeUsage +
+                '}';
+    }
+
+    public static Optional<BasicTypeUsage> findByName(String typeName) {
         for (BasicTypeUsage basicTypeUsage : BASIC_TYPES) {
             if (basicTypeUsage.name.equals(typeName)) {
                 return Optional.of(basicTypeUsage);
@@ -56,4 +64,14 @@ public class BasicTypeUsage extends TypeUsage {
         }
         return Optional.empty();
     }
+
+    public static BasicTypeUsage getByName(String typeName) {
+        for (BasicTypeUsage basicTypeUsage : BASIC_TYPES) {
+            if (basicTypeUsage.name.equals(typeName)) {
+                return basicTypeUsage;
+            }
+        }
+        throw new IllegalArgumentException(typeName);
+    }
+
 }

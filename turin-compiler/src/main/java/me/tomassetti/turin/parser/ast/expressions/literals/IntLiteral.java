@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 public class IntLiteral extends Expression {
@@ -45,7 +46,7 @@ public class IntLiteral extends Expression {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        return PrimitiveTypeUsage.INT;
     }
 
     public int getValue() {

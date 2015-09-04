@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser;
 
 import me.tomassetti.parser.antlr.TurinParser;
+import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
@@ -8,6 +9,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -107,6 +109,10 @@ class ParseTreeToAst {
     private TypeUsage toAst(TurinParser.TypeUsageContext type) {
         if (type.ref != null) {
             return new ReferenceTypeUsage(type.ref.getText());
+        } else if (type.primitiveType != null) {
+            return PrimitiveTypeUsage.getByName(type.primitiveType.getText());
+        } else if (type.basicType != null) {
+            return BasicTypeUsage.getByName(type.basicType.getText());
         } else {
             throw new UnsupportedOperationException();
         }

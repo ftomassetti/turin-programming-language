@@ -38,6 +38,9 @@ SLASH:    '/';
 PLUS:     '+';
 MINUS:    '-';
 
+PRIMITIVE_TYPE: F_PRIMITIVE_TYPE;
+BASIC_TYPE:     F_BASIC_TYPE;
+
 ID: F_ID;
 // Only for types
 TID: F_TID;
@@ -60,7 +63,8 @@ fragment F_ID: ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
 fragment F_TID: ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_INT: '0'|(('1'..'9')('0'..'9')*);
-
+fragment F_PRIMITIVE_TYPE: 'Byte'|'Int'|'Long'|'Bool'|'Char'|'Float'|'Double'|'Short';
+fragment F_BASIC_TYPE: 'UInt';
 
 mode IN_STRING;
 
@@ -74,6 +78,8 @@ fragment SHARP : '#'{ _input.LA(1)!='{' }?;
 mode IN_INTERPOLATION;
 
 INTERPOLATION_END : '}' -> popMode;
+I_PRIMITIVE_TYPE: F_PRIMITIVE_TYPE -> type(PRIMITIVE_TYPE);
+I_BASIC_TYPE:     F_BASIC_TYPE -> type(BASIC_TYPE);
 I_ID: F_ID   -> type(ID);
 I_TID: F_TID -> type(TID);
 I_INT: F_INT -> type(INT);
