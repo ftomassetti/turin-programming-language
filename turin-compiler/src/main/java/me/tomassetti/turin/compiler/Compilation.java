@@ -242,9 +242,7 @@ public class Compilation {
         mv.visitCode();
 
         for (Statement statement : program.getStatements()) {
-            for (BytecodeSequence bytecodeSequence : compile(statement)){
-                bytecodeSequence.operate(mv);
-            }
+            compile(statement).operate(mv);
         }
 
         // Implicit return
@@ -257,12 +255,12 @@ public class Compilation {
         return ImmutableList.of(endClass(canonicalClassName));
     }
 
-    private List<BytecodeSequence> compile(Statement statement) {
+    private BytecodeSequence compile(Statement statement) {
         if (statement instanceof VariableDeclaration) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
             int pos = nParams + nLocalVars;
             nLocalVars += 1;
-            return ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver)));
+            return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
         } else if (statement instanceof ExpressionStatement) {
             return executeEpression(((ExpressionStatement)statement).getExpression());
         } else {
@@ -289,30 +287,28 @@ public class Compilation {
         }
     }
 
-    private List<BytecodeSequence> pushInstance(FunctionCall functionCall) {
+    private BytecodeSequence pushInstance(FunctionCall functionCall) {
         Expression function = functionCall.getFunction();
         if (function instanceof FieldAccess) {
-            return ImmutableList.of(pushExpression(((FieldAccess) function).getSubject()));
+            return pushExpression(((FieldAccess) function).getSubject());
         } else {
             throw new UnsupportedOperationException(functionCall.getFunction().getClass().getCanonicalName());
         }
     }
 
-    private List<BytecodeSequence> executeEpression(Expression expr) {
+    private BytecodeSequence executeEpression(Expression expr) {
         if (expr instanceof IntLiteral) {
-            // no op
-            return Collections.emptyList();
+            return NoOp.getInstance();
         } else if (expr instanceof StringLiteral) {
-            // no op
-            return Collections.emptyList();
+            return NoOp.getInstance();
         } else if (expr instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)expr;
-            List<BytecodeSequence> instancePush = pushInstance(functionCall);
+            BytecodeSequence instancePush = pushInstance(functionCall);
             List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
             JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
-            return ImmutableList.<BytecodeSequence>builder().addAll(instancePush).addAll(argumentsPush).add(new MethodInvocation(methodDefinition)).build();
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocation(methodDefinition)).build());
         } else {
             throw new UnsupportedOperationException(expr.toString());
         }
