@@ -1,4 +1,4 @@
-package me.tomassetti.compiler;
+package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
@@ -10,9 +10,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class ReferenceTypeUsageTest {
 
     private PropertyReference nameRef;

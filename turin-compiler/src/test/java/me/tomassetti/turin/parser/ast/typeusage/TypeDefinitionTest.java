@@ -1,18 +1,15 @@
-package me.tomassetti.compiler;
+package me.tomassetti.turin.parser.ast.typeusage;
 
+import me.tomassetti.turin.compiler.ExamplesAst;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class TypeDefinitionTest {
 
     private TurinTypeDefinition mangaCharacter;

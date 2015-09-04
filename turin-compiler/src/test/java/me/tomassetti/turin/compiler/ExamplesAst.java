@@ -1,4 +1,4 @@
-package me.tomassetti.compiler;
+package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;

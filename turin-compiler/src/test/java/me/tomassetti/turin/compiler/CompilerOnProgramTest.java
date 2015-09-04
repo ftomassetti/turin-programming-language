@@ -1,4 +1,4 @@
-package me.tomassetti.parser.antlr;
+package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;

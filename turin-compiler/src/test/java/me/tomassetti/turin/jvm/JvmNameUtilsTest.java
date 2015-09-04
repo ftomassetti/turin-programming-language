@@ -1,4 +1,4 @@
-package me.tomassetti.turin;
+package me.tomassetti.turin.jvm;
 
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import org.junit.Test;
