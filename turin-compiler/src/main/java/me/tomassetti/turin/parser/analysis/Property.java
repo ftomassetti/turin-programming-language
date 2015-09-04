@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;

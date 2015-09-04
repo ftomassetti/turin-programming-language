@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.List;

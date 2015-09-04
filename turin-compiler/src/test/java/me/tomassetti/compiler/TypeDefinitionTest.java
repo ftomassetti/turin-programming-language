@@ -1,8 +1,8 @@
 package me.tomassetti.compiler;
 
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.turin.parser.analysis.InFileResolver;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Before;

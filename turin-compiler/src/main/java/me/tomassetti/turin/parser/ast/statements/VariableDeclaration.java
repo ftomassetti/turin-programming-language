@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.statements;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;

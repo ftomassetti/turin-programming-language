@@ -1,7 +1,10 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.parser.analysis.resolvers;
 
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.Unresolved;
+import me.tomassetti.turin.parser.analysis.UnresolvedType;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -39,7 +42,8 @@ public class InFileResolver implements Resolver {
 
     @Override
     public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
-        if (typeName.contains("/")) {
+        // primitive names are not valid here
+        if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
         Optional<TypeDefinition> result = findTypeDefinitionInHelper(typeName, context);
@@ -55,7 +59,12 @@ public class InFileResolver implements Resolver {
         if (PrimitiveTypeUsage.isPrimitiveTypeName(typeName)){
             return PrimitiveTypeUsage.getByName(typeName);
         }
+        // note that this check has to come after the check for primitive types
+        if (!JvmNameUtils.isValidQualifiedName(typeName)) {
+            throw new IllegalArgumentException(typeName);
+        }
 
+        // Note that our Turin basic types shadow other types
         Optional<BasicTypeUsage> basicType = BasicTypeUsage.getBasicType(typeName);
         if (basicType.isPresent()) {
             return basicType.get();
@@ -66,23 +75,23 @@ public class InFileResolver implements Resolver {
 
     @Override
     public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
-        List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream().map((ap)->ap.calcType(this).jvmType(this)).collect(Collectors.toList());
+        List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream()
+                .map((ap) -> ap.calcType(this).jvmType(this))
+                .collect(Collectors.toList());
         Expression function = functionCall.getFunction();
         boolean staticContext = function.isType(this);
         return function.findMethodFor(argsTypes, this, staticContext);
     }
 
     private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context) {
-        if (typeName.contains("/")) {
-            throw new IllegalArgumentException(typeName);
-        }
-        if (typeName.startsWith(".")) {
+        if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
         for (Node child : context.getChildren()) {
             if (child instanceof TypeDefinition) {
                 TypeDefinition typeDefinition = (TypeDefinition)child;
-                if (typeDefinition.getName().equals(typeName)) {
+                if (typeDefinition.getName().equals(typeName)
+                        || typeDefinition.getQualifiedName().equals(typeName)) {
                     return Optional.of(typeDefinition);
                 }
             }
@@ -100,7 +109,7 @@ public class InFileResolver implements Resolver {
     }
 
     private Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
-        if (typeName.contains("/")) {
+        if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
         return ReflectionTypeDefinitionFactory.getInstance().findTypeDefinition(typeName);

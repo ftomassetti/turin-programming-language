@@ -4,7 +4,7 @@ import me.tomassetti.turin.*;
 import me.tomassetti.turin.compiler.ClassFileDefinition;
 import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.turin.parser.analysis.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.TurinFile;

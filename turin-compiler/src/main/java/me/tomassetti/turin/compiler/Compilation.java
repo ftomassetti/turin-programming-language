@@ -5,7 +5,7 @@ import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Program;
 import me.tomassetti.turin.parser.ast.TurinFile;
@@ -17,7 +17,6 @@ import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import org.objectweb.asm.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

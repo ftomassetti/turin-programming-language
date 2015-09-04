@@ -2,9 +2,9 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.UnsolvedConstructorException;
-import me.tomassetti.turin.parser.analysis.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.literals.FloatLiteral;

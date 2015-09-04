@@ -1,6 +1,6 @@
 package me.tomassetti.turin.jvm;
 
-import me.tomassetti.turin.parser.analysis.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.Opcodes;
 
@@ -29,12 +29,12 @@ public enum JvmTypeCategory {
     }
 
     public static JvmTypeCategory from(TypeUsage typeUsage, Resolver resolver) {
-        String jvmType = typeUsage.jvmType(resolver).getSignature();
-        if (jvmType.startsWith("L")){
+        String signature = typeUsage.jvmType(resolver).getSignature();
+        if (signature.startsWith("L")){
             return REFERENCE;
         }
 
-        switch (jvmType) {
+        switch (signature) {
             case "Z":
             case "B":
             case "S":
@@ -48,7 +48,7 @@ public enum JvmTypeCategory {
             case "D":
                 return DOUBLE;
             default:
-                throw new UnsupportedOperationException(jvmType);
+                throw new UnsupportedOperationException(signature);
         }
     }
 }

@@ -90,4 +90,8 @@ public final class JvmNameUtils {
         }
         return true;
     }
+
+    public static boolean isValidQualifiedName(String typeName) {
+        return isValidPackageName(typeName);
+    }
 }

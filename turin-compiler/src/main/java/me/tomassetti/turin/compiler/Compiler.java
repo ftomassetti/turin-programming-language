@@ -2,7 +2,8 @@ package me.tomassetti.turin.compiler;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import me.tomassetti.turin.parser.analysis.*;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
 
 import java.io.*;
