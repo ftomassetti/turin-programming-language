@@ -6,7 +6,12 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.List;
 
 public class UnsolvedConstructorException extends RuntimeException {
-    public UnsolvedConstructorException(String type, List<ActualParam> paramList) {
 
+    private String typeCanonicalName;
+    private List<ActualParam> paramList;
+
+    public UnsolvedConstructorException(String typeCanonicalName, List<ActualParam> paramList) {
+        this.typeCanonicalName = typeCanonicalName;
+        this.paramList = paramList;
     }
 }

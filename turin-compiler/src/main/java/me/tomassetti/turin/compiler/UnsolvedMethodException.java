@@ -7,7 +7,15 @@ import java.util.List;
 
 public class UnsolvedMethodException extends RuntimeException {
 
-    public UnsolvedMethodException(TypeDefinition typeDefinition, String name, List<JvmType> argsTypes, boolean staticContext) {
+    private TypeDefinition typeDefinition;
+    private String methodName;
+    private List<JvmType> argsTypes;
+    private boolean staticContext;
 
+    public UnsolvedMethodException(TypeDefinition typeDefinition, String methodName, List<JvmType> argsTypes, boolean staticContext) {
+        this.typeDefinition = typeDefinition;
+        this.methodName = methodName;
+        this.argsTypes = argsTypes;
+        this.staticContext = staticContext;
     }
 }
