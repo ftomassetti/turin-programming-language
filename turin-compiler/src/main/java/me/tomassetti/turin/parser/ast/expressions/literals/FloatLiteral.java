@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.ast.literals;
+package me.tomassetti.turin.parser.ast.expressions.literals;
 
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
@@ -8,17 +8,17 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
 
-public class BooleanLiteral extends Expression {
+public class FloatLiteral extends Expression {
 
-    private boolean value;
+    private float value;
 
-    public BooleanLiteral(boolean value) {
+    public FloatLiteral(float value) {
         this.value = value;
     }
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        return PrimitiveTypeUsage.BOOLEAN;
+        return PrimitiveTypeUsage.FLOAT;
     }
 
     @Override
