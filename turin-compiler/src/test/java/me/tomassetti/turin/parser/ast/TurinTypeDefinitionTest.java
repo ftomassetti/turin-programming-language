@@ -38,9 +38,9 @@ public class TurinTypeDefinitionTest {
         Resolver resolver = new InFileResolver();
 
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, Collections.emptyList());
-        assertEquals("Lme/tomassetti/MyType;", constructor.getJvmType());
+        assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
-        assertEquals("()V", constructor.getSignature());
+        assertEquals("()V", constructor.getDescriptor());
     }
 
     @Test(expected = UnsolvedConstructorException.class)
@@ -71,9 +71,9 @@ public class TurinTypeDefinitionTest {
 
         ActualParam p0 = new ActualParam(new FloatLiteral(0.0f));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
-        assertEquals("Lme/tomassetti/MyType;", constructor.getJvmType());
+        assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
-        assertEquals("(F)V", constructor.getSignature());
+        assertEquals("(F)V", constructor.getDescriptor());
     }
 
     @Test(expected = UnsolvedConstructorException.class)
@@ -106,9 +106,9 @@ public class TurinTypeDefinitionTest {
 
         ActualParam p0 = new ActualParam("coefficient", new BooleanLiteral(false));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
-        assertEquals("Lme/tomassetti/MyType;", constructor.getJvmType());
+        assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
-        assertEquals("()V", constructor.getSignature());
+        assertEquals("()V", constructor.getDescriptor());
     }
 
     @Test
@@ -125,9 +125,9 @@ public class TurinTypeDefinitionTest {
 
         ActualParam p0 = new ActualParam("coefficient", new FloatLiteral(0.0f));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
-        assertEquals("Lme/tomassetti/MyType;", constructor.getJvmType());
+        assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
-        assertEquals("(F)V", constructor.getSignature());
+        assertEquals("(F)V", constructor.getDescriptor());
     }
 
     @Test(expected = UnsolvedConstructorException.class)

@@ -70,4 +70,24 @@ public final class JvmNameUtils {
     public static String canonicalToInternal(String canonicalName) {
         return canonicalName.replaceAll("\\.", "/");
     }
+
+    public static boolean isValidInternalName(String internalName) {
+        if (internalName == null) {
+            throw new IllegalArgumentException();
+        }
+        if (internalName.isEmpty()) {
+            return false;
+        }
+        // the part would be discarded, we have to check explicitly
+        if (internalName.endsWith("/")){
+            return false;
+        }
+        String[] parts = internalName.split("/");
+        for (String part : parts) {
+            if (!isValidJavaIdentifier(part)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

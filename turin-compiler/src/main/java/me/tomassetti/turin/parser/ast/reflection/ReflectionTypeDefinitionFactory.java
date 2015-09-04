@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
@@ -23,7 +24,7 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public static JvmMethodDefinition toMethodDefinition(Method method){
-        return new JvmMethodDefinition(method.getDeclaringClass().getCanonicalName(), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()));
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getCanonicalName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()));
     }
 
     public static String calcSignature(Class<?> clazz) {

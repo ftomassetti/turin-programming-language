@@ -85,7 +85,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         List<String> paramSignatures = paramTypesInOrder.stream()
                 .map((p) -> p.jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
-        return new JvmConstructorDefinition(jvmType().getSignature(), "(" + String.join("", paramSignatures) + ")V");
+        return new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
     }
 
     @Override

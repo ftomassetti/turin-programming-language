@@ -68,7 +68,7 @@ public class Creation extends Invokable {
     }
 
     public String jvmSignature(Resolver resolver) {
-        return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams).getSignature();
+        return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams).getDescriptor();
     }
 
     public JvmConstructorDefinition jvmDefinition(Resolver resolver) {

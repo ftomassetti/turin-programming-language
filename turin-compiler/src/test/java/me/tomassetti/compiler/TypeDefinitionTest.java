@@ -1,3 +1,5 @@
+package me.tomassetti.compiler;
+
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.InFileResolver;
 import me.tomassetti.turin.parser.analysis.Resolver;

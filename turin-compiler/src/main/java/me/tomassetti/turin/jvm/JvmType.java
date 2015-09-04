@@ -57,4 +57,10 @@ public class JvmType {
         return signature;
     }
 
+    public String getInternalName() {
+        if (!signature.startsWith("L")) {
+            throw new UnsupportedOperationException();
+        }
+        return signature.substring(1, signature.length() - 1);
+    }
 }
