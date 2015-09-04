@@ -87,6 +87,9 @@ public class InFileResolver implements Resolver {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
+        if (typeName.equals("manga.MangaCharacter")) {
+            int a = 8 * 8;
+        }
         for (Node child : context.getChildren()) {
             if (child instanceof TypeDefinition) {
                 TypeDefinition typeDefinition = (TypeDefinition)child;

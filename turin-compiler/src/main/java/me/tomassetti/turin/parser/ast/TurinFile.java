@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TurinFile extends Node {
 
@@ -82,5 +83,9 @@ public class TurinFile extends Node {
     public void add(Program program) {
         topNodes.add(program);
         program.parent = this;
+    }
+
+    public List<TypeDefinition> getTopTypeDefinitions() {
+        return topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition)).map((n) -> (TypeDefinition)n).collect(Collectors.toList());
     }
 }

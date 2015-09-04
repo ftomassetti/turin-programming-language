@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CompilerTest {
+public class CompilerOnAstTest {
 
     private TurinFile mangaAst() {
         // define AST
@@ -365,6 +365,5 @@ public class CompilerTest {
         assertFalse(ranma1.hashCode() == ranma2.hashCode());
         assertFalse(ranma2.hashCode() == ranma1.hashCode());
     }
-
 
 }

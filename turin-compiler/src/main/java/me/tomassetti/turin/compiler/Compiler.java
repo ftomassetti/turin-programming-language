@@ -2,8 +2,11 @@ package me.tomassetti.turin.compiler;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
 import me.tomassetti.turin.parser.ast.*;
 
 import java.io.*;
@@ -46,9 +49,9 @@ public class Compiler {
         private List<String> sources = new ArrayList<>();
     }
 
-    private static Resolver getResolver(List<String> sources, List<String> classPathElements) {
+    private static Resolver getResolver(List<String> sources, List<String> classPathElements, List<TurinFile> turinFiles) {
         // TODO use all the elements for resolving
-        return new InFileResolver();
+        return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(turinFiles)));
     }
 
     private void compile(File file) throws IOException {
@@ -107,18 +110,26 @@ public class Compiler {
             return;
         }
 
-        Resolver resolver = getResolver(options.sources, options.classPathElements);
+        Parser parser = new Parser();
 
-        Compiler instance = new Compiler(resolver, options);
-        // TODO consider classpath
+        // First we collect all TurinFiles and we pass it to the resolver
+        List<TurinFile> turinFiles = new ArrayList<>();
         for (String source : options.sources) {
             try {
-                instance.compile(new File(source));
+                turinFiles.addAll(parser.parseAllIn(new File(source)));
             } catch (FileNotFoundException e){
                 System.err.println("Error: " + e.getMessage());
                 System.exit(1);
                 return;
             }
+        }
+        Resolver resolver = getResolver(options.sources, options.classPathElements, turinFiles);
+
+        // Then we compile all files
+        // TODO consider classpath
+        Compiler instance = new Compiler(resolver, options);
+        for (TurinFile turinFile : turinFiles) {
+            instance.compile(turinFile);
         }
     }
 

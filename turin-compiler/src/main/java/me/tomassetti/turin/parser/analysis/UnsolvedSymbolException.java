@@ -5,12 +5,12 @@ import me.tomassetti.turin.parser.ast.Node;
 /**
  * Some symbol of some sort has not being solved.
  */
-public class UnsolvedSymbolException extends RuntimeException {
+public class UnsolvedSymbolException extends UnsolvedException {
 
     private Node node;
 
     public UnsolvedSymbolException(Node node) {
-        super("Unresolved " + node);
+        super("Unsolved " + node);
         this.node = node;
     }
 }

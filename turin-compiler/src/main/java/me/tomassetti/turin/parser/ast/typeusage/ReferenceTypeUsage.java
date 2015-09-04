@@ -150,7 +150,7 @@ public class ReferenceTypeUsage extends TypeUsage {
             return false;
         }
         ReferenceTypeUsage other = (ReferenceTypeUsage)type;
-        if (this.equals(other)) {
+        if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
             return true;
         }
         for (TypeUsage ancestor : this.getAllAncestors(resolver)) {

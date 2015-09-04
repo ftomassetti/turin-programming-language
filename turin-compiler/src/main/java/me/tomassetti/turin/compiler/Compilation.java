@@ -426,8 +426,10 @@ public class Compilation {
         Expression function = functionCall.getFunction();
         if (function instanceof FieldAccess) {
             return pushExpression(((FieldAccess) function).getSubject());
+        } else if (function instanceof ValueReference) {
+            throw new UnsupportedOperationException(function.toString());
         } else {
-            throw new UnsupportedOperationException(functionCall.getFunction().getClass().getCanonicalName());
+            throw new UnsupportedOperationException(function.getClass().getCanonicalName());
         }
     }
 
