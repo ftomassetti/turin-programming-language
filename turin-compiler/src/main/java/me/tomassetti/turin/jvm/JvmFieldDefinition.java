@@ -1,20 +1,20 @@
 package me.tomassetti.turin.jvm;
 
 public class JvmFieldDefinition {
-    private String declaringType;
-    private String name;
-    private String typeName;
+    private String ownerInternalName;
+    private String fieldName;
+    private String descriptor;
 
-    public String getDeclaringType() {
-        return declaringType;
+    public String getOwnerInternalName() {
+        return ownerInternalName;
     }
 
-    public String getName() {
-        return name;
+    public String getFieldName() {
+        return fieldName;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public String getDescriptor() {
+        return descriptor;
     }
 
     public boolean isStatic() {
@@ -23,10 +23,10 @@ public class JvmFieldDefinition {
 
     private boolean static_;
 
-    public JvmFieldDefinition(String declaringType, String name, String typeName, boolean static_) {
-        this.declaringType = declaringType;
-        this.name = name;
-        this.typeName = typeName;
+    public JvmFieldDefinition(String ownerInternalName, String fieldName, String descriptor, boolean static_) {
+        this.ownerInternalName = ownerInternalName;
+        this.fieldName = fieldName;
+        this.descriptor = descriptor;
         this.static_ = static_;
     }
 }

@@ -36,6 +36,11 @@ public class BasicTypeUsage extends TypeUsage {
     }
 
     @Override
+    public boolean isPrimitive() {
+        return true;
+    }
+
+    @Override
     public JvmType jvmType(Resolver resolver) {
         return new JvmType(jvmType);
     }

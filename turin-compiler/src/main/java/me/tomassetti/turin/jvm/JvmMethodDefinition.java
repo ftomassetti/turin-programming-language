@@ -15,8 +15,8 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
         this.staticField = staticField;
     }
 
-    public JvmMethodDefinition(String jvmType, String name, String signature, boolean _static) {
-        super(signature, name, jvmType);
+    public JvmMethodDefinition(String ownerInternalName, String methodName, String descriptor, boolean _static) {
+        super(ownerInternalName, methodName, descriptor);
         this._static = _static;
     }
 

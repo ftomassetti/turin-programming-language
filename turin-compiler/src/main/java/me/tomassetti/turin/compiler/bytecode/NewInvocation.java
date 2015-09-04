@@ -14,9 +14,9 @@ public class NewInvocation extends BytecodeSequence {
     private String signature;
 
     public NewInvocation(JvmConstructorDefinition constructorDefinition, List<BytecodeSequence> argumentsPush) {
-        this.type = constructorDefinition.getJvmType();
+        this.type = constructorDefinition.getOwnerInternalName();
         this.argumentsPush = argumentsPush;
-        this.signature = constructorDefinition.getSignature();
+        this.signature = constructorDefinition.getDescriptor();
     }
 
     @Override

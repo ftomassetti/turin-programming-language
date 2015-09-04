@@ -16,7 +16,7 @@ public class PushStaticField extends BytecodeSequence {
     @Override
     public void operate(MethodVisitor mv) {
         if (fieldDefinition.isStatic()) {
-            mv.visitFieldInsn(GETSTATIC, fieldDefinition.getDeclaringType(), fieldDefinition.getName(), fieldDefinition.getTypeName());
+            mv.visitFieldInsn(GETSTATIC, fieldDefinition.getOwnerInternalName(), fieldDefinition.getFieldName(), fieldDefinition.getDescriptor());
         } else {
             throw new UnsupportedOperationException();
         }

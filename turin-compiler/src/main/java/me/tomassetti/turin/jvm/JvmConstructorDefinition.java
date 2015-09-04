@@ -2,8 +2,8 @@ package me.tomassetti.turin.jvm;
 
 public class JvmConstructorDefinition extends JvmInvokableDefinition {
 
-    public JvmConstructorDefinition(String jvmType, String signature) {
-        super(signature, "<init>", jvmType);
+    public JvmConstructorDefinition(String ownerInternalName, String descriptor) {
+        super(ownerInternalName, "<init>", descriptor);
     }
 
 }

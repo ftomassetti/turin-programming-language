@@ -1,28 +1,25 @@
 package me.tomassetti.turin.jvm;
 
-/**
- * Created by federico on 03/09/15.
- */
-public class JvmInvokableDefinition {
-    protected String jvmType;
+public abstract class JvmInvokableDefinition {
+    protected String ownerInternalName;
     protected String name;
-    protected String signature;
+    protected String descriptor;
 
-    public JvmInvokableDefinition(String signature, String name, String jvmType) {
-        this.signature = signature;
+    protected JvmInvokableDefinition(String ownerInternalName, String name, String descriptor) {
+        this.descriptor = descriptor;
         this.name = name;
-        this.jvmType = jvmType;
+        this.ownerInternalName = ownerInternalName;
     }
 
-    public String getJvmType() {
-        return jvmType;
+    public String getOwnerInternalName() {
+        return ownerInternalName;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getSignature() {
-        return signature;
+    public String getDescriptor() {
+        return descriptor;
     }
 }
