@@ -11,23 +11,6 @@ public enum JvmTypeCategory {
     DOUBLE,
     REFERENCE;
 
-    public int loadOpcode(){
-        switch (this){
-            case INT:
-                return Opcodes.ILOAD;
-            case LONG:
-                return Opcodes.LLOAD;
-            case FLOAT:
-                return Opcodes.FLOAD;
-            case DOUBLE:
-                return Opcodes.DLOAD;
-            case REFERENCE:
-                return Opcodes.ALOAD;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
     public int storeOpcode(){
         switch (this){
             case INT:
@@ -49,10 +32,23 @@ public enum JvmTypeCategory {
         String jvmType = typeUsage.jvmType(resolver).getSignature();
         if (jvmType.startsWith("L")){
             return REFERENCE;
-        } else if (jvmType.equals("I")){
-            return INT;
-        } else {
-            throw new UnsupportedOperationException(jvmType);
+        }
+
+        switch (jvmType) {
+            case "Z":
+            case "B":
+            case "S":
+            case "C":
+            case "I":
+                return INT;
+            case"J":
+                return LONG;
+            case "F":
+                return FLOAT;
+            case "D":
+                return DOUBLE;
+            default:
+                throw new UnsupportedOperationException(jvmType);
         }
     }
 }

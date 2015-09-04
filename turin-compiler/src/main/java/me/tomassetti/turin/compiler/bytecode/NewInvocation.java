@@ -11,12 +11,12 @@ public class NewInvocation extends BytecodeSequence {
 
     private String type;
     private List<BytecodeSequence> argumentsPush;
-    private String signature;
+    private String descriptor;
 
     public NewInvocation(JvmConstructorDefinition constructorDefinition, List<BytecodeSequence> argumentsPush) {
         this.type = constructorDefinition.getOwnerInternalName();
         this.argumentsPush = argumentsPush;
-        this.signature = constructorDefinition.getDescriptor();
+        this.descriptor = constructorDefinition.getDescriptor();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class NewInvocation extends BytecodeSequence {
         mv.visitInsn(DUP);
         argumentsPush.forEach((ap)->ap.operate(mv));
         // false because the method is not declared on an interface
-        mv.visitMethodInsn(INVOKESPECIAL, type, "<init>", signature, false);
+        mv.visitMethodInsn(INVOKESPECIAL, type, "<init>", descriptor, false);
     }
 
 }
