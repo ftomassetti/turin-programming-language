@@ -67,4 +67,7 @@ public final class JvmNameUtils {
         return true;
     }
 
+    public static String canonicalToInternal(String canonicalName) {
+        return canonicalName.replaceAll("\\.", "/");
+    }
 }

@@ -3,10 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.jvm.JvmTypeCategory;
+import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
@@ -33,6 +30,8 @@ public class Compilation {
 
     private static final int JAVA_8_CLASS_VERSION = 52;
     public static final int LOCALVAR_INDEX_FOR_THIS_IN_METHOD = 0;
+
+    private static final String OBJECT_INTERNAL_NAME = JvmNameUtils.canonicalToInternal(Object.class.getCanonicalName());
 
     private ClassWriter cw;
     private Resolver resolver;
@@ -134,7 +133,7 @@ public class Compilation {
         mv.visitCode();
 
         PushThis.getInstance().operate(mv);
-        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+        mv.visitMethodInsn(INVOKESPECIAL, OBJECT_INTERNAL_NAME, "<init>", "()V", false);
 
         int propIndex = 0;
         for (Property property : directProperties) {
@@ -200,22 +199,23 @@ public class Compilation {
     }
 
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
-        String className = typeDefinition.getQualifiedName().replaceAll("\\.", "/");
+        String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
+        // TODO consider generic signature, superclass and interfaces
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
 
         for (Property property : typeDefinition.getDirectProperties(resolver)){
             generateField(property);
-            generateGetter(property, className);
-            generateSetter(property, className);
+            generateGetter(property, internalClassName);
+            generateSetter(property, internalClassName);
         }
 
-        generateConstructor(typeDefinition, className);
+        generateConstructor(typeDefinition, internalClassName);
         cw.visitEnd();
 
-        return ImmutableList.of(new ClassFileDefinition(className.replaceAll("/", "."), cw.toByteArray()));
+        return ImmutableList.of(new ClassFileDefinition(typeDefinition.getQualifiedName(), cw.toByteArray()));
     }
 
     private List<ClassFileDefinition> compile(Program program) {
@@ -223,7 +223,7 @@ public class Compilation {
         String className = qname.replaceAll("\\.", "/");
 
         cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, className, null, OBJECT_INTERNAL_NAME, null);
 
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
 
