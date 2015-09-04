@@ -6,9 +6,6 @@ import me.tomassetti.turin.parser.ast.statements.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class Program extends Node {
 
     private String name;
