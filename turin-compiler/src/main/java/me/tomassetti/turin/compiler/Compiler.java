@@ -36,7 +36,7 @@ public class Compiler {
         @Parameter(names = {"-cp", "--classpath"}, variableArity = true)
         private List<String> classPathElements = new ArrayList<>();
 
-        @Parameter(names = {"--verbose"})
+        @Parameter(names = {"-v", "--verbose"})
         private boolean verbose = false;
 
         @Parameter(names = {"-h", "--help"})
@@ -53,9 +53,9 @@ public class Compiler {
 
     private void compile(File file) throws IOException {
         if (file.isDirectory()) {
-            compileFile(file);
-        } else {
             compileDir(file);
+        } else {
+            compileFile(file);
         }
     }
 
@@ -86,7 +86,14 @@ public class Compiler {
         System.out.println("-------------------------------------\n");
 
         Options options = new Options();
-        JCommander commander = new JCommander(options, args);
+        JCommander commander = null;
+        try {
+            commander = new JCommander(options, args);
+        } catch (Throwable t) {
+            System.err.println("Problem parsing options: " + t.getMessage());
+            System.exit(1);
+            return;
+        }
 
         if (options.help) {
             System.out.println("Help demanded - printing usage");
@@ -103,8 +110,15 @@ public class Compiler {
         Resolver resolver = getResolver(options.sources, options.classPathElements);
 
         Compiler instance = new Compiler(resolver, options);
-        for (String classPathElement : options.classPathElements) {
-            instance.compileDir(new File(classPathElement));
+        // TODO consider classpath
+        for (String source : options.sources) {
+            try {
+                instance.compile(new File(source));
+            } catch (FileNotFoundException e){
+                System.err.println("Error: " + e.getMessage());
+                System.exit(1);
+                return;
+            }
         }
     }
 
