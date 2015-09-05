@@ -73,6 +73,34 @@ public class PrimitiveTypeUsage extends TypeUsage {
         throw new IllegalArgumentException(name);
     }
 
+    @Override
+    public String toString() {
+        return "PrimitiveTypeUsage{" +
+                "name='" + name + '\'' +
+                ", jvmType=" + jvmType +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PrimitiveTypeUsage that = (PrimitiveTypeUsage) o;
+
+        if (!jvmType.equals(that.jvmType)) return false;
+        if (!name.equals(that.name)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + jvmType.hashCode();
+        return result;
+    }
+
     public static boolean isPrimitiveTypeName(String typeName) {
         for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
             if (primitiveTypeUsage.name.equals(typeName)) {

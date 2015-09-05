@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.imports.SingleFieldImportDeclaration;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
@@ -17,6 +18,8 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 class ParseTreeToAst {
@@ -148,10 +151,11 @@ class ParseTreeToAst {
     }
 
     private Node toAst(TurinParser.ProgramContext programCtx) {
-        Program program = new Program(programCtx.name.getText());
+        List<Statement> statements = new ArrayList<>();
         for (TurinParser.StatementContext stmtCtx : programCtx.statements) {
-            program.add(toAst(stmtCtx));
+            statements.add(toAst(stmtCtx));
         }
+        Program program = new Program(programCtx.name.getText(), new BlockStatement(statements));
         return program;
     }
 

@@ -2,12 +2,11 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
-import me.tomassetti.turin.compiler.ClassFileDefinition;
-import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class CompilerOnProgramTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        Program program = new Program("SuperSimple");
+        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of()));
         turinFile.add(program);
 
         return turinFile;
@@ -46,7 +45,6 @@ public class CompilerOnProgramTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        Program program = new Program("SuperSimple");
         StringLiteral stringLiteral = new StringLiteral("Hello Turin!");
         QualifiedName javaLang = new QualifiedName(new QualifiedName("java"), "lang");
         TypeIdentifier system = new TypeIdentifier(javaLang, "System");
@@ -54,7 +52,7 @@ public class CompilerOnProgramTest {
         FieldAccess println = new FieldAccess(out, "println");
         FunctionCall printInvokation = new FunctionCall(println, ImmutableList.of(new ActualParam(stringLiteral)));
         Statement printStatement = new ExpressionStatement(printInvokation);
-        program.add(printStatement);
+        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of(printStatement)));
         turinFile.add(program);
 
         return turinFile;

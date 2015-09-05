@@ -13,13 +13,17 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBasedSetOfOverloadedMethods;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -380,9 +384,7 @@ public class Compilation {
 
         mv.visitCode();
 
-        for (Statement statement : program.getStatements()) {
-            compile(statement).operate(mv);
-        }
+        compile(program.getStatement()).operate(mv);
 
         // Implicit return
         mv.visitInsn(RETURN);
@@ -401,7 +403,11 @@ public class Compilation {
             nLocalVars += 1;
             return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
         } else if (statement instanceof ExpressionStatement) {
-            return executeEpression(((ExpressionStatement)statement).getExpression());
+            return executeEpression(((ExpressionStatement) statement).getExpression());
+        } else if (statement instanceof BlockStatement){
+            BlockStatement blockStatement = (BlockStatement)statement;
+            List<BytecodeSequence> elements = blockStatement.getStatements().stream().map((s)->compile(s)).collect(Collectors.toList());
+            return new ComposedBytecodeSequence(elements);
         } else {
             throw new UnsupportedOperationException(statement.toString());
         }
@@ -489,7 +495,22 @@ public class Compilation {
             return new PushStaticField(staticFieldAccess.toJvmField(resolver));
         } else if (expr instanceof StringInterpolation) {
             StringInterpolation stringInterpolation = (StringInterpolation)expr;
-            throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
+
+            List<BytecodeSequence> elements = new ArrayList<>();
+            elements.add(new NewInvocation(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
+
+            for (Expression piece : stringInterpolation.getElements()) {
+                TypeUsage pieceType = piece.calcType(resolver);
+                if (pieceType.equals(ReferenceTypeUsage.STRING)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)));
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            }
+
+            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
+            return new ComposedBytecodeSequence(elements);
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

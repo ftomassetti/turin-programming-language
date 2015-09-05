@@ -12,6 +12,10 @@ public class StringInterpolation extends Expression {
 
     private List<Expression> elements = new ArrayList<>();
 
+    public List<Expression> getElements() {
+        return elements;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -22,6 +26,7 @@ public class StringInterpolation extends Expression {
         if (!elements.equals(that.elements)) return false;
 
         return true;
+
     }
 
     @Override

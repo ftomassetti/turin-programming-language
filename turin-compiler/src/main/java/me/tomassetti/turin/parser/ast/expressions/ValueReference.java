@@ -43,7 +43,17 @@ public class ValueReference extends Expression {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        Optional<Node> declaration = resolver.findSymbol(name, this);
+        if (declaration.isPresent()) {
+            if (declaration.get() instanceof Expression) {
+                Expression expression = (Expression)declaration.get();
+                return expression.calcType(resolver);
+            } else {
+                throw new UnsupportedOperationException(declaration.get().describe());
+            }
+        } else {
+            throw new UnsolvedSymbolException(this);
+        }
     }
 
     @Override

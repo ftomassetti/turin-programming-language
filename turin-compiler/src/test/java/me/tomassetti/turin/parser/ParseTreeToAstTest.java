@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -66,17 +67,16 @@ public class ParseTreeToAstTest {
 
         turinFile.add(mangaCharacter);
 
-        Program program = new Program("MangaExample");
+
         // val ranma = MangaCharacter("Ranma", 16)
         Creation value = new Creation("MangaCharacter", ImmutableList.of(new ActualParam(new StringLiteral("Ranma")), new ActualParam(new IntLiteral(16))));
         VariableDeclaration varDecl = new VariableDeclaration("ranma", value);
-        program.add(varDecl);
         // print("The protagonist is #{ranma}")
         StringInterpolation string = new StringInterpolation();
         string.add(new StringLiteral("The protagonist is "));
         string.add(new ValueReference("ranma"));
         FunctionCall functionCall = new FunctionCall(new ValueReference("print"), ImmutableList.of(new ActualParam(string)));
-        program.add(new ExpressionStatement(functionCall));
+        Program program = new Program("MangaExample", new BlockStatement(ImmutableList.of(varDecl, new ExpressionStatement(functionCall))));
         turinFile.add(program);
 
         return turinFile;

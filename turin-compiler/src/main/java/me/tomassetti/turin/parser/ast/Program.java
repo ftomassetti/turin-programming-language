@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 
 import java.util.ArrayList;
@@ -9,35 +10,31 @@ import java.util.List;
 public class Program extends Node {
 
     private String name;
-    private List<Statement> statements = new ArrayList<>();
+    private Statement statement;
 
-    public Program(String name) {
+    public Program(String name, Statement statement) {
         this.name = name;
+        this.statement = statement;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<Statement> getStatements() {
-        return ImmutableList.copyOf(statements);
+    public Statement getStatement() {
+        return statement;
     }
 
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.copyOf(statements);
-    }
-
-    public void add(Statement statement) {
-        statements.add(statement);
-        statement.parent = this;
+        return ImmutableList.of(statement);
     }
 
     @Override
     public String toString() {
         return "Program{" +
                 "name='" + name + '\'' +
-                ", statements=" + statements +
+                ", statement=" + statement +
                 '}';
     }
 
@@ -49,7 +46,7 @@ public class Program extends Node {
         Program program = (Program) o;
 
         if (!name.equals(program.name)) return false;
-        if (!statements.equals(program.statements)) return false;
+        if (!statement.equals(program.statement)) return false;
 
         return true;
     }
@@ -57,7 +54,7 @@ public class Program extends Node {
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + statements.hashCode();
+        result = 31 * result + statement.hashCode();
         return result;
     }
 
