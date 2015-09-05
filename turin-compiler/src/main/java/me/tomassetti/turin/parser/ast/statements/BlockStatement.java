@@ -39,6 +39,7 @@ public class BlockStatement extends Statement {
 
     public BlockStatement(List<Statement> statements) {
         this.statements = statements;
+        this.statements.forEach((s) -> s.setParent(BlockStatement.this));
     }
 
     @Override

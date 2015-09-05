@@ -15,6 +15,7 @@ public class Program extends Node {
     public Program(String name, Statement statement) {
         this.name = name;
         this.statement = statement;
+        this.statement.setParent(this);
     }
 
     public String getName() {

@@ -48,6 +48,7 @@ public class ComposedResolver implements Resolver {
                 return definition;
             } catch (UnsolvedException re) {
                 // Ignore
+                System.err.println(re.getMessage());
             }
         }
         throw new UnsolvedTypeException(typeName, context);
