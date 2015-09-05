@@ -22,4 +22,4 @@ program MangaExample(String[] args) {
 }
 ```
 
-It prints: _The protagonist is Ranma, 16"
+It prints: _The protagonist is Ranma, 16_
