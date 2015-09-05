@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Import;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 
 import java.util.ArrayList;
@@ -98,9 +99,9 @@ public class TurinFile extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name) {
+    public Optional<Node> findSymbol(String name, Resolver resolver) {
         for (ImportDeclaration importDeclaration : imports) {
-            Optional<Node> imported = importDeclaration.findAmongImported(name);
+            Optional<Node> imported = importDeclaration.findAmongImported(name, resolver);
             if (imported.isPresent()) {
                 return imported;
             }

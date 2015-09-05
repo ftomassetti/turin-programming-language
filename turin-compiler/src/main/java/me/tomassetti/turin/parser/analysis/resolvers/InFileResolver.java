@@ -85,7 +85,7 @@ public class InFileResolver implements Resolver {
 
     @Override
     public Optional<Node> findSymbol(String name, Node context) {
-        return context.findSymbol(name);
+        return context.findSymbol(name, this);
     }
 
     private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context) {

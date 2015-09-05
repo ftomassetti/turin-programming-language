@@ -75,12 +75,12 @@ class ParseTreeToAst {
         if (ctx.alternativeName == null) {
             return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName));
         } else {
-            return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName), ctx.alternativeName);
+            return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName), ctx.alternativeName.getText());
         }
     }
 
     private QualifiedName toAst(TurinParser.QualifiedIdContext qualifiedIdContext) {
-        throw new UnsupportedOperationException();
+        return QualifiedName.create(qualifiedIdContext.parts.stream().map((p)->p.getText()).collect(Collectors.toList()));
     }
 
     private Node toAst(TurinParser.FileMemberContext memberCtx) {

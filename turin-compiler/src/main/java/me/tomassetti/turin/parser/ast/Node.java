@@ -1,5 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+
 import java.util.Optional;
 
 /**
@@ -41,11 +43,24 @@ public abstract class Node {
         return parent.contextName();
     }
 
-    public Optional<Node> findSymbol(String name) {
+    public Optional<Node> findSymbol(String name, Resolver resolver) {
         if (parent == null) {
             return Optional.empty();
         } else {
-            return parent.findSymbol(name);
+            return parent.findSymbol(name, resolver);
         }
+    }
+
+    public Node getField(QualifiedName fieldsPath) {
+        if (fieldsPath.isSimpleName()) {
+            return getField(fieldsPath.getName());
+        } else {
+            Node next = getField(fieldsPath.firstSegment());
+            return next.getField(fieldsPath.rest());
+        }
+    }
+
+    public Node getField(String fieldName) {
+        throw new UnsupportedOperationException();
     }
 }

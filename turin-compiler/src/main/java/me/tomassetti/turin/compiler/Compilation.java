@@ -5,6 +5,7 @@ import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
+import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -18,6 +19,7 @@ import org.objectweb.asm.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -428,8 +430,8 @@ public class Compilation {
             return pushExpression(((FieldAccess) function).getSubject());
         } else if (function instanceof ValueReference) {
             ValueReference valueReference = (ValueReference)function;
-            valueReference.resolve(resolver);
-            throw new UnsupportedOperationException(function.toString());
+            Node declaration = valueReference.resolve(resolver);
+            throw new UnsupportedOperationException(declaration.getClass().getCanonicalName());
         } else {
             throw new UnsupportedOperationException(function.getClass().getCanonicalName());
         }
