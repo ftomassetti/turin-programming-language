@@ -142,7 +142,7 @@ statement :
 //
 
 formalParam :
-    type=typeUsage COLON name=ID;
+    type=typeUsage name=ID;
 //
 
 program:

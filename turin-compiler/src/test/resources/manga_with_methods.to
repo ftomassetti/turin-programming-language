@@ -5,6 +5,8 @@ property String : name
 type MangaCharacter {
     has name
     has UInt : age
+
+    String toString() = "#{name}, #{age}"
 }
 
 program MangaExample(String[] args) {

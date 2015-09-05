@@ -9,7 +9,7 @@ type MangaCharacter {
     has UInt : age
 }
 
-program MangaExample(String[]: args) {
+program MangaExample(String[] args) {
     val ranma = MangaCharacter("Ranma", 16)
     print("The protagonist is #{ranma}")
     //print("The protagonist is " + ranma.name)

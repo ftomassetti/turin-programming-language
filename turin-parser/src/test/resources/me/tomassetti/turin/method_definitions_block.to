@@ -2,7 +2,7 @@ namespace foo
 
 type MyClass {
 
-    Int sum(Int:a, Int:b) {
+    Int sum(Int a, Int b) {
         return a + b
     }
 
