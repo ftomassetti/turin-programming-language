@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser;
 
+import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
@@ -15,6 +16,7 @@ import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
@@ -111,7 +113,9 @@ class ParseTreeToAst {
             if (memberNode instanceof PropertyReference) {
                 typeDefinition.add((PropertyReference)memberNode);
             } else if (memberNode instanceof PropertyDefinition) {
-                typeDefinition.add((PropertyDefinition)memberNode);
+                typeDefinition.add((PropertyDefinition) memberNode);
+            } else if (memberCtx instanceof MethodDefinition) {
+                sdfsdf
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -124,6 +128,38 @@ class ParseTreeToAst {
             return toAst(memberCtx.inTypePropertyDeclaration());
         } else if (memberCtx.propertyReference() != null) {
             return toAst(memberCtx.propertyReference());
+        } else if (memberCtx.methodDefinition() != null) {
+            return toAst(memberCtx.methodDefinition());
+        } else {
+            throw new UnsupportedOperationException(memberCtx.getClass().getCanonicalName());
+        }
+    }
+
+    private Node toAst(TurinParser.MethodDefinitionContext methodDefinitionContext) {
+        List<FormalParameter> params = methodDefinitionContext.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        return new MethodDefinition(methodDefinitionContext.name.getText(), toAst(methodDefinitionContext.type), params, toAst(methodDefinitionContext.methodBody()));
+    }
+
+    private Statement toAst(TurinParser.MethodBodyContext methodBodyContext) {
+        if (methodBodyContext.expression() != null) {
+            ExpressionStatement exprStmt = new ExpressionStatement(toAst(methodBodyContext.expression()));
+            return new BlockStatement(ImmutableList.of(exprStmt));
+        } else if (methodBodyContext.statements != null) {
+            return new BlockStatement(methodBodyContext.statements.stream().map((s)->toAst(s)).collect(Collectors.toList()));
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private FormalParameter toAst(TurinParser.FormalParamContext formalParamContext) {
+        return new FormalParameter(toAst(formalParamContext.type), formalParamContext.name.getText());
+    }
+
+    private TypeUsage toAst(TurinParser.ReturnTypeContext type) {
+        if (type.isVoid != null) {
+            return new VoidTypeUsage();
+        } else if (type.type != null) {
+            return toAst(type.type);
         } else {
             throw new UnsupportedOperationException();
         }
