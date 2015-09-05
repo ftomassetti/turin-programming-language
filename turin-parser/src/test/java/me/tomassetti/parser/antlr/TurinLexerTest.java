@@ -225,4 +225,9 @@ public class TurinLexerTest {
         verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 
+    @Test
+    public void parseMethodDefinitionWithExpressionBody() throws IOException {
+        String code = "Void toString() = \"foo\"";
+        verify(code, TurinLexer.VOID_KW, TurinLexer.ID, TurinLexer.LPAREN, TurinLexer.RPAREN, TurinLexer.ASSIGNMENT, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+    }
 }

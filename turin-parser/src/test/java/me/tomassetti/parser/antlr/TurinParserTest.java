@@ -24,4 +24,14 @@ public class TurinParserTest {
         assertEquals(5, root.importDeclaration().size());
     }
 
+    @Test
+    public void parseMethodDeclarationWithExpressionBody() throws IOException {
+        TurinParser.TurinFileContext root = parse("method_definitions_expression");
+    }
+
+    @Test
+    public void parseMethodDeclarationWithBlockBody() throws IOException {
+        TurinParser.TurinFileContext root = parse("method_definitions_block");
+    }
+
 }

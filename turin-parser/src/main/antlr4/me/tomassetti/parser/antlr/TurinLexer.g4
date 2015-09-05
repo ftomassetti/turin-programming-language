@@ -21,6 +21,8 @@ ABSTRACT_KW: 'abstract';
 SHARED_KW: 'shared';
 IMPORT_KW: 'import';
 AS_KW: 'as';
+VOID_KW: 'Void';
+RETURN_KW: 'return';
 
 LPAREN: '(';
 RPAREN: ')';

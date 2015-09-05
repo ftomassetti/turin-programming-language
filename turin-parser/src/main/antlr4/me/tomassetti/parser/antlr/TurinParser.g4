@@ -46,6 +46,17 @@ typeUsage:
     | primitiveType = PRIMITIVE_TYPE
     | basicType = BASIC_TYPE;
 
+// method definition
+
+methodDefinition:
+    type=returnType name=ID LPAREN (params+=formalParam (COMMA params+=formalParam)*)? RPAREN methodBody;
+
+returnType:
+    isVoid=VOID_KW | type=typeUsage;
+
+methodBody:
+    ASSIGNMENT value=expression nls | LBRACKET nls (statements += statement)* RBRACKET nls;
+
 //
 
 topLevelPropertyDeclaration:
@@ -58,7 +69,7 @@ propertyReference:
     HAS_KW name=ID nls;
 
 typeMember:
-    inTypePropertyDeclaration | propertyReference;
+    inTypePropertyDeclaration | propertyReference | methodDefinition;
 
 typeDeclaration:
     TYPE_KW name=TID LBRACKET nls
@@ -77,10 +88,15 @@ basicExpression:
     stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression;
 
 expression:
-    invokation | creation | basicExpression | fieldAccess | staticFieldReference;
+    invokation | creation | basicExpression | fieldAccess | staticFieldReference
+    | left=expression operator=ASTERISK right=expression
+    | left=expression operator=SLASH    right=expression
+    | left=expression operator=PLUS     right=expression
+    | left=expression operator=MINUS    right=expression
+    ;
 
 invokation:
-    function=basicExpression LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
+    function=basicExpression LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
 
 fieldAccess:
     subject=basicExpression POINT name=ID;
@@ -110,7 +126,7 @@ intLiteral:
     INT;
 
 creation:
-    name=TID LPAREN params+=actualParam (COMMA params+=actualParam)*  RPAREN ;
+    name=TID LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
 
 varDecl :
     VAL_KW (type=typeUsage COLON)? name=ID ASSIGNMENT value=expression nls;
@@ -118,12 +134,15 @@ varDecl :
 expressionStmt:
     expression nls;
 
+returnStmt:
+    RETURN_KW value=expression nls;
+
 statement :
-    varDecl | expressionStmt ;
+    varDecl | expressionStmt | returnStmt;
 //
 
 formalParam :
-    type=typeUsage name=ID;
+    type=typeUsage COLON name=ID;
 //
 
 program:
