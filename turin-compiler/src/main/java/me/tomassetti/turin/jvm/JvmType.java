@@ -1,9 +1,13 @@
 package me.tomassetti.turin.jvm;
 
+import com.sun.org.apache.bcel.internal.generic.ARETURN;
+import com.sun.org.apache.bcel.internal.generic.ILOAD;
+import com.sun.org.apache.bcel.internal.generic.IRETURN;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import org.objectweb.asm.Opcodes;
 
 import java.util.Optional;
 
@@ -62,5 +66,21 @@ public class JvmType {
             throw new UnsupportedOperationException();
         }
         return signature.substring(1, signature.length() - 1);
+    }
+
+    public int returnOpcode() {
+        if (signature.equals("L")){
+            return Opcodes.LRETURN;
+        } else if (signature.equals("V")) {
+            return Opcodes.RETURN;
+        } else if (signature.equals("F")) {
+            return Opcodes.FRETURN;
+        } else if (signature.equals("D")) {
+            return Opcodes.DRETURN;
+        } else if (signature.equals("B")||signature.equals("S")||signature.equals("C")||signature.equals("I")) {
+            return Opcodes.IRETURN;
+        } else {
+            return Opcodes.ARETURN;
+        }
     }
 }

@@ -14,6 +14,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -174,6 +175,18 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public Optional<Node> findSymbol(String name, Resolver resolver) {
+        // TODO support references to methods
+        for (Property property : this.getAllProperties(resolver)) {
+            if (property.getName().equals(name)) {
+                return Optional.of(property);
+            }
+        }
+
+        return super.findSymbol(name, resolver);
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.copyOf(members);
     }
@@ -190,6 +203,16 @@ public class TurinTypeDefinition extends TypeDefinition {
         return properties;
     }
 
+    public List<MethodDefinition> getDirectMethods() {
+        List<MethodDefinition> methods = new ArrayList<>();
+        for (Node member : members) {
+            if (member instanceof MethodDefinition) {
+                methods.add((MethodDefinition)member);
+            }
+        }
+        return methods;
+    }
+
     /**
      * Get direct and inherited properties.
      */
@@ -198,4 +221,8 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver);
     }
 
+    public void add(MethodDefinition methodDefinition) {
+        members.add(methodDefinition);
+        methodDefinition.parent = this;
+    }
 }

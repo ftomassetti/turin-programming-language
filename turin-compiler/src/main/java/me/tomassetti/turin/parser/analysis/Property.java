@@ -1,16 +1,20 @@
 package me.tomassetti.turin.parser.analysis;
 
+import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.Collections;
+
 /**
  * A Property can be derived by a definition in the type (PropertyDefinition) or by a reference (PropertyReference)
  */
-public class Property {
+public class Property extends Node {
 
     private String name;
     private TypeUsage typeUsage;
@@ -29,6 +33,11 @@ public class Property {
         }
         this.name = name;
         this.typeUsage = typeUsage;
+    }
+
+    @Override
+    public TypeUsage calcType(Resolver resolver) {
+        return typeUsage;
     }
 
     public static Property fromDefinition(PropertyDefinition propertyDefinition) {
@@ -54,4 +63,11 @@ public class Property {
     public String fieldName() {
         return name;
     }
+
+    @Override
+    public Iterable<Node> getChildren() {
+        // this is intended
+        return Collections.emptyList();
+    }
+
 }

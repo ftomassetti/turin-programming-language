@@ -9,10 +9,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.imports.SingleFieldImportDeclaration;
-import me.tomassetti.turin.parser.ast.statements.BlockStatement;
-import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
-import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -114,8 +111,8 @@ class ParseTreeToAst {
                 typeDefinition.add((PropertyReference)memberNode);
             } else if (memberNode instanceof PropertyDefinition) {
                 typeDefinition.add((PropertyDefinition) memberNode);
-            } else if (memberCtx instanceof MethodDefinition) {
-                sdfsdf
+            } else if (memberNode instanceof MethodDefinition) {
+                typeDefinition.add((MethodDefinition) memberNode);
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -142,8 +139,8 @@ class ParseTreeToAst {
 
     private Statement toAst(TurinParser.MethodBodyContext methodBodyContext) {
         if (methodBodyContext.expression() != null) {
-            ExpressionStatement exprStmt = new ExpressionStatement(toAst(methodBodyContext.expression()));
-            return new BlockStatement(ImmutableList.of(exprStmt));
+            ReturnStatement returnStatement = new ReturnStatement(toAst(methodBodyContext.expression()));
+            return new BlockStatement(ImmutableList.of(returnStatement));
         } else if (methodBodyContext.statements != null) {
             return new BlockStatement(methodBodyContext.statements.stream().map((s)->toAst(s)).collect(Collectors.toList()));
         } else {

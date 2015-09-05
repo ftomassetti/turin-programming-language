@@ -14,10 +14,8 @@ import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
-import me.tomassetti.turin.parser.ast.statements.BlockStatement;
-import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
-import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
+import me.tomassetti.turin.parser.ast.statements.*;
+import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.*;
@@ -44,9 +42,12 @@ public class Compilation {
 
     private ClassWriter cw;
     private Resolver resolver;
+    @Deprecated
     private int nParams = 0;
+    @Deprecated
     private int nLocalVars = 0;
     private LocalVarsSymbolTable localVarsSymbolTable;
+    private String internalClassName;
 
     public Compilation(Resolver resolver) {
         this.resolver = resolver;
@@ -349,7 +350,7 @@ public class Compilation {
     }
 
     private List<ClassFileDefinition> compile(TurinTypeDefinition typeDefinition) {
-        String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
+        this.internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -366,7 +367,39 @@ public class Compilation {
         generateEqualsMethod(typeDefinition, internalClassName);
         generateHashCodeMethod(typeDefinition, internalClassName);
 
+        typeDefinition.getDirectMethods().forEach((m)->generateMethod(typeDefinition, m));
+
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
+    }
+
+    private void generateMethod(TypeDefinition typeDefinition, MethodDefinition methodDefinition) {
+        localVarsSymbolTable = LocalVarsSymbolTable.forInstanceMethod();
+        String canonicalClassName = typeDefinition.getQualifiedName();
+        String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
+
+        String paramsDescriptor = String.join("", methodDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", methodDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
+        String methodDescriptor = "(" + paramsDescriptor + ")" + methodDefinition.getReturnType().jvmType(resolver).getDescriptor();
+        String methodSignature = "(" + paramsSignature + ")" + methodDefinition.getReturnType().jvmType(resolver).getSignature();
+        // TODO consider exceptions
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodDefinition.getName(), methodDescriptor, methodSignature, null);
+
+        nLocalVars = 0;
+
+        mv.visitCode();
+
+        for (FormalParameter formalParameter : methodDefinition.getParameters()) {
+            localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
+        }
+
+        compile(methodDefinition.getBody()).operate(mv);
+
+        // TODO add implicit return when needed
+
+        // calculated for us
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+        localVarsSymbolTable = null;
     }
 
     private List<ClassFileDefinition> compile(Program program) {
@@ -380,6 +413,8 @@ public class Compilation {
 
         // TODO consider exceptions
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
+
+        localVarsSymbolTable.add("args", new FormalParameter(new ArrayTypeUsage(ReferenceTypeUsage.STRING), "args"));
 
         nParams = 1;
         nLocalVars = 0;
@@ -412,6 +447,14 @@ public class Compilation {
             BlockStatement blockStatement = (BlockStatement)statement;
             List<BytecodeSequence> elements = blockStatement.getStatements().stream().map((s)->compile(s)).collect(Collectors.toList());
             return new ComposedBytecodeSequence(elements);
+        } else if (statement instanceof ReturnStatement){
+            ReturnStatement returnStatement = (ReturnStatement)statement;
+            if (returnStatement.hasValue()) {
+                int returnType = returnStatement.getValue().calcType(resolver).jvmType(resolver).returnOpcode();
+                return new ReturnValue(returnType, pushExpression(returnStatement.getValue()));
+            } else {
+                return new ReturnVoid();
+            }
         } else {
             throw new UnsupportedOperationException(statement.toString());
         }
@@ -460,12 +503,16 @@ public class Compilation {
 
     private BytecodeSequence push(Node node) {
         if (node instanceof ReflectionBaseField) {
-            ReflectionBaseField reflectionBaseField = (ReflectionBaseField)node;
+            ReflectionBaseField reflectionBaseField = (ReflectionBaseField) node;
             if (reflectionBaseField.isStatic()) {
                 return new PushStaticField(reflectionBaseField.toJvmField(resolver));
             } else {
                 throw new UnsupportedOperationException();
             }
+        } else if (node instanceof Property) {
+            Property property = (Property)node;
+            JvmFieldDefinition field = new JvmFieldDefinition(this.internalClassName, property.fieldName(), property.getTypeUsage().jvmType(resolver).getDescriptor(), false);
+            return new PushInstanceField(field);
         } else {
             throw new UnsupportedOperationException(node.getClass().getCanonicalName());
         }
@@ -525,6 +572,9 @@ public class Compilation {
                 } else if (pieceType.isReference()) {
                     elements.add(pushExpression(piece));
                     elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.equals(BasicTypeUsage.UINT)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false)));
                 } else {
                     throw new UnsupportedOperationException(pieceType.toString());
                 }
@@ -539,7 +589,7 @@ public class Compilation {
                 TypeUsage type = localVarsSymbolTable.findDeclaration(valueReference.getName()).get().calcType(resolver);
                 return new PushLocalVar(loadTypeFor(type), index.get());
             } else {
-                throw new UnsupportedOperationException(valueReference.toString());
+                return push(valueReference.resolve(resolver));
             }
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());

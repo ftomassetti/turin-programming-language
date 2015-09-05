@@ -12,6 +12,8 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,6 +58,9 @@ public class CompilerOnFileTest {
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(2, classFileDefinitions.size());
 
+        //saveClassFile(classFileDefinitions.get(0), "tmp");
+        //saveClassFile(classFileDefinitions.get(1), "tmp");
+
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
@@ -66,4 +71,18 @@ public class CompilerOnFileTest {
         assertEquals("Ranma, 16", toString.invoke(ranma));
     }
 
+    /*private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
+        File output = null;
+        try {
+            output = new File(dir + "/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
+            output.getParentFile().mkdirs();
+            FileOutputStream fos = new FileOutputStream(output);
+            fos.write(classFileDefinition.getBytecode());
+        } catch (IOException e) {
+            System.err.println("Problem writing file "+output+": "+ e.getMessage());
+            System.exit(3);
+        }
+    }*/
+
 }
+

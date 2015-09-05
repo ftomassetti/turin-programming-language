@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
@@ -66,12 +67,7 @@ public class ValueReference extends Expression {
     public TypeUsage calcType(Resolver resolver) {
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
-            if (declaration.get() instanceof Expression) {
-                Expression expression = (Expression)declaration.get();
-                return expression.calcType(resolver);
-            } else {
-                throw new UnsupportedOperationException(declaration.get().describe());
-            }
+            return declaration.get().calcType(resolver);
         } else {
             throw new UnsolvedSymbolException(this);
         }

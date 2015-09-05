@@ -13,6 +13,18 @@ public class MethodDefinition extends Node {
     private List<FormalParameter> parameters;
     private Statement body;
 
+    public TypeUsage getReturnType() {
+        return returnType;
+    }
+
+    public List<FormalParameter> getParameters() {
+        return parameters;
+    }
+
+    public Statement getBody() {
+        return body;
+    }
+
     public MethodDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
         this.name = name;
         this.returnType = returnType;
@@ -26,5 +38,9 @@ public class MethodDefinition extends Node {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.<Node>builder().add(returnType).addAll(parameters).add(body).build();
+    }
+
+    public String getName() {
+        return name;
     }
 }

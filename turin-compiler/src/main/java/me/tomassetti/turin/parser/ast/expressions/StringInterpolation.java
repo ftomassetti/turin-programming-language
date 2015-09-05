@@ -54,6 +54,7 @@ public class StringInterpolation extends Expression {
      */
     public void add(Expression interpolatedValue) {
         elements.add(interpolatedValue);
+        interpolatedValue.setParent(this);
     }
 
     @Override

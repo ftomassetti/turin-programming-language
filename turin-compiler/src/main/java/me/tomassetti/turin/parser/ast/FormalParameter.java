@@ -18,4 +18,12 @@ public class FormalParameter extends Node {
     public Iterable<Node> getChildren() {
         return ImmutableList.of(type);
     }
+
+    public TypeUsage getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
