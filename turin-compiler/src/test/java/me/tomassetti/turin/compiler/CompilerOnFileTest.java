@@ -32,7 +32,7 @@ public class CompilerOnFileTest {
         // generate bytecode
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
-        assertEquals(1, classFileDefinitions.size());
+        assertEquals(2, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),

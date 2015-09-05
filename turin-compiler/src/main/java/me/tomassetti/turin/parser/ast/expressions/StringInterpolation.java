@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class StringInterpolation extends Expression {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        return ReferenceTypeUsage.STRING;
     }
 
     /**

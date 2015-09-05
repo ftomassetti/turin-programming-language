@@ -24,4 +24,8 @@ public class UnsolvedMethodException extends UnsolvedException {
     public UnsolvedMethodException(FunctionCall functionCall) {
         super("Unsolved function call " + functionCall.toString());
     }
+
+    public UnsolvedMethodException(String name, List<JvmType> argsTypes, boolean staticContext) {
+        super("Unsolved method call on " + name + " with params " + argsTypes);
+    }
 }

@@ -27,7 +27,15 @@ public class VariableDeclaration extends Statement {
         this.name = name;
         this.value = value;
         this.value.setParent(this);
+    }
 
+    @Override
+    public TypeUsage calcType(Resolver resolver) {
+        if (type == null) {
+            return value.calcType(resolver);
+        } else {
+            return getType();
+        }
     }
 
     @Override

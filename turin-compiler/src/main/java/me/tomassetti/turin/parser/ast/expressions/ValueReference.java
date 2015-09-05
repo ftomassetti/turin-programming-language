@@ -1,11 +1,14 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ValueReference extends Expression {
@@ -14,6 +17,20 @@ public class ValueReference extends Expression {
 
     public ValueReference(String name) {
         this.name = name;
+    }
+
+    @Override
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+        Optional<Node> declaration = resolver.findSymbol(name, this);
+        if (declaration.isPresent()) {
+            if (declaration.get() instanceof Expression) {
+                return ((Expression) declaration.get()).findMethodFor(argsTypes, resolver, staticContext);
+            } else {
+                throw new UnsupportedOperationException(declaration.get().getClass().getCanonicalName());
+            }
+        } else {
+            throw new UnsolvedSymbolException(this);
+        }
     }
 
     @Override
@@ -26,6 +43,10 @@ public class ValueReference extends Expression {
         if (!name.equals(that.name)) return false;
 
         return true;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

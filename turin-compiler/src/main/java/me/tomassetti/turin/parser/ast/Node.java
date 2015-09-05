@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Optional;
 
@@ -43,6 +44,11 @@ public abstract class Node {
         }
         return parent.contextName();
     }
+
+    public TypeUsage calcType(Resolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
 
     public Optional<Node> findSymbol(String name, Resolver resolver) {
         if (parent == null) {

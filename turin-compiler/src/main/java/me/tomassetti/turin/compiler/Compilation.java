@@ -46,6 +46,7 @@ public class Compilation {
     private Resolver resolver;
     private int nParams = 0;
     private int nLocalVars = 0;
+    private LocalVarsSymbolTable localVarsSymbolTable;
 
     public Compilation(Resolver resolver) {
         this.resolver = resolver;
@@ -369,6 +370,7 @@ public class Compilation {
     }
 
     private List<ClassFileDefinition> compile(Program program) {
+        localVarsSymbolTable = LocalVarsSymbolTable.forStaticMethod();
         String canonicalClassName = program.getQualifiedName();
         String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
 
@@ -392,6 +394,7 @@ public class Compilation {
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+        localVarsSymbolTable = null;
 
         return ImmutableList.of(endClass(canonicalClassName));
     }
@@ -401,6 +404,7 @@ public class Compilation {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
             int pos = nParams + nLocalVars;
             nLocalVars += 1;
+            localVarsSymbolTable.add(variableDeclaration.getName(), variableDeclaration);
             return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
         } else if (statement instanceof ExpressionStatement) {
             return executeEpression(((ExpressionStatement) statement).getExpression());
@@ -485,6 +489,20 @@ public class Compilation {
         }
     }
 
+    /**
+     * We need a special treatment for local variables.
+     */
+    private TypeUsage getType(Expression expression) {
+        if (expression instanceof ValueReference) {
+            ValueReference valueReference = (ValueReference)expression;
+            Optional<Node> declaration = localVarsSymbolTable.findDeclaration(valueReference.getName());
+            if (declaration.isPresent()) {
+                return declaration.get().calcType(resolver);
+            }
+        }
+        return expression.calcType(resolver);
+    }
+
     private BytecodeSequence pushExpression(Expression expr) {
         if (expr instanceof IntLiteral) {
             return new PushIntConst(((IntLiteral)expr).getValue());
@@ -494,26 +512,42 @@ public class Compilation {
             StaticFieldAccess staticFieldAccess = (StaticFieldAccess) expr;
             return new PushStaticField(staticFieldAccess.toJvmField(resolver));
         } else if (expr instanceof StringInterpolation) {
-            StringInterpolation stringInterpolation = (StringInterpolation)expr;
+            StringInterpolation stringInterpolation = (StringInterpolation) expr;
 
             List<BytecodeSequence> elements = new ArrayList<>();
             elements.add(new NewInvocation(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
 
             for (Expression piece : stringInterpolation.getElements()) {
-                TypeUsage pieceType = piece.calcType(resolver);
+                TypeUsage pieceType = getType(piece);
                 if (pieceType.equals(ReferenceTypeUsage.STRING)) {
                     elements.add(pushExpression(piece));
                     elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.isReference()) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false)));
                 } else {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException(pieceType.toString());
                 }
             }
 
             elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
             return new ComposedBytecodeSequence(elements);
+        } else if (expr instanceof ValueReference) {
+            ValueReference valueReference = (ValueReference)expr;
+            Optional<Integer> index = localVarsSymbolTable.findIndex(valueReference.getName());
+            if (index.isPresent()) {
+                TypeUsage type = localVarsSymbolTable.findDeclaration(valueReference.getName()).get().calcType(resolver);
+                return new PushLocalVar(loadTypeFor(type), index.get());
+            } else {
+                throw new UnsupportedOperationException(valueReference.toString());
+            }
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
+    }
+
+    private int loadTypeFor(TypeUsage type) {
+        return loadTypeFor(type.jvmType(resolver));
     }
 
 }

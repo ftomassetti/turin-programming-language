@@ -1,8 +1,10 @@
 package me.tomassetti.turin.compiler;
 
-import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.ast.Node;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * An instance is created for each method.
@@ -11,7 +13,7 @@ import java.util.*;
  */
 public class LocalVarsSymbolTable {
 
-    private List<Expression> values = new LinkedList<>();
+    private List<Node> values = new LinkedList<>();
     private List<Block> blockOfDeckaration = new LinkedList<>();
     private List<String> orderedNames = new LinkedList<>();
     private int startIndex;
@@ -45,7 +47,7 @@ public class LocalVarsSymbolTable {
     /**
      * Return the index in the symbol table.
      */
-    public int add(String name, Expression value) {
+    public int add(String name, Node value) {
         values.add(value);
         orderedNames.add(name);
         blockOfDeckaration.add(currentBlock);
@@ -54,6 +56,15 @@ public class LocalVarsSymbolTable {
 
     public Optional<Integer> findIndex(String name) {
         return findIndexInBlock(name, currentBlock);
+    }
+
+    public Optional<Node> findDeclaration(String name) {
+        Optional<Integer> index = findIndex(name);
+        if (index.isPresent()) {
+            return Optional.of(values.get(index.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     private Optional<Integer> findIndexInBlock(String name, Block block) {
