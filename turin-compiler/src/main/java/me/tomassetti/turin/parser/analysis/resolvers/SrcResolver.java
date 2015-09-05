@@ -37,7 +37,6 @@ public class SrcResolver implements Resolver {
         throw new UnsolvedSymbolException(propertyReference);
     }
 
-
     @Override
     public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
         if (definitions.containsKey(typeName)) {

@@ -33,7 +33,7 @@ public class Compiler {
 
     public static class Options {
 
-        @Parameter(names = {"-d", "--destination"})
+        @Parameter(names = {"-o", "--output"})
         private String destinationDir = "turin_classes";
 
         @Parameter(names = {"-cp", "--classpath"}, variableArity = true)
@@ -41,6 +41,9 @@ public class Compiler {
 
         @Parameter(names = {"-v", "--verbose"})
         private boolean verbose = false;
+
+        @Parameter(names = {"-d", "--debug"})
+        private boolean debug = false;
 
         @Parameter(names = {"-h", "--help"})
         private boolean help = false;
@@ -129,7 +132,25 @@ public class Compiler {
         // TODO consider classpath
         Compiler instance = new Compiler(resolver, options);
         for (TurinFile turinFile : turinFiles) {
-            instance.compile(turinFile);
+            for (ClassFileDefinition classFileDefinition : instance.compile(turinFile)) {
+                saveClassFile(classFileDefinition, options);
+            }
+        }
+    }
+
+    private static void saveClassFile(ClassFileDefinition classFileDefinition, Options options) {
+        File output = null;
+        try {
+            output = new File(new File(options.destinationDir).getAbsolutePath() + "/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
+            if (options.verbose) {
+                System.out.println(" [saving "+output.getPath()+"]");
+            }
+            output.getParentFile().mkdirs();
+            FileOutputStream fos = new FileOutputStream(output);
+            fos.write(classFileDefinition.getBytecode());
+        } catch (IOException e) {
+            System.err.println("Problem writing file "+output+": "+ e.getMessage());
+            System.exit(3);
         }
     }
 
