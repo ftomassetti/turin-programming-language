@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 
 import java.util.Optional;
 
