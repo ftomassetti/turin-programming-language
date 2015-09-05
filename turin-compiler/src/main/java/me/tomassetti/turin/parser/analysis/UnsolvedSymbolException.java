@@ -13,4 +13,8 @@ public class UnsolvedSymbolException extends UnsolvedException {
         super("Unsolved " + node);
         this.node = node;
     }
+
+    public UnsolvedSymbolException(String fieldName) {
+        super("Unsolved " + fieldName);
+    }
 }

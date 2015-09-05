@@ -51,16 +51,23 @@ public abstract class Node {
         }
     }
 
-    public Node getField(QualifiedName fieldsPath) {
+    public final Node getField(QualifiedName fieldsPath, Resolver resolver) {
         if (fieldsPath.isSimpleName()) {
-            return getField(fieldsPath.getName());
+            return getField(fieldsPath.getName(), resolver);
         } else {
-            Node next = getField(fieldsPath.firstSegment());
-            return next.getField(fieldsPath.rest());
+            Node next = getField(fieldsPath.firstSegment(), resolver);
+            return next.getField(fieldsPath.rest(), resolver);
         }
     }
 
-    public Node getField(String fieldName) {
-        throw new UnsupportedOperationException();
+    public String describe() {
+        return this.toString();
+    }
+
+    /**
+     * This is intended in a broad way: everything that can be accessed with a dot.
+     */
+    public Node getField(String fieldName, Resolver resolver) {
+        throw new UnsupportedOperationException("It is not possible to get field of " + describe());
     }
 }

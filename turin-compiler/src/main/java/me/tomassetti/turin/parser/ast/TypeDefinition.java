@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import org.omg.CORBA.UnknownUserException;
 
 import java.util.List;
 
@@ -40,4 +41,7 @@ public abstract class TypeDefinition extends Node {
 
     public abstract boolean isInterface();
 
+    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 }

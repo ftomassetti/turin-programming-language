@@ -5,6 +5,7 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 
 import java.util.List;
 
@@ -45,6 +46,10 @@ public abstract class TypeUsage extends Node {
     }
 
     public PrimitiveTypeUsage asPrimitiveTypeUsage() {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

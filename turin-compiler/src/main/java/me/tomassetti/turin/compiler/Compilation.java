@@ -11,6 +11,8 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
@@ -431,9 +433,31 @@ public class Compilation {
         } else if (function instanceof ValueReference) {
             ValueReference valueReference = (ValueReference)function;
             Node declaration = valueReference.resolve(resolver);
-            throw new UnsupportedOperationException(declaration.getClass().getCanonicalName());
+            if (declaration instanceof ReflectionBasedSetOfOverloadedMethods) {
+                ReflectionBasedSetOfOverloadedMethods methods = (ReflectionBasedSetOfOverloadedMethods)declaration;
+                if (methods.isStatic()) {
+                    return NoOp.getInstance();
+                } else {
+                    return push(methods.getInstance());
+                }
+            } else {
+                throw new UnsupportedOperationException(declaration.getClass().getCanonicalName());
+            }
         } else {
             throw new UnsupportedOperationException(function.getClass().getCanonicalName());
+        }
+    }
+
+    private BytecodeSequence push(Node node) {
+        if (node instanceof ReflectionBaseField) {
+            ReflectionBaseField reflectionBaseField = (ReflectionBaseField)node;
+            if (reflectionBaseField.isStatic()) {
+                return new PushStaticField(reflectionBaseField.toJvmField(resolver));
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        } else {
+            throw new UnsupportedOperationException(node.getClass().getCanonicalName());
         }
     }
 
@@ -461,8 +485,11 @@ public class Compilation {
         } else if (expr instanceof StringLiteral) {
             return new PushStringConst(((StringLiteral)expr).getValue());
         } else if (expr instanceof StaticFieldAccess) {
-            StaticFieldAccess staticFieldAccess = (StaticFieldAccess)expr;
+            StaticFieldAccess staticFieldAccess = (StaticFieldAccess) expr;
             return new PushStaticField(staticFieldAccess.toJvmField(resolver));
+        } else if (expr instanceof StringInterpolation) {
+            StringInterpolation stringInterpolation = (StringInterpolation)expr;
+            throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

@@ -4,6 +4,7 @@ import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -17,6 +18,13 @@ import java.util.Collections;
 import java.util.List;
 
 class ReflectionBasedTypeDefinition extends TypeDefinition {
+
+    @Override
+    public String toString() {
+        return "ReflectionBasedTypeDefinition{" +
+                "clazz=" + clazz +
+                '}';
+    }
 
     private Class<?> clazz;
 
@@ -177,5 +185,39 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Node getField(String fieldName, Resolver resolver) {
+        return internalGetField(fieldName, null);
+    }
+
+    @Override
+    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+        return internalGetField(fieldName, instance);
+    }
+
+    /**
+     * Instance null means get static fields.
+     */
+    private Node internalGetField(String fieldName, Node instance) {
+        boolean isStatic = instance == null;
+        for (Field field : clazz.getFields()) {
+            if (field.getName().equals(fieldName) && Modifier.isStatic(field.getModifiers()) == isStatic) {
+                return new ReflectionBaseField(field);
+            }
+        }
+        List<Method> matchingMethods = new ArrayList<>();
+        for (Method method : clazz.getMethods()) {
+            if (method.getName().equals(fieldName) && Modifier.isStatic(method.getModifiers()) == isStatic){
+                matchingMethods.add(method);
+            }
+        }
+        if (matchingMethods.isEmpty()) {
+            // TODO improve the error returned
+            throw new UnsolvedSymbolException(fieldName);
+        } else {
+            return new ReflectionBasedSetOfOverloadedMethods(matchingMethods, instance);
+        }
     }
 }

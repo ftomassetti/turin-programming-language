@@ -1,7 +1,6 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Import;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 

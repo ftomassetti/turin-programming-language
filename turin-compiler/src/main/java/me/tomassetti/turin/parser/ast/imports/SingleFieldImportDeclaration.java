@@ -43,10 +43,8 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
                 String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
                 TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(canonicalTypeName, this);
 
-                Node importedValue = typeDefinition.getField(fieldsPath);
-
-                //return Optional.of(new ComposedReference(packagePart.qualifiedName() + "." + typeName, fieldsPath));
-                throw new UnsupportedOperationException(typeDefinition.getQualifiedName());
+                Node importedValue = typeDefinition.getField(fieldsPath, resolver);
+                return Optional.of(importedValue);
             } else {
                 return Optional.empty();
             }

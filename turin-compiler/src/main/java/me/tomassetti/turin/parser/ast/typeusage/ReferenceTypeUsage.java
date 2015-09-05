@@ -6,6 +6,7 @@ import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,5 +165,10 @@ public class ReferenceTypeUsage extends TypeUsage {
     public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
         // TODO perhaps some generic type substitution needs to be done
         return getTypeDefinition(resolver).getAllAncestors(resolver);
+    }
+
+    @Override
+    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+        return getTypeDefinition(resolver).getFieldOnInstance(fieldName, instance, resolver);
     }
 }
