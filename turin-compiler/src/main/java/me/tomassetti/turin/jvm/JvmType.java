@@ -34,6 +34,13 @@ public class JvmType {
     }
 
     @Override
+    public String toString() {
+        return "JvmType{" +
+                "signature='" + signature + '\'' +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return signature.hashCode();
     }
