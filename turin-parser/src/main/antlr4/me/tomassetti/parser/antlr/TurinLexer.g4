@@ -9,7 +9,7 @@ lexer grammar TurinLexer;
     public static final int COMMENTS = 2;
 }
 
-tokens { ID, TID, INT, LPAREN, RPAREN, COMMA, RELOP }
+tokens { ID, TID, INT, LPAREN, RPAREN, COMMA, RELOP, AND_KW, OR_KW, NOT_KW }
 
 NAMESPACE_KW: 'namespace';
 PROGRAM_KW: 'program';
@@ -25,9 +25,9 @@ VOID_KW: 'Void';
 RETURN_KW: 'return';
 FALSE_KW: 'false';
 TRUE_KW: 'true';
-AND_KW: 'and';
-OR_KW: 'or';
-NOT_KW: 'not';
+AND_KW: F_AND;
+OR_KW: F_OR;
+NOT_KW: F_NOT;
 
 LPAREN: '(';
 RPAREN: ')';
@@ -73,6 +73,9 @@ LINE_COMMENT
     :   '//' ~[\r\n]* -> channel(COMMENTS)
     ;
 
+fragment F_AND: 'and';
+fragment F_OR: 'or';
+fragment F_NOT: 'not';
 fragment F_ID: ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
 fragment F_TID: ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
@@ -96,9 +99,9 @@ I_PRIMITIVE_TYPE: F_PRIMITIVE_TYPE -> type(PRIMITIVE_TYPE);
 I_BASIC_TYPE:     F_BASIC_TYPE -> type(BASIC_TYPE);
 I_FALSE_KW : 'false' -> type(FALSE_KW);
 I_TRUE_KW : 'true' -> type(TRUE_KW);
-I_AND_KW: 'and' -> type(AND_KW);
-I_OR_KW: 'or' -> type(OR_KW);
-I_NOT_KW: 'not' -> type(NOT_KW);
+I_AND_KW: F_AND -> type(AND_KW);
+I_OR_KW: F_OR -> type(OR_KW);
+I_NOT_KW: F_NOT -> type(NOT_KW);
 I_ID: F_ID   -> type(ID);
 I_TID: F_TID -> type(TID);
 I_INT: F_INT -> type(INT);

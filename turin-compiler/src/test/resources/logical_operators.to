@@ -1,0 +1,17 @@
+namespace examples
+
+type A {
+    Boolean foo1() = false and false
+    Boolean foo2() = false and true
+    Boolean foo3() = true  and false
+    Boolean foo4() = true  and true
+    Boolean foo5() = false or false
+    Boolean foo6() = false or true
+    Boolean foo7() = true  or false
+    Boolean foo8() = true  or true
+    Boolean foo9() = not false
+    Boolean foo10() = not true
+    Boolean foo11() = not false or not true
+    Boolean foo12() = not ((false or true) or false)
+}
+
