@@ -11,10 +11,8 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -184,6 +182,34 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
 
         return super.findSymbol(name, resolver);
+    }
+
+    /**
+     * Does it override the toString method defined in Object?
+     */
+    public boolean defineMethodToString(Resolver resolver) {
+        return isDefiningMethod("toString", Collections.emptyList(), resolver);
+    }
+
+    /**
+     * Does it override the hashCode method defined in Object?
+     */
+    public boolean defineMethodHashCode(Resolver resolver) {
+        return isDefiningMethod("hashCode", Collections.emptyList(), resolver);
+    }
+
+    /**
+     * Does it override the equals method defined in Object?
+     */
+    public boolean defineMethodEquals(Resolver resolver) {
+        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT), resolver);
+    }
+
+    private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, Resolver resolver) {
+        return getDirectMethods().stream().filter((m)->m.getName().equals(name))
+                .filter((m) -> m.getParameters().stream().map((p) -> p.calcType(resolver).jvmType(resolver)).collect(Collectors.toList())
+                        .equals(paramTypes.stream().map((p) -> p.jvmType(resolver)).collect(Collectors.toList())))
+                .count() > 0;
     }
 
     @Override

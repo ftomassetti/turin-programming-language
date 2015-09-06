@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class ReferenceTypeUsage extends TypeUsage {
 
+    public static final ReferenceTypeUsage OBJECT = new ReferenceTypeUsage("java.lang.Object");
+    public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
+
     public boolean isInterface(Resolver resolver) {
         return getTypeDefinition(resolver).isInterface();
     }
@@ -59,8 +62,6 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
-
-    public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
 
     public TypeParameterValues getTypeParameterValues() {
         return typeParameterValues;

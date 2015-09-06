@@ -1,0 +1,23 @@
+namespace manga
+
+type A {
+    String toString() = "foo"
+}
+
+type B {
+    String toString(Int i) = "unrelated toString!"
+}
+
+type C {
+    Int hashCode() = 1
+}
+
+type D {
+    Int hashCode(String s) = 1
+    Boolean equals(Object o) = false
+}
+
+type E {
+    Int hashCode(String s) = 1
+    Boolean equals(String s) = true
+}
