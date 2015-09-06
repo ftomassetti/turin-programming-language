@@ -105,7 +105,7 @@ public class JvmType {
             return Opcodes.FRETURN;
         } else if (signature.equals("D")) {
             return Opcodes.DRETURN;
-        } else if (signature.equals("B")||signature.equals("S")||signature.equals("C")||signature.equals("I")) {
+        } else if (signature.equals("B")||signature.equals("S")||signature.equals("C")||signature.equals("I")||signature.equals("Z")) {
             return Opcodes.IRETURN;
         } else {
             return Opcodes.ARETURN;

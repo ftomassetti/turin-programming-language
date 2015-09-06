@@ -5,6 +5,7 @@ import me.tomassetti.parser.antlr.TurinParser;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
+import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.imports.AllPackageImportDeclaration;
@@ -254,6 +255,8 @@ class ParseTreeToAst {
             return toAst(exprCtx.parenExpression().internal);
         } else if (exprCtx.stringLiteral() != null) {
             return toAst(exprCtx.stringLiteral());
+        } else if (exprCtx.booleanLiteral() != null) {
+            return new BooleanLiteral(exprCtx.booleanLiteral().positive != null);
         } else {
             throw new UnsupportedOperationException();
         }

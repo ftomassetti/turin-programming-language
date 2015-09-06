@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
+import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
@@ -610,7 +611,7 @@ public class Compilation {
                 return push(valueReference.resolve(resolver));
             }
         } else if (expr instanceof MathOperation) {
-            MathOperation mathOperation = (MathOperation)expr;
+            MathOperation mathOperation = (MathOperation) expr;
             // TODO do proper conversions
             if (!mathOperation.getLeft().calcType(resolver).equals(PrimitiveTypeUsage.INT)) {
                 throw new UnsupportedOperationException();
@@ -623,6 +624,8 @@ public class Compilation {
                     pushExpression(mathOperation.getLeft()),
                     pushExpression(mathOperation.getRight()),
                     new MathOperationBytecode(mathOperation.getLeft().calcType(resolver).jvmType(resolver).typeCategory(), mathOperation.getOperator())));
+        } else if (expr instanceof BooleanLiteral) {
+            return new PushBoolean(((BooleanLiteral)expr).getValue());
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

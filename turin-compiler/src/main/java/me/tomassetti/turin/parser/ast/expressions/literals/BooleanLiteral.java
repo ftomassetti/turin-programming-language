@@ -25,4 +25,8 @@ public class BooleanLiteral extends Expression {
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
     }
+
+    public boolean getValue() {
+        return value;
+    }
 }

@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Test;
 
@@ -204,7 +205,6 @@ public class CompilerOnFileTest {
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
-        saveClassFile(classFileDefinitions.get(0), "tmp");
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class math = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
@@ -216,6 +216,35 @@ public class CompilerOnFileTest {
         assertEquals(15, calc.invoke(mathInstance, 0));
         assertEquals(20, calc.invoke(mathInstance, 5));
         assertEquals(25, calc.invoke(mathInstance, 10));
+    }
+
+    @Test
+    public void pimitiveTypesHavePrecedence() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/boolean_literals.to"));
+
+        assertEquals(PrimitiveTypeUsage.BOOLEAN, turinFile.getTopTypeDefinition("A").get().getDirectMethods().get(0).getReturnType());
+    }
+
+    @Test
+    public void compileBooleanLiterals() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/boolean_literals.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        saveClassFile(classFileDefinitions.get(0), "tmp");
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, aClass.getConstructors().length);
+        Object aInstance = aClass.getConstructors()[0].newInstance();
+
+        Method foo1 = aClass.getMethod("foo1");
+        Method foo2 = aClass.getMethod("foo2");
+        assertEquals(false, foo1.invoke(aInstance));
+        assertEquals(true, foo2.invoke(aInstance));
     }
 
     // Used for debugging
