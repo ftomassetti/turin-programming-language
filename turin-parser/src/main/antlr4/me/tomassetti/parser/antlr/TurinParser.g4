@@ -49,10 +49,13 @@ typeUsage:
     | primitiveType = PRIMITIVE_TYPE
     | basicType = BASIC_TYPE;
 
+commaNl:
+    COMMA NL?;
+
 // method definition
 
 methodDefinition:
-    type=returnType name=ID LPAREN (params+=formalParam (COMMA params+=formalParam)*)? RPAREN methodBody;
+    type=returnType name=ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
 
 returnType:
     isVoid=VOID_KW | type=typeUsage;
@@ -102,7 +105,7 @@ expression:
     ;
 
 invokation:
-    function=basicExpression LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
+    function=basicExpression LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
 
 fieldAccess:
     subject=basicExpression POINT name=ID;
@@ -132,7 +135,7 @@ intLiteral:
     INT;
 
 creation:
-    (pakage=qualifiedId POINT)? name=TID LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
+    (pakage=qualifiedId POINT)? name=TID LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
 
 varDecl :
     VAL_KW (type=typeUsage)? name=ID ASSIGNMENT value=expression nls;
@@ -152,7 +155,7 @@ formalParam :
 //
 
 program:
-    PROGRAM_KW name=TID LPAREN params+=formalParam (COMMA params+=formalParam)* RPAREN LBRACKET nls
+    PROGRAM_KW name=TID LPAREN params+=formalParam (commaNl params+=formalParam)* RPAREN LBRACKET nls
     (statements += statement)*
     RBRACKET nls;
 
