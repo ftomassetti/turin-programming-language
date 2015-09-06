@@ -655,7 +655,28 @@ public class Compilation {
                     pushExpression(mathOperation.getRight()),
                     new MathOperationBytecode(mathOperation.getLeft().calcType(resolver).jvmType(resolver).typeCategory(), mathOperation.getOperator())));
         } else if (expr instanceof BooleanLiteral) {
-            return new PushBoolean(((BooleanLiteral)expr).getValue());
+            return new PushBoolean(((BooleanLiteral) expr).getValue());
+        } else if (expr instanceof LogicOperation) {
+            LogicOperation logicOperation = (LogicOperation)expr;
+            switch (logicOperation.getOperator()) {
+                case AND:
+                    return new ComposedBytecodeSequence(ImmutableList.of(
+                            pushExpression(logicOperation.getLeft()),
+                            pushExpression(logicOperation.getRight()),
+                            new AndOperation()
+                    ));
+                case OR:
+                    return new ComposedBytecodeSequence(ImmutableList.of(
+                            pushExpression(logicOperation.getLeft()),
+                            pushExpression(logicOperation.getRight()),
+                            new OrOperation()
+                    ));
+                default:
+                    throw new UnsupportedOperationException(logicOperation.getOperator().name());
+            }
+        } else if (expr instanceof NotOperation) {
+            NotOperation notOperation = (NotOperation)expr;
+            return new ComposedBytecodeSequence(ImmutableList.of(pushExpression(notOperation.getValue()), new NotOperationBytecode()));
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

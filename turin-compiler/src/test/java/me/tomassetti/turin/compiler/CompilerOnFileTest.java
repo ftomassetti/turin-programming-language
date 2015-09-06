@@ -344,6 +344,7 @@ public class CompilerOnFileTest {
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
+        saveClassFile(classFileDefinitions.get(0), "tmp");
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),

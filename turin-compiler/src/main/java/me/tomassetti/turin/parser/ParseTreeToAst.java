@@ -231,17 +231,28 @@ class ParseTreeToAst {
         } else if (exprCtx.invokation() != null) {
             return toAst(exprCtx.invokation());
         } else if (exprCtx.mathOperator != null) {
-            return operationToAst(exprCtx.mathOperator.getText(), exprCtx.left, exprCtx.right);
+            return mathOperationToAst(exprCtx.mathOperator.getText(), exprCtx.left, exprCtx.right);
+        } else if (exprCtx.logicOperator != null) {
+            return logicOperationToAst(exprCtx.logicOperator.getText(), exprCtx.left, exprCtx.right);
+        } else if (exprCtx.not != null) {
+            return new NotOperation(toAst(exprCtx.value));
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }
     }
 
-    private Expression operationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
+    private Expression mathOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
         Expression leftExpr = toAst(left);
         Expression rightExpr = toAst(right);
         MathOperation.Operator operator = MathOperation.Operator.fromSymbol(operatorStr);
         return new MathOperation(operator, leftExpr, rightExpr);
+    }
+
+    private Expression logicOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
+        Expression leftExpr = toAst(left);
+        Expression rightExpr = toAst(right);
+        LogicOperation.Operator operator = LogicOperation.Operator.fromSymbol(operatorStr);
+        return new LogicOperation(operator, leftExpr, rightExpr);
     }
 
     private Expression toAst(TurinParser.BasicExpressionContext exprCtx) {
