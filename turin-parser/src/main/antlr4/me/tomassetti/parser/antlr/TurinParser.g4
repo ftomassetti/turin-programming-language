@@ -150,8 +150,16 @@ expressionStmt:
 returnStmt:
     RETURN_KW value=expression nls;
 
+elifStmt:
+    ELIF_KW condition=expression RBRACKET nls (ifBody+=statement)* LBRACKET;
+
+ifStmt:
+    IF_KW condition=expression RBRACKET nls (ifBody+=statement)* LBRACKET
+    (elifs+=elifStmt)*
+    (ELSE_KW RBRACKET nls (elseBody+=statement)* LBRACKET)? nls;
+
 statement :
-    varDecl | expressionStmt | returnStmt;
+    varDecl | expressionStmt | returnStmt | ifStmt;
 //
 
 formalParam :
