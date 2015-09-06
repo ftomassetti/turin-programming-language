@@ -675,8 +675,15 @@ public class Compilation {
                     throw new UnsupportedOperationException(logicOperation.getOperator().name());
             }
         } else if (expr instanceof NotOperation) {
-            NotOperation notOperation = (NotOperation)expr;
+            NotOperation notOperation = (NotOperation) expr;
             return new ComposedBytecodeSequence(ImmutableList.of(pushExpression(notOperation.getValue()), new NotOperationBytecode()));
+        } else if (expr instanceof RelationalOperation) {
+            RelationalOperation relationalOperation = (RelationalOperation)expr;
+            return new ComposedBytecodeSequence(ImmutableList.of(
+                    pushExpression(relationalOperation.getLeft()),
+                    pushExpression(relationalOperation.getRight()),
+                    new RelationalOperationBytecode(relationalOperation.getOperator())
+            ));
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

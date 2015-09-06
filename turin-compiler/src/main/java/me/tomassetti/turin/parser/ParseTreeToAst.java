@@ -236,6 +236,8 @@ class ParseTreeToAst {
             return logicOperationToAst(exprCtx.logicOperator.getText(), exprCtx.left, exprCtx.right);
         } else if (exprCtx.not != null) {
             return new NotOperation(toAst(exprCtx.value));
+        } else if (exprCtx.relOp != null) {
+            return relationalOperationToAst(exprCtx.relOp.getText(), exprCtx.left, exprCtx.right);
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }
@@ -253,6 +255,13 @@ class ParseTreeToAst {
         Expression rightExpr = toAst(right);
         LogicOperation.Operator operator = LogicOperation.Operator.fromSymbol(operatorStr);
         return new LogicOperation(operator, leftExpr, rightExpr);
+    }
+
+    private Expression relationalOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
+        Expression leftExpr = toAst(left);
+        Expression rightExpr = toAst(right);
+        RelationalOperation.Operator operator = RelationalOperation.Operator.fromSymbol(operatorStr);
+        return new RelationalOperation(operator, leftExpr, rightExpr);
     }
 
     private Expression toAst(TurinParser.BasicExpressionContext exprCtx) {
