@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
+import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.*;
@@ -8,6 +9,7 @@ import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -90,5 +92,14 @@ public class ReflectionTypeDefinitionFactory {
         } catch (ClassNotFoundException e) {
            return Optional.empty();
         }
+    }
+
+    public static JvmConstructorDefinition toConstructorDefinition(Constructor constructor) {
+        return new JvmConstructorDefinition(JvmNameUtils.canonicalToInternal(constructor.getDeclaringClass().getCanonicalName()), calcSignature(constructor));
+    }
+
+    private static String calcSignature(Constructor constructor) {
+        List<String> paramTypesSignatures = Arrays.stream(constructor.getParameterTypes()).map((t) -> calcSignature(t)).collect(Collectors.toList());
+        return "(" + String.join("", paramTypesSignatures) + ")V";
     }
 }

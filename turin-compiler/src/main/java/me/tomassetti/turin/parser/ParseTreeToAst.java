@@ -261,7 +261,13 @@ class ParseTreeToAst {
     }
 
     private Creation toAst(TurinParser.CreationContext creation) {
-        return new Creation(creation.name.getText(), creation.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+        String name;
+        if (creation.pakage != null) {
+            name = toAst(creation.pakage).qualifiedName() + "." + creation.name.getText();
+        } else {
+            name = creation.name.getText();
+        }
+        return new Creation(name, creation.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
     }
 
     private ActualParam toAst(TurinParser.ActualParamContext apCtx) {

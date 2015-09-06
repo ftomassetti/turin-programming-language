@@ -126,7 +126,7 @@ intLiteral:
     INT;
 
 creation:
-    name=TID LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
+    (pakage=qualifiedId POINT)? name=TID LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
 
 varDecl :
     VAL_KW (type=typeUsage COLON)? name=ID ASSIGNMENT value=expression nls;

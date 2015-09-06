@@ -58,9 +58,6 @@ public class CompilerOnFileTest {
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(2, classFileDefinitions.size());
 
-        //saveClassFile(classFileDefinitions.get(0), "tmp");
-        //saveClassFile(classFileDefinitions.get(1), "tmp");
-
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
@@ -69,6 +66,20 @@ public class CompilerOnFileTest {
 
         Method toString = mangaCharacterClass.getMethod("toString");
         assertEquals("Ranma, 16", toString.invoke(ranma));
+    }
+
+    @Test
+    public void compileInstantiationOfDate() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/instantiation_of_date.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
     }
 
     /*private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {

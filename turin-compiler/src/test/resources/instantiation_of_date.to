@@ -1,0 +1,5 @@
+namespace examples
+
+program Example(String[] args) {
+    val d = java.util.Date()
+}

@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
-import me.tomassetti.turin.compiler.AmbiguousCallException;
+import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
@@ -8,9 +8,9 @@ import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -46,7 +46,15 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     @Override
     public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
-        throw new UnsupportedOperationException();
+        List<JvmType> argsTypes = new ArrayList<>();
+        for (ActualParam actualParam : actualParams) {
+            if (actualParam.isNamed()) {
+                throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
+            } else {
+                argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
+            }
+        }
+        return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()), this);
     }
 
     @Override
