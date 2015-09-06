@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.reflection.ReflectionBasedSetOfOverloadedM
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.*;
@@ -572,9 +573,24 @@ public class Compilation {
                 } else if (pieceType.isReference()) {
                     elements.add(pushExpression(piece));
                     elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false)));
-                } else if (pieceType.equals(BasicTypeUsage.UINT)) {
+                } else if (pieceType.equals(BasicTypeUsage.UINT) || (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt())) {
                     elements.add(pushExpression(piece));
                     elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.equals(PrimitiveTypeUsage.BOOLEAN)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.equals(PrimitiveTypeUsage.CHAR)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.equals(PrimitiveTypeUsage.LONG)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(J)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.equals(PrimitiveTypeUsage.FLOAT)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(F)Ljava/lang/StringBuilder;", false)));
+                } else if (pieceType.equals(PrimitiveTypeUsage.DOUBLE)) {
+                    elements.add(pushExpression(piece));
+                    elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(D)Ljava/lang/StringBuilder;", false)));
                 } else {
                     throw new UnsupportedOperationException(pieceType.toString());
                 }

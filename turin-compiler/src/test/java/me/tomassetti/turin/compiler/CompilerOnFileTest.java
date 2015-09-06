@@ -17,7 +17,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -122,6 +124,76 @@ public class CompilerOnFileTest {
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
+    }
+
+    @Test
+    public void compilePrimitiveData() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/primitive_data.to"));
+
+        // generate bytecode
+        Compiler compiler = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = compiler.compile(turinFile);
+        assertEquals(8, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Map<String, Class> clazzes = new HashMap<>();
+        for (ClassFileDefinition classFileDefinition : classFileDefinitions) {
+            Class clazz = turinClassLoader.addClass(classFileDefinition.getName(),
+                    classFileDefinition.getBytecode());
+            clazzes.put(clazz.getSimpleName(), clazz);
+        }
+
+        Class hasPrimitiveType = null;
+        Method toString = null;
+        Object instance = null;
+
+        hasPrimitiveType = clazzes.get("UseBoolean");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance(true);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("true", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseChar");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance('Z');
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("Z", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseByte");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance((byte)42);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("42", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseShort");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance((short)272);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("272", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseInt");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance(165000);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("165000", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseLong");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance(1000000000);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("1000000000", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseFloat");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance(42.0f);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("42.0", toString.invoke(instance));
+
+        hasPrimitiveType = clazzes.get("UseDouble");
+        assertEquals(1, hasPrimitiveType.getConstructors().length);
+        instance = hasPrimitiveType.getConstructors()[0].newInstance(42.0);
+        toString = hasPrimitiveType.getMethod("toString");
+        assertEquals("42.0", toString.invoke(instance));
     }
 
     /*private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {

@@ -64,9 +64,19 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return Collections.emptyList();
     }
 
+    /**
+     * In Turin all type names are capitalized, this is true also for primitive types.
+     */
+    public String turinName() {
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
+
+    /**
+     * It accepts both Java name (lower case) or Turin name (capitalized).
+     */
     public static TypeUsage getByName(String name) {
         for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
-            if (primitiveTypeUsage.name.equals(name)) {
+            if (primitiveTypeUsage.turinName().equals(name) || primitiveTypeUsage.name.equals(name)) {
                 return primitiveTypeUsage;
             }
         }
@@ -125,5 +135,9 @@ public class PrimitiveTypeUsage extends TypeUsage {
 
     public boolean isDouble() {
         return this == PrimitiveTypeUsage.DOUBLE;
+    }
+
+    public boolean isStoredInInt() {
+        return (this == BYTE || this == SHORT || this == INT);
     }
 }
