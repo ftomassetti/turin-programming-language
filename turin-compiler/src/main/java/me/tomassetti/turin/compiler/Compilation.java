@@ -580,22 +580,8 @@ public class Compilation {
         }
     }
 
-    /**
-     * We need a special treatment for local variables.
-     */
-    private TypeUsage getType(Expression expression) {
-        if (expression instanceof ValueReference) {
-            ValueReference valueReference = (ValueReference)expression;
-            Optional<Node> declaration = localVarsSymbolTable.findDeclaration(valueReference.getName());
-            if (declaration.isPresent()) {
-                return declaration.get().calcType(resolver);
-            }
-        }
-        return expression.calcType(resolver);
-    }
-
     private void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
-        TypeUsage pieceType = getType(piece);
+        TypeUsage pieceType = piece.calcType(resolver);
         if (pieceType.equals(ReferenceTypeUsage.STRING)) {
             elements.add(pushExpression(piece));
             elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)));
