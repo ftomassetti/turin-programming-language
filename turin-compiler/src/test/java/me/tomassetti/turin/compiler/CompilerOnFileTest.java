@@ -110,6 +110,20 @@ public class CompilerOnFileTest {
                 classFileDefinitions.get(0).getBytecode());
     }
 
+    @Test
+    public void compileImportDateWithAlias() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/import_date_with_alias.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class mangaCharacterClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+    }
+
     /*private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
         File output = null;
         try {

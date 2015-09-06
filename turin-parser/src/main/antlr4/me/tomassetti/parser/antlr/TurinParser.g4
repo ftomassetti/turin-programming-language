@@ -30,7 +30,7 @@ importDeclaration:
     typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration | allPackageImportDeclaration;
 
 typeImportDeclaration:
-    IMPORT_KW packagePart=qualifiedId POINT typeName=TID (AS_KW alternativeName=ID)? nls ;
+    IMPORT_KW packagePart=qualifiedId POINT typeName=TID (AS_KW alternativeName=TID)? nls ;
 
 singleFieldImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT typeName=TID POINT fieldName=qualifiedId (AS_KW alternativeName=ID)? nls;
