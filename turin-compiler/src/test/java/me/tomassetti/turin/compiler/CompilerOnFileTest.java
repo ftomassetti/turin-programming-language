@@ -499,6 +499,98 @@ public class CompilerOnFileTest {
         assertEquals(false, foo20.invoke(aInstance));
     }
 
+    @Test
+    public void compileSimpleIf() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/if.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, aClass.getConstructors().length);
+        Object aInstance = aClass.getConstructors()[0].newInstance();
+
+        Method method = aClass.getMethod("foo1", boolean.class);
+        assertEquals(true, method.invoke(aInstance, false));
+        assertEquals(true, method.invoke(aInstance, true));
+    }
+
+    @Test
+    public void compileSimpleIfElse() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/if.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, aClass.getConstructors().length);
+        Object aInstance = aClass.getConstructors()[0].newInstance();
+
+        Method method = aClass.getMethod("foo2", boolean.class);
+        assertEquals(true, method.invoke(aInstance, false));
+        assertEquals(true, method.invoke(aInstance, true));
+    }
+
+    @Test
+    public void compileSimpleIfElifsElse() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/if.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, aClass.getConstructors().length);
+        Object aInstance = aClass.getConstructors()[0].newInstance();
+
+        Method method = aClass.getMethod("foo3", boolean.class, boolean.class, boolean.class);
+        assertEquals(true, method.invoke(aInstance, false, false, false));
+        assertEquals(true, method.invoke(aInstance, false, false, true));
+        assertEquals(true, method.invoke(aInstance, false, true,  false));
+        assertEquals(true, method.invoke(aInstance, false, true,  true));
+        assertEquals(true, method.invoke(aInstance, true, false, false));
+        assertEquals(true, method.invoke(aInstance, true, false, true));
+        assertEquals(true, method.invoke(aInstance, true, true,  false));
+        assertEquals(true, method.invoke(aInstance, true, true,  true));
+    }
+
+    @Test
+    public void compileSimpleIfElifsNoElse() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/if.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, aClass.getConstructors().length);
+        Object aInstance = aClass.getConstructors()[0].newInstance();
+
+        Method method = aClass.getMethod("foo4", boolean.class, boolean.class, boolean.class);
+        assertEquals(true, method.invoke(aInstance, false, false, false));
+        assertEquals(true, method.invoke(aInstance, false, false, true));
+        assertEquals(true, method.invoke(aInstance, false, true,  false));
+        assertEquals(true, method.invoke(aInstance, false, true,  true));
+        assertEquals(true, method.invoke(aInstance, true, false, false));
+        assertEquals(true, method.invoke(aInstance, true, false, true));
+        assertEquals(true, method.invoke(aInstance, true, true,  false));
+        assertEquals(true, method.invoke(aInstance, true, true,  true));
+    }
+
     // Used for debugging
     private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
         File output = null;

@@ -151,12 +151,12 @@ returnStmt:
     RETURN_KW value=expression nls;
 
 elifStmt:
-    ELIF_KW condition=expression RBRACKET nls (ifBody+=statement)* LBRACKET;
+    ELIF_KW condition=expression LBRACKET nls (ifBody+=statement)* RBRACKET;
 
 ifStmt:
-    IF_KW condition=expression RBRACKET nls (ifBody+=statement)* LBRACKET
+    IF_KW condition=expression LBRACKET nls (ifBody+=statement)* RBRACKET
     (elifs+=elifStmt)*
-    (ELSE_KW RBRACKET nls (elseBody+=statement)* LBRACKET)? nls;
+    (ELSE_KW LBRACKET nls (elseBody+=statement)* RBRACKET)? nls;
 
 statement :
     varDecl | expressionStmt | returnStmt | ifStmt;

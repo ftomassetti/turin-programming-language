@@ -1,0 +1,44 @@
+namespace examples
+
+type A {
+
+    String foo1(Boolean a) {
+        if a {
+            return "A"
+        }
+        return "B"
+    }
+
+    String foo2(Boolean a) {
+        if a {
+            return "A"
+        } else {
+            return "B"
+        }
+    }
+
+    String foo3(Boolean a, Boolean b, Boolean c) {
+        if a {
+           return "A"
+        } elif b {
+           return "B"
+        } elif c {
+           return "C"
+        } else {
+           return "D"
+        }
+    }
+
+    String foo4(Boolean a, Boolean b, Boolean c) {
+        if a {
+           return "A"
+        } elif b {
+           return "B"
+        } elif c {
+           return "C"
+        }
+        return "D"
+    }
+
+}
+
