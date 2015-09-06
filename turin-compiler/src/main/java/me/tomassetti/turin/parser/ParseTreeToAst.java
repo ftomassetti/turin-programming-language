@@ -230,8 +230,8 @@ class ParseTreeToAst {
             return toAst(exprCtx.creation());
         } else if (exprCtx.invokation() != null) {
             return toAst(exprCtx.invokation());
-        } else if (exprCtx.operator != null) {
-            return operationToAst(exprCtx.operator.getText(), exprCtx.left, exprCtx.right);
+        } else if (exprCtx.mathOperator != null) {
+            return operationToAst(exprCtx.mathOperator.getText(), exprCtx.left, exprCtx.right);
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }

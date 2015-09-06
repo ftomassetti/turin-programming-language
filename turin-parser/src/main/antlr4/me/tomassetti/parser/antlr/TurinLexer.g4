@@ -9,7 +9,7 @@ lexer grammar TurinLexer;
     public static final int COMMENTS = 2;
 }
 
-tokens { ID, TID, INT, LPAREN, RPAREN, COMMA }
+tokens { ID, TID, INT, LPAREN, RPAREN, COMMA, RELOP }
 
 NAMESPACE_KW: 'namespace';
 PROGRAM_KW: 'program';
@@ -25,6 +25,9 @@ VOID_KW: 'Void';
 RETURN_KW: 'return';
 FALSE_KW: 'false';
 TRUE_KW: 'true';
+AND_KW: 'and';
+OR_KW: 'or';
+NOT_KW: 'not';
 
 LPAREN: '(';
 RPAREN: ')';
@@ -35,7 +38,14 @@ RSQUARE: ']';
 COMMA: ',';
 POINT: '.';
 COLON: ':';
-EQUAL: '==';
+// We use just one token type to reduce the number of states (and not crash Antlr...)
+// https://github.com/antlr/antlr4/issues/840
+EQUAL: '=='     -> type(RELOP);
+DIFFERENT: '!=' -> type(RELOP);
+LESSEQ: '<='    -> type(RELOP);
+LESS:   '<'     -> type(RELOP);
+MOREEQ: '>='    -> type(RELOP);
+MORE:   '>'     -> type(RELOP);
 ASSIGNMENT: '=';
 ASTERISK: '*';
 SLASH:    '/';
@@ -86,6 +96,9 @@ I_PRIMITIVE_TYPE: F_PRIMITIVE_TYPE -> type(PRIMITIVE_TYPE);
 I_BASIC_TYPE:     F_BASIC_TYPE -> type(BASIC_TYPE);
 I_FALSE_KW : 'false' -> type(FALSE_KW);
 I_TRUE_KW : 'true' -> type(TRUE_KW);
+I_AND_KW: 'and' -> type(AND_KW);
+I_OR_KW: 'or' -> type(OR_KW);
+I_NOT_KW: 'not' -> type(NOT_KW);
 I_ID: F_ID   -> type(ID);
 I_TID: F_TID -> type(TID);
 I_INT: F_INT -> type(INT);
@@ -101,7 +114,12 @@ I_PLUS:     '+' -> type(PLUS);
 I_MINUS:    '-' -> type(MINUS);
 
 I_POINT : '.' -> type(POINT);
-I_EQUAL : '==' -> type(EQUAL);
+I_EQUAL     : '==' -> type(RELOP);
+I_DIFFERENT : '!=' -> type(RELOP);
+I_LESSEQ    : '<=' -> type(RELOP);
+I_LESS      : '<'  -> type(RELOP);
+I_MOREEQ    : '>=' -> type(RELOP);
+I_MORE      : '>'  -> type(RELOP);
 I_STRING_START : '"' -> type(STRING_START), pushMode(IN_STRING);
 I_WS: (' ' | '\t')+ -> type(WS), channel(WHITESPACE);
 

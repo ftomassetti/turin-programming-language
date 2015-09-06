@@ -96,12 +96,19 @@ basicExpression:
 booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
 
+relOperator:
+    EQUAL | DIFFERENT | LESSEQ | LESS | MOREEQ | MORE;
+
 expression:
     invokation | creation | basicExpression | fieldAccess | staticFieldReference
-    | left=expression operator=ASTERISK right=expression
-    | left=expression operator=SLASH    right=expression
-    | left=expression operator=PLUS     right=expression
-    | left=expression operator=MINUS    right=expression
+    | left=expression mathOperator=ASTERISK right=expression
+    | left=expression mathOperator=SLASH    right=expression
+    | left=expression mathOperator=PLUS     right=expression
+    | left=expression mathOperator=MINUS    right=expression
+    | left=expression boolOperator=AND      right=expression
+    | left=expression boolOperator=OR       right=expression
+    | left=expression relOp=relOperator     right=expression
+    | not=NOT expression
     ;
 
 invokation:
