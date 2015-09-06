@@ -10,6 +10,8 @@ Programming should be about describe data, phenomenons, processes and interactio
 
 The initial goal is to complement Java for a series of tasks for which it is not strongly suited. The initial focus is on the definition of datatypes with proper defaults (no need to write or generated hashCode, equals, getters and setters in most cases).
 
+We want to be pragmatic: to start with a small language and make it usable in practice as soon as possible. To do so we are working on an [IntelliJ plugin](https://github.com/ftomassetti/turin-intellij-plugin) and we plan to start working soon on a Maven plugin.
+
 # Status
 
 Types with properties and methods can be defined and can compiled to class files. It is possible to invoke Java from Turin and viceversa.
@@ -51,3 +53,11 @@ program MangaExample(String[] args) {
 ```
 
 It prints: _The protagonist is Ranma, 16_
+
+# License
+
+Turin is released under the Apache License v2.0
+
+# Contributing
+
+All sorts of questions, advices and contributions are extremely welcome!
