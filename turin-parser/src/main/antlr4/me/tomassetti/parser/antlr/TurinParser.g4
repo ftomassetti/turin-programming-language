@@ -96,9 +96,6 @@ basicExpression:
 booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
 
-relOperator:
-    EQUAL | DIFFERENT | LESSEQ | LESS | MOREEQ | MORE;
-
 expression:
     invokation | creation | basicExpression | fieldAccess | staticFieldReference
     | left=expression mathOperator=ASTERISK right=expression
@@ -107,7 +104,7 @@ expression:
     | left=expression mathOperator=MINUS    right=expression
     | left=expression logicOperator=AND_KW  right=expression
     | left=expression logicOperator=OR_KW   right=expression
-    | left=expression relOp=relOperator     right=expression
+    | left=expression relOp=RELOP     right=expression
     | not=NOT_KW value=expression
     ;
 

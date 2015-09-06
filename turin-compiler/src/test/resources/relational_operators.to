@@ -1,0 +1,25 @@
+namespace examples
+
+type A {
+    Boolean foo1()  = 0 == 0
+    Boolean foo2()  = 1 == 1
+    Boolean foo3()  = 0 == 1
+    Boolean foo4()  = 1 == 0
+    Boolean foo5()  = 0 != 0
+    Boolean foo6()  = 1 != 1
+    Boolean foo7()  = 0 != 1
+    Boolean foo8()  = 1 != 0
+    Boolean foo9()  = 1 < 0
+    Boolean foo10() = 0 < 0
+    Boolean foo11() = 0 < 1
+    Boolean foo12() = 1 <= 0
+    Boolean foo13() = 0 <= 0
+    Boolean foo14() = 0 <= 1
+    Boolean foo15() = 1 > 0
+    Boolean foo16() = 0 > 0
+    Boolean foo17() = 0 > 1
+    Boolean foo18() = 1 >= 0
+    Boolean foo19() = 0 >= 0
+    Boolean foo20() = 0 >= 1
+}
+
