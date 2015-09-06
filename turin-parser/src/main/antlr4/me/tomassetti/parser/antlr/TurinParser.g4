@@ -88,7 +88,10 @@ parenExpression:
     LPAREN internal=expression RPAREN;
 
 basicExpression:
-    stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression;
+    booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression;
+
+booleanLiteral:
+    negative=FALSE_KW | positive=TRUE_KW;
 
 expression:
     invokation | creation | basicExpression | fieldAccess | staticFieldReference

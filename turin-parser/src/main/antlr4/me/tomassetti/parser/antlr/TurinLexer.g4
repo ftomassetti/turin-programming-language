@@ -23,6 +23,8 @@ IMPORT_KW: 'import';
 AS_KW: 'as';
 VOID_KW: 'Void';
 RETURN_KW: 'return';
+FALSE_KW: 'false';
+TRUE_KW: 'true';
 
 LPAREN: '(';
 RPAREN: ')';
@@ -65,7 +67,7 @@ fragment F_ID: ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
 fragment F_TID: ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_INT: '0'|(('1'..'9')('0'..'9')*);
-fragment F_PRIMITIVE_TYPE: 'Byte'|'Int'|'Long'|'Bool'|'Char'|'Float'|'Double'|'Short';
+fragment F_PRIMITIVE_TYPE: 'Byte'|'Int'|'Long'|'Boolean'|'Char'|'Float'|'Double'|'Short';
 fragment F_BASIC_TYPE: 'UInt';
 
 mode IN_STRING;
@@ -82,6 +84,8 @@ mode IN_INTERPOLATION;
 INTERPOLATION_END : '}' -> popMode;
 I_PRIMITIVE_TYPE: F_PRIMITIVE_TYPE -> type(PRIMITIVE_TYPE);
 I_BASIC_TYPE:     F_BASIC_TYPE -> type(BASIC_TYPE);
+I_FALSE_KW : 'false' -> type(FALSE_KW);
+I_TRUE_KW : 'true' -> type(TRUE_KW);
 I_ID: F_ID   -> type(ID);
 I_TID: F_TID -> type(TID);
 I_INT: F_INT -> type(INT);
