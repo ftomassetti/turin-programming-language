@@ -19,6 +19,30 @@ public class ArrayTypeUsage extends TypeUsage {
     }
 
     @Override
+    public String toString() {
+        return "ArrayTypeUsage{" +
+                "componentType=" + componentType +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArrayTypeUsage that = (ArrayTypeUsage) o;
+
+        if (!componentType.equals(that.componentType)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return componentType.hashCode();
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of(componentType);
     }

@@ -61,7 +61,7 @@ public class LocalVarsSymbolTable {
     public Optional<Node> findDeclaration(String name) {
         Optional<Integer> index = findIndex(name);
         if (index.isPresent()) {
-            return Optional.of(values.get(index.get()));
+            return Optional.of(values.get(index.get() - startIndex));
         } else {
             return Optional.empty();
         }

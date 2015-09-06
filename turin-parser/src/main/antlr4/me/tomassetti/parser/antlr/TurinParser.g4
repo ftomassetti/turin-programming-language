@@ -132,7 +132,7 @@ creation:
     (pakage=qualifiedId POINT)? name=TID LPAREN (params+=actualParam (COMMA params+=actualParam)*)?  RPAREN ;
 
 varDecl :
-    VAL_KW (type=typeUsage COLON)? name=ID ASSIGNMENT value=expression nls;
+    VAL_KW (type=typeUsage)? name=ID ASSIGNMENT value=expression nls;
 
 expressionStmt:
     expression nls;

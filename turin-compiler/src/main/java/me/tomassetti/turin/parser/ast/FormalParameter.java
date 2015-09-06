@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 public class FormalParameter extends Node {
@@ -17,6 +18,11 @@ public class FormalParameter extends Node {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of(type);
+    }
+
+    @Override
+    public TypeUsage calcType(Resolver resolver) {
+        return type;
     }
 
     public TypeUsage getType() {

@@ -204,6 +204,7 @@ public class CompilerOnFileTest {
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
+        saveClassFile(classFileDefinitions.get(0), "tmp");
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class math = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
@@ -211,13 +212,14 @@ public class CompilerOnFileTest {
         assertEquals(1, math.getConstructors().length);
         Object mathInstance = math.getConstructors()[0].newInstance(3, 5);
 
-        Method calc = math.getMethod("calc");
+        Method calc = math.getMethod("calc", int.class);
         assertEquals(15, calc.invoke(mathInstance, 0));
         assertEquals(20, calc.invoke(mathInstance, 5));
         assertEquals(25, calc.invoke(mathInstance, 10));
     }
 
-    /*private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
+    // Used for debugging
+    private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
         File output = null;
         try {
             output = new File(dir + "/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
@@ -228,7 +230,7 @@ public class CompilerOnFileTest {
             System.err.println("Problem writing file "+output+": "+ e.getMessage());
             System.exit(3);
         }
-    }*/
+    }
 
 }
 

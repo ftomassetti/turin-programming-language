@@ -1,10 +1,12 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MethodDefinition extends Node {
 
@@ -38,6 +40,16 @@ public class MethodDefinition extends Node {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.<Node>builder().add(returnType).addAll(parameters).add(body).build();
+    }
+
+    @Override
+    public Optional<Node> findSymbol(String name, Resolver resolver) {
+        for (FormalParameter param : parameters) {
+            if (param.getName().equals(name)) {
+                return Optional.of(param);
+            }
+        }
+        return super.findSymbol(name, resolver);
     }
 
     public String getName() {

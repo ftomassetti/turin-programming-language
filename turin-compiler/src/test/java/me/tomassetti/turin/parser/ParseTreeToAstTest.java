@@ -76,7 +76,7 @@ public class ParseTreeToAstTest {
         string.add(new StringLiteral("The protagonist is "));
         string.add(new ValueReference("ranma"));
         FunctionCall functionCall = new FunctionCall(new ValueReference("print"), ImmutableList.of(new ActualParam(string)));
-        Program program = new Program("MangaExample", new BlockStatement(ImmutableList.of(varDecl, new ExpressionStatement(functionCall))));
+        Program program = new Program("MangaExample", new BlockStatement(ImmutableList.of(varDecl, new ExpressionStatement(functionCall))), "args");
         turinFile.add(program);
 
         return turinFile;

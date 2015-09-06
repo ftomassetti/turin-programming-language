@@ -2,8 +2,11 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
+import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,10 +52,23 @@ public abstract class Node {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-
     public Optional<Node> findSymbol(String name, Resolver resolver) {
         if (parent == null) {
             return Optional.empty();
+        } else if (parent instanceof BlockStatement) {
+            if (!(this instanceof Statement)) {
+                throw new RuntimeException();
+            }
+            // This is a peculiar case because we have visibility only on the elements preceding this statement
+            BlockStatement blockStatement = (BlockStatement)parent;
+            List<Statement> preceedingStatements = blockStatement.findPreeceding((Statement)this);
+            for (Statement statement : preceedingStatements) {
+                Optional<Node> result = statement.findSymbol(name, resolver);
+                if (result.isPresent()) {
+                    return result;
+                }
+            }
+            return parent.findSymbol(name, resolver);
         } else {
             return parent.findSymbol(name, resolver);
         }
@@ -76,5 +92,16 @@ public abstract class Node {
      */
     public Node getField(String fieldName, Resolver resolver) {
         throw new UnsupportedOperationException("It is not possible to get field of " + describe());
+    }
+
+    public <T extends Node> List<T> findAll(Class<T> desiredClass) {
+        List<T> results = new LinkedList<>();
+        if (desiredClass.isInstance(this)) {
+            results.add(desiredClass.cast(this));
+        }
+        for (Node child : getChildren()) {
+            results.addAll(child.findAll(desiredClass));
+        }
+        return results;
     }
 }

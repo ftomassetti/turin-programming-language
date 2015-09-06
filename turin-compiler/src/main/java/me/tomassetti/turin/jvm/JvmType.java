@@ -1,5 +1,6 @@
 package me.tomassetti.turin.jvm;
 
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -50,6 +51,29 @@ public class JvmType {
             return new ReferenceTypeUsage(typeName);
         } else {
             throw new UnsupportedOperationException(signature);
+        }
+    }
+
+    public JvmTypeCategory typeCategory() {
+        if (signature.startsWith("L")){
+            return JvmTypeCategory.REFERENCE;
+        }
+
+        switch (signature) {
+            case "Z":
+            case "B":
+            case "S":
+            case "C":
+            case "I":
+                return JvmTypeCategory.INT;
+            case"J":
+                return JvmTypeCategory.LONG;
+            case "F":
+                return JvmTypeCategory.FLOAT;
+            case "D":
+                return JvmTypeCategory.DOUBLE;
+            default:
+                throw new UnsupportedOperationException(signature);
         }
     }
 

@@ -5,7 +5,6 @@ import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -13,7 +12,6 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBasedSetOfOverloadedMethods;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
@@ -599,7 +597,7 @@ public class Compilation {
             elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
             return new ComposedBytecodeSequence(elements);
         } else if (expr instanceof ValueReference) {
-            ValueReference valueReference = (ValueReference)expr;
+            ValueReference valueReference = (ValueReference) expr;
             Optional<Integer> index = localVarsSymbolTable.findIndex(valueReference.getName());
             if (index.isPresent()) {
                 TypeUsage type = localVarsSymbolTable.findDeclaration(valueReference.getName()).get().calcType(resolver);
@@ -607,6 +605,20 @@ public class Compilation {
             } else {
                 return push(valueReference.resolve(resolver));
             }
+        } else if (expr instanceof MathOperation) {
+            MathOperation mathOperation = (MathOperation)expr;
+            // TODO do proper conversions
+            if (!mathOperation.getLeft().calcType(resolver).equals(PrimitiveTypeUsage.INT)) {
+                throw new UnsupportedOperationException();
+            }
+            if (!mathOperation.getRight().calcType(resolver).equals(PrimitiveTypeUsage.INT)) {
+                throw new UnsupportedOperationException();
+            }
+
+            return new ComposedBytecodeSequence(ImmutableList.of(
+                    pushExpression(mathOperation.getLeft()),
+                    pushExpression(mathOperation.getRight()),
+                    new MathOperationBytecode(mathOperation.getLeft().calcType(resolver).jvmType(resolver).typeCategory(), mathOperation.getOperator())));
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

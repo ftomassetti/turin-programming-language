@@ -31,7 +31,7 @@ public class CompilerOnProgramTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of()));
+        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of()), "args");
         turinFile.add(program);
 
         return turinFile;
@@ -52,7 +52,7 @@ public class CompilerOnProgramTest {
         FieldAccess println = new FieldAccess(out, "println");
         FunctionCall printInvokation = new FunctionCall(println, ImmutableList.of(new ActualParam(stringLiteral)));
         Statement printStatement = new ExpressionStatement(printInvokation);
-        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of(printStatement)));
+        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of(printStatement)), "args");
         turinFile.add(program);
 
         return turinFile;

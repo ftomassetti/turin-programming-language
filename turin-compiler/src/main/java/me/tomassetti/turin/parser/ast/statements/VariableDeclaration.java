@@ -6,6 +6,8 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 
+import java.util.Optional;
+
 public class VariableDeclaration extends Statement {
     private TypeUsage type;
     private String name;
@@ -27,6 +29,14 @@ public class VariableDeclaration extends Statement {
         this.name = name;
         this.value = value;
         this.value.setParent(this);
+    }
+
+    @Override
+    public Optional<Node> findSymbol(String name, Resolver resolver) {
+        if (name.equals(this.name)) {
+            return Optional.of(this);
+        }
+        return super.findSymbol(name, resolver);
     }
 
     @Override

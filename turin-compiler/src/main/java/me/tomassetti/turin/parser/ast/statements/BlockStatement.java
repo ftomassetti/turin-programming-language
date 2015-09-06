@@ -46,4 +46,14 @@ public class BlockStatement extends Statement {
     public Iterable<Node> getChildren() {
         return ImmutableList.copyOf(statements);
     }
+
+    public List<Statement> findPreeceding(Statement statement) {
+        for (int i=0;i<statements.size();i++){
+            // we look for exactly that statement
+            if (statements.get(i) == statement) {
+                return statements.subList(0, i);
+            }
+        }
+        throw new IllegalArgumentException(statement.describe());
+    }
 }

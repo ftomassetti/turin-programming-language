@@ -200,7 +200,7 @@ class ParseTreeToAst {
         for (TurinParser.StatementContext stmtCtx : programCtx.statements) {
             statements.add(toAst(stmtCtx));
         }
-        Program program = new Program(programCtx.name.getText(), new BlockStatement(statements));
+        Program program = new Program(programCtx.name.getText(), new BlockStatement(statements), programCtx.formalParam.name.getText());
         return program;
     }
 
@@ -229,9 +229,18 @@ class ParseTreeToAst {
             return toAst(exprCtx.creation());
         } else if (exprCtx.invokation() != null) {
             return toAst(exprCtx.invokation());
+        } else if (exprCtx.operator != null) {
+            return operationToAst(exprCtx.operator.getText(), exprCtx.left, exprCtx.right);
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }
+    }
+
+    private Expression operationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
+        Expression leftExpr = toAst(left);
+        Expression rightExpr = toAst(right);
+        MathOperation.Operator operator = MathOperation.Operator.fromSymbol(operatorStr);
+        return new MathOperation(operator, leftExpr, rightExpr);
     }
 
     private Expression toAst(TurinParser.BasicExpressionContext exprCtx) {
