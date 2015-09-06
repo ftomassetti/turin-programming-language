@@ -151,7 +151,7 @@ returnStmt:
     RETURN_KW value=expression nls;
 
 elifStmt:
-    ELIF_KW condition=expression LBRACKET nls (ifBody+=statement)* RBRACKET;
+    ELIF_KW condition=expression LBRACKET nls (body+=statement)* RBRACKET;
 
 ifStmt:
     IF_KW condition=expression LBRACKET nls (ifBody+=statement)* RBRACKET

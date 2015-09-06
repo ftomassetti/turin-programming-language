@@ -210,9 +210,37 @@ class ParseTreeToAst {
             return toAst(stmtCtx.expressionStmt());
         } else if (stmtCtx.varDecl() != null) {
             return toAst(stmtCtx.varDecl());
+        } else if (stmtCtx.ifStmt() != null) {
+            return toAst(stmtCtx.ifStmt());
+        } else if (stmtCtx.returnStmt() != null){
+            return toAst(stmtCtx.returnStmt());
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException(stmtCtx.getText());
         }
+    }
+
+    private Statement toAst(TurinParser.ReturnStmtContext returnStmtContext) {
+        if (returnStmtContext.value == null) {
+            return new ReturnStatement();
+        } else {
+            return new ReturnStatement(toAst(returnStmtContext.value));
+        }
+    }
+
+    private Statement toAst(TurinParser.IfStmtContext ctx) {
+        BlockStatement ifBody = new BlockStatement(ctx.ifBody.stream().map((s)->toAst(s)).collect(Collectors.toList()));
+        List<ElifClause> elifs = ctx.elifs.stream().map((s) -> toAst(s)).collect(Collectors.toList());
+        if (ctx.elseBody == null) {
+            return new IfStatement(toAst(ctx.condition), ifBody, elifs);
+        } else {
+            BlockStatement elseBody = new BlockStatement(ctx.elseBody.stream().map((s)->toAst(s)).collect(Collectors.toList()));
+            return new IfStatement(toAst(ctx.condition), ifBody, elifs, elseBody);
+        }
+    }
+
+    private ElifClause toAst(TurinParser.ElifStmtContext ctx) {
+        BlockStatement body = new BlockStatement(ctx.body.stream().map((s)->toAst(s)).collect(Collectors.toList()));
+        return new ElifClause(toAst(ctx.condition), body);
     }
 
     private VariableDeclaration toAst(TurinParser.VarDeclContext varDeclContext) {

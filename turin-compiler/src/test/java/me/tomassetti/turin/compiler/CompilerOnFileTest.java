@@ -515,8 +515,8 @@ public class CompilerOnFileTest {
         Object aInstance = aClass.getConstructors()[0].newInstance();
 
         Method method = aClass.getMethod("foo1", boolean.class);
-        assertEquals(true, method.invoke(aInstance, false));
-        assertEquals(true, method.invoke(aInstance, true));
+        assertEquals("B", method.invoke(aInstance, false));
+        assertEquals("A", method.invoke(aInstance, true));
     }
 
     @Test
@@ -535,8 +535,8 @@ public class CompilerOnFileTest {
         Object aInstance = aClass.getConstructors()[0].newInstance();
 
         Method method = aClass.getMethod("foo2", boolean.class);
-        assertEquals(true, method.invoke(aInstance, false));
-        assertEquals(true, method.invoke(aInstance, true));
+        assertEquals("B", method.invoke(aInstance, false));
+        assertEquals("A", method.invoke(aInstance, true));
     }
 
     @Test
@@ -555,14 +555,14 @@ public class CompilerOnFileTest {
         Object aInstance = aClass.getConstructors()[0].newInstance();
 
         Method method = aClass.getMethod("foo3", boolean.class, boolean.class, boolean.class);
-        assertEquals(true, method.invoke(aInstance, false, false, false));
-        assertEquals(true, method.invoke(aInstance, false, false, true));
-        assertEquals(true, method.invoke(aInstance, false, true,  false));
-        assertEquals(true, method.invoke(aInstance, false, true,  true));
-        assertEquals(true, method.invoke(aInstance, true, false, false));
-        assertEquals(true, method.invoke(aInstance, true, false, true));
-        assertEquals(true, method.invoke(aInstance, true, true,  false));
-        assertEquals(true, method.invoke(aInstance, true, true,  true));
+        assertEquals("D", method.invoke(aInstance, false, false, false));
+        assertEquals("C", method.invoke(aInstance, false, false, true));
+        assertEquals("B", method.invoke(aInstance, false, true,  false));
+        assertEquals("B", method.invoke(aInstance, false, true,  true));
+        assertEquals("A", method.invoke(aInstance, true, false, false));
+        assertEquals("A", method.invoke(aInstance, true, false, true));
+        assertEquals("A", method.invoke(aInstance, true, true,  false));
+        assertEquals("A", method.invoke(aInstance, true, true,  true));
     }
 
     @Test
@@ -581,14 +581,14 @@ public class CompilerOnFileTest {
         Object aInstance = aClass.getConstructors()[0].newInstance();
 
         Method method = aClass.getMethod("foo4", boolean.class, boolean.class, boolean.class);
-        assertEquals(true, method.invoke(aInstance, false, false, false));
-        assertEquals(true, method.invoke(aInstance, false, false, true));
-        assertEquals(true, method.invoke(aInstance, false, true,  false));
-        assertEquals(true, method.invoke(aInstance, false, true,  true));
-        assertEquals(true, method.invoke(aInstance, true, false, false));
-        assertEquals(true, method.invoke(aInstance, true, false, true));
-        assertEquals(true, method.invoke(aInstance, true, true,  false));
-        assertEquals(true, method.invoke(aInstance, true, true,  true));
+        assertEquals("D", method.invoke(aInstance, false, false, false));
+        assertEquals("C", method.invoke(aInstance, false, false, true));
+        assertEquals("B", method.invoke(aInstance, false, true,  false));
+        assertEquals("B", method.invoke(aInstance, false, true,  true));
+        assertEquals("A", method.invoke(aInstance, true, false, false));
+        assertEquals("A", method.invoke(aInstance, true, false, true));
+        assertEquals("A", method.invoke(aInstance, true, true,  false));
+        assertEquals("A", method.invoke(aInstance, true, true,  true));
     }
 
     // Used for debugging

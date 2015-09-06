@@ -491,13 +491,24 @@ public class Compilation {
             BlockStatement blockStatement = (BlockStatement)statement;
             List<BytecodeSequence> elements = blockStatement.getStatements().stream().map((s)->compile(s)).collect(Collectors.toList());
             return new ComposedBytecodeSequence(elements);
-        } else if (statement instanceof ReturnStatement){
-            ReturnStatement returnStatement = (ReturnStatement)statement;
+        } else if (statement instanceof ReturnStatement) {
+            ReturnStatement returnStatement = (ReturnStatement) statement;
             if (returnStatement.hasValue()) {
                 int returnType = returnStatement.getValue().calcType(resolver).jvmType(resolver).returnOpcode();
                 return new ReturnValue(returnType, pushExpression(returnStatement.getValue()));
             } else {
                 return new ReturnVoid();
+            }
+        } else if (statement instanceof IfStatement) {
+            IfStatement ifStatement = (IfStatement)statement;
+            BytecodeSequence ifCondition = pushExpression(ifStatement.getCondition());
+            BytecodeSequence ifBody = compile(ifStatement.getIfBody());
+            List<BytecodeSequence> elifConditions = ifStatement.getElifStatements().stream().map((ec)->pushExpression(ec.getCondition())).collect(Collectors.toList());
+            List<BytecodeSequence> elifBodys = ifStatement.getElifStatements().stream().map((ec)->compile(ec.getBody())).collect(Collectors.toList());
+            if (ifStatement.hasElse()) {
+                return new IfBytecode(ifCondition, ifBody, elifConditions, elifBodys, compile(ifStatement.getElseBody()));
+            } else {
+                return new IfBytecode(ifCondition, ifBody, elifConditions, elifBodys);
             }
         } else {
             throw new UnsupportedOperationException(statement.toString());

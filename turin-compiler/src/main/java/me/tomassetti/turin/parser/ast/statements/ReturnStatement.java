@@ -12,6 +12,9 @@ public class ReturnStatement extends Statement {
         this.value.setParent(this);
     }
 
+    public ReturnStatement() {
+    }
+
     public Expression getValue() {
         return value;
     }
