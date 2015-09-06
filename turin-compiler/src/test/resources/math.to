@@ -1,0 +1,7 @@
+namespace examples
+
+type Math {
+    has Int : b
+    has Int : c
+    Int calc(Int a) = "#{a + b * c}"
+}

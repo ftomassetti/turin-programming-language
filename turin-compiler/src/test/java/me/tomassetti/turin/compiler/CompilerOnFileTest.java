@@ -196,6 +196,27 @@ public class CompilerOnFileTest {
         assertEquals("42.0", toString.invoke(instance));
     }
 
+    @Test
+    public void compileMath() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/math.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class math = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, math.getConstructors().length);
+        Object mathInstance = math.getConstructors()[0].newInstance(3, 5);
+
+        Method calc = math.getMethod("calc");
+        assertEquals(15, calc.invoke(mathInstance, 0));
+        assertEquals(20, calc.invoke(mathInstance, 5));
+        assertEquals(25, calc.invoke(mathInstance, 10));
+    }
+
     /*private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
         File output = null;
         try {
