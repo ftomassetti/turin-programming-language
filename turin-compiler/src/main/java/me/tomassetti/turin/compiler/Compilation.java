@@ -363,8 +363,12 @@ public class Compilation {
         }
 
         generateConstructor(typeDefinition, internalClassName);
-        generateEqualsMethod(typeDefinition, internalClassName);
-        generateHashCodeMethod(typeDefinition, internalClassName);
+        if (!typeDefinition.defineMethodEquals(resolver)) {
+            generateEqualsMethod(typeDefinition, internalClassName);
+        }
+        if (!typeDefinition.defineMethodHashCode(resolver)) {
+            generateHashCodeMethod(typeDefinition, internalClassName);
+        }
 
         typeDefinition.getDirectMethods().forEach((m)->generateMethod(typeDefinition, m));
 
