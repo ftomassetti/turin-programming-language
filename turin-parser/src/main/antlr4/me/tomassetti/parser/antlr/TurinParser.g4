@@ -105,10 +105,10 @@ expression:
     | left=expression mathOperator=SLASH    right=expression
     | left=expression mathOperator=PLUS     right=expression
     | left=expression mathOperator=MINUS    right=expression
-    | left=expression boolOperator=AND      right=expression
-    | left=expression boolOperator=OR       right=expression
+    | left=expression boolOperator=AND_KW   right=expression
+    | left=expression boolOperator=OR_KW    right=expression
     | left=expression relOp=relOperator     right=expression
-    | not=NOT expression
+    | not=NOT_KW expression
     ;
 
 invokation:
