@@ -90,4 +90,8 @@ public final class JvmNameUtils {
         }
         return true;
     }
+
+    public static boolean isSimpleName(String name) {
+        return -1 == name.indexOf('.');
+    }
 }

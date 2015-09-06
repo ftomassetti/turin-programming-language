@@ -27,7 +27,7 @@ namespaceDecl:
 // Imports
 
 importDeclaration:
-    typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration;
+    typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration | allPackageImportDeclaration;
 
 typeImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT typeName=TID (AS_KW alternativeName=ID)? nls ;
@@ -37,6 +37,9 @@ singleFieldImportDeclaration:
 
 allFieldsImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT typeName=TID POINT ASTERISK nls;
+
+allPackageImportDeclaration:
+    IMPORT_KW packagePart=qualifiedId POINT ASTERISK nls;
 
 //
 

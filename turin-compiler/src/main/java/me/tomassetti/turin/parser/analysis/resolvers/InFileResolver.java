@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
+import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
@@ -9,6 +10,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -41,21 +43,16 @@ public class InFileResolver implements Resolver {
     }
 
     @Override
-    public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
+    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, Resolver resolver) {
         // primitive names are not valid here
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
-        Optional<TypeDefinition> result = findTypeDefinitionInHelper(typeName, context);
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new UnsolvedTypeException(typeName, context);
-        }
+        return findTypeDefinitionInHelper(typeName, context, resolver);
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context) {
+    public TypeUsage findTypeUsageIn(String typeName, Node context, Resolver resolver) {
         if (PrimitiveTypeUsage.isPrimitiveTypeName(typeName)){
             return PrimitiveTypeUsage.getByName(typeName);
         }
@@ -70,7 +67,7 @@ public class InFileResolver implements Resolver {
             return basicType.get();
         }
 
-        return new ReferenceTypeUsage(findTypeDefinitionIn(typeName, context));
+        return new ReferenceTypeUsage(getTypeDefinitionIn(typeName, context, resolver));
     }
 
     @Override
@@ -88,7 +85,7 @@ public class InFileResolver implements Resolver {
         return context.findSymbol(name, this);
     }
 
-    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context) {
+    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context, Resolver resolver) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
@@ -98,6 +95,16 @@ public class InFileResolver implements Resolver {
                 if (typeDefinition.getName().equals(typeName)
                         || typeDefinition.getQualifiedName().equals(typeName)) {
                     return Optional.of(typeDefinition);
+                }
+            } else if (child instanceof ImportDeclaration) {
+                ImportDeclaration importDeclaration = (ImportDeclaration)child;
+                Optional<Node> resolvedNode = importDeclaration.findAmongImported(typeName, resolver);
+                if (resolvedNode.isPresent()) {
+                    if (resolvedNode.get() instanceof TypeDefinition) {
+                        return Optional.of((TypeDefinition)resolvedNode.get());
+                    } else {
+                        throw new SemanticErrorException(context, "" + typeName + " is not a type");
+                    }
                 }
             }
         }
@@ -110,7 +117,7 @@ public class InFileResolver implements Resolver {
 
             return resolveAbsoluteTypeName(typeName);
         }
-        return findTypeDefinitionInHelper(typeName, context.getParent());
+        return findTypeDefinitionInHelper(typeName, context.getParent(), resolver);
     }
 
     private Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {

@@ -38,16 +38,16 @@ public class SrcResolver implements Resolver {
     }
 
     @Override
-    public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
+    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, Resolver resolver) {
         if (definitions.containsKey(typeName)) {
-            return definitions.get(typeName);
+            return Optional.of(definitions.get(typeName));
         } else {
-            throw new UnsolvedTypeException(typeName, context);
+            return Optional.empty();
         }
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context) {
+    public TypeUsage findTypeUsageIn(String typeName, Node context, Resolver resolver) {
         if (definitions.containsKey(typeName)) {
             return new ReferenceTypeUsage(definitions.get(typeName));
         } else {

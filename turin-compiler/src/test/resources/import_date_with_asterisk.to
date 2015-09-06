@@ -1,0 +1,7 @@
+namespace examples
+
+import java.util.*
+
+program Example(String[] args) {
+    val d = Date()
+}

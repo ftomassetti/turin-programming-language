@@ -25,7 +25,7 @@ public class StaticFieldAccess extends Expression {
     }
 
     private TypeDefinition typeDefinition(Resolver resolver) {
-        return resolver.findTypeDefinitionIn(subject.qualifiedName(), this);
+        return resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
     }
 
     @Override

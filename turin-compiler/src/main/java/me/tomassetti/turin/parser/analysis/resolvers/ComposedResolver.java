@@ -41,23 +41,23 @@ public class ComposedResolver implements Resolver {
     }
 
     @Override
-    public TypeDefinition findTypeDefinitionIn(String typeName, Node context) {
+    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, Resolver resolver) {
         for (Resolver element : elements) {
             try {
-                TypeDefinition definition = element.findTypeDefinitionIn(typeName, context);
-                return definition;
+                TypeDefinition definition = element.getTypeDefinitionIn(typeName, context, resolver);
+                return Optional.of(definition);
             } catch (UnsolvedException re) {
                 // Ignore
             }
         }
-        throw new UnsolvedTypeException(typeName, context);
+        return Optional.empty();
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context) {
+    public TypeUsage findTypeUsageIn(String typeName, Node context, Resolver resolver) {
         for (Resolver element : elements) {
             try {
-                TypeUsage typeUsage = element.findTypeUsageIn(typeName, context);
+                TypeUsage typeUsage = element.findTypeUsageIn(typeName, context, resolver);
                 return typeUsage;
             } catch (UnsolvedException re) {
                 // Ignore

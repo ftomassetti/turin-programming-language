@@ -2,11 +2,9 @@ package me.tomassetti.turin.parser.ast.imports;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.ast.ComposedReference;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 
 import java.util.Optional;
 
@@ -41,7 +39,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
         } else {
             if (alias.equals(name)) {
                 String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-                TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(canonicalTypeName, this);
+                TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
 
                 Node importedValue = typeDefinition.getField(fieldsPath, resolver);
                 return Optional.of(importedValue);

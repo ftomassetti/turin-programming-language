@@ -7,8 +7,10 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.imports.AllPackageImportDeclaration;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.imports.SingleFieldImportDeclaration;
+import me.tomassetti.turin.parser.ast.imports.TypeImportDeclaration;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -67,9 +69,19 @@ class ParseTreeToAst {
         } else if (importDeclarationContext.singleFieldImportDeclaration() != null) {
             return toAst(importDeclarationContext.singleFieldImportDeclaration());
         } else if (importDeclarationContext.typeImportDeclaration() != null) {
-            throw new UnsupportedOperationException();
+            return toAst(importDeclarationContext.typeImportDeclaration());
+        } else if (importDeclarationContext.allPackageImportDeclaration() != null) {
+            return new AllPackageImportDeclaration(toAst(importDeclarationContext.allPackageImportDeclaration().packagePart));
         } else {
             throw new UnsupportedOperationException(importDeclarationContext.toString());
+        }
+    }
+
+    private ImportDeclaration toAst(TurinParser.TypeImportDeclarationContext ctx) {
+        if (ctx.alternativeName == null) {
+            return new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText());
+        } else {
+            return new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), ctx.alternativeName.getText());
         }
     }
 

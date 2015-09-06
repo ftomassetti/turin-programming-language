@@ -61,10 +61,10 @@ public class Creation extends Invokable {
     @Override
     public TypeUsage calcType(Resolver resolver) {
         // this node will not have a context so we resolve the type already
-        return resolver.findTypeUsageIn(typeName, this);
+        return resolver.findTypeUsageIn(typeName, this, resolver);
     }
 
     public JvmConstructorDefinition jvmDefinition(Resolver resolver) {
-        return resolver.findTypeDefinitionIn(typeName, this).resolveConstructorCall(resolver, actualParams);
+        return resolver.getTypeDefinitionIn(typeName, this, resolver).resolveConstructorCall(resolver, actualParams);
     }
 }

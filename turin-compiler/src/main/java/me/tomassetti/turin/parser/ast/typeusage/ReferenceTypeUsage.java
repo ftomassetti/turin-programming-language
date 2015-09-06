@@ -6,7 +6,6 @@ import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +108,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     public TypeDefinition getTypeDefinition(Resolver resolver) {
-        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(this.name, this);
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(this.name, this, resolver);
         return typeDefinition;
     }
 
@@ -126,12 +125,12 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     @Override
     public JvmType jvmType(Resolver resolver) {
-        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
         return typeDefinition.jvmType();
     }
 
     public String getQualifiedName(Resolver resolver) {
-        TypeDefinition typeDefinition = resolver.findTypeDefinitionIn(name, this);
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
         return typeDefinition.getQualifiedName();
     }
 
