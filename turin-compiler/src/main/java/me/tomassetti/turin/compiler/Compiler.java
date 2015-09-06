@@ -17,7 +17,7 @@ import me.tomassetti.turin.parser.Parser;
 
 public class Compiler {
 
-    private static String VERSION = "Alpha 000";
+    private static String VERSION = "0.1 (Crocetta)";
 
     private Resolver resolver;
     private Options options;
