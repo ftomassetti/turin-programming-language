@@ -310,7 +310,7 @@ public class Compilation {
         mv.visitEnd();
     }
 
-    private void generateToStringMethod(TurinTypeDefinition typeDefinition, String internalClassName) {
+    private void generateToStringMethod(TurinTypeDefinition typeDefinition) {
         localVarsSymbolTable = LocalVarsSymbolTable.forInstanceMethod();
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", "()Ljava/lang/String;", null);
         mv.visitCode();
@@ -369,7 +369,7 @@ public class Compilation {
             generateHashCodeMethod(typeDefinition, internalClassName);
         }
         if (!typeDefinition.defineMethodToString(resolver)) {
-            generateToStringMethod(typeDefinition, internalClassName);
+            generateToStringMethod(typeDefinition);
         }
 
         typeDefinition.getDirectMethods().forEach((m)->generateMethod(typeDefinition, m));

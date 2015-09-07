@@ -87,9 +87,9 @@ public class Compiler {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("-------------------------------------");
+        System.out.println("--------------------------------------------------");
         System.out.println(" Turin Compiler - version " + VERSION);
-        System.out.println("-------------------------------------\n");
+        System.out.println("--------------------------------------------------\n");
 
         Options options = new Options();
         JCommander commander = null;
