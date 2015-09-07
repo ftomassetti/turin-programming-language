@@ -6,7 +6,7 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.List;
 
-public class IfBytecode extends BytecodeSequence {
+public class IfBS extends BytecodeSequence {
 
     private BytecodeSequence pushIfCondition;
     private BytecodeSequence ifBody;
@@ -15,7 +15,7 @@ public class IfBytecode extends BytecodeSequence {
     private List<BytecodeSequence> elifConditions;
     private List<BytecodeSequence> elifBodys;
 
-    public IfBytecode(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, List<BytecodeSequence> elifConditions, List<BytecodeSequence> elifBodys, BytecodeSequence elseBody) {
+    public IfBS(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, List<BytecodeSequence> elifConditions, List<BytecodeSequence> elifBodys, BytecodeSequence elseBody) {
         if (elifConditions.size() != elifBodys.size()) {
             throw new IllegalArgumentException();
         }
@@ -26,7 +26,7 @@ public class IfBytecode extends BytecodeSequence {
         this.elifBodys = elifBodys;
     }
 
-    public IfBytecode(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, List<BytecodeSequence> elifConditions, List<BytecodeSequence> elifBodys) {
+    public IfBS(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, List<BytecodeSequence> elifConditions, List<BytecodeSequence> elifBodys) {
         if (elifConditions.size() != elifBodys.size()) {
             throw new IllegalArgumentException();
         }

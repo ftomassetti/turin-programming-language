@@ -5,11 +5,11 @@ import me.tomassetti.turin.parser.ast.expressions.MathOperation;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class MathOperationBytecode extends BytecodeSequence {
+public class MathOperationBS extends BytecodeSequence {
 
     private int opcode;
 
-    public MathOperationBytecode(JvmTypeCategory operandsType, MathOperation.Operator operator) {
+    public MathOperationBS(JvmTypeCategory operandsType, MathOperation.Operator operator) {
         switch (operator) {
             case MULTIPLICATION:
                 switch (operandsType) {

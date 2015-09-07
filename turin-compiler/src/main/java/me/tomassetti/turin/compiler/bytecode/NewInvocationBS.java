@@ -7,13 +7,13 @@ import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class NewInvocation extends BytecodeSequence {
+public class NewInvocationBS extends BytecodeSequence {
 
     private String type;
     private List<BytecodeSequence> argumentsPush;
     private String descriptor;
 
-    public NewInvocation(JvmConstructorDefinition constructorDefinition, List<BytecodeSequence> argumentsPush) {
+    public NewInvocationBS(JvmConstructorDefinition constructorDefinition, List<BytecodeSequence> argumentsPush) {
         this.type = constructorDefinition.getOwnerInternalName();
         this.argumentsPush = argumentsPush;
         this.descriptor = constructorDefinition.getDescriptor();

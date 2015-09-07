@@ -98,8 +98,8 @@ public class Compilation {
             // if the value is >= 0 we jump and skip the throw exception
             mv.visitJumpInsn(IFGE, label);
             JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
-            BytecodeSequence instantiateException = new NewInvocation(constructor, ImmutableList.of(new PushStringConst(property.getName() + " should be positive")));
-            new Throw(instantiateException).operate(mv);
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, ImmutableList.of(new PushStringConst(property.getName() + " should be positive")));
+            new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
         } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
@@ -110,8 +110,8 @@ public class Compilation {
             // if not null skip the throw
             mv.visitJumpInsn(IFNONNULL, label);
             JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
-            BytecodeSequence instantiateException = new NewInvocation(constructor, ImmutableList.of(new PushStringConst(property.getName() + " cannot be null")));
-            new Throw(instantiateException).operate(mv);
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, ImmutableList.of(new PushStringConst(property.getName() + " cannot be null")));
+            new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
         }
@@ -226,7 +226,7 @@ public class Compilation {
         mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_PARAM_0);
         Label paramAndThisAreNotTheSame = new Label();
         mv.visitJumpInsn(IF_ACMPNE, paramAndThisAreNotTheSame);
-        new ReturnTrue().operate(mv);
+        new ReturnTrueBS().operate(mv);
         mv.visitLabel(paramAndThisAreNotTheSame);
 
         // if (o == null || getClass() != o.getClass()) return false;
@@ -240,7 +240,7 @@ public class Compilation {
         Label paramHasSameClassAsThis = new Label();
         mv.visitJumpInsn(IF_ACMPEQ, paramHasSameClassAsThis);
         mv.visitLabel(paramIsNull);
-        new ReturnFalse().operate(mv);
+        new ReturnFalseBS().operate(mv);
         mv.visitLabel(paramHasSameClassAsThis);
 
         // MyType other = (MyType) o;
@@ -283,11 +283,11 @@ public class Compilation {
                 mv.visitJumpInsn(IFNE, propertyIsEqual);
             }
 
-            new ReturnFalse().operate(mv);
+            new ReturnFalseBS().operate(mv);
             mv.visitLabel(propertyIsEqual);
         }
 
-        new ReturnTrue().operate(mv);
+        new ReturnTrueBS().operate(mv);
 
         // calculated for us
         mv.visitMaxs(0, 0);
@@ -358,7 +358,7 @@ public class Compilation {
             pushExpression(new StringLiteral(typeDefinition.getName())).operate(mv);
         } else {
             List<BytecodeSequence> elements = new ArrayList<>();
-            elements.add(new NewInvocation(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
+            elements.add(new NewInvocationBS(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
             appendToStringBuilder(new StringLiteral(typeDefinition.getName()+"{"), elements);
 
             int remaining = typeDefinition.getAllProperties(resolver).size();
@@ -376,7 +376,7 @@ public class Compilation {
 
             appendToStringBuilder(new StringLiteral("}"), elements);
 
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
             new ComposedBytecodeSequence(elements).operate(mv);
         }
         mv.visitInsn(ARETURN);
@@ -484,7 +484,7 @@ public class Compilation {
             int pos = nParams + nLocalVars;
             nLocalVars += 1;
             localVarsSymbolTable.add(variableDeclaration.getName(), variableDeclaration);
-            return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignment(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
+            return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignmentBS(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
         } else if (statement instanceof ExpressionStatement) {
             return executeEpression(((ExpressionStatement) statement).getExpression());
         } else if (statement instanceof BlockStatement){
@@ -495,9 +495,9 @@ public class Compilation {
             ReturnStatement returnStatement = (ReturnStatement) statement;
             if (returnStatement.hasValue()) {
                 int returnType = returnStatement.getValue().calcType(resolver).jvmType(resolver).returnOpcode();
-                return new ReturnValue(returnType, pushExpression(returnStatement.getValue()));
+                return new ReturnValueBS(returnType, pushExpression(returnStatement.getValue()));
             } else {
-                return new ReturnVoid();
+                return new ReturnVoidBS();
             }
         } else if (statement instanceof IfStatement) {
             IfStatement ifStatement = (IfStatement)statement;
@@ -506,9 +506,9 @@ public class Compilation {
             List<BytecodeSequence> elifConditions = ifStatement.getElifStatements().stream().map((ec)->pushExpression(ec.getCondition())).collect(Collectors.toList());
             List<BytecodeSequence> elifBodys = ifStatement.getElifStatements().stream().map((ec)->compile(ec.getBody())).collect(Collectors.toList());
             if (ifStatement.hasElse()) {
-                return new IfBytecode(ifCondition, ifBody, elifConditions, elifBodys, compile(ifStatement.getElseBody()));
+                return new IfBS(ifCondition, ifBody, elifConditions, elifBodys, compile(ifStatement.getElseBody()));
             } else {
-                return new IfBytecode(ifCondition, ifBody, elifConditions, elifBodys);
+                return new IfBS(ifCondition, ifBody, elifConditions, elifBodys);
             }
         } else {
             throw new UnsupportedOperationException(statement.toString());
@@ -528,7 +528,7 @@ public class Compilation {
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
             JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(resolver);
-            return new NewInvocation(constructorDefinition, argumentsPush);
+            return new NewInvocationBS(constructorDefinition, argumentsPush);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -585,7 +585,7 @@ public class Compilation {
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
             JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocation(methodDefinition)).build());
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
         } else {
             throw new UnsupportedOperationException(expr.toString());
         }
@@ -595,28 +595,28 @@ public class Compilation {
         TypeUsage pieceType = piece.calcType(resolver);
         if (pieceType.equals(ReferenceTypeUsage.STRING)) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.isReference()) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.equals(BasicTypeUsage.UINT) || (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt())) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.BOOLEAN)) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.CHAR)) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.LONG)) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(J)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(J)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.FLOAT)) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(F)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(F)Ljava/lang/StringBuilder;", false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.DOUBLE)) {
             elements.add(pushExpression(piece));
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(D)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(D)Ljava/lang/StringBuilder;", false)));
         } else {
             throw new UnsupportedOperationException(pieceType.toString());
         }
@@ -634,13 +634,13 @@ public class Compilation {
             StringInterpolation stringInterpolation = (StringInterpolation) expr;
 
             List<BytecodeSequence> elements = new ArrayList<>();
-            elements.add(new NewInvocation(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
+            elements.add(new NewInvocationBS(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
 
             for (Expression piece : stringInterpolation.getElements()) {
                 appendToStringBuilder(piece, elements);
             }
 
-            elements.add(new MethodInvocation(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
             return new ComposedBytecodeSequence(elements);
         } else if (expr instanceof ValueReference) {
             ValueReference valueReference = (ValueReference) expr;
@@ -664,7 +664,7 @@ public class Compilation {
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(mathOperation.getLeft()),
                     pushExpression(mathOperation.getRight()),
-                    new MathOperationBytecode(mathOperation.getLeft().calcType(resolver).jvmType(resolver).typeCategory(), mathOperation.getOperator())));
+                    new MathOperationBS(mathOperation.getLeft().calcType(resolver).jvmType(resolver).typeCategory(), mathOperation.getOperator())));
         } else if (expr instanceof BooleanLiteral) {
             return new PushBoolean(((BooleanLiteral) expr).getValue());
         } else if (expr instanceof LogicOperation) {
@@ -674,13 +674,13 @@ public class Compilation {
                     return new ComposedBytecodeSequence(ImmutableList.of(
                             pushExpression(logicOperation.getLeft()),
                             pushExpression(logicOperation.getRight()),
-                            new AndOperation()
+                            new AndBS()
                     ));
                 case OR:
                     return new ComposedBytecodeSequence(ImmutableList.of(
                             pushExpression(logicOperation.getLeft()),
                             pushExpression(logicOperation.getRight()),
-                            new OrOperation()
+                            new OrBS()
                     ));
                 default:
                     throw new UnsupportedOperationException(logicOperation.getOperator().name());
@@ -693,7 +693,7 @@ public class Compilation {
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(relationalOperation.getLeft()),
                     pushExpression(relationalOperation.getRight()),
-                    new RelationalOperationBytecode(relationalOperation.getOperator())
+                    new RelationalOperationBS(relationalOperation.getOperator())
             ));
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());

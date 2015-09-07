@@ -5,11 +5,11 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class RelationalOperationBytecode extends BytecodeSequence {
+public class RelationalOperationBS extends BytecodeSequence {
 
     private int jumpOpcode;
 
-    public RelationalOperationBytecode(RelationalOperation.Operator operator) {
+    public RelationalOperationBS(RelationalOperation.Operator operator) {
         switch (operator) {
             case EQUAL:
                 jumpOpcode = Opcodes.IF_ICMPNE;

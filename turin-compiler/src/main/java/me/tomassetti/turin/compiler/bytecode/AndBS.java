@@ -3,7 +3,7 @@ package me.tomassetti.turin.compiler.bytecode;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class AndOperation extends BytecodeSequence {
+public class AndBS extends BytecodeSequence {
 
     @Override
     public void operate(MethodVisitor mv) {

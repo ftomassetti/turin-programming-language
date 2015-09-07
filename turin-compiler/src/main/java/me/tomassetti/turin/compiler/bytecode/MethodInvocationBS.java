@@ -5,11 +5,11 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public class MethodInvocation extends BytecodeSequence {
+public class MethodInvocationBS extends BytecodeSequence {
 
     private JvmMethodDefinition jvmMethodDefinition;
 
-    public MethodInvocation(JvmMethodDefinition jvmMethodDefinition) {
+    public MethodInvocationBS(JvmMethodDefinition jvmMethodDefinition) {
         this.jvmMethodDefinition = jvmMethodDefinition;
     }
 

@@ -4,11 +4,11 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.ATHROW;
 
-public class Throw extends BytecodeSequence {
+public class ThrowBS extends BytecodeSequence {
 
     private BytecodeSequence pushException;
 
-    public Throw(BytecodeSequence pushException) {
+    public ThrowBS(BytecodeSequence pushException) {
         this.pushException = pushException;
     }
 

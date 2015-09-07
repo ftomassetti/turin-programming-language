@@ -3,7 +3,7 @@ package me.tomassetti.turin.compiler.bytecode;
 import me.tomassetti.turin.jvm.JvmTypeCategory;
 import org.objectweb.asm.MethodVisitor;
 
-public class LocalVarAssignment extends BytecodeSequence {
+public class LocalVarAssignmentBS extends BytecodeSequence {
 
     private int assignmentTarget;
     private JvmTypeCategory jvmTypeCategory;
@@ -12,7 +12,7 @@ public class LocalVarAssignment extends BytecodeSequence {
      * @param assignmentTarget the local variable index of the value being assigned
      * @param jvmTypeCategory
      */
-    public LocalVarAssignment(int assignmentTarget, JvmTypeCategory jvmTypeCategory) {
+    public LocalVarAssignmentBS(int assignmentTarget, JvmTypeCategory jvmTypeCategory) {
         if (assignmentTarget < 0) {
             throw new IllegalArgumentException();
         }
