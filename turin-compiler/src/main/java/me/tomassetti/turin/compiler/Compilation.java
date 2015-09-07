@@ -72,7 +72,6 @@ public class Compilation {
     }
 
     private void generateField(Property property) {
-        // TODO understand how to use description and signature (which is used for generics)
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
         FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), jvmType.getDescriptor(), jvmType.getSignature(), null);
         fv.visitEnd();
@@ -81,7 +80,6 @@ public class Compilation {
     private void generateGetter(Property property, String classInternalName) {
         String getterName = property.getterName();
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
-        // TODO understand how to use description and signature (which is used for generics)
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getDescriptor(), "()" + jvmType.getSignature(), null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
@@ -92,8 +90,7 @@ public class Compilation {
         mv.visitEnd();
     }
 
-    private void enforceConstraint(Property property, MethodVisitor mv, String className, JvmType jvmType, int varIndex) {
-        // TODO enforce also arbitrary constraints associated to the property
+    private void enforceConstraint(Property property, MethodVisitor mv, JvmType jvmType, int varIndex) {
         if (property.getTypeUsage().equals(BasicTypeUsage.UINT)) {
             // index 0 is the "this"
             mv.visitVarInsn(loadTypeFor(jvmType), varIndex + 1);
@@ -127,7 +124,7 @@ public class Compilation {
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, setterName, "(" + jvmType.getDescriptor() + ")V", "(" + jvmType.getSignature() + ")V", null);
         mv.visitCode();
 
-        enforceConstraint(property, mv, internalClassName, jvmType, 0);
+        enforceConstraint(property, mv, jvmType, 0);
 
         // Assignment
         PushThis.getInstance().operate(mv);
@@ -152,7 +149,7 @@ public class Compilation {
 
         int propIndex = 0;
         for (Property property : directProperties) {
-            enforceConstraint(property, mv, className, property.getTypeUsage().jvmType(resolver), propIndex);
+            enforceConstraint(property, mv, property.getTypeUsage().jvmType(resolver), propIndex);
             propIndex++;
         }
 
