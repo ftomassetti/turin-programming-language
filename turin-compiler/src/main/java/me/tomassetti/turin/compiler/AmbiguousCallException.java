@@ -30,7 +30,6 @@ public class AmbiguousCallException extends RuntimeException {
         this.context = context;
         this.name = name;
         this.paramList = paramList;
-
     }
 
 }
