@@ -13,8 +13,4 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
         return _static;
     }
 
-    public boolean isOnInterface() {
-        // TODO to be correctly implemented
-        return false;
-    }
 }

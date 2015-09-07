@@ -20,7 +20,7 @@ public class MethodInvocationBS extends BytecodeSequence {
         // initialization methods as well as private methods and methods of a superclass of the current class.
         // ref.: http://zeroturnaround.com/rebellabs/java-bytecode-fundamentals-using-objects-and-calling-methods/
         mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getOwnerInternalName(),
-                jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), jvmMethodDefinition.isOnInterface());
+                jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
     }
 
 }
