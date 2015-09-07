@@ -2,6 +2,14 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
+import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalAndBS;
+import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalNotBS;
+import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalOrBS;
+import me.tomassetti.turin.compiler.bytecode.pushop.*;
+import me.tomassetti.turin.compiler.bytecode.returnop.ReturnFalseBS;
+import me.tomassetti.turin.compiler.bytecode.returnop.ReturnTrueBS;
+import me.tomassetti.turin.compiler.bytecode.returnop.ReturnValueBS;
+import me.tomassetti.turin.compiler.bytecode.returnop.ReturnVoidBS;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
@@ -674,20 +682,20 @@ public class Compilation {
                     return new ComposedBytecodeSequence(ImmutableList.of(
                             pushExpression(logicOperation.getLeft()),
                             pushExpression(logicOperation.getRight()),
-                            new AndBS()
+                            new LogicalAndBS()
                     ));
                 case OR:
                     return new ComposedBytecodeSequence(ImmutableList.of(
                             pushExpression(logicOperation.getLeft()),
                             pushExpression(logicOperation.getRight()),
-                            new OrBS()
+                            new LogicalOrBS()
                     ));
                 default:
                     throw new UnsupportedOperationException(logicOperation.getOperator().name());
             }
         } else if (expr instanceof NotOperation) {
             NotOperation notOperation = (NotOperation) expr;
-            return new ComposedBytecodeSequence(ImmutableList.of(pushExpression(notOperation.getValue()), new NotOperationBytecode()));
+            return new ComposedBytecodeSequence(ImmutableList.of(pushExpression(notOperation.getValue()), new LogicalNotBS()));
         } else if (expr instanceof RelationalOperation) {
             RelationalOperation relationalOperation = (RelationalOperation)expr;
             return new ComposedBytecodeSequence(ImmutableList.of(

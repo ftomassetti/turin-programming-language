@@ -1,6 +1,7 @@
-package me.tomassetti.turin.compiler.bytecode;
+package me.tomassetti.turin.compiler.bytecode.pushop;
 
 import me.tomassetti.turin.compiler.Compilation;
+import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.ALOAD;

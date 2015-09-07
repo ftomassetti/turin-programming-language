@@ -1,10 +1,10 @@
-package me.tomassetti.turin.compiler.bytecode;
+package me.tomassetti.turin.compiler.bytecode.pushop;
 
+import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
 import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GETSTATIC;
 
 public class PushInstanceField extends BytecodeSequence {
 

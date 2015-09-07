@@ -1,5 +1,6 @@
-package me.tomassetti.turin.compiler.bytecode;
+package me.tomassetti.turin.compiler.bytecode.returnop;
 
+import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.ICONST_0;

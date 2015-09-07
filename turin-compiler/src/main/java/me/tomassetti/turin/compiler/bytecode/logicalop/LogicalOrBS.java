@@ -1,9 +1,10 @@
-package me.tomassetti.turin.compiler.bytecode;
+package me.tomassetti.turin.compiler.bytecode.logicalop;
 
+import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class OrBS extends BytecodeSequence {
+public class LogicalOrBS extends BytecodeSequence {
 
     @Override
     public void operate(MethodVisitor mv) {
