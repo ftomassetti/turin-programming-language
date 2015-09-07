@@ -50,10 +50,6 @@ public class Compilation {
 
     private ClassWriter cw;
     private Resolver resolver;
-    @Deprecated
-    private int nParams = 0;
-    @Deprecated
-    private int nLocalVars = 0;
     private LocalVarsSymbolTable localVarsSymbolTable;
     private String internalClassName;
 
@@ -436,8 +432,6 @@ public class Compilation {
         // TODO consider exceptions
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodDefinition.getName(), methodDescriptor, methodSignature, null);
 
-        nLocalVars = 0;
-
         mv.visitCode();
 
         for (FormalParameter formalParameter : methodDefinition.getParameters()) {
@@ -468,9 +462,6 @@ public class Compilation {
 
         localVarsSymbolTable.add("args", new FormalParameter(new ArrayTypeUsage(ReferenceTypeUsage.STRING), "args"));
 
-        nParams = 1;
-        nLocalVars = 0;
-
         mv.visitCode();
 
         compile(program.getStatement()).operate(mv);
@@ -489,9 +480,7 @@ public class Compilation {
     private BytecodeSequence compile(Statement statement) {
         if (statement instanceof VariableDeclaration) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
-            int pos = nParams + nLocalVars;
-            nLocalVars += 1;
-            localVarsSymbolTable.add(variableDeclaration.getName(), variableDeclaration);
+            int pos = localVarsSymbolTable.add(variableDeclaration.getName(), variableDeclaration);
             return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignmentBS(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
         } else if (statement instanceof ExpressionStatement) {
             return executeEpression(((ExpressionStatement) statement).getExpression());
