@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static me.tomassetti.turin.compiler.OpcodesUtils.*;
+
 import static org.objectweb.asm.Opcodes.*;
 
 /**
@@ -166,48 +168,6 @@ public class Compilation {
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();
-    }
-
-    private int returnTypeFor(JvmType jvmType) {
-        switch (jvmType.getDescriptor()) {
-            case "Z":
-            case "B":
-            case "S":
-            case "C":
-            case "I":
-                // used for boolean, byte, short, char, or int
-                return IRETURN;
-            case "J":
-                return LRETURN;
-            case "F":
-                return FRETURN;
-            case "D":
-                return DRETURN;
-            case "V":
-                return RETURN;
-            default:
-                return ARETURN;
-        }
-    }
-
-    private int loadTypeFor(JvmType jvmType) {
-        switch (jvmType.getDescriptor()) {
-            case "Z":
-            case "B":
-            case "S":
-            case "C":
-            case "I":
-                // used for boolean, byte, short, char, or int
-                return ILOAD;
-            case "J":
-                return LLOAD;
-            case "F":
-                return FLOAD;
-            case "D":
-                return DLOAD;
-            default:
-                return ALOAD;
-        }
     }
 
     private ClassFileDefinition endClass(String canonicalName) {
@@ -641,7 +601,7 @@ public class Compilation {
             Optional<Integer> index = localVarsSymbolTable.findIndex(valueReference.getName());
             if (index.isPresent()) {
                 TypeUsage type = localVarsSymbolTable.findDeclaration(valueReference.getName()).get().calcType(resolver);
-                return new PushLocalVar(loadTypeFor(type), index.get());
+                return new PushLocalVar(loadTypeForTypeUsage(type), index.get());
             } else {
                 return push(valueReference.resolve(resolver));
             }
@@ -694,7 +654,7 @@ public class Compilation {
         }
     }
 
-    private int loadTypeFor(TypeUsage type) {
+    private int loadTypeForTypeUsage(TypeUsage type) {
         return loadTypeFor(type.jvmType(resolver));
     }
 
