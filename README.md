@@ -59,6 +59,10 @@ program MangaExample(String[] args) {
 
 It prints: _The protagonist is Ranma, 16_
 
+# Applications in Turin
+
+So far I started working on one application in Turin. It is a [java-formatter](https://github.com/ftomassetti/java-formatter).
+
 # License
 
 Turin is released under the Apache License v2.0
