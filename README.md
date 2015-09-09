@@ -16,6 +16,11 @@ We want to be pragmatic: to start with a small language and make it usable in pr
 
 Types with properties and methods can be defined and can compiled to class files. It is possible to invoke Java from Turin and viceversa.
 
+# Supporting tools
+
+* [turin-maven-plugin](https://github.com/ftomassetti/turin-maven-plugin)
+* [turin-intellij-plugin](https://github.com/ftomassetti/turin-intellij-plugin)
+
 # Examples
 
 This is an example of a program (compiling & running) written in Turin.
