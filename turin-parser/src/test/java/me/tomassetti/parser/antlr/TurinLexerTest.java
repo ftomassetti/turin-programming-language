@@ -1,6 +1,5 @@
 package me.tomassetti.parser.antlr;
 
-import com.google.common.collect.ImmutableList;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -10,10 +9,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TurinLexerTest {
 
@@ -142,7 +145,7 @@ public class TurinLexerTest {
     @Test
     public void parseLineComment() throws IOException {
         String code = " // hi! \n an_id";
-        verify(code, TurinLexer.NL, TurinLexer.ID);
+        verify(code, TurinLexer.NL, TurinLexer.VALUE_ID);
     }
 
     @Test
@@ -160,19 +163,19 @@ public class TurinLexerTest {
     @Test
     public void parseIDs() throws IOException {
         String code = "foo f122___ a___FOO";
-        verify(code, TurinLexer.ID, TurinLexer.ID, TurinLexer.ID);
+        verify(code, TurinLexer.VALUE_ID, TurinLexer.VALUE_ID, TurinLexer.VALUE_ID);
     }
 
     @Test
     public void parseTIDs() throws IOException {
         String code = "Foo F122___ A___foo";
-        verify(code, TurinLexer.TID, TurinLexer.TID, TurinLexer.TID);
+        verify(code, TurinLexer.TYPE_ID, TurinLexer.TYPE_ID, TurinLexer.TYPE_ID);
     }
 
     @Test
     public void parseIDsAndTIDsStartingWithUnderscore() throws IOException {
         String code = "_a __B";
-        verify(code, TurinLexer.ID, TurinLexer.TID);
+        verify(code, TurinLexer.VALUE_ID, TurinLexer.TYPE_ID);
     }
 
     @Test
@@ -215,7 +218,7 @@ public class TurinLexerTest {
     public void parseStringWithInterpolationContainingID() throws IOException {
         String code = "\"Hel#{foo}lo!\"";
         verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.INTERPOLATION_START,
-                TurinLexer.ID,
+                TurinLexer.VALUE_ID,
                 TurinLexer.INTERPOLATION_END, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 
@@ -228,6 +231,6 @@ public class TurinLexerTest {
     @Test
     public void parseMethodDefinitionWithExpressionBody() throws IOException {
         String code = "Void toString() = \"foo\"";
-        verify(code, TurinLexer.VOID_KW, TurinLexer.ID, TurinLexer.LPAREN, TurinLexer.RPAREN, TurinLexer.ASSIGNMENT, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+        verify(code, TurinLexer.VOID_KW, TurinLexer.VALUE_ID, TurinLexer.LPAREN, TurinLexer.RPAREN, TurinLexer.ASSIGNMENT, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 }

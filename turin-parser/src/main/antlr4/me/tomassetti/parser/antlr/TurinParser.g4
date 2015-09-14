@@ -17,7 +17,7 @@ turinFile:
 nls: NL+;
 
 qualifiedId:
-    (parts+=ID POINT)* parts+=ID;
+    (parts+=VALUE_ID POINT)* parts+=VALUE_ID;
 
 // Namespace
 
@@ -30,13 +30,13 @@ importDeclaration:
     typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration | allPackageImportDeclaration;
 
 typeImportDeclaration:
-    IMPORT_KW packagePart=qualifiedId POINT typeName=TID (AS_KW alternativeName=TID)? nls ;
+    IMPORT_KW packagePart=qualifiedId POINT typeName=TYPE_ID (AS_KW alternativeName=TYPE_ID)? nls ;
 
 singleFieldImportDeclaration:
-    IMPORT_KW packagePart=qualifiedId POINT typeName=TID POINT fieldName=qualifiedId (AS_KW alternativeName=ID)? nls;
+    IMPORT_KW packagePart=qualifiedId POINT typeName=TYPE_ID POINT fieldName=qualifiedId (AS_KW alternativeName=VALUE_ID)? nls;
 
 allFieldsImportDeclaration:
-    IMPORT_KW packagePart=qualifiedId POINT typeName=TID POINT ASTERISK nls;
+    IMPORT_KW packagePart=qualifiedId POINT typeName=TYPE_ID POINT ASTERISK nls;
 
 allPackageImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT ASTERISK nls;
@@ -44,7 +44,7 @@ allPackageImportDeclaration:
 //
 
 typeUsage:
-    ref=TID
+    ref=TYPE_ID
     | arrayBase=typeUsage LSQUARE RSQUARE
     | primitiveType = PRIMITIVE_TYPE
     | basicType = BASIC_TYPE;
@@ -55,7 +55,7 @@ commaNl:
 // method definition
 
 methodDefinition:
-    type=returnType name=ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
+    type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
 
 returnType:
     isVoid=VOID_KW | type=typeUsage;
@@ -66,26 +66,26 @@ methodBody:
 //
 
 topLevelPropertyDeclaration:
-    PROPERTY_KW type=typeUsage COLON name=ID nls;
+    PROPERTY_KW type=typeUsage COLON name=VALUE_ID nls;
 
 inTypePropertyDeclaration:
-    HAS_KW type=typeUsage COLON name=ID nls;
+    HAS_KW type=typeUsage COLON name=VALUE_ID nls;
 
 propertyReference:
-    HAS_KW name=ID nls;
+    HAS_KW name=VALUE_ID nls;
 
 typeMember:
     inTypePropertyDeclaration | propertyReference | methodDefinition;
 
 typeDeclaration:
-    TYPE_KW name=TID LBRACKET nls
+    TYPE_KW name=TYPE_ID LBRACKET nls
     (typeMembers += typeMember)*
     RBRACKET nls;
 
 //
 
 actualParam:
-    expression | name=ID ASSIGNMENT expression;
+    expression | name=VALUE_ID ASSIGNMENT expression;
 
 parenExpression:
     LPAREN internal=expression RPAREN;
@@ -112,16 +112,16 @@ invokation:
     function=basicExpression LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
 
 fieldAccess:
-    subject=basicExpression POINT name=ID;
+    subject=basicExpression POINT name=VALUE_ID;
 
 staticFieldReference:
-    typeReference POINT name=ID;
+    typeReference POINT name=VALUE_ID;
 
 valueReference:
-    name=ID;
+    name=VALUE_ID;
 
 typeReference:
-    (packag=qualifiedId)? POINT name=TID;
+    (packag=qualifiedId)? POINT name=TYPE_ID;
 
 stringLiteral:
     STRING_START (content=STRING_CONTENT)? STRING_STOP;
@@ -139,10 +139,10 @@ intLiteral:
     INT;
 
 creation:
-    (pakage=qualifiedId POINT)? name=TID LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
+    (pakage=qualifiedId POINT)? name=TYPE_ID LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
 
 varDecl :
-    VAL_KW (type=typeUsage)? name=ID ASSIGNMENT value=expression nls;
+    VAL_KW (type=typeUsage)? name=VALUE_ID ASSIGNMENT value=expression nls;
 
 expressionStmt:
     expression nls;
@@ -163,11 +163,11 @@ statement :
 //
 
 formalParam :
-    type=typeUsage name=ID;
+    type=typeUsage name=VALUE_ID;
 //
 
 program:
-    PROGRAM_KW name=TID LPAREN params+=formalParam (commaNl params+=formalParam)* RPAREN LBRACKET nls
+    PROGRAM_KW name=TYPE_ID LPAREN params+=formalParam (commaNl params+=formalParam)* RPAREN LBRACKET nls
     (statements += statement)*
     RBRACKET nls;
 
