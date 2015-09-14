@@ -42,7 +42,7 @@ public class FunctionsCompilationTest {
                 classFileDefinitions.get(0).getBytecode());
         assertEquals(0, functionClass.getConstructors().length);
 
-        Method invoke = functionClass.getMethod("invoke");
+        Method invoke = functionClass.getMethod("invoke", int.class, int.class);
         assertEquals(10, invoke.invoke(null, 7, 3));
     }
 

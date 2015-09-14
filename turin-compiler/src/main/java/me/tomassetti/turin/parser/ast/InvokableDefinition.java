@@ -11,13 +11,13 @@ import java.util.Optional;
 /**
  * Either a function or a method.
  */
-public abstract class Invokable extends Node {
+public abstract class InvokableDefinition extends Node {
     protected String name;
     protected TypeUsage returnType;
     protected List<FormalParameter> parameters;
     protected Statement body;
 
-    public Invokable(List<FormalParameter> parameters, Statement body, String name, TypeUsage returnType) {
+    public InvokableDefinition(List<FormalParameter> parameters, Statement body, String name, TypeUsage returnType) {
         this.parameters = parameters;
         this.body = body;
         this.name = name;

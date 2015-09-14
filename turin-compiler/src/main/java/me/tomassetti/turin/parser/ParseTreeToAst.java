@@ -54,6 +54,8 @@ class ParseTreeToAst {
                 turinFile.add((PropertyDefinition) memberNode);
             } else if (memberNode instanceof Program) {
                 turinFile.add((Program) memberNode);
+            } else if (memberNode instanceof FunctionDefinition) {
+                turinFile.add((FunctionDefinition)memberNode);
             } else {
                 throw new UnsupportedOperationException(memberNode.getClass().getCanonicalName());
             }

@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 
-public class FunctionDefinition extends Invokable {
+public class FunctionDefinition extends InvokableDefinition {
 
     public FunctionDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
         super(parameters, body, name, returnType);

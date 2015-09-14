@@ -26,7 +26,7 @@ public class SrcResolver implements Resolver {
         this.turinFiles = turinFiles;
         this.definitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
-            for (TypeDefinition typeDefinition : turinFile.getTopTypeDefinitions()) {
+            for (TypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
                 definitions.put(typeDefinition.getQualifiedName(), typeDefinition);
             }
         }

@@ -15,6 +15,7 @@ import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.InvokableDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
@@ -28,10 +29,7 @@ import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.tomassetti.turin.compiler.OpcodesUtils.*;
@@ -67,10 +65,25 @@ public class Compilation {
                 classFileDefinitions.addAll(compile((TurinTypeDefinition)node));
             } else if (node instanceof Program) {
                 classFileDefinitions.addAll(compile((Program) node));
+            } else if (node instanceof FunctionDefinition) {
+                classFileDefinitions.addAll(compile((FunctionDefinition) node, turinFile.getNamespaceDefinition()));
             }
         }
 
         return classFileDefinitions;
+    }
+
+    private List<ClassFileDefinition> compile(FunctionDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
+        String canonicalClassName = namespaceDefinition.getName() + ".Function_"+functionDefinition.getName();
+        String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
+
+        // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
+
+        generateInvokable(functionDefinition, "invoke", true);
+
+        return ImmutableList.of(endClass(canonicalClassName));
     }
 
     private void generateField(Property property) {
@@ -372,30 +385,40 @@ public class Compilation {
             generateToStringMethod(typeDefinition);
         }
 
-        typeDefinition.getDirectMethods().forEach((m)->generateMethod(typeDefinition, m));
+        typeDefinition.getDirectMethods().forEach((m)->generateMethod(m));
 
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }
 
-    private void generateMethod(TypeDefinition typeDefinition, MethodDefinition methodDefinition) {
-        localVarsSymbolTable = LocalVarsSymbolTable.forInstanceMethod();
-        String canonicalClassName = typeDefinition.getQualifiedName();
-        String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
+    private void generateMethod(MethodDefinition methodDefinition) {
+        generateInvokable(methodDefinition, methodDefinition.getName(), false);
+    }
 
-        String paramsDescriptor = String.join("", methodDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
-        String paramsSignature = String.join("", methodDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
-        String methodDescriptor = "(" + paramsDescriptor + ")" + methodDefinition.getReturnType().jvmType(resolver).getDescriptor();
-        String methodSignature = "(" + paramsSignature + ")" + methodDefinition.getReturnType().jvmType(resolver).getSignature();
+    private void generateInvokable(InvokableDefinition invokableDefinition, String invokableName, boolean isStatic) {
+        if (isStatic) {
+            localVarsSymbolTable = LocalVarsSymbolTable.forStaticMethod();
+        } else {
+            localVarsSymbolTable = LocalVarsSymbolTable.forInstanceMethod();
+        }
+
+        String paramsDescriptor = String.join("", invokableDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", invokableDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
+        String methodDescriptor = "(" + paramsDescriptor + ")" + invokableDefinition.getReturnType().jvmType(resolver).getDescriptor();
+        String methodSignature = "(" + paramsSignature + ")" + invokableDefinition.getReturnType().jvmType(resolver).getSignature();
         // TODO consider exceptions
-        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, methodDefinition.getName(), methodDescriptor, methodSignature, null);
+        int modifiers = ACC_PUBLIC;
+        if (isStatic) {
+            modifiers = modifiers | ACC_STATIC;
+        }
+        MethodVisitor mv = cw.visitMethod(modifiers, invokableName, methodDescriptor, methodSignature, null);
 
         mv.visitCode();
 
-        for (FormalParameter formalParameter : methodDefinition.getParameters()) {
+        for (FormalParameter formalParameter : invokableDefinition.getParameters()) {
             localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
         }
 
-        compile(methodDefinition.getBody()).operate(mv);
+        compile(invokableDefinition.getBody()).operate(mv);
 
         // TODO add implicit return when needed
 
