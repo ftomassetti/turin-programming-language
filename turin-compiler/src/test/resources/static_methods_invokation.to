@@ -1,0 +1,5 @@
+namespace manga
+
+import java.util.Collections
+
+Object myEmptyList() = Collections.emptyList()
