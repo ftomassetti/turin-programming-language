@@ -1,0 +1,5 @@
+namespace foo
+
+Int sum(Int a, Int b) {
+    return a + b
+}
