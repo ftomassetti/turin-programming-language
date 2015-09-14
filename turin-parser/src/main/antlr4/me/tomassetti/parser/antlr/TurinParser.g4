@@ -68,6 +68,9 @@ methodBody:
 topLevelPropertyDeclaration:
     PROPERTY_KW type=typeUsage COLON name=VALUE_ID nls;
 
+topLevelFunctionDeclaration:
+    type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
+
 inTypePropertyDeclaration:
     HAS_KW type=typeUsage COLON name=VALUE_ID nls;
 
@@ -174,5 +177,5 @@ program:
 //
 
 fileMember:
-    topLevelPropertyDeclaration | typeDeclaration | program;
+    topLevelPropertyDeclaration | topLevelFunctionDeclaration | typeDeclaration | program;
 

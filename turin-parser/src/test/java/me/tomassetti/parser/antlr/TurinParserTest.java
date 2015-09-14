@@ -34,4 +34,14 @@ public class TurinParserTest {
         TurinParser.TurinFileContext root = parse("method_definitions_block");
     }
 
+    @Test
+    public void parseFunctionDeclarationWithExpressionBody() throws IOException {
+        TurinParser.TurinFileContext root = parse("function_definitions_expression");
+    }
+
+    @Test
+    public void parseFunctionDeclarationWithBlockBody() throws IOException {
+        TurinParser.TurinFileContext root = parse("function_definitions_block");
+    }
+
 }

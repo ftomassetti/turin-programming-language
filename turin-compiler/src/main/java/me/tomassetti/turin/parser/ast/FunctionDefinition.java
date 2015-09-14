@@ -5,12 +5,12 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 
-public class MethodDefinition extends InvokableDefinition {
+public class FunctionDefinition extends InvokableDefinition {
 
-    public MethodDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
+    public FunctionDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
         super(parameters, body, name, returnType);
         this.returnType.parent = this;
-        this.parameters.forEach((p) -> p.parent = MethodDefinition.this );
+        this.parameters.forEach((p) -> p.parent = FunctionDefinition.this );
         this.body.parent = this;
     }
 

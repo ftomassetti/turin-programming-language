@@ -93,8 +93,12 @@ public class TurinFile extends Node {
         program.parent = this;
     }
 
-    public List<TypeDefinition> getTopTypeDefinitions() {
+    public List<TypeDefinition> getTopLevelTypeDefinitions() {
         return topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition)).map((n) -> (TypeDefinition)n).collect(Collectors.toList());
+    }
+
+    public List<FunctionDefinition> getTopLevelFunctionDefinitions() {
+        return topNodes.stream().filter((n)-> (n instanceof FunctionDefinition)).map((n) -> (FunctionDefinition)n).collect(Collectors.toList());
     }
 
     @Override
@@ -106,5 +110,10 @@ public class TurinFile extends Node {
             }
         }
         return Optional.empty();
+    }
+
+    public void add(FunctionDefinition functionDefinition) {
+        topNodes.add(functionDefinition);
+        functionDefinition.parent = this;
     }
 }
