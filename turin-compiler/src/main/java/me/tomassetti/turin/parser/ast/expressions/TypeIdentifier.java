@@ -10,6 +10,41 @@ public class TypeIdentifier extends Node {
 
     public TypeIdentifier(QualifiedName packageName, String typeName) {
         this.packageName = packageName;
+        this.packageName.setParent(this);
+        this.typeName = typeName;
+    }
+
+    @Override
+    public String toString() {
+        return "TypeIdentifier{" +
+                "packageName=" + packageName +
+                ", typeName='" + typeName + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TypeIdentifier that = (TypeIdentifier) o;
+
+        if (packageName != null ? !packageName.equals(that.packageName) : that.packageName != null) return false;
+        if (!typeName.equals(that.typeName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = packageName != null ? packageName.hashCode() : 0;
+        result = 31 * result + typeName.hashCode();
+        return result;
+    }
+
+    public TypeIdentifier(String typeName) {
+
+        this.packageName = null;
         this.typeName = typeName;
     }
 

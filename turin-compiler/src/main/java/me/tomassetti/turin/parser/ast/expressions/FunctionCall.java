@@ -61,7 +61,7 @@ public class FunctionCall extends Invokable {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        return function.calcType(resolver).returnTypeWhenInvokedWith(actualParams);
     }
 
 }

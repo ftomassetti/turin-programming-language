@@ -9,14 +9,14 @@ import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeVariableTypeUsage;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class ReflectionBasedTypeDefinition extends TypeDefinition {
 
@@ -66,7 +66,41 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
                 }
             }
         }
-        throw new UnsupportedOperationException();
+
+        List<Method> methods = new LinkedList<>();
+        for (Method method : clazz.getMethods()) {
+            if (method.getName().equals(fieldName)) {
+                if (Modifier.isStatic(method.getModifiers()) == staticContext) {
+                    methods.add(method);
+                }
+            }
+        }
+        if (!methods.isEmpty()) {
+            return ReflectionBasedTypeDefinition.typeFor(methods);
+        }
+
+        // TODO consider inherited fields and methods
+        throw new UnsupportedOperationException(fieldName);
+    }
+
+    private static TypeUsage typeFor(List<Method> methods) {
+        if (methods.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        methods.forEach((m)-> {
+            if (!Modifier.isStatic(m.getModifiers())) {
+                throw new IllegalArgumentException("Non static method given: " + m);
+            }
+        });
+        if (methods.size() != 1) {
+            throw new UnsupportedOperationException();
+        }
+        return typeFor(methods.get(0));
+    }
+
+    private static TypeUsage typeFor(Method method) {
+        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
+        return new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
     }
 
     @Override
@@ -107,14 +141,36 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return referenceTypeUsage;
     }
 
-    private TypeUsage toTypeUsage(Type parameterType) {
-        if (parameterType instanceof Class){
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
+    private static TypeUsage toTypeUsage(Type type) {
+        if (type instanceof Class) {
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             return referenceTypeUsage;
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
+            List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+            return new ReferenceTypeUsage(typeDefinition, typeParams);
+        } else if (type instanceof TypeVariable) {
+            TypeVariable typeVariable = (TypeVariable)type;
+            return toTypeUsage(typeVariable);
         } else {
-            throw new UnsupportedOperationException(parameterType.getClass().getCanonicalName());
+            throw new UnsupportedOperationException(type.getClass().getCanonicalName());
         }
+    }
+
+    private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
+        TypeVariableTypeUsage.GenericDeclaration genericDeclaration = null;
+        List<TypeUsage> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b)).collect(Collectors.toList());
+        if (typeVariable.getGenericDeclaration() instanceof Class) {
+            throw new UnsupportedOperationException();
+        } else if (typeVariable.getGenericDeclaration() instanceof Method) {
+            Method method = (Method)typeVariable.getGenericDeclaration();
+            genericDeclaration = TypeVariableTypeUsage.GenericDeclaration.onMethod(method.getDeclaringClass().getCanonicalName(), ReflectionTypeDefinitionFactory.toMethodDefinition(method).getDescriptor());
+        } else {
+            throw new UnsupportedOperationException(typeVariable.getGenericDeclaration().getClass().getCanonicalName());
+        }
+        return new TypeVariableTypeUsage(genericDeclaration, typeVariable.getName(), bounds);
     }
 
     @Override

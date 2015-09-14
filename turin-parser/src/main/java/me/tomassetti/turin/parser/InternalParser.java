@@ -16,7 +16,7 @@ public class InternalParser {
         p.addErrorListener(new BaseErrorListener() {
             @Override
             public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-                throw new IllegalStateException("failed to parse at line " + line + " due to " + msg, e);
+                throw new IllegalStateException("failed to parse at  L " + line + ", C " + charPositionInLine + " due to " + msg, e);
             }
         });
         TurinParser.TurinFileContext turinFileContext = p.turinFile();

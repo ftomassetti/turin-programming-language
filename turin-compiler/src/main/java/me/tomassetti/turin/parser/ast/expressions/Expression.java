@@ -16,7 +16,7 @@ public abstract class Expression extends Node {
      * with the given parameters.
      */
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+        throw new UnsupportedOperationException("On " + this.getClass().getCanonicalName());
     }
 
     /**

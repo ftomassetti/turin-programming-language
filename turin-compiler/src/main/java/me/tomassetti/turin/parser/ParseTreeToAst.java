@@ -314,8 +314,22 @@ class ParseTreeToAst {
             return toAst(exprCtx.stringLiteral());
         } else if (exprCtx.booleanLiteral() != null) {
             return new BooleanLiteral(exprCtx.booleanLiteral().positive != null);
+        } else if (exprCtx.staticFieldReference() != null) {
+            return toAst(exprCtx.staticFieldReference());
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException(exprCtx.getText());
+        }
+    }
+
+    private Expression toAst(TurinParser.StaticFieldReferenceContext ctx) {
+        return new StaticFieldAccess(toAst(ctx.typeReference()), ctx.name.getText());
+    }
+
+    private TypeIdentifier toAst(TurinParser.TypeReferenceContext ctx) {
+        if (ctx.packag != null) {
+            return new TypeIdentifier(toAst(ctx.packag), ctx.name.getText());
+        } else {
+            return new TypeIdentifier(ctx.name.getText());
         }
     }
 

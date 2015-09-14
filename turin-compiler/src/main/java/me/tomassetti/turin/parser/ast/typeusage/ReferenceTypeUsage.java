@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,29 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     public static final ReferenceTypeUsage OBJECT = new ReferenceTypeUsage("java.lang.Object");
     public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
+    private List<TypeUsage> typeParams;
+    private TypeParameterValues typeParameterValues = new TypeParameterValues();
+    private String name;
+
+    public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsage> typeParams) {
+        this(typeDefinition.getQualifiedName());
+        this.typeParams = typeParams;
+    }
+
+    public ReferenceTypeUsage(String name) {
+        if (name.contains("/")) {
+            throw new IllegalArgumentException(name);
+        }
+        if (name.startsWith(".")) {
+            throw new IllegalArgumentException();
+        }
+        this.name = name;
+        this.typeParams = Collections.emptyList();
+    }
+
+    public ReferenceTypeUsage(TypeDefinition td) {
+        this(td.getQualifiedName());
+    }
 
     public boolean isInterface(Resolver resolver) {
         return getTypeDefinition(resolver).isInterface();
@@ -34,53 +58,8 @@ public class ReferenceTypeUsage extends TypeUsage {
         throw new UnsupportedOperationException();
     }
 
-    public class TypeParameterValues {
-        private List<TypeUsage> usages = new ArrayList<>();
-        private List<String> names = new ArrayList<>();
-
-        public void add(String name, TypeUsage typeUsage) {
-            names.add(name);
-            usages.add(typeUsage);
-        }
-
-        public List<TypeUsage> getInOrder() {
-            return usages;
-        }
-
-        public List<String> getNamesInOrder() {
-            return names;
-        }
-
-        public TypeUsage getByName(String name) {
-            for (int i=0; i<names.size(); i++) {
-                if (names.get(i).equals(name)) {
-                    return usages.get(i);
-                }
-            }
-            throw new IllegalArgumentException(name);
-        }
-    }
-
-    private TypeParameterValues typeParameterValues = new TypeParameterValues();
-
     public TypeParameterValues getTypeParameterValues() {
         return typeParameterValues;
-    }
-
-    private String name;
-
-    public ReferenceTypeUsage(String name) {
-        if (name.contains("/")) {
-            throw new IllegalArgumentException(name);
-        }
-        if (name.startsWith(".")) {
-            throw new IllegalArgumentException();
-        }
-        this.name = name;
-    }
-
-    public ReferenceTypeUsage(TypeDefinition td) {
-        this(td.getQualifiedName());
     }
 
     @Override
@@ -170,5 +149,32 @@ public class ReferenceTypeUsage extends TypeUsage {
     @Override
     public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
         return getTypeDefinition(resolver).getFieldOnInstance(fieldName, instance, resolver);
+    }
+
+    public class TypeParameterValues {
+        private List<TypeUsage> usages = new ArrayList<>();
+        private List<String> names = new ArrayList<>();
+
+        public void add(String name, TypeUsage typeUsage) {
+            names.add(name);
+            usages.add(typeUsage);
+        }
+
+        public List<TypeUsage> getInOrder() {
+            return usages;
+        }
+
+        public List<String> getNamesInOrder() {
+            return names;
+        }
+
+        public TypeUsage getByName(String name) {
+            for (int i=0; i<names.size(); i++) {
+                if (names.get(i).equals(name)) {
+                    return usages.get(i);
+                }
+            }
+            throw new IllegalArgumentException(name);
+        }
     }
 }

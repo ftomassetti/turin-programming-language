@@ -19,8 +19,13 @@ public class MethodInvocationBS extends BytecodeSequence {
         // a method based on the class of the object. The invokespecial instruction is used to invoke instance
         // initialization methods as well as private methods and methods of a superclass of the current class.
         // ref.: http://zeroturnaround.com/rebellabs/java-bytecode-fundamentals-using-objects-and-calling-methods/
-        mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getOwnerInternalName(),
-                jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
+        if (jvmMethodDefinition.isStatic()) {
+            mv.visitMethodInsn(INVOKESTATIC, jvmMethodDefinition.getOwnerInternalName(),
+                    jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
+        } else {
+            mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getOwnerInternalName(),
+                    jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
+        }
     }
 
 }

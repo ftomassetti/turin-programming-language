@@ -12,7 +12,7 @@
     <parent>
         <groupId>me.tomassetti</groupId>
         <artifactId>turin-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1-${maven.build.timestamp}-SNAPSHOT</version>
     </parent>
 
     <licenses>

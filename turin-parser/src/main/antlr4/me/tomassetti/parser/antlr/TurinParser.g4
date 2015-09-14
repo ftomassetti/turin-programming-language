@@ -49,6 +49,7 @@ typeUsage:
     | primitiveType = PRIMITIVE_TYPE
     | basicType = BASIC_TYPE;
 
+// we permit to insert a newline after the comma to break long lists
 commaNl:
     COMMA NL?;
 
@@ -94,13 +95,14 @@ parenExpression:
     LPAREN internal=expression RPAREN;
 
 basicExpression:
-    booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression;
+    booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression | staticFieldReference;
 
 booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
 
 expression:
-    invokation | creation | basicExpression | fieldAccess | staticFieldReference
+    invokation | creation
+    | basicExpression | fieldAccess
     | left=expression mathOperator=ASTERISK right=expression
     | left=expression mathOperator=SLASH    right=expression
     | left=expression mathOperator=PLUS     right=expression
@@ -112,7 +114,7 @@ expression:
     ;
 
 invokation:
-    function=basicExpression LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
+    function=basicExpression LPAREN (params+=actualParam (commaNl params+=actualParam)*)? RPAREN ;
 
 fieldAccess:
     subject=basicExpression POINT name=VALUE_ID;
@@ -124,7 +126,7 @@ valueReference:
     name=VALUE_ID;
 
 typeReference:
-    (packag=qualifiedId)? POINT name=TYPE_ID;
+    (packag=qualifiedId POINT)? name=TYPE_ID;
 
 stringLiteral:
     STRING_START (content=STRING_CONTENT)? STRING_STOP;
