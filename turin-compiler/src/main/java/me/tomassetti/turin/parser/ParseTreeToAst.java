@@ -55,7 +55,7 @@ class ParseTreeToAst {
             } else if (memberNode instanceof Program) {
                 turinFile.add((Program) memberNode);
             } else {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException(memberNode.getClass().getCanonicalName());
             }
         }
         for (TurinParser.ImportDeclarationContext importDeclarationContext : turinFileContext.importDeclaration()) {
@@ -105,9 +105,16 @@ class ParseTreeToAst {
             return toAst(memberCtx.topLevelPropertyDeclaration());
         } else if (memberCtx.program() != null) {
             return toAst(memberCtx.program());
+        } else if (memberCtx.topLevelFunctionDeclaration() != null) {
+            return toAst(memberCtx.topLevelFunctionDeclaration());
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException(memberCtx.toString());
         }
+    }
+
+    private Node toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
+        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        return new FunctionDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
     }
 
     private Node toAst(TurinParser.TopLevelPropertyDeclarationContext topLevelPropertyDeclarationContext) {
