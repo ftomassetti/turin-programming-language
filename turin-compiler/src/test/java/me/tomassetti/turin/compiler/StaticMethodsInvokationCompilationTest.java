@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class StaticMethodsInvokationCompilationTest {
+public class StaticMethodsInvokationCompilationTest extends AbstractCompilerTest {
 
     private Resolver getResolverFor(TurinFile turinFile) {
         return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(ImmutableList.of(turinFile))));
@@ -32,13 +32,14 @@ public class StaticMethodsInvokationCompilationTest {
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
         assertEquals(1, classFileDefinitions.size());
+        saveClassFile(classFileDefinitions.get(0), "tmp");
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
         assertEquals(0, functionClass.getConstructors().length);
 
-        Method invoke = functionClass.getMethod("invoke", int.class, int.class);
+        Method invoke = functionClass.getMethod("invoke");
         Object result = invoke.invoke(null);
         assertTrue(result instanceof List);
         List list = (List)result;

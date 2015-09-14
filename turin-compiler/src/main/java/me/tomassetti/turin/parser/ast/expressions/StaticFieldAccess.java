@@ -2,10 +2,14 @@ package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmFieldDefinition;
+import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+
+import java.util.List;
 
 public class StaticFieldAccess extends Expression {
 
@@ -18,10 +22,46 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
+    public String toString() {
+        return "StaticFieldAccess{" +
+                "subject=" + subject +
+                ", field='" + field + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StaticFieldAccess that = (StaticFieldAccess) o;
+
+        if (!field.equals(that.field)) return false;
+        if (!subject.equals(that.subject)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = subject.hashCode();
+        result = 31 * result + field.hashCode();
+        return result;
+    }
+
+    @Override
     public TypeUsage calcType(Resolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
+
         TypeUsage fieldType = typeDefinition.getField(field, true);
         return fieldType;
+    }
+
+    @Override
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+        TypeDefinition typeDefinition = typeDefinition(resolver);
+
+        return typeDefinition.findMethodFor(field, argsTypes, resolver, staticContext);
     }
 
     private TypeDefinition typeDefinition(Resolver resolver) {

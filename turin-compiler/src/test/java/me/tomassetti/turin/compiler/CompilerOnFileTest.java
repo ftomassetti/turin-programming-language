@@ -591,19 +591,5 @@ public class CompilerOnFileTest {
         assertEquals("A", method.invoke(aInstance, true, true,  true));
     }
 
-    // Used for debugging
-    private static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {
-        File output = null;
-        try {
-            output = new File(dir + "/" + classFileDefinition.getName().replaceAll("\\.", "/") + ".class");
-            output.getParentFile().mkdirs();
-            FileOutputStream fos = new FileOutputStream(output);
-            fos.write(classFileDefinition.getBytecode());
-        } catch (IOException e) {
-            System.err.println("Problem writing file "+output+": "+ e.getMessage());
-            System.exit(3);
-        }
-    }
-
 }
 

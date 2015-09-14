@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.expressions.StaticFieldAccess;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
@@ -76,7 +77,7 @@ public class InFileResolver implements Resolver {
                 .map((ap) -> ap.calcType(this).jvmType(this))
                 .collect(Collectors.toList());
         Expression function = functionCall.getFunction();
-        boolean staticContext = function.isType(this);
+        boolean staticContext = function.isType(this) || (function instanceof StaticFieldAccess);
         return function.findMethodFor(argsTypes, this, staticContext);
     }
 

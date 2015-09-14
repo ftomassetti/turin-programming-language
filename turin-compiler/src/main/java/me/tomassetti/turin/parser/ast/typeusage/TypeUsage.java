@@ -5,6 +5,7 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 
 import java.util.List;
@@ -50,6 +51,13 @@ public abstract class TypeUsage extends Node {
     }
 
     public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    /**
+     * If this can be invoked with the given arguments which type would be return?
+     */
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

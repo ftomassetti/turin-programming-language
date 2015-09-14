@@ -516,10 +516,10 @@ public class Compilation {
         if (function instanceof FieldAccess) {
             return pushExpression(((FieldAccess) function).getSubject());
         } else if (function instanceof ValueReference) {
-            ValueReference valueReference = (ValueReference)function;
+            ValueReference valueReference = (ValueReference) function;
             Node declaration = valueReference.resolve(resolver);
             if (declaration instanceof ReflectionBasedSetOfOverloadedMethods) {
-                ReflectionBasedSetOfOverloadedMethods methods = (ReflectionBasedSetOfOverloadedMethods)declaration;
+                ReflectionBasedSetOfOverloadedMethods methods = (ReflectionBasedSetOfOverloadedMethods) declaration;
                 if (methods.isStatic()) {
                     return NoOp.getInstance();
                 } else {
@@ -528,6 +528,8 @@ public class Compilation {
             } else {
                 throw new UnsupportedOperationException(declaration.getClass().getCanonicalName());
             }
+        } else if (function instanceof StaticFieldAccess) {
+            return NoOp.getInstance();
         } else {
             throw new UnsupportedOperationException(function.getClass().getCanonicalName());
         }
@@ -672,6 +674,14 @@ public class Compilation {
                     pushExpression(relationalOperation.getRight()),
                     new RelationalOperationBS(relationalOperation.getOperator())
             ));
+        } else if (expr instanceof FunctionCall) {
+            FunctionCall functionCall = (FunctionCall)expr;
+            BytecodeSequence instancePush = pushInstance(functionCall);
+            List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
+                    .map((ap) -> pushExpression(ap))
+                    .collect(Collectors.toList());
+            JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
