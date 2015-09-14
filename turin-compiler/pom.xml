@@ -4,19 +4,15 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>turin-compiler</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1-${maven.build.timestamp}-SNAPSHOT</version>
     <name>turin-compiler</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 
     <parent>
         <groupId>me.tomassetti</groupId>
         <artifactId>turin-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1-${maven.build.timestamp}-SNAPSHOT</version>
     </parent>
-
-    <properties>
-        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-    </properties>
 
     <licenses>
         <license>
