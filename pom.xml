@@ -66,6 +66,14 @@
 		<url>https://github.com/ftomassetti/turin-programming-language/issues</url>
 	</issueManagement>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
