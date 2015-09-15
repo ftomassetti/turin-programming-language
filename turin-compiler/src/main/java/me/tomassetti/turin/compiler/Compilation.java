@@ -61,7 +61,7 @@ public class Compilation {
     }
 
     public List<ClassFileDefinition> compile(TurinFile turinFile) {
-        boolean valid = turinFile.validate(errorCollector);
+        boolean valid = turinFile.validate(resolver, errorCollector);
 
         if (!valid) {
             return Collections.emptyList();

@@ -106,12 +106,12 @@ public abstract class Node {
         return results;
     }
 
-    public boolean validate(ErrorCollector errorCollector) {
-        boolean res = specificValidate(errorCollector);
+    public boolean validate(Resolver resolver, ErrorCollector errorCollector) {
+        boolean res = specificValidate(resolver, errorCollector);
         // if the node is wrong we do not check its children
         if (res) {
             for (Node child : getChildren()) {
-                boolean partial = child.validate(errorCollector);
+                boolean partial = child.validate(resolver, errorCollector);
                 if (!partial) {
                     res = false;
                 }
@@ -123,7 +123,7 @@ public abstract class Node {
     /**
      * @return if the node is valid
      */
-    protected boolean specificValidate(ErrorCollector errorCollector) {
+    protected boolean specificValidate(Resolver resolver, ErrorCollector errorCollector) {
         // nothing to do
         return true;
     }
