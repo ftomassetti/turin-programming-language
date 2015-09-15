@@ -1,0 +1,19 @@
+namespace trycatch
+
+import java.io.IOException
+
+Int parse(Int i) {
+    try {
+        if i == 0 {
+            throw IOException("foo")
+        } elif i == 1 {
+            throw RuntimeException("bar")
+        } else {
+            return i
+        }
+    } catch IOException e {
+        return -1
+    } catch RuntimeException e {
+        return -2
+    }
+}

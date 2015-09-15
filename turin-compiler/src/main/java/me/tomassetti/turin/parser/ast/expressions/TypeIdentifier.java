@@ -1,8 +1,15 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+
+import java.util.Collections;
+import java.util.Optional;
 
 public class TypeIdentifier extends Node {
     private QualifiedName packageName;
@@ -35,6 +42,15 @@ public class TypeIdentifier extends Node {
         return true;
     }
 
+    public TypeDefinition resolve(Resolver resolver) {
+        Optional<TypeDefinition> res = resolver.findTypeDefinitionIn(qualifiedName(), this, resolver);
+        if (res.isPresent()) {
+            return res.get();
+        } else {
+            throw new UnsolvedTypeException(qualifiedName(), this);
+        }
+    }
+
     @Override
     public int hashCode() {
         int result = packageName != null ? packageName.hashCode() : 0;
@@ -43,14 +59,17 @@ public class TypeIdentifier extends Node {
     }
 
     public TypeIdentifier(String typeName) {
-
         this.packageName = null;
         this.typeName = typeName;
     }
 
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.of(packageName);
+        if (packageName == null) {
+            return Collections.emptyList();
+        } else {
+            return ImmutableList.of(packageName);
+        }
     }
 
     public String qualifiedName() {

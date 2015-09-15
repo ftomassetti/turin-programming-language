@@ -233,4 +233,28 @@ public class TurinLexerTest {
         String code = "Void toString() = \"foo\"";
         verify(code, TurinLexer.VOID_KW, TurinLexer.VALUE_ID, TurinLexer.LPAREN, TurinLexer.RPAREN, TurinLexer.ASSIGNMENT, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
+
+    @Test
+    public void parseZero() throws IOException {
+        String code = "0";
+        verify(code, TurinLexer.INT);
+    }
+
+    @Test
+    public void parseMinusZero() throws IOException {
+        String code = "-0";
+        verify(code, TurinLexer.INT);
+    }
+
+    @Test
+    public void parsePositive() throws IOException {
+        String code = "38";
+        verify(code, TurinLexer.INT);
+    }
+
+    @Test
+    public void parseNegative() throws IOException {
+        String code = "-19";
+        verify(code, TurinLexer.INT);
+    }
 }
