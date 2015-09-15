@@ -225,9 +225,27 @@ class ParseTreeToAst {
             return toAst(stmtCtx.returnStmt());
         } else if (stmtCtx.throwStmt() != null) {
             return toAst(stmtCtx.throwStmt());
+        } else if (stmtCtx.tryCatchStmt() != null) {
+            return toAst(stmtCtx.tryCatchStmt());
         } else {
             throw new UnsupportedOperationException(stmtCtx.getText());
         }
+    }
+
+    private TryCatchStatement toAst(TurinParser.TryCatchStmtContext ctx) {
+        BlockStatement body = new BlockStatement(ctx.body.stream().map((s)->toAst(s)).collect(Collectors.toList()));
+        List<CatchClause> catches = ctx.catches.stream().map((cc) -> toAst(cc)).collect(Collectors.toList());
+        TryCatchStatement tryCatchStatement = new TryCatchStatement(body, catches);
+        getPositionFrom(tryCatchStatement, ctx);
+        return tryCatchStatement;
+    }
+
+    private CatchClause toAst(TurinParser.CatchClauseContext ctx) {
+        BlockStatement body = new BlockStatement(ctx.body.stream().map((s)->toAst(s)).collect(Collectors.toList()));
+        TypeIdentifier type = toAst(ctx.type);
+        CatchClause catchCause = new CatchClause(type, ctx.varName.getText(), body);
+        getPositionFrom(catchCause, ctx);
+        return catchCause;
     }
 
     private ThrowStatement toAst(TurinParser.ThrowStmtContext ctx) {

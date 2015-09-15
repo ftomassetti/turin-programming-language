@@ -497,11 +497,48 @@ public class Compilation {
                 return new IfBS(ifCondition, ifBody, elifConditions, elifBodys);
             }
         } else if (statement instanceof ThrowStatement) {
-            ThrowStatement throwStatement = (ThrowStatement)statement;
+            ThrowStatement throwStatement = (ThrowStatement) statement;
             return new ThrowBS(pushExpression(throwStatement.getException()));
+        } else if (statement instanceof TryCatchStatement) {
+            TryCatchStatement tryCatchStatement = (TryCatchStatement) statement;
+            return compile(tryCatchStatement);
         } else {
             throw new UnsupportedOperationException(statement.toString());
         }
+    }
+
+    private BytecodeSequence compile(TryCatchStatement tryCatchStatement) {
+        return new BytecodeSequence() {
+            @Override
+            public void operate(MethodVisitor mv) {
+                Label tryStart = new Label();
+                Label tryEnd = new Label();
+                Label afterTryCatch = new Label();
+                List<Label> catchSpecificLabels = new ArrayList<>();
+
+                for (CatchClause catchClause : tryCatchStatement.getCatchClauses()) {
+                    Label catchSpecificLabel = new Label();
+                    mv.visitTryCatchBlock(tryStart, tryEnd, catchSpecificLabel, JvmNameUtils.canonicalToInternal(catchClause.getExceptionType().resolve(resolver).getQualifiedName()));
+                    catchSpecificLabels.add(catchSpecificLabel);
+                }
+
+                mv.visitLabel(tryStart);
+                compile(tryCatchStatement.getBody()).operate(mv);
+                mv.visitLabel(tryEnd);
+                mv.visitJumpInsn(GOTO, afterTryCatch);
+
+                int i=0;
+                for (CatchClause catchClause : tryCatchStatement.getCatchClauses()) {
+                    Label catchSpecificLabel = catchSpecificLabels.get(i);
+                    mv.visitLabel(catchSpecificLabel);
+                    compile(catchClause.getBody()).operate(mv);
+                    mv.visitJumpInsn(GOTO, afterTryCatch);
+                    i++;
+                }
+
+                mv.visitLabel(afterTryCatch);
+            }
+        };
     }
 
     private BytecodeSequence compile(Expression expression) {

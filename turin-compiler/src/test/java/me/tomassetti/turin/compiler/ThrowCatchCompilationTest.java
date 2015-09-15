@@ -68,5 +68,22 @@ public class ThrowCatchCompilationTest extends AbstractCompilerTest {
         EasyMock.verify(errorCollector);
     }
 
+    @Test
+    public void compileTryCatchStatement() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/try_catch_statement.to"));
+
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        Method method = functionClass.getMethod("invoke", int.class);
+        assertEquals(-1, method.invoke(null, 0));
+        assertEquals(-2, method.invoke(null, 1));
+        assertEquals(2, method.invoke(null, 2));
+    }
+
 }
 

@@ -166,8 +166,17 @@ ifStmt:
 throwStmt:
     THROW_KW exc=expression nls;
 
+catchClause:
+    CATCH_KW type=typeReference varName=VALUE_ID LBRACKET nls (body+=statement)*;
+
+tryCatchStmt:
+    TRY_KW LBRACKET nls
+    (body+=statement)*
+    (RBRACKET catches+=catchClause)+
+    RBRACKET nls;
+
 statement:
-    varDecl | expressionStmt | returnStmt | ifStmt | throwStmt;
+    varDecl | expressionStmt | returnStmt | ifStmt | throwStmt | tryCatchStmt;
 //
 
 formalParam:
