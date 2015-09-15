@@ -48,4 +48,9 @@ public class Position {
         this.start = start;
         this.end = end;
     }
+
+    public static Position create(int startLine, int startCol, int endLine, int endCol) {
+        return new Position(new Point(startLine, startCol), new Point(endLine, endCol));
+    }
+
 }

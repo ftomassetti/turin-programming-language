@@ -13,6 +13,9 @@ public abstract class AbstractCompilerTest {
 
         @Override
         public void recordSemanticError(Position position, String description) {
+            if (position == null) {
+                throw new IllegalArgumentException("null position");
+            }
             throw new RuntimeException(position.toString() + " : " + description);
         }
     }
