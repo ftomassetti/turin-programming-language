@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class QualifiedName extends Node {
@@ -49,7 +50,11 @@ public class QualifiedName extends Node {
 
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.of(base);
+        if (base == null) {
+            return Collections.emptyList();
+        } else {
+            return ImmutableList.of(base);
+        }
     }
 
     public String qualifiedName() {

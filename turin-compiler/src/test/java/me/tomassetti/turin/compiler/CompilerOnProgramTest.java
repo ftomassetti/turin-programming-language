@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * We test specifically the compilation of programs AST nodes.
  */
-public class CompilerOnProgramTest {
+public class CompilerOnProgramTest extends AbstractCompilerTest {
 
     private TurinFile emptyProgram() {
         // define AST
@@ -80,7 +80,7 @@ public class CompilerOnProgramTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         loadAndInvoke(classFileDefinitions.get(0));
@@ -92,7 +92,7 @@ public class CompilerOnProgramTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
         assertEquals("myProgram.SuperSimple", classFileDefinitions.get(0).getName());
 

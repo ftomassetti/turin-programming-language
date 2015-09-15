@@ -221,11 +221,19 @@ class ParseTreeToAst {
             return toAst(stmtCtx.varDecl());
         } else if (stmtCtx.ifStmt() != null) {
             return toAst(stmtCtx.ifStmt());
-        } else if (stmtCtx.returnStmt() != null){
+        } else if (stmtCtx.returnStmt() != null) {
             return toAst(stmtCtx.returnStmt());
+        } else if (stmtCtx.throwStmt() != null) {
+            return toAst(stmtCtx.throwStmt());
         } else {
             throw new UnsupportedOperationException(stmtCtx.getText());
         }
+    }
+
+    private ThrowStatement toAst(TurinParser.ThrowStmtContext ctx) {
+        ThrowStatement throwStatement = new ThrowStatement(toAst(ctx.expression()));
+        getPositionFrom(throwStatement, ctx);
+        return throwStatement;
     }
 
     private Statement toAst(TurinParser.ReturnStmtContext returnStmtContext) {
@@ -333,8 +341,10 @@ class ParseTreeToAst {
         }
     }
 
-    private Expression toAst(TurinParser.ValueReferenceContext valueReferenceContext) {
-        return new ValueReference(valueReferenceContext.getText());
+    private ValueReference toAst(TurinParser.ValueReferenceContext valueReferenceContext) {
+        ValueReference expression = new ValueReference(valueReferenceContext.getText());
+        getPositionFrom(expression, valueReferenceContext);
+        return expression;
     }
 
     private Expression toAst(TurinParser.InterpolatedStringLiteralContext interpolatedStringLiteralContext) {
@@ -348,6 +358,7 @@ class ParseTreeToAst {
                 throw new UnsupportedOperationException();
             }
         }
+        getPositionFrom(stringInterpolation, interpolatedStringLiteralContext);
         return stringInterpolation;
     }
 
@@ -383,7 +394,9 @@ class ParseTreeToAst {
 
     private StringLiteral toAst(TurinParser.StringLiteralContext stringLiteralContext) {
         String content = stringLiteralContext.getText().substring(1, stringLiteralContext.getText().length() - 1);
-        return new StringLiteral(content);
+        StringLiteral stringLiteral = new StringLiteral(content);
+        getPositionFrom(stringLiteral, stringLiteralContext);
+        return stringLiteral;
     }
 
     private ExpressionStatement toAst(TurinParser.ExpressionStmtContext expressionStmtContext) {

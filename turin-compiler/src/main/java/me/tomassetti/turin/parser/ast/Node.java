@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast;
 
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
@@ -103,5 +104,27 @@ public abstract class Node {
             results.addAll(child.findAll(desiredClass));
         }
         return results;
+    }
+
+    public boolean validate(Resolver resolver, ErrorCollector errorCollector) {
+        boolean res = specificValidate(resolver, errorCollector);
+        // if the node is wrong we do not check its children
+        if (res) {
+            for (Node child : getChildren()) {
+                boolean partial = child.validate(resolver, errorCollector);
+                if (!partial) {
+                    res = false;
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * @return if the node is valid
+     */
+    protected boolean specificValidate(Resolver resolver, ErrorCollector errorCollector) {
+        // nothing to do
+        return true;
     }
 }

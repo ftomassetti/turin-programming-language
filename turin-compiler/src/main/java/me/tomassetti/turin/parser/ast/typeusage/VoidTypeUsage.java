@@ -10,7 +10,7 @@ public class VoidTypeUsage extends TypeUsage {
 
     @Override
     public JvmType jvmType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        return new JvmType("V");
     }
 
     @Override

@@ -1,0 +1,5 @@
+namespace manga
+
+Void parse(String path) {
+    throw "To be implemented"
+}
