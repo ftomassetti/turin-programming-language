@@ -477,16 +477,19 @@ public class Compilation {
                 return new ReturnVoidBS();
             }
         } else if (statement instanceof IfStatement) {
-            IfStatement ifStatement = (IfStatement)statement;
+            IfStatement ifStatement = (IfStatement) statement;
             BytecodeSequence ifCondition = pushExpression(ifStatement.getCondition());
             BytecodeSequence ifBody = compile(ifStatement.getIfBody());
-            List<BytecodeSequence> elifConditions = ifStatement.getElifStatements().stream().map((ec)->pushExpression(ec.getCondition())).collect(Collectors.toList());
-            List<BytecodeSequence> elifBodys = ifStatement.getElifStatements().stream().map((ec)->compile(ec.getBody())).collect(Collectors.toList());
+            List<BytecodeSequence> elifConditions = ifStatement.getElifStatements().stream().map((ec) -> pushExpression(ec.getCondition())).collect(Collectors.toList());
+            List<BytecodeSequence> elifBodys = ifStatement.getElifStatements().stream().map((ec) -> compile(ec.getBody())).collect(Collectors.toList());
             if (ifStatement.hasElse()) {
                 return new IfBS(ifCondition, ifBody, elifConditions, elifBodys, compile(ifStatement.getElseBody()));
             } else {
                 return new IfBS(ifCondition, ifBody, elifConditions, elifBodys);
             }
+        } else if (statement instanceof ThrowStatement) {
+            ThrowStatement throwStatement = (ThrowStatement)statement;
+            return new ThrowBS(pushExpression(throwStatement.getException()));
         } else {
             throw new UnsupportedOperationException(statement.toString());
         }
@@ -682,6 +685,13 @@ public class Compilation {
                     .collect(Collectors.toList());
             JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
+        } else if (expr instanceof Creation) {
+            Creation creation = (Creation)expr;
+            List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
+                    .map((ap) -> pushExpression(ap))
+                    .collect(Collectors.toList());
+            JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(resolver);
+            return new NewInvocationBS(constructorDefinition, argumentsPush);
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

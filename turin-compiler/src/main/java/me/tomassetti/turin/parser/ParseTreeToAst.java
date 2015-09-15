@@ -221,11 +221,17 @@ class ParseTreeToAst {
             return toAst(stmtCtx.varDecl());
         } else if (stmtCtx.ifStmt() != null) {
             return toAst(stmtCtx.ifStmt());
-        } else if (stmtCtx.returnStmt() != null){
+        } else if (stmtCtx.returnStmt() != null) {
             return toAst(stmtCtx.returnStmt());
+        } else if (stmtCtx.throwStmt() != null) {
+            return toAst(stmtCtx.throwStmt());
         } else {
             throw new UnsupportedOperationException(stmtCtx.getText());
         }
+    }
+
+    private ThrowStatement toAst(TurinParser.ThrowStmtContext ctx) {
+        return new ThrowStatement(toAst(ctx.expression()));
     }
 
     private Statement toAst(TurinParser.ReturnStmtContext returnStmtContext) {

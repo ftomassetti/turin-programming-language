@@ -146,7 +146,7 @@ intLiteral:
 creation:
     (pakage=qualifiedId POINT)? name=TYPE_ID LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
 
-varDecl :
+varDecl:
     VAL_KW (type=typeUsage)? name=VALUE_ID ASSIGNMENT value=expression nls;
 
 expressionStmt:
@@ -163,11 +163,14 @@ ifStmt:
     (elifs+=elifStmt)*
     (ELSE_KW LBRACKET nls (elseBody+=statement)* RBRACKET)? nls;
 
-statement :
-    varDecl | expressionStmt | returnStmt | ifStmt;
+throwStmt:
+    THROW_KW exc=expression nls;
+
+statement:
+    varDecl | expressionStmt | returnStmt | ifStmt | throwStmt;
 //
 
-formalParam :
+formalParam:
     type=typeUsage name=VALUE_ID;
 //
 
