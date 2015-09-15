@@ -30,7 +30,7 @@ public class StaticMethodsInvokationCompilationTest extends AbstractCompilerTest
 
         // generate bytecode
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();

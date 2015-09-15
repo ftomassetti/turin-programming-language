@@ -12,15 +12,33 @@ public class Parser {
 
     private InternalParser internalParser = new InternalParser();
 
+    public class TurinFileAndFile {
+        private File file;
+        private TurinFile turinFile;
+
+        public TurinFileAndFile(File file, TurinFile turinFile) {
+            this.file = file;
+            this.turinFile = turinFile;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public TurinFile getTurinFile() {
+            return turinFile;
+        }
+    }
+
     public TurinFile parse(InputStream inputStream) throws IOException {
         return new ParseTreeToAst().toAst(internalParser.produceParseTree(inputStream));
     }
 
-    public List<TurinFile> parseAllIn(File file) throws IOException {
+    public List<TurinFileAndFile> parseAllIn(File file) throws IOException {
         if (file.isFile()) {
-            return ImmutableList.of(parse(new FileInputStream(file)));
+            return ImmutableList.of(new TurinFileAndFile(file, parse(new FileInputStream(file))));
         } else if (file.isDirectory()) {
-            List<TurinFile> result = new ArrayList<>();
+            List<TurinFileAndFile> result = new ArrayList<>();
             for (File child : file.listFiles()) {
                 result.addAll(parseAllIn(child));
             }

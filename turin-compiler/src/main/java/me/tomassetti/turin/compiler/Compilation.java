@@ -10,6 +10,7 @@ import me.tomassetti.turin.compiler.bytecode.returnop.ReturnFalseBS;
 import me.tomassetti.turin.compiler.bytecode.returnop.ReturnTrueBS;
 import me.tomassetti.turin.compiler.bytecode.returnop.ReturnValueBS;
 import me.tomassetti.turin.compiler.bytecode.returnop.ReturnVoidBS;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
@@ -52,12 +53,20 @@ public class Compilation {
     private Resolver resolver;
     private LocalVarsSymbolTable localVarsSymbolTable;
     private String internalClassName;
+    private ErrorCollector errorCollector;
 
-    public Compilation(Resolver resolver) {
+    public Compilation(Resolver resolver, ErrorCollector errorCollector) {
         this.resolver = resolver;
+        this.errorCollector = errorCollector;
     }
 
     public List<ClassFileDefinition> compile(TurinFile turinFile) {
+        boolean valid = turinFile.validate(errorCollector);
+
+        if (!valid) {
+            return Collections.emptyList();
+        }
+
         List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
 
         for (Node node : turinFile.getChildren()) {

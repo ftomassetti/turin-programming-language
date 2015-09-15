@@ -1,10 +1,21 @@
 package me.tomassetti.turin.compiler;
 
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.parser.ast.Position;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public abstract class AbstractCompilerTest {
+
+    protected static class MyErrorCollector implements ErrorCollector {
+
+        @Override
+        public void recordSemanticError(Position position, String description) {
+            throw new RuntimeException(position.toString() + " : " + description);
+        }
+    }
 
     // Used for debugging
     protected static void saveClassFile(ClassFileDefinition classFileDefinition, String dir) {

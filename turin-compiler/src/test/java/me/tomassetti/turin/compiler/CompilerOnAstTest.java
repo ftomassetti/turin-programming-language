@@ -1,8 +1,6 @@
 package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.*;
-import me.tomassetti.turin.compiler.ClassFileDefinition;
-import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
@@ -17,7 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CompilerOnAstTest {
+public class CompilerOnAstTest extends AbstractCompilerTest {
 
     private TurinFile mangaAst() {
         // define AST
@@ -50,7 +48,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -72,7 +70,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(2, classFileDefinitions.size());
 
         assertEquals("registry.Person", classFileDefinitions.get(0).getName());
@@ -97,7 +95,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(2, classFileDefinitions.size());
 
         assertEquals("registry.Address", classFileDefinitions.get(1).getName());
@@ -121,7 +119,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(2, classFileDefinitions.size());
 
         assertEquals("registry.Address", classFileDefinitions.get(1).getName());
@@ -150,7 +148,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -172,7 +170,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -194,7 +192,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -214,7 +212,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -234,7 +232,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -254,7 +252,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -274,7 +272,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -293,7 +291,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -312,7 +310,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -332,7 +330,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
@@ -352,7 +350,7 @@ public class CompilerOnAstTest {
 
         // generate bytecode
         Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();

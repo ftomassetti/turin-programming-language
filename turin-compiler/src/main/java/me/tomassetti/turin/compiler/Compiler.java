@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
@@ -12,6 +13,7 @@ import me.tomassetti.turin.parser.ast.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import me.tomassetti.turin.parser.Parser;
 
@@ -27,8 +29,8 @@ public class Compiler {
         this.options = options;
     }
 
-    public List<ClassFileDefinition> compile(TurinFile turinFile) {
-        return new Compilation(resolver).compile(turinFile);
+    public List<ClassFileDefinition> compile(TurinFile turinFile, ErrorCollector errorCollector) {
+        return new Compilation(resolver, errorCollector).compile(turinFile);
     }
 
     public static class Options {
@@ -65,10 +67,24 @@ public class Compiler {
         }
     }
 
+    private static class ErrorPrinter implements ErrorCollector {
+
+        private String fileDescription;
+
+        public ErrorPrinter(String fileDescription) {
+            this.fileDescription = fileDescription;
+        }
+
+        @Override
+        public void recordSemanticError(Position position, String description) {
+            System.err.println(fileDescription + " at " + position + ": (semantic error) " + description);
+        }
+    }
+
     private void compileFile(File file) throws IOException {
         TurinFile turinFile = new Parser().parse(new FileInputStream(file));
 
-        for (ClassFileDefinition classFileDefinition : compile(turinFile)) {
+        for (ClassFileDefinition classFileDefinition : compile(turinFile, new ErrorPrinter(file.getPath()))) {
             if (options.verbose) {
                 System.out.println(" Writing [" + classFileDefinition.getName() + "]");
             }
@@ -116,7 +132,7 @@ public class Compiler {
         Parser parser = new Parser();
 
         // First we collect all TurinFiles and we pass it to the resolver
-        List<TurinFile> turinFiles = new ArrayList<>();
+        List<Parser.TurinFileAndFile> turinFiles = new ArrayList<>();
         for (String source : options.sources) {
             try {
                 turinFiles.addAll(parser.parseAllIn(new File(source)));
@@ -126,13 +142,13 @@ public class Compiler {
                 return;
             }
         }
-        Resolver resolver = getResolver(options.sources, options.classPathElements, turinFiles);
+        Resolver resolver = getResolver(options.sources, options.classPathElements, turinFiles.stream().map(Parser.TurinFileAndFile::getTurinFile).collect(Collectors.toList()));
 
         // Then we compile all files
         // TODO consider classpath
         Compiler instance = new Compiler(resolver, options);
-        for (TurinFile turinFile : turinFiles) {
-            for (ClassFileDefinition classFileDefinition : instance.compile(turinFile)) {
+        for (Parser.TurinFileAndFile turinFile : turinFiles) {
+            for (ClassFileDefinition classFileDefinition : instance.compile(turinFile.getTurinFile(), new ErrorPrinter(turinFile.getFile().getPath()))) {
                 saveClassFile(classFileDefinition, options);
             }
         }

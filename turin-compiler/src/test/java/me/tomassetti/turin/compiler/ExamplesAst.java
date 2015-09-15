@@ -4,9 +4,6 @@ import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class ExamplesAst {
 
     public static TurinFile registryAst() {

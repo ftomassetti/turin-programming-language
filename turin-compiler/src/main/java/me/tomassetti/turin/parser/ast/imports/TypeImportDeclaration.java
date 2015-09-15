@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast.imports;
 
+import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.NoContext;
 import me.tomassetti.turin.parser.ast.Node;
@@ -42,6 +43,6 @@ public class TypeImportDeclaration extends ImportDeclaration {
 
     @Override
     public Iterable<Node> getChildren() {
-        throw new UnsupportedOperationException();
+        return ImmutableList.of(qualifiedName);
     }
 }
