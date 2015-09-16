@@ -26,6 +26,10 @@ public abstract class TypeUsage extends Node {
         throw new UnsupportedOperationException();
     }
 
+    public ArrayTypeUsage asArrayTypeUsage() {
+        throw new UnsupportedOperationException();
+    }
+
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }

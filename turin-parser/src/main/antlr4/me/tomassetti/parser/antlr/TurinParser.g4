@@ -101,8 +101,10 @@ booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
 
 expression:
-    invokation | creation
-    | basicExpression | fieldAccess
+    invokation
+    | creation
+    | basicExpression
+    | array=expression LSQUARE index=expression RSQUARE
     | left=expression mathOperator=ASTERISK right=expression
     | left=expression mathOperator=SLASH    right=expression
     | left=expression mathOperator=PLUS     right=expression

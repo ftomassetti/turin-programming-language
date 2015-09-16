@@ -13,10 +13,7 @@ import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.imports.SingleFieldImportDeclaration;
 import me.tomassetti.turin.parser.ast.imports.TypeImportDeclaration;
 import me.tomassetti.turin.parser.ast.statements.*;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
@@ -200,8 +197,10 @@ class ParseTreeToAst {
             return PrimitiveTypeUsage.getByName(type.primitiveType.getText());
         } else if (type.basicType != null) {
             return BasicTypeUsage.getByName(type.basicType.getText());
+        } else if (type.arrayBase != null) {
+            return new ArrayTypeUsage(toAst(type.arrayBase));
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException(type.getText());
         }
     }
 
@@ -301,6 +300,8 @@ class ParseTreeToAst {
             return new NotOperation(toAst(exprCtx.value));
         } else if (exprCtx.relOp != null) {
             return relationalOperationToAst(exprCtx.relOp.getText(), exprCtx.left, exprCtx.right);
+        } else if (exprCtx.array != null) {
+            return new ArrayAccess(toAst(exprCtx.array), toAst(exprCtx.index));
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }

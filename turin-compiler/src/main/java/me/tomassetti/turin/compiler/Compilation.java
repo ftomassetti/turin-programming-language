@@ -732,12 +732,18 @@ public class Compilation {
             JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
         } else if (expr instanceof Creation) {
-            Creation creation = (Creation)expr;
+            Creation creation = (Creation) expr;
             List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
             JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(resolver);
             return new NewInvocationBS(constructorDefinition, argumentsPush);
+        } else if (expr instanceof ArrayAccess) {
+            ArrayAccess arrayAccess = (ArrayAccess)expr;
+            return new ComposedBytecodeSequence(ImmutableList.of(
+                    pushExpression(arrayAccess.getArray()),
+                    pushExpression(arrayAccess.getIndex()),
+                    new ArrayAccessBS(arrayAccess.calcType(resolver).jvmType(resolver).typeCategory())));
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
