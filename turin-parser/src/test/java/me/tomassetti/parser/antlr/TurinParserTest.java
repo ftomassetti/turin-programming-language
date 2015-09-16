@@ -44,4 +44,21 @@ public class TurinParserTest {
         TurinParser.TurinFileContext root = parse("function_definitions_block");
     }
 
+    @Test
+    public void parseArgsLengthInRelExpr() throws IOException {
+        TurinParser.TurinFileContext root = parse("args_length_different_from_one");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.TopLevelFunctionDeclarationContext function = root.members.get(0).topLevelFunctionDeclaration();
+        TurinParser.ExpressionContext funcBody = function.methodBody().expression();
+        assertEquals("!=", funcBody.relOp.getText());
+    }
+
+    @Test
+    public void parseFieldAccess() throws IOException {
+        TurinParser.TurinFileContext root = parse("field_access");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.TopLevelFunctionDeclarationContext function = root.members.get(0).topLevelFunctionDeclaration();
+        TurinParser.ExpressionContext funcBody = function.methodBody().expression();
+        assertEquals("length", funcBody.fieldName.getText());
+    }
 }
