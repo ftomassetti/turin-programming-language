@@ -39,11 +39,11 @@ class ParseTreeToAst {
         return new Point(token.getLine(), token.getCharPositionInLine() + token.getText().length());
     }
 
-    public TurinFile toAst(TurinParser.TurinFileContext turinFileContext){
+    public TurinFile toAst(TurinParser.TurinFileContext ctx){
         TurinFile turinFile = new TurinFile();
-        getPositionFrom(turinFile, turinFileContext);
-        turinFile.setNameSpace(toAst(turinFileContext.namespace));
-        for (TurinParser.FileMemberContext memberCtx : turinFileContext.fileMember()) {
+        getPositionFrom(turinFile, ctx);
+        turinFile.setNameSpace(toAst(ctx.namespace));
+        for (TurinParser.FileMemberContext memberCtx : ctx.fileMember()) {
             Node memberNode = toAst(memberCtx);
             if (memberNode instanceof TurinTypeDefinition) {
                 turinFile.add((TurinTypeDefinition)memberNode);
@@ -57,74 +57,85 @@ class ParseTreeToAst {
                 throw new UnsupportedOperationException(memberNode.getClass().getCanonicalName());
             }
         }
-        for (TurinParser.ImportDeclarationContext importDeclarationContext : turinFileContext.importDeclaration()) {
+        for (TurinParser.ImportDeclarationContext importDeclarationContext : ctx.importDeclaration()) {
             turinFile.add(toAst(importDeclarationContext));
         }
         return turinFile;
     }
 
-    private ImportDeclaration toAst(TurinParser.ImportDeclarationContext importDeclarationContext) {
-        if (importDeclarationContext.allFieldsImportDeclaration() != null) {
+    private ImportDeclaration toAst(TurinParser.ImportDeclarationContext ctx) {
+        if (ctx.allFieldsImportDeclaration() != null) {
             throw new UnsupportedOperationException();
-        } else if (importDeclarationContext.singleFieldImportDeclaration() != null) {
-            return toAst(importDeclarationContext.singleFieldImportDeclaration());
-        } else if (importDeclarationContext.typeImportDeclaration() != null) {
-            return toAst(importDeclarationContext.typeImportDeclaration());
-        } else if (importDeclarationContext.allPackageImportDeclaration() != null) {
-            return new AllPackageImportDeclaration(toAst(importDeclarationContext.allPackageImportDeclaration().packagePart));
+        } else if (ctx.singleFieldImportDeclaration() != null) {
+            return toAst(ctx.singleFieldImportDeclaration());
+        } else if (ctx.typeImportDeclaration() != null) {
+            return toAst(ctx.typeImportDeclaration());
+        } else if (ctx.allPackageImportDeclaration() != null) {
+            return new AllPackageImportDeclaration(toAst(ctx.allPackageImportDeclaration().packagePart));
         } else {
-            throw new UnsupportedOperationException(importDeclarationContext.toString());
+            throw new UnsupportedOperationException(ctx.toString());
         }
     }
 
     private ImportDeclaration toAst(TurinParser.TypeImportDeclarationContext ctx) {
+        ImportDeclaration importDeclaration;
         if (ctx.alternativeName == null) {
-            return new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText());
+             importDeclaration = new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText());
         } else {
-            return new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), ctx.alternativeName.getText());
+            importDeclaration = new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), ctx.alternativeName.getText());
         }
+        getPositionFrom(importDeclaration, ctx);
+        return importDeclaration;
     }
 
     private ImportDeclaration toAst(TurinParser.SingleFieldImportDeclarationContext ctx) {
+        ImportDeclaration importDeclaration;
         if (ctx.alternativeName == null) {
-            return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName));
+            importDeclaration = new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName));
         } else {
-            return new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName), ctx.alternativeName.getText());
+            importDeclaration = new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName), ctx.alternativeName.getText());
+        }
+        getPositionFrom(importDeclaration, ctx);
+        return importDeclaration;
+    }
+
+    private QualifiedName toAst(TurinParser.QualifiedIdContext ctx) {
+        QualifiedName qualifiedName = QualifiedName.create(ctx.parts.stream().map((p) -> p.getText()).collect(Collectors.toList()));
+        getPositionFrom(qualifiedName, ctx);
+        return qualifiedName;
+    }
+
+    private Node toAst(TurinParser.FileMemberContext ctx) {
+        if (ctx.typeDeclaration() != null) {
+            return toAst(ctx.typeDeclaration());
+        } else if (ctx.topLevelPropertyDeclaration() != null) {
+            return toAst(ctx.topLevelPropertyDeclaration());
+        } else if (ctx.program() != null) {
+            return toAst(ctx.program());
+        } else if (ctx.topLevelFunctionDeclaration() != null) {
+            return toAst(ctx.topLevelFunctionDeclaration());
+        } else {
+            throw new UnsupportedOperationException(ctx.toString());
         }
     }
 
-    private QualifiedName toAst(TurinParser.QualifiedIdContext qualifiedIdContext) {
-        return QualifiedName.create(qualifiedIdContext.parts.stream().map((p)->p.getText()).collect(Collectors.toList()));
-    }
-
-    private Node toAst(TurinParser.FileMemberContext memberCtx) {
-        if (memberCtx.typeDeclaration() != null) {
-            return toAst(memberCtx.typeDeclaration());
-        } else if (memberCtx.topLevelPropertyDeclaration() != null) {
-            return toAst(memberCtx.topLevelPropertyDeclaration());
-        } else if (memberCtx.program() != null) {
-            return toAst(memberCtx.program());
-        } else if (memberCtx.topLevelFunctionDeclaration() != null) {
-            return toAst(memberCtx.topLevelFunctionDeclaration());
-        } else {
-            throw new UnsupportedOperationException(memberCtx.toString());
-        }
-    }
-
-    private Node toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
+    private FunctionDefinition toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
         List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        return new FunctionDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        FunctionDefinition functionDefinition = new FunctionDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        getPositionFrom(functionDefinition, ctx);
+        return functionDefinition;
     }
 
-    private Node toAst(TurinParser.TopLevelPropertyDeclarationContext topLevelPropertyDeclarationContext) {
-        PropertyDefinition propertyDefinition = new PropertyDefinition(topLevelPropertyDeclarationContext.name.getText(), toAst(topLevelPropertyDeclarationContext.type));
+    private PropertyDefinition toAst(TurinParser.TopLevelPropertyDeclarationContext ctx) {
+        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type));
+        getPositionFrom(propertyDefinition, ctx);
         return propertyDefinition;
     }
 
-    private TurinTypeDefinition toAst(TurinParser.TypeDeclarationContext typeDeclarationContext) {
-        TurinTypeDefinition typeDefinition = new TurinTypeDefinition(typeDeclarationContext.name.getText());
-        getPositionFrom(typeDefinition, typeDeclarationContext);
-        for (TurinParser.TypeMemberContext memberCtx : typeDeclarationContext.typeMember()) {
+    private TurinTypeDefinition toAst(TurinParser.TypeDeclarationContext ctx) {
+        TurinTypeDefinition typeDefinition = new TurinTypeDefinition(ctx.name.getText());
+        getPositionFrom(typeDefinition, ctx);
+        for (TurinParser.TypeMemberContext memberCtx : ctx.typeMember()) {
             Node memberNode = toAst(memberCtx);
             if (memberNode instanceof PropertyReference) {
                 typeDefinition.add((PropertyReference)memberNode);
@@ -139,21 +150,23 @@ class ParseTreeToAst {
         return typeDefinition;
     }
 
-    private Node toAst(TurinParser.TypeMemberContext memberCtx) {
-        if (memberCtx.inTypePropertyDeclaration() != null) {
-            return toAst(memberCtx.inTypePropertyDeclaration());
-        } else if (memberCtx.propertyReference() != null) {
-            return toAst(memberCtx.propertyReference());
-        } else if (memberCtx.methodDefinition() != null) {
-            return toAst(memberCtx.methodDefinition());
+    private Node toAst(TurinParser.TypeMemberContext ctx) {
+        if (ctx.inTypePropertyDeclaration() != null) {
+            return toAst(ctx.inTypePropertyDeclaration());
+        } else if (ctx.propertyReference() != null) {
+            return toAst(ctx.propertyReference());
+        } else if (ctx.methodDefinition() != null) {
+            return toAst(ctx.methodDefinition());
         } else {
-            throw new UnsupportedOperationException(memberCtx.getClass().getCanonicalName());
+            throw new UnsupportedOperationException(ctx.getClass().getCanonicalName());
         }
     }
 
-    private Node toAst(TurinParser.MethodDefinitionContext methodDefinitionContext) {
-        List<FormalParameter> params = methodDefinitionContext.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        return new MethodDefinition(methodDefinitionContext.name.getText(), toAst(methodDefinitionContext.type), params, toAst(methodDefinitionContext.methodBody()));
+    private Node toAst(TurinParser.MethodDefinitionContext ctx) {
+        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        MethodDefinition methodDefinition = new MethodDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        getPositionFrom(methodDefinition, ctx);
+        return methodDefinition;
     }
 
     private Statement toAst(TurinParser.MethodBodyContext methodBodyContext) {
