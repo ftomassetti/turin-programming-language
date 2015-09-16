@@ -14,6 +14,9 @@ public class TurinParserTest {
     private TurinParser.TurinFileContext parse(String exampleName) throws IOException {
         InternalParser internalParser = new InternalParser();
         InputStream inputStream = this.getClass().getResourceAsStream("/me/tomassetti/turin/" + exampleName + ".to");
+        if (inputStream == null) {
+            throw new RuntimeException("Example not found: " + exampleName);
+        }
         TurinParser.TurinFileContext turinFileContext = internalParser.produceParseTree(inputStream);
         return  turinFileContext;
     }
@@ -60,5 +63,13 @@ public class TurinParserTest {
         TurinParser.TopLevelFunctionDeclarationContext function = root.members.get(0).topLevelFunctionDeclaration();
         TurinParser.ExpressionContext funcBody = function.methodBody().expression();
         assertEquals("length", funcBody.fieldName.getText());
+    }
+
+    @Test
+    public void parseStringInterpolation1() throws IOException {
+        TurinParser.TurinFileContext root = parse("string_interp1");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.TopLevelFunctionDeclarationContext function = root.members.get(0).topLevelFunctionDeclaration();
+        TurinParser.ExpressionContext funcBody = function.methodBody().expression();
     }
 }

@@ -290,8 +290,8 @@ class ParseTreeToAst {
             return toAst(exprCtx.basicExpression());
         } else if (exprCtx.creation() != null) {
             return toAst(exprCtx.creation());
-        } else if (exprCtx.invokation() != null) {
-            return toAst(exprCtx.invokation());
+        } else if (exprCtx.function != null) {
+            return toAstFunctionCall(exprCtx);
         } else if (exprCtx.mathOperator != null) {
             return mathOperationToAst(exprCtx.mathOperator.getText(), exprCtx.left, exprCtx.right);
         } else if (exprCtx.logicOperator != null) {
@@ -403,8 +403,9 @@ class ParseTreeToAst {
         }
     }
 
-    private FunctionCall toAst(TurinParser.InvokationContext functionCallContext) {
-        return new FunctionCall(toAst(functionCallContext.basicExpression()), functionCallContext.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+    private FunctionCall toAstFunctionCall(TurinParser.ExpressionContext functionCallContext) {
+        Expression function = toAst(functionCallContext.function);
+        return new FunctionCall(function, functionCallContext.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
     }
 
     private IntLiteral toAst(TurinParser.IntLiteralContext intLiteralContext) {

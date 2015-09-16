@@ -1,12 +1,10 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import jdk.nashorn.internal.codegen.types.Type;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionBaseField;
 
 import java.util.List;
 

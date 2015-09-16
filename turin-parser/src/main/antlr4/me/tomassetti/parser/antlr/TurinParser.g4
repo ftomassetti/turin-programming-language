@@ -101,11 +101,11 @@ booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
 
 expression:
-    invokation
-    | creation
+    creation
     | basicExpression
     | container=expression POINT fieldName=VALUE_ID
     | array=expression LSQUARE index=expression RSQUARE
+    | function=expression LPAREN (params+=actualParam (commaNl params+=actualParam)*)? RPAREN
     | left=expression mathOperator=ASTERISK right=expression
     | left=expression mathOperator=SLASH    right=expression
     | left=expression mathOperator=PLUS     right=expression
@@ -115,9 +115,6 @@ expression:
     | left=expression relOp=RELOP           right=expression
     | not=NOT_KW value=expression
     ;
-
-invokation:
-    function=basicExpression LPAREN (params+=actualParam (commaNl params+=actualParam)*)? RPAREN ;
 
 fieldAccess:
     subject=basicExpression POINT name=VALUE_ID;
