@@ -1,5 +1,6 @@
 package me.tomassetti.turin.compiler.bytecode;
 
+import com.google.common.collect.ImmutableList;
 import org.objectweb.asm.MethodVisitor;
 
 import java.util.List;
@@ -7,6 +8,10 @@ import java.util.List;
 public class ComposedBytecodeSequence extends BytecodeSequence {
 
     private List<BytecodeSequence> components;
+
+    public ComposedBytecodeSequence(BytecodeSequence... components) {
+        this(ImmutableList.<BytecodeSequence>builder().add(components).build());
+    }
 
     public ComposedBytecodeSequence(List<BytecodeSequence> components) {
         this.components = components;

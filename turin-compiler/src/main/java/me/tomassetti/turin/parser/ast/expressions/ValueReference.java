@@ -64,6 +64,11 @@ public class ValueReference extends Expression {
     }
 
     @Override
+    public Node getField(String fieldName, Resolver resolver) {
+        return resolve(resolver).getField(fieldName, resolver);
+    }
+
+    @Override
     public TypeUsage calcType(Resolver resolver) {
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {

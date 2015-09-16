@@ -24,10 +24,6 @@ import static org.junit.Assert.*;
 
 public class ThrowCatchCompilationTest extends AbstractCompilerTest {
 
-    private Resolver getResolverFor(TurinFile turinFile) {
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(ImmutableList.of(turinFile))));
-    }
-
     @Test
     public void compileThrowStatement() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/throw_statement.to"));

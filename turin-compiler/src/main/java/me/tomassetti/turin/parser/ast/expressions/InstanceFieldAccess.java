@@ -11,12 +11,12 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 
-public class StaticFieldAccess extends Expression {
+public class InstanceFieldAccess extends Expression {
 
-    private TypeIdentifier subject;
+    private Expression subject;
     private String field;
 
-    public StaticFieldAccess(TypeIdentifier subject, String field) {
+    public InstanceFieldAccess(Expression subject, String field) {
         this.subject = subject;
         this.subject.setParent(this);
         this.field = field;
@@ -30,12 +30,24 @@ public class StaticFieldAccess extends Expression {
                 '}';
     }
 
+    public Expression getSubject() {
+        return subject;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public boolean isArrayLength(Resolver resolver) {
+        return getSubject().calcType(resolver).isArray() && field.equals("length");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StaticFieldAccess that = (StaticFieldAccess) o;
+        InstanceFieldAccess that = (InstanceFieldAccess) o;
 
         if (!field.equals(that.field)) return false;
         if (!subject.equals(that.subject)) return false;
@@ -52,21 +64,12 @@ public class StaticFieldAccess extends Expression {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
-
-        TypeUsage fieldType = typeDefinition.getField(field, true);
-        return fieldType;
+        return subject.getField(field, resolver).calcType(resolver);
     }
 
     @Override
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
-
-        return typeDefinition.findMethodFor(field, argsTypes, resolver, staticContext);
-    }
-
-    private TypeDefinition typeDefinition(Resolver resolver) {
-        return resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -75,8 +78,6 @@ public class StaticFieldAccess extends Expression {
     }
 
     public JvmFieldDefinition toJvmField(Resolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
-        TypeUsage fieldType = typeDefinition.getField(field, true);
-        return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType(resolver).getSignature(), true);
+        throw new UnsupportedOperationException();
     }
 }

@@ -22,10 +22,6 @@ import static org.junit.Assert.*;
 
 public class CompilerOnFileTest extends AbstractCompilerTest {
 
-    private Resolver getResolverFor(TurinFile turinFile) {
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(ImmutableList.of(turinFile))));
-    }
-
     @Test
     public void compileRanma() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/ranma.to"));

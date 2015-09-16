@@ -1,7 +1,13 @@
 package me.tomassetti.turin.compiler;
 
+import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
 import me.tomassetti.turin.parser.ast.Position;
+import me.tomassetti.turin.parser.ast.TurinFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,6 +38,10 @@ public abstract class AbstractCompilerTest {
             System.err.println("Problem writing file "+output+": "+ e.getMessage());
             System.exit(3);
         }
+    }
+
+    protected Resolver getResolverFor(TurinFile turinFile) {
+        return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(ImmutableList.of(turinFile))));
     }
 
 }

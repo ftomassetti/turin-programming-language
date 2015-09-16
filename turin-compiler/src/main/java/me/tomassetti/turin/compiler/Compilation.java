@@ -67,7 +67,7 @@ public class Compilation {
             return Collections.emptyList();
         }
 
-        List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
+         List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
 
         for (Node node : turinFile.getChildren()) {
             if (node instanceof TurinTypeDefinition) {
@@ -739,11 +739,19 @@ public class Compilation {
             JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(resolver);
             return new NewInvocationBS(constructorDefinition, argumentsPush);
         } else if (expr instanceof ArrayAccess) {
-            ArrayAccess arrayAccess = (ArrayAccess)expr;
+            ArrayAccess arrayAccess = (ArrayAccess) expr;
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(arrayAccess.getArray()),
                     pushExpression(arrayAccess.getIndex()),
                     new ArrayAccessBS(arrayAccess.calcType(resolver).jvmType(resolver).typeCategory())));
+        } else if (expr instanceof InstanceFieldAccess) {
+            InstanceFieldAccess instanceFieldAccess = (InstanceFieldAccess)expr;
+            // Ideally it should be desugarized before
+            if (instanceFieldAccess.isArrayLength(resolver)) {
+                return new ComposedBytecodeSequence(pushExpression(instanceFieldAccess.getSubject()), new ArrayLengthBS());
+            } else {
+                throw new UnsupportedOperationException(expr.toString());
+            }
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

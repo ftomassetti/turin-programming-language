@@ -302,9 +302,15 @@ class ParseTreeToAst {
             return relationalOperationToAst(exprCtx.relOp.getText(), exprCtx.left, exprCtx.right);
         } else if (exprCtx.array != null) {
             return new ArrayAccess(toAst(exprCtx.array), toAst(exprCtx.index));
+        } else if (exprCtx.fieldName != null) {
+            return toInstanceFieldAccessAst(exprCtx);
         } else {
-            throw new UnsupportedOperationException(exprCtx.getText());
+            throw new UnsupportedOperationException("Enable to produce ast for " + exprCtx.getText());
         }
+    }
+
+    private InstanceFieldAccess toInstanceFieldAccessAst(TurinParser.ExpressionContext ctx) {
+        return new InstanceFieldAccess(toAst(ctx.container), ctx.fieldName.getText());
     }
 
     private Expression mathOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {

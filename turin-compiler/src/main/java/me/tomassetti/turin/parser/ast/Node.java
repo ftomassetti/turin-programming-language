@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -92,7 +93,7 @@ public abstract class Node {
      * This is intended in a broad way: everything that can be accessed with a dot.
      */
     public Node getField(String fieldName, Resolver resolver) {
-        throw new UnsupportedOperationException("It is not possible to get field of " + describe());
+        return calcType(resolver).getFieldOnInstance(fieldName, this, resolver);
     }
 
     public <T extends Node> List<T> findAll(Class<T> desiredClass) {
