@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.parser.TurinFileWithSource;
 import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
@@ -132,7 +133,7 @@ public class Compiler {
         Parser parser = new Parser();
 
         // First we collect all TurinFiles and we pass it to the resolver
-        List<Parser.TurinFileAndFile> turinFiles = new ArrayList<>();
+        List<TurinFileWithSource> turinFiles = new ArrayList<>();
         for (String source : options.sources) {
             try {
                 turinFiles.addAll(parser.parseAllIn(new File(source)));
@@ -142,13 +143,13 @@ public class Compiler {
                 return;
             }
         }
-        Resolver resolver = getResolver(options.sources, options.classPathElements, turinFiles.stream().map(Parser.TurinFileAndFile::getTurinFile).collect(Collectors.toList()));
+        Resolver resolver = getResolver(options.sources, options.classPathElements, turinFiles.stream().map(TurinFileWithSource::getTurinFile).collect(Collectors.toList()));
 
         // Then we compile all files
         // TODO consider classpath
         Compiler instance = new Compiler(resolver, options);
-        for (Parser.TurinFileAndFile turinFile : turinFiles) {
-            for (ClassFileDefinition classFileDefinition : instance.compile(turinFile.getTurinFile(), new ErrorPrinter(turinFile.getFile().getPath()))) {
+        for (TurinFileWithSource turinFile : turinFiles) {
+            for (ClassFileDefinition classFileDefinition : instance.compile(turinFile.getTurinFile(), new ErrorPrinter(turinFile.getSource().getPath()))) {
                 saveClassFile(classFileDefinition, options);
             }
         }
