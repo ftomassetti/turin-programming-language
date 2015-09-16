@@ -28,6 +28,23 @@ public enum JvmTypeCategory {
         }
     }
 
+    public int arrayLoadOpcode(){
+        switch (this){
+            case INT:
+                return Opcodes.IALOAD;
+            case LONG:
+                return Opcodes.LALOAD;
+            case FLOAT:
+                return Opcodes.FALOAD;
+            case DOUBLE:
+                return Opcodes.DALOAD;
+            case REFERENCE:
+                return Opcodes.AALOAD;
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
     public static JvmTypeCategory from(TypeUsage typeUsage, Resolver resolver) {
         String signature = typeUsage.jvmType(resolver).getSignature();
         if (signature.startsWith("L")){
