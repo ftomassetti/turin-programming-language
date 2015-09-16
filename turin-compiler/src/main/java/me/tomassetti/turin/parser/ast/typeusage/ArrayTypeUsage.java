@@ -13,9 +13,19 @@ public class ArrayTypeUsage extends TypeUsage {
         this.componentType = componentType;
     }
 
+    public TypeUsage getComponentType() {
+        return componentType;
+    }
+
     @Override
+
     public JvmType jvmType(Resolver resolver) {
         return new JvmType("[" + componentType.jvmType(resolver).getSignature());
+    }
+
+    @Override
+    public ArrayTypeUsage asArrayTypeUsage() {
+        return this;
     }
 
     @Override
