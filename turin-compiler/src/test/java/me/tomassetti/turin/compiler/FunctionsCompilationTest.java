@@ -2,10 +2,9 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
-import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.*;
-import me.tomassetti.turin.parser.ast.Position;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Test;
 

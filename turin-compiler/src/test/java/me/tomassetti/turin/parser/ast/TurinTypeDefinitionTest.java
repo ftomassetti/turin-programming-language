@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.parser.analysis.resolvers.JdkTypeResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;

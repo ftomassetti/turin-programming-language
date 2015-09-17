@@ -1,8 +1,8 @@
-package me.tomassetti.turin.parser.analysis.resolvers;
+package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
 import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 
 import java.util.Optional;
 
