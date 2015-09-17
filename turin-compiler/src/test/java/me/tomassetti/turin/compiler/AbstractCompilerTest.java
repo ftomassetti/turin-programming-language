@@ -61,6 +61,7 @@ public abstract class AbstractCompilerTest {
         options.setClassPathElements(classPathElements);
         Compiler instance = new Compiler(getResolverFor(turinFile), options);
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        saveClassFile(classFileDefinitions.get(0), "tmp");
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();

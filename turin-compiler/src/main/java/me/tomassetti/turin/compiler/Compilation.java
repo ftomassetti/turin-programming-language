@@ -531,7 +531,11 @@ public class Compilation {
                 for (CatchClause catchClause : tryCatchStatement.getCatchClauses()) {
                     Label catchSpecificLabel = catchSpecificLabels.get(i);
                     mv.visitLabel(catchSpecificLabel);
+                    localVarsSymbolTable.enterBlock();
+                    int catchedExcIndex = localVarsSymbolTable.add(catchClause.getVariableName(), catchClause);
+                    new LocalVarAssignmentBS(catchedExcIndex, JvmTypeCategory.REFERENCE).operate(mv);
                     compile(catchClause.getBody()).operate(mv);
+                    localVarsSymbolTable.exitBlock();
                     mv.visitJumpInsn(GOTO, afterTryCatch);
                     i++;
                 }

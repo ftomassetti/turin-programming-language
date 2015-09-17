@@ -1,0 +1,9 @@
+namespace foo
+
+String foo() {
+    try {
+        throw RuntimeException("abcdef")
+    } catch RuntimeException e {
+        return e.getMessage()
+    }
+}
