@@ -470,7 +470,7 @@ public class Compilation {
         if (statement instanceof VariableDeclaration) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
             int pos = localVarsSymbolTable.add(variableDeclaration.getName(), variableDeclaration);
-            return new ComposedBytecodeSequence(ImmutableList.of(compile(variableDeclaration.getValue()), new LocalVarAssignmentBS(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
+            return new ComposedBytecodeSequence(ImmutableList.of(pushExpression(variableDeclaration.getValue()), new LocalVarAssignmentBS(pos, JvmTypeCategory.from(variableDeclaration.varType(resolver), resolver))));
         } else if (statement instanceof ExpressionStatement) {
             return executeEpression(((ExpressionStatement) statement).getExpression());
         } else if (statement instanceof BlockStatement){
@@ -544,26 +544,7 @@ public class Compilation {
             }
         };
     }
-
-    private BytecodeSequence compile(Expression expression) {
-        if (expression instanceof IntLiteral) {
-            throw new UnsupportedOperationException();
-        } else if (expression instanceof StringLiteral) {
-            throw new UnsupportedOperationException();
-        } else if (expression instanceof FunctionCall) {
-            throw new UnsupportedOperationException();
-        } else if (expression instanceof Creation) {
-            Creation creation = (Creation)expression;
-            List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
-                    .map((ap) -> pushExpression(ap))
-                    .collect(Collectors.toList());
-            JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(resolver);
-            return new NewInvocationBS(constructorDefinition, argumentsPush);
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
+    
     private BytecodeSequence pushInstance(FunctionCall functionCall) {
         Expression function = functionCall.getFunction();
         if (function instanceof FieldAccess) {
