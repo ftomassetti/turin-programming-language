@@ -21,7 +21,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
 
     @Override
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
-        return ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this);
+        return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this));
     }
 
     public ReflectionBasedSetOfOverloadedMethods(List<Method> methods, Node instance) {

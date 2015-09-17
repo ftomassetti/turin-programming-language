@@ -17,23 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CompileArrayOperationsTest extends AbstractCompilerTest {
 
-    private Method compileFunction(String exampleName, Class[] paramTypes) throws NoSuchMethodException, IOException {
-        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/" + exampleName + ".to"));
-
-        // generate bytecode
-        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(1, classFileDefinitions.size());
-
-        TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
-                classFileDefinitions.get(0).getBytecode());
-        assertEquals(0, functionClass.getConstructors().length);
-
-        Method invoke = functionClass.getMethod("invoke", paramTypes);
-        return invoke;
-    }
-
     @Test
     public void compileArrayLength() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
         Method invoke = compileFunction("array_length", new Class[]{int[].class});

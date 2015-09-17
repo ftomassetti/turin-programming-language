@@ -2,6 +2,6 @@ namespace foo
 
 import com.github.javaparser.ast.comments.Comment
 
-String foo(String content) {
-    return Comment(content).getContent()
+String foo(Comment comment) {
+    return comment.getContent()
 }

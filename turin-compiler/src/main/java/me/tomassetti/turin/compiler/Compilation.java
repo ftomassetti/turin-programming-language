@@ -745,13 +745,21 @@ public class Compilation {
                     pushExpression(arrayAccess.getIndex()),
                     new ArrayAccessBS(arrayAccess.calcType(resolver).jvmType(resolver).typeCategory())));
         } else if (expr instanceof InstanceFieldAccess) {
-            InstanceFieldAccess instanceFieldAccess = (InstanceFieldAccess)expr;
+            InstanceFieldAccess instanceFieldAccess = (InstanceFieldAccess) expr;
             // Ideally it should be desugarized before
             if (instanceFieldAccess.isArrayLength(resolver)) {
                 return new ComposedBytecodeSequence(pushExpression(instanceFieldAccess.getSubject()), new ArrayLengthBS());
             } else {
                 throw new UnsupportedOperationException(expr.toString());
             }
+        } else if (expr instanceof InstanceMethodInvokation) {
+            InstanceMethodInvokation instanceMethodInvokation = (InstanceMethodInvokation)expr;
+            BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
+            List<BytecodeSequence> argumentsPush = instanceMethodInvokation.getActualParamValuesInOrder().stream()
+                    .map((ap) -> pushExpression(ap))
+                    .collect(Collectors.toList());
+            JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(resolver);
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

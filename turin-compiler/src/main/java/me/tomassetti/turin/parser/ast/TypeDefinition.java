@@ -43,4 +43,8 @@ public abstract class TypeDefinition extends Node {
     public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
+
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 }

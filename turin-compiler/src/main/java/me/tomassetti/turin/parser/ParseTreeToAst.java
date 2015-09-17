@@ -317,9 +317,18 @@ class ParseTreeToAst {
             return new ArrayAccess(toAst(exprCtx.array), toAst(exprCtx.index));
         } else if (exprCtx.fieldName != null) {
             return toInstanceFieldAccessAst(exprCtx);
+        } else if (exprCtx.methodName != null) {
+            return toInstanceMethodAccessAst(exprCtx);
         } else {
             throw new UnsupportedOperationException("Enable to produce ast for " + exprCtx.getText());
         }
+    }
+
+    private InstanceMethodInvokation toInstanceMethodAccessAst(TurinParser.ExpressionContext ctx) {
+        List<ActualParam> params = ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList());
+        InstanceMethodInvokation instanceMethodInvokation = new InstanceMethodInvokation(toAst(ctx.container), ctx.methodName.getText(), params);
+        getPositionFrom(instanceMethodInvokation, ctx);
+        return instanceMethodInvokation;
     }
 
     private InstanceFieldAccess toInstanceFieldAccessAst(TurinParser.ExpressionContext ctx) {

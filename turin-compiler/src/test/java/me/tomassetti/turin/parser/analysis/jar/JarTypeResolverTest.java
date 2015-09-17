@@ -88,7 +88,6 @@ public class JarTypeResolverTest {
     public void testIsInterfaceNegativeCase() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Resolver resolver = new InFileResolver(jarTypeResolver);
         Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         assertEquals(false, typeDefinition.get().isInterface());
     }
@@ -97,7 +96,6 @@ public class JarTypeResolverTest {
     public void testIsInterfacePositiveCase() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Resolver resolver = new InFileResolver(jarTypeResolver);
         Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.DocumentableNode");
         assertEquals(true, typeDefinition.get().isInterface());
     }

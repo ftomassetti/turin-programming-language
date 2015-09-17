@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.TurinFileWithSource;
 import me.tomassetti.turin.parser.analysis.resolvers.*;
+import me.tomassetti.turin.parser.analysis.resolvers.jar.JarTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
 
@@ -33,6 +34,53 @@ public class Compiler {
     }
 
     public static class Options {
+        public String getDestinationDir() {
+            return destinationDir;
+        }
+
+        public void setDestinationDir(String destinationDir) {
+            this.destinationDir = destinationDir;
+        }
+
+        public List<String> getClassPathElements() {
+            return classPathElements;
+        }
+
+        public void setClassPathElements(List<String> classPathElements) {
+            this.classPathElements = classPathElements;
+        }
+
+        public boolean isVerbose() {
+            return verbose;
+        }
+
+        public void setVerbose(boolean verbose) {
+            this.verbose = verbose;
+        }
+
+        public boolean isDebug() {
+            return debug;
+        }
+
+        public void setDebug(boolean debug) {
+            this.debug = debug;
+        }
+
+        public boolean isHelp() {
+            return help;
+        }
+
+        public void setHelp(boolean help) {
+            this.help = help;
+        }
+
+        public List<String> getSources() {
+            return sources;
+        }
+
+        public void setSources(List<String> sources) {
+            this.sources = sources;
+        }
 
         @Parameter(names = {"-o", "--output"})
         private String destinationDir = "turin_classes";
@@ -54,8 +102,24 @@ public class Compiler {
     }
 
     private static Resolver getResolver(List<String> sources, List<String> classPathElements, List<TurinFile> turinFiles) {
-        // TODO use all the elements for resolving
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(JdkTypeResolver.getInstance()), new SrcResolver(turinFiles)));
+        TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
+                .add(JdkTypeResolver.getInstance())
+                .addAll(classPathElements.stream().map((cp) -> toTypeResolver(cp)).collect(Collectors.toList()))
+                .build());
+        return new ComposedResolver(ImmutableList.of(new InFileResolver(typeResolver), new SrcResolver(turinFiles)));
+    }
+
+    private static TypeResolver toTypeResolver(String classPathElement) {
+        File file = new File(classPathElement);
+        if (file.exists() && file.isFile() && classPathElement.endsWith(".jar")) {
+            try {
+                return new JarTypeResolver(file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new IllegalArgumentException(classPathElement);
+        }
     }
 
     private void compile(File file) throws IOException {

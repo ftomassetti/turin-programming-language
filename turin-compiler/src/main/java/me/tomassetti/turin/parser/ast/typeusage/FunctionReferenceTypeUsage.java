@@ -24,7 +24,7 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
 
     @Override
     public JvmType jvmType(Resolver resolver) {
-        throw new UnsupportedOperationException();
+        return returnType.jvmType(resolver);
     }
 
     @Override

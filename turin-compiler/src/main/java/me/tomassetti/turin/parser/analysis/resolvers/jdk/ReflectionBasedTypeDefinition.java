@@ -41,7 +41,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
-        return ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
+        return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this));
     }
 
     @Override
@@ -55,6 +55,20 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             }
         }
         return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()), this);
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+        List<JvmType> argsTypes = new ArrayList<>();
+        for (ActualParam actualParam : actualParams) {
+            if (actualParam.isNamed()) {
+                throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
+            } else {
+                argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
+            }
+        }
+        Method method = ReflectionBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
+        return typeFor(method);
     }
 
     @Override

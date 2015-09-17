@@ -5,7 +5,9 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -176,5 +178,11 @@ public class ReferenceTypeUsage extends TypeUsage {
             }
             throw new IllegalArgumentException(name);
         }
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+        TypeDefinition typeDefinition = getTypeDefinition(resolver);
+        return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
     }
 }

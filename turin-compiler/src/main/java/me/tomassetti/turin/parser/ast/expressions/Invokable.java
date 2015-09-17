@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +9,12 @@ public abstract class Invokable extends Expression {
 
     public List<ActualParam> getActualParams() {
         return actualParams;
+    }
+
+    public Invokable(List<ActualParam> actualParams) {
+        this.actualParams = new ArrayList<>();
+        this.actualParams.addAll(actualParams);
+        this.actualParams.forEach((p) ->p.setParent(this));
     }
 
     /**

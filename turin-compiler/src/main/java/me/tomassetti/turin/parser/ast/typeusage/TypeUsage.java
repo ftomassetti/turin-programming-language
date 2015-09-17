@@ -58,9 +58,16 @@ public abstract class TypeUsage extends Node {
     }
 
     /**
-     * If this can be invoked with the given arguments which type would be return?
+     * If this is something invokable and can be invoked with the given arguments which type would be return?
      */
     public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    /**
+     * If this has an invokable name with the given methodName and the given arguments which type would be return?
+     */
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

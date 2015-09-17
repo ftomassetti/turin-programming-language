@@ -46,11 +46,8 @@ public class Creation extends Invokable {
     }
 
     public Creation(String typeName, List<ActualParam> actualParams) {
+        super(actualParams);
         this.typeName = typeName;
-        this.actualParams = actualParams;
-        this.actualParams = new ArrayList<>();
-        this.actualParams.addAll(actualParams);
-        this.actualParams.forEach((p) ->p.setParent(Creation.this));
     }
 
     @Override

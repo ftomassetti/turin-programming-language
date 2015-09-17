@@ -1,104 +1,35 @@
 package me.tomassetti.turin.compiler;
 
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.LineComment;
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.TurinClassLoader;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
-import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.expressions.*;
-import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
-import me.tomassetti.turin.parser.ast.statements.BlockStatement;
-import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
-import me.tomassetti.turin.parser.ast.statements.Statement;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * We test specifically the compilation of programs AST nodes.
- */
 public class CompilerJarReferenceTest extends AbstractCompilerTest {
 
-    private TurinFile emptyProgram() {
-        // define AST
-        TurinFile turinFile = new TurinFile();
-
-        NamespaceDefinition namespaceDefinition = new NamespaceDefinition("myProgram");
-
-        turinFile.setNameSpace(namespaceDefinition);
-
-        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of()), "args");
-        turinFile.add(program);
-
-        return turinFile;
-    }
-
-    private TurinFile simpleProgram() {
-        // define AST
-        TurinFile turinFile = new TurinFile();
-
-        NamespaceDefinition namespaceDefinition = new NamespaceDefinition("myProgram");
-
-        turinFile.setNameSpace(namespaceDefinition);
-
-        StringLiteral stringLiteral = new StringLiteral("Hello Turin!");
-        QualifiedName javaLang = new QualifiedName(new QualifiedName("java"), "lang");
-        TypeIdentifier system = new TypeIdentifier(javaLang, "System");
-        StaticFieldAccess out = new StaticFieldAccess(system, "out");
-        FieldAccess println = new FieldAccess(out, "println");
-        FunctionCall printInvokation = new FunctionCall(println, ImmutableList.of(new ActualParam(stringLiteral)));
-        Statement printStatement = new ExpressionStatement(printInvokation);
-        Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of(printStatement)), "args");
-        turinFile.add(program);
-
-        return turinFile;
-    }
-
-    private void invokeProgram(Class<?> programClass) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method main = programClass.getMethod("main", String[].class);
-        assertEquals("main", main.getName());
-        assertEquals(true, Modifier.isStatic(main.getModifiers()));
-        assertEquals(1, main.getParameterTypes().length);
-        assertEquals(String[].class, main.getParameterTypes()[0]);
-        main.invoke(null, (Object)new String[]{});
-    }
-
-    private void loadAndInvoke(ClassFileDefinition classFileDefinition) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class programClass = turinClassLoader.addClass(classFileDefinition.getName(),
-                classFileDefinition.getBytecode());
-        invokeProgram(programClass);
+    @Test
+    public void compileFunctionInstantiatingTypeFromJar() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        Method invoke = compileFunction("use_jar_constructor", new Class[]{String.class}, ImmutableList.of("src/test/resources/jars/javaparser-core-2.2.1.jar"));
+        Comment comment = (Comment)invoke.invoke(null, "qwerty");
+        assertEquals("qwerty", comment.getContent());
     }
 
     @Test
-    public void compileAnEmptyProgram() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
-        TurinFile turinFile = emptyProgram();
-
-        // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(1, classFileDefinitions.size());
-
-        loadAndInvoke(classFileDefinitions.get(0));
+    public void compileFunctionUsingMethodTypeFromJar() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        Method invoke = compileFunction("use_jar_method", new Class[]{Comment.class}, ImmutableList.of("src/test/resources/jars/javaparser-core-2.2.1.jar"));
+        Comment comment = new LineComment("qwerty");
+        assertEquals("qwerty", invoke.invoke(null, comment));
     }
 
     @Test
-    public void compileASimpleProgram() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException {
-        TurinFile turinFile = simpleProgram();
-
-        // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(1, classFileDefinitions.size());
-        assertEquals("myProgram.SuperSimple", classFileDefinitions.get(0).getName());
-
-        loadAndInvoke(classFileDefinitions.get(0));
+    public void compileFunctionUsingContructorAndMethodTypeFromJar() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        Method invoke = compileFunction("use_jar", new Class[]{String.class}, ImmutableList.of("src/test/resources/jars/javaparser-core-2.2.1.jar"));
+        assertEquals("qwerty", invoke.invoke(null, "qwerty"));
     }
-
-
 }

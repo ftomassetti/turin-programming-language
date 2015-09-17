@@ -56,7 +56,7 @@ class ReflectionBasedMethodResolution {
         return ReflectionTypeDefinitionFactory.toConstructorDefinition(methodOrConstructor.constructor);
     }
 
-    public static JvmMethodDefinition findMethodAmong(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext, List<Method> methods, Node context) {
+    public static Method findMethodAmong(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext, List<Method> methods, Node context) {
         List<MethodOrConstructor> methodOrConstructors = methods.stream()
                 .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                 .filter((m) -> m.getName().equals(name))
@@ -65,7 +65,7 @@ class ReflectionBasedMethodResolution {
         if (methodOrConstructor == null) {
             throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
         }
-        return ReflectionTypeDefinitionFactory.toMethodDefinition(methodOrConstructor.method);
+        return methodOrConstructor.method;
     }
 
     private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, Resolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {
