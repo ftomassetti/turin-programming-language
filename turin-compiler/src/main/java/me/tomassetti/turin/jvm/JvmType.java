@@ -110,4 +110,8 @@ public class JvmType {
             return Opcodes.ARETURN;
         }
     }
+
+    public boolean isAssignableBy(JvmType other) {
+        return this.equals(other);
+    }
 }

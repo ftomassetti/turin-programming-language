@@ -34,7 +34,7 @@ public class TopLevelFunctionInvokationCompilationTest extends AbstractCompilerT
         Method invoke2 = foo2Class.getMethod("invoke");
 
         assertEquals("foo1", invoke1.invoke(null));
-        assertEquals("foo2", invoke2.invoke(null));
+        assertEquals("foo1", invoke2.invoke(null));
     }
 
 }

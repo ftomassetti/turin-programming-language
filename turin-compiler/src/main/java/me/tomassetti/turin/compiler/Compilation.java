@@ -578,6 +578,8 @@ public class Compilation {
                 } else {
                     return push(methods.getInstance());
                 }
+            } else if (declaration instanceof FunctionDefinition) {
+                return NoOp.getInstance();
             } else {
                 throw new UnsupportedOperationException(declaration.getClass().getCanonicalName());
             }
