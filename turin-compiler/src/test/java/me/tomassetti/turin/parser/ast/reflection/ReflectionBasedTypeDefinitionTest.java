@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -18,7 +19,7 @@ public class ReflectionBasedTypeDefinitionTest {
 
     @Test
     public void getAllAncestorsOfString(){
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(4, ancestors.size());
@@ -37,7 +38,7 @@ public class ReflectionBasedTypeDefinitionTest {
 
     @Test
     public void getAllAncestorsOfObject(){
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(0, ancestors.size());
@@ -45,7 +46,7 @@ public class ReflectionBasedTypeDefinitionTest {
 
     @Test
     public void getAllAncestorsOfSerializable(){
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(0, ancestors.size());

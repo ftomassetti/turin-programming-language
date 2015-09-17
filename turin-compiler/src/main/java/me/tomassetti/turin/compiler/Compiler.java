@@ -5,10 +5,7 @@ import com.beust.jcommander.Parameter;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.TurinFileWithSource;
-import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.*;
 import me.tomassetti.turin.parser.ast.*;
 
 import java.io.*;
@@ -57,7 +54,7 @@ public class Compiler {
 
     private static Resolver getResolver(List<String> sources, List<String> classPathElements, List<TurinFile> turinFiles) {
         // TODO use all the elements for resolving
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(turinFiles)));
+        return new ComposedResolver(ImmutableList.of(new InFileResolver(JdkTypeResolver.getInstance()), new SrcResolver(turinFiles)));
     }
 
     private void compile(File file) throws IOException {

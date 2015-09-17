@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.resolvers.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
@@ -37,7 +38,7 @@ public class TurinTypeDefinitionTest {
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, Collections.emptyList());
         assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
@@ -53,7 +54,7 @@ public class TurinTypeDefinitionTest {
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         ActualParam p0 = new ActualParam(new BooleanLiteral(false));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
@@ -69,7 +70,7 @@ public class TurinTypeDefinitionTest {
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         ActualParam p0 = new ActualParam(new FloatLiteral(0.0f));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
@@ -88,7 +89,7 @@ public class TurinTypeDefinitionTest {
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         ActualParam p0 = new ActualParam(new BooleanLiteral(false));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
@@ -104,7 +105,7 @@ public class TurinTypeDefinitionTest {
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         ActualParam p0 = new ActualParam("coefficient", new BooleanLiteral(false));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
@@ -123,7 +124,7 @@ public class TurinTypeDefinitionTest {
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         ActualParam p0 = new ActualParam("coefficient", new FloatLiteral(0.0f));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
@@ -140,7 +141,7 @@ public class TurinTypeDefinitionTest {
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
         turinFile.add(typeDefinition);
 
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
 
         ActualParam p0 = new ActualParam("zzz", new FloatLiteral(0.0f));
         JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
@@ -149,7 +150,7 @@ public class TurinTypeDefinitionTest {
     @Test
     public void defineMethodToString() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/common_methods.to"));
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         assertEquals(true, turinFile.getTopTypeDefinition("A").get().defineMethodToString(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("B").get().defineMethodToString(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("C").get().defineMethodToString(resolver));
@@ -160,7 +161,7 @@ public class TurinTypeDefinitionTest {
     @Test
     public void defineMethodHashCode() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/common_methods.to"));
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         assertEquals(false, turinFile.getTopTypeDefinition("A").get().defineMethodHashCode(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("B").get().defineMethodHashCode(resolver));
         assertEquals(true, turinFile.getTopTypeDefinition("C").get().defineMethodHashCode(resolver));
@@ -171,7 +172,7 @@ public class TurinTypeDefinitionTest {
     @Test
     public void defineMethodEquals() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/common_methods.to"));
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         assertEquals(false, turinFile.getTopTypeDefinition("A").get().defineMethodEquals(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("B").get().defineMethodEquals(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("C").get().defineMethodEquals(resolver));

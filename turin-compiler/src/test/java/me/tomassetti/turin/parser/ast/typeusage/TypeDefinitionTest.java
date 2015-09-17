@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import me.tomassetti.turin.compiler.ExamplesAst;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class TypeDefinitionTest {
 
     @Test
     public void getDirectProperties() {
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         assertEquals(2, mangaCharacter.getDirectProperties(resolver).size());
 
         assertEquals("name", mangaCharacter.getDirectProperties(resolver).get(0).getName());
@@ -58,7 +59,7 @@ public class TypeDefinitionTest {
 
     @Test
     public void getDirectPropertiesOnRegistryExample() {
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TurinFile turinFile = ExamplesAst.registryAst();
         TurinTypeDefinition person = turinFile.getTopTypeDefinition("Person").get();
         assertEquals(2, person.getDirectProperties(resolver).size());
