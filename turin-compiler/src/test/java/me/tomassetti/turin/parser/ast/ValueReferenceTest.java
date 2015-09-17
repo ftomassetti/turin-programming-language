@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
@@ -32,7 +33,7 @@ public class ValueReferenceTest {
         TurinFile turinFile = new Parser().parse(stream);
         List<ValueReference> valueReferences = turinFile.findAll(ValueReference.class);
         assertEquals(1, valueReferences.size());
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TypeUsage type = valueReferences.get(0).calcType(resolver);
         assertEquals(BasicTypeUsage.UINT, type);
     }
@@ -47,7 +48,7 @@ public class ValueReferenceTest {
         TurinFile turinFile = new Parser().parse(stream);
         List<ValueReference> valueReferences = turinFile.findAll(ValueReference.class);
         assertEquals(1, valueReferences.size());
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TypeUsage type = valueReferences.get(0).calcType(resolver);
         assertEquals(new ArrayTypeUsage(ReferenceTypeUsage.STRING), type);
     }
@@ -62,7 +63,7 @@ public class ValueReferenceTest {
         TurinFile turinFile = new Parser().parse(stream);
         List<ValueReference> valueReferences = turinFile.findAll(ValueReference.class);
         assertEquals(1, valueReferences.size());
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         TypeUsage type = valueReferences.get(0).calcType(resolver);
         assertEquals(PrimitiveTypeUsage.INT, type);
     }

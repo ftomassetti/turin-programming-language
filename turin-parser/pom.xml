@@ -4,7 +4,7 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>turin-parser</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1-${maven.build.timestamp}-SNAPSHOT</version>
+    <version>0.0.1-20150916-SNAPSHOT</version>
     <name>turin-programming-language</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 

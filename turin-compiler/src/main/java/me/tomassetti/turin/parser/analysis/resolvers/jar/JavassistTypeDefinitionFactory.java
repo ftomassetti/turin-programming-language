@@ -1,35 +1,36 @@
-package me.tomassetti.turin.parser.ast.reflection;
+package me.tomassetti.turin.parser.analysis.resolvers.jar;
 
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ReflectionTypeDefinitionFactory {
+public class JavassistTypeDefinitionFactory {
 
-    private static final ReflectionTypeDefinitionFactory INSTANCE = new ReflectionTypeDefinitionFactory();
+    private static final JavassistTypeDefinitionFactory INSTANCE = new JavassistTypeDefinitionFactory();
 
-    public static ReflectionTypeDefinitionFactory getInstance() {
+    public static JavassistTypeDefinitionFactory getInstance() {
         return INSTANCE;
     }
 
-    public static JvmMethodDefinition toMethodDefinition(Method method){
-        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getCanonicalName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()));
+    public static JvmMethodDefinition toMethodDefinition(CtMethod method) throws NotFoundException {
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()));
     }
 
-    public static String calcSignature(Class<?> clazz) {
+    public static String calcSignature(CtClass clazz) {
         if (clazz.isPrimitive()) {
             switch (clazz.getName()) {
                 case "boolean":
@@ -51,54 +52,53 @@ public class ReflectionTypeDefinitionFactory {
                 case "void":
                     return "V";
                 default:
-                    throw new UnsupportedOperationException(clazz.getCanonicalName());
+                    throw new UnsupportedOperationException(clazz.getName());
             }
         } else if (clazz.isArray()){
-            return "[" + calcSignature(clazz.getComponentType());
+            try {
+                return "[" + calcSignature(clazz.getComponentType());
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            return "L" + clazz.getCanonicalName().replaceAll("\\.", "/") + ";";
+            return "L" + clazz.getName().replaceAll("\\.", "/") + ";";
         }
     }
 
-    public static String calcSignature(Method method) {
+    public static String calcSignature(CtMethod method) throws NotFoundException {
         List<String> paramTypesSignatures = Arrays.stream(method.getParameterTypes()).map((t) -> calcSignature(t)).collect(Collectors.toList());
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsage toTypeUsage(Class<?> type) {
+    public static TypeUsage toTypeUsage(CtClass type) {
         if (type.isArray()) {
-            return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+            try {
+                return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsage.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsage(type.getCanonicalName());
+            return new ReferenceTypeUsage(type.getName());
         }
     }
 
-    public TypeDefinition getTypeDefinition(Class<?> clazz) {
+    public TypeDefinition getTypeDefinition(CtClass clazz) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
         if (clazz.isPrimitive()) {
             throw new IllegalArgumentException();
         }
-        return new ReflectionBasedTypeDefinition(clazz);
+        return new JavassistTypeDefinition(clazz);
     }
 
-    public Optional<TypeDefinition> findTypeDefinition(String typeName) {
-        try {
-            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(typeName);
-            return Optional.of(getTypeDefinition(clazz));
-        } catch (ClassNotFoundException e) {
-           return Optional.empty();
-        }
+    public static JvmConstructorDefinition toConstructorDefinition(CtConstructor constructor) throws NotFoundException {
+        return new JvmConstructorDefinition(JvmNameUtils.canonicalToInternal(constructor.getDeclaringClass().getName()), calcSignature(constructor));
     }
 
-    public static JvmConstructorDefinition toConstructorDefinition(Constructor constructor) {
-        return new JvmConstructorDefinition(JvmNameUtils.canonicalToInternal(constructor.getDeclaringClass().getCanonicalName()), calcSignature(constructor));
-    }
-
-    private static String calcSignature(Constructor constructor) {
+    private static String calcSignature(CtConstructor constructor) throws NotFoundException {
         List<String> paramTypesSignatures = Arrays.stream(constructor.getParameterTypes()).map((t) -> calcSignature(t)).collect(Collectors.toList());
         return "(" + String.join("", paramTypesSignatures) + ")V";
     }

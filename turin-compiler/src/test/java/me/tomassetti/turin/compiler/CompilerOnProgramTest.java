@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
@@ -79,7 +80,7 @@ public class CompilerOnProgramTest extends AbstractCompilerTest {
         TurinFile turinFile = emptyProgram();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -91,7 +92,7 @@ public class CompilerOnProgramTest extends AbstractCompilerTest {
         TurinFile turinFile = simpleProgram();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
         assertEquals("myProgram.SuperSimple", classFileDefinitions.get(0).getName());

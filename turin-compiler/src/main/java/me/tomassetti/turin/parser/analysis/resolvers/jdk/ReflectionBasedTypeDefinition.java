@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.ast.reflection;
+package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;

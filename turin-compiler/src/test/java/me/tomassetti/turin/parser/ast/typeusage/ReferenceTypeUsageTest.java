@@ -2,10 +2,10 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +45,7 @@ public class ReferenceTypeUsageTest {
 
     @Test
     public void javaType() {
-        Resolver resolver = new InFileResolver();
+        Resolver resolver = new InFileResolver(JdkTypeResolver.getInstance());
         assertEquals("Ljava/lang/String;", nameRef.getType(resolver).jvmType(resolver).getSignature());
         assertEquals("I", ageProperty.getType().jvmType(resolver).getSignature());
     }
@@ -54,14 +54,14 @@ public class ReferenceTypeUsageTest {
     public void isInterfaceNegativeCase() {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
         ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
-        assertEquals(false, typeUsage.isInterface(new InFileResolver()));
+        assertEquals(false, typeUsage.isInterface(new InFileResolver(JdkTypeResolver.getInstance())));
     }
 
     @Test
     public void isInterfacePositiveCase() {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
         ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
-        assertEquals(true, typeUsage.isInterface(new InFileResolver()));
+        assertEquals(true, typeUsage.isInterface(new InFileResolver(JdkTypeResolver.getInstance())));
     }
 
 }

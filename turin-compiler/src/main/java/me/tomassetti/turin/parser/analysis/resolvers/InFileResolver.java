@@ -5,14 +5,12 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.StaticFieldAccess;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
-import me.tomassetti.turin.parser.ast.reflection.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -22,6 +20,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InFileResolver implements Resolver {
+
+    private TypeResolver typeResolver;
+
+    public InFileResolver(TypeResolver typeResolver) {
+        this.typeResolver = typeResolver;
+    }
 
     @Override
     public PropertyDefinition findDefinition(PropertyReference propertyReference) {
@@ -111,21 +115,14 @@ public class InFileResolver implements Resolver {
         }
         if (context.getParent() == null) {
             // implicitly look into java.lang package
-            Optional<TypeDefinition> result = resolveAbsoluteTypeName("java.lang." + typeName);
+            Optional<TypeDefinition> result = typeResolver.resolveAbsoluteTypeName("java.lang." + typeName);
             if (result.isPresent()) {
                 return result;
             }
 
-            return resolveAbsoluteTypeName(typeName);
+            return typeResolver.resolveAbsoluteTypeName(typeName);
         }
         return findTypeDefinitionInHelper(typeName, context.getParent(), resolver);
-    }
-
-    private Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
-        if (!JvmNameUtils.isValidQualifiedName(typeName)) {
-            throw new IllegalArgumentException(typeName);
-        }
-        return ReflectionTypeDefinitionFactory.getInstance().findTypeDefinition(typeName);
     }
 
 }

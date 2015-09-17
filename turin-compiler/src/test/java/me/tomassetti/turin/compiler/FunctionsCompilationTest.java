@@ -2,13 +2,9 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
-import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
-import me.tomassetti.turin.parser.ast.Position;
+import me.tomassetti.turin.parser.analysis.resolvers.*;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Test;
 
@@ -22,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 public class FunctionsCompilationTest {
 
     private Resolver getResolverFor(TurinFile turinFile) {
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(), new SrcResolver(ImmutableList.of(turinFile))));
+        return new ComposedResolver(ImmutableList.of(new InFileResolver(JdkTypeResolver.getInstance()), new SrcResolver(ImmutableList.of(turinFile))));
     }
 
     @Test
