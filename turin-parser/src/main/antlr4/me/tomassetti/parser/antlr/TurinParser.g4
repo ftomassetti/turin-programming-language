@@ -103,6 +103,7 @@ booleanLiteral:
 expression:
     creation
     | basicExpression
+    | container=expression POINT methodName=VALUE_ID LPAREN (params+=actualParam (commaNl params+=actualParam)*)? RPAREN
     | container=expression POINT fieldName=VALUE_ID
     | array=expression LSQUARE index=expression RSQUARE
     | function=expression LPAREN (params+=actualParam (commaNl params+=actualParam)*)? RPAREN

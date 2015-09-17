@@ -66,6 +66,15 @@ public class TurinParserTest {
     }
 
     @Test
+    public void parseMethodInvokation() throws IOException {
+        TurinParser.TurinFileContext root = parse("method_invokation");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.TopLevelFunctionDeclarationContext function = root.members.get(0).topLevelFunctionDeclaration();
+        TurinParser.ExpressionContext funcBody = function.methodBody().expression();
+        assertEquals("length", funcBody.methodName.getText());
+    }
+
+    @Test
     public void parseStringInterpolation1() throws IOException {
         TurinParser.TurinFileContext root = parse("string_interp1");
         assertEquals(1, root.fileMember().size());
