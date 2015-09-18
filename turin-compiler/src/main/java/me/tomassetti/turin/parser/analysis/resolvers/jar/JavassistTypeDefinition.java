@@ -1,8 +1,11 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jar;
 
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.BadBytecode;
+import javassist.bytecode.SignatureAttribute;
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
@@ -11,12 +14,13 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class JavassistTypeDefinition extends TypeDefinition {
 
@@ -78,12 +82,106 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     @Override
     public TypeUsage getField(String fieldName, boolean staticContext) {
-        throw new UnsupportedOperationException();
+        for (CtField field : ctClass.getFields()) {
+            if (field.getName().equals(fieldName)) {
+                if (Modifier.isStatic(field.getModifiers()) == staticContext) {
+                    try {
+                        return JavassistTypeDefinitionFactory.toTypeUsage(field.getType());
+                    } catch (NotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        List<CtMethod> methods = new LinkedList<>();
+        for (CtMethod method : ctClass.getMethods()) {
+            if (method.getName().equals(fieldName)) {
+                if (Modifier.isStatic(method.getModifiers()) == staticContext) {
+                    methods.add(method);
+                }
+            }
+        }
+        if (!methods.isEmpty()) {
+            return typeFor(methods, this);
+        }
+
+        // TODO consider inherited fields and methods
+        throw new UnsupportedOperationException(fieldName);
+    }
+
+    private static TypeUsage typeFor(List<CtMethod> methods, Node parentToAssign) {
+        if (methods.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        methods.forEach((m)-> {
+            if (!Modifier.isStatic(m.getModifiers())) {
+                throw new IllegalArgumentException("Non static method given: " + m);
+            }
+        });
+        if (methods.size() != 1) {
+            throw new UnsupportedOperationException();
+        }
+        return typeFor(methods.get(0), parentToAssign);
+    }
+
+    private static TypeUsage typeFor(CtMethod method, Node parentToAssign) {
+        try {
+            SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
+            SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
+            List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
+            FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
+            functionReferenceTypeUsage.setParent(parentToAssign);
+            return functionReferenceTypeUsage;
+        } catch (BadBytecode badBytecode) {
+            throw new RuntimeException(badBytecode);
+        }
+    }
+
+    private static TypeUsage toTypeUsage(SignatureAttribute.Type type) {
+        return new JvmType(type.jvmTypeName()).toTypeUsage();
     }
 
     @Override
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
-        throw new UnsupportedOperationException();
+        try {
+            SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
+            List<ReferenceTypeUsage> ancestors = new ArrayList<>();
+            if (ctClass.getSuperclass() != null) {
+                ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass());
+                ancestors.add(superTypeDefinition);
+                ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+            }
+            int i = 0;
+            for (CtClass interfaze : ctClass.getInterfaces()) {
+                SignatureAttribute.ClassType genericInterfaze = classSignature.getInterfaces()[i];
+                ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+                ancestors.add(superTypeDefinition);
+                ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+                i++;
+            }
+            return ancestors;
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (BadBytecode badBytecode) {
+            throw new RuntimeException(badBytecode);
+        }
+    }
+
+    private ReferenceTypeUsage toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType) {
+        try {
+            SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(clazz.getGenericSignature());
+            TypeDefinition typeDefinition = new JavassistTypeDefinition(clazz);
+            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+            int i=0;
+            for (SignatureAttribute.TypeArgument typeArgument : genericClassType.getTypeArguments()) {
+                referenceTypeUsage.getTypeParameterValues().add(classSignature.getParameters()[i].getName(), toTypeUsage(typeArgument.getType()));
+                i++;
+            }
+            return referenceTypeUsage;
+        } catch (BadBytecode badBytecode) {
+            throw new RuntimeException(badBytecode);
+        }
     }
 
     @Override
@@ -93,6 +191,6 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     @Override
     public Iterable<Node> getChildren() {
-        throw new UnsupportedOperationException();
+        return Collections.emptyList();
     }
 }
