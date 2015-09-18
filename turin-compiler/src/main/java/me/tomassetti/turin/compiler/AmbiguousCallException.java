@@ -6,7 +6,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import java.util.List;
 
 /**
- * A call is ambiguous: we are not able to differentiate between varios overloaded methods to invoke.
+ * A call is ambiguous: we are not able to differentiate between various overloaded methods to invoke.
  */
 public class AmbiguousCallException extends RuntimeException {
 
