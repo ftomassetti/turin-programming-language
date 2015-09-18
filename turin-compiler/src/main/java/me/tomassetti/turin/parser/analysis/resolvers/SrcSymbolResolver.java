@@ -19,12 +19,10 @@ import java.util.Optional;
  */
 public class SrcSymbolResolver implements SymbolResolver {
 
-    private List<TurinFile> turinFiles;
     private Map<String, TypeDefinition> typeDefinitions;
     private Map<String, PropertyDefinition> propertyDefinitions;
 
     public SrcSymbolResolver(List<TurinFile> turinFiles) {
-        this.turinFiles = turinFiles;
         this.typeDefinitions = new HashMap<>();
         this.propertyDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
@@ -45,7 +43,6 @@ public class SrcSymbolResolver implements SymbolResolver {
         } else {
             return Optional.empty();
         }
-
     }
 
     @Override

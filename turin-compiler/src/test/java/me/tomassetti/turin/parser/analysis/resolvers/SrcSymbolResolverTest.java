@@ -4,9 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
-import me.tomassetti.turin.parser.ast.PropertyDefinition;
-import me.tomassetti.turin.parser.ast.PropertyReference;
-import me.tomassetti.turin.parser.ast.TurinFile;
+import me.tomassetti.turin.parser.ast.*;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.junit.Test;
@@ -50,6 +48,29 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         Optional<PropertyDefinition> optionalDefinition = srcSymbolResolver.findDefinition(propertyReference);
         assertEquals(false, optionalDefinition.isPresent());
+    }
+
+    @Test
+    public void findTypeDefinitionInPositiveCase() throws IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/basicManga.to"));
+        SrcSymbolResolver srcSymbolResolver = new SrcSymbolResolver(ImmutableList.of(turinFile));
+
+        SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+
+        Optional<TypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        assertEquals(true, typeDefinition.isPresent());
+        assertEquals("manga.MangaCharacter", typeDefinition.get().getQualifiedName());
+    }
+
+    @Test
+    public void findTypeDefinitionInNegativeCase() throws IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/basicManga.to"));
+        SrcSymbolResolver srcSymbolResolver = new SrcSymbolResolver(ImmutableList.of(turinFile));
+
+        SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+
+        Optional<TypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        assertEquals(false, typeDefinition.isPresent());
     }
 
 }
