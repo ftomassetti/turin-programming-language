@@ -37,7 +37,6 @@ public class CatchClause extends Node {
         this.exceptionType.setParent(this);
         this.variableName = variableName;
         this.body = body;
-
         this.body.setParent(this);
     }
 

@@ -49,20 +49,20 @@ class JavassistBasedMethodResolution {
         }
     }
 
-    public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, Resolver resolver, List<CtConstructor> constructors, Node context) {
+    public static CtConstructor findConstructorAmong(List<JvmType> argsTypes, Resolver resolver, List<CtConstructor> constructors, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
             MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, "constructor");
             if (methodOrConstructor == null) {
                 throw new RuntimeException("unresolved constructor for " + argsTypes);
             }
-            return JavassistTypeDefinitionFactory.toConstructorDefinition(methodOrConstructor.constructor);
+            return methodOrConstructor.constructor;
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static JvmMethodDefinition findMethodAmong(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
+    public static CtMethod findMethodAmong(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = methods.stream()
                     .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
@@ -72,7 +72,7 @@ class JavassistBasedMethodResolution {
             if (methodOrConstructor == null) {
                 throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
             }
-            return JavassistTypeDefinitionFactory.toMethodDefinition(methodOrConstructor.method);
+            return methodOrConstructor.method;
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }

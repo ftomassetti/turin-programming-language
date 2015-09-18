@@ -22,7 +22,9 @@ public class FunctionDefinition extends InvokableDefinition {
 
     @Override
     public TypeUsage calcType(Resolver resolver) {
-        return new FunctionReferenceTypeUsage(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
+        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
+        functionReferenceTypeUsage.setParent(this);
+        return functionReferenceTypeUsage;
     }
 
     public JvmMethodDefinition jvmMethodDefinition(Resolver resolver) {

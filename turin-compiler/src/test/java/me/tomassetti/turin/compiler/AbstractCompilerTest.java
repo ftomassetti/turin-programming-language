@@ -5,6 +5,7 @@ import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.*;
+import me.tomassetti.turin.parser.analysis.resolvers.jar.JarTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.Position;
 import me.tomassetti.turin.parser.ast.TurinFile;
@@ -13,8 +14,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,6 +52,20 @@ public abstract class AbstractCompilerTest {
         return new ComposedResolver(ImmutableList.of(new InFileResolver(JdkTypeResolver.getInstance()), new SrcResolver(ImmutableList.of(turinFile))));
     }
 
+    protected Resolver getResolverFor(TurinFile turinFile, List<String> jarFiles) {
+        TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
+                .add(JdkTypeResolver.getInstance())
+                .addAll(jarFiles.stream().map((jf) -> {
+                    try {
+                        return new JarTypeResolver(new File(jf));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList()))
+                .build());
+        return new ComposedResolver(ImmutableList.of(new InFileResolver(typeResolver), new SrcResolver(ImmutableList.of(turinFile))));
+    }
+
     public Method compileFunction(String exampleName, Class[] paramTypes) throws NoSuchMethodException, IOException {
         return compileFunction(exampleName, paramTypes, Collections.emptyList());
     }
@@ -59,7 +76,7 @@ public abstract class AbstractCompilerTest {
         // generate bytecode
         Compiler.Options options = new Compiler.Options();
         options.setClassPathElements(classPathElements);
-        Compiler instance = new Compiler(getResolverFor(turinFile), options);
+        Compiler instance = new Compiler(getResolverFor(turinFile, classPathElements), options);
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
         saveClassFile(classFileDefinitions.get(0), "tmp");
         assertEquals(1, classFileDefinitions.size());

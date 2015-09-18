@@ -68,7 +68,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             }
         }
         Method method = ReflectionBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
-        return typeFor(method);
+        return toTypeUsage(method.getReturnType());
     }
 
     @Override
@@ -90,14 +90,14 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return ReflectionBasedTypeDefinition.typeFor(methods);
+            return ReflectionBasedTypeDefinition.typeFor(methods, this);
         }
 
         // TODO consider inherited fields and methods
         throw new UnsupportedOperationException(fieldName);
     }
 
-    private static TypeUsage typeFor(List<Method> methods) {
+    private static TypeUsage typeFor(List<Method> methods, Node parentToAssign) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -109,12 +109,14 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         if (methods.size() != 1) {
             throw new UnsupportedOperationException();
         }
-        return typeFor(methods.get(0));
+        return typeFor(methods.get(0), parentToAssign);
     }
 
-    private static TypeUsage typeFor(Method method) {
+    private static TypeUsage typeFor(Method method, Node parentToAssign) {
         List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
-        return new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
+        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
+        functionReferenceTypeUsage.setParent(parentToAssign);
+        return functionReferenceTypeUsage;
     }
 
     @Override

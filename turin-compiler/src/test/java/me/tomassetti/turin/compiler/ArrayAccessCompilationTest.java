@@ -1,17 +1,8 @@
 package me.tomassetti.turin.compiler;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
-import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
-import me.tomassetti.turin.parser.ast.Position;
 import me.tomassetti.turin.parser.ast.TurinFile;
-import me.tomassetti.turin.parser.ast.statements.ThrowStatement;
-import org.easymock.EasyMock;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ArrayAccessCompilationTest extends AbstractCompilerTest {
 

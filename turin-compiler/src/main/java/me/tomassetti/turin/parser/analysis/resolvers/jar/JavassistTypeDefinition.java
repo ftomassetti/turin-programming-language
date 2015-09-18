@@ -1,6 +1,8 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jar;
 
 import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
@@ -26,13 +28,35 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+        List<JvmType> argsTypes = new ArrayList<>();
+        for (ActualParam actualParam : actualParams) {
+            if (actualParam.isNamed()) {
+                throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
+            } else {
+                argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
+            }
+        }
+        CtMethod method = JavassistBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
+        try {
+            return JavassistTypeDefinitionFactory.toTypeUsage(method.getReturnType());
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public String getQualifiedName() {
         return ctClass.getName();
     }
 
     @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
-        return JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
+        try {
+            return JavassistTypeDefinitionFactory.toMethodDefinition(JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this));
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -45,7 +69,11 @@ public class JavassistTypeDefinition extends TypeDefinition {
                 argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
             }
         }
-        return JavassistBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(ctClass.getConstructors()), this);
+        try {
+            return JavassistTypeDefinitionFactory.toConstructorDefinition(JavassistBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(ctClass.getConstructors()), this));
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ public class TryCatchStatement extends Statement {
         this.body = body;
         this.body.setParent(this);
         this.catchClauses = catchClauses;
-        this.catchClauses.forEach((cc)->cc.setParent(this));
+        this.catchClauses.forEach((cc)->cc.setParent(TryCatchStatement.this));
     }
 
     @Override

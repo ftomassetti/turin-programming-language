@@ -86,6 +86,9 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public Optional<TypeDefinition> findTypeDefinition(String typeName) {
+        if (!typeName.startsWith("java.") && !typeName.startsWith("javax.")) {
+            return Optional.empty();
+        }
         try {
             Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(typeName);
             return Optional.of(getTypeDefinition(clazz));
