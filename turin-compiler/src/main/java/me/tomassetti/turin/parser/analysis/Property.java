@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * A Property can be derived by a definition in the type (PropertyDefinition) or by a reference (PropertyReference)
@@ -31,8 +32,11 @@ public class Property extends Node {
     }
 
     public static Property fromReference(PropertyReference propertyReference, SymbolResolver resolver) {
-        PropertyDefinition propertyDefinition = resolver.findDefinition(propertyReference);
-        return new Property(propertyReference.getName(), propertyDefinition.getType());
+        Optional<PropertyDefinition> propertyDefinition = resolver.findDefinition(propertyReference);
+        if (!propertyDefinition.isPresent()) {
+            throw new UnsolvedSymbolException(propertyReference);
+        }
+        return new Property(propertyReference.getName(), propertyDefinition.get().getType());
     }
 
     public String getName() {

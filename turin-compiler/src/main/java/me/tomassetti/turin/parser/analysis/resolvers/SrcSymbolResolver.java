@@ -38,12 +38,12 @@ public class SrcSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public PropertyDefinition findDefinition(PropertyReference propertyReference) {
+    public Optional<PropertyDefinition> findDefinition(PropertyReference propertyReference) {
         String name = propertyReference.contextName() + "." + propertyReference.getName();
         if (propertyDefinitions.containsKey(name)) {
-            return propertyDefinitions.get(name);
+            return Optional.of(propertyDefinitions.get(name));
         } else {
-            throw new UnsolvedSymbolException(propertyReference);
+            return Optional.empty();
         }
 
     }

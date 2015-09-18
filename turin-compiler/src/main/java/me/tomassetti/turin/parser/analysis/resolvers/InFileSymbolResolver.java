@@ -31,21 +31,21 @@ public class InFileSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public PropertyDefinition findDefinition(PropertyReference propertyReference) {
+    public Optional<PropertyDefinition> findDefinition(PropertyReference propertyReference) {
         return findDefinitionIn(propertyReference, propertyReference.getParent());
     }
 
-    private PropertyDefinition findDefinitionIn(PropertyReference propertyReference, Node context) {
+    private Optional<PropertyDefinition> findDefinitionIn(PropertyReference propertyReference, Node context) {
         for (Node child : context.getChildren()) {
             if (child instanceof PropertyDefinition) {
                 PropertyDefinition propertyDefinition = (PropertyDefinition)child;
                 if (propertyDefinition.getName().equals(propertyReference.getName())) {
-                    return propertyDefinition;
+                    return Optional.of(propertyDefinition);
                 }
             }
         }
         if (context.getParent() == null) {
-            throw new UnsolvedSymbolException(propertyReference);
+            return Optional.empty();
         }
         return findDefinitionIn(propertyReference, context.getParent());
     }

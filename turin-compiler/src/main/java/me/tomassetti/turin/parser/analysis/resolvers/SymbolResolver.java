@@ -16,7 +16,7 @@ public interface SymbolResolver {
     /**
      * Given a PropertyReference it finds the corresponding declaration.
      */
-    PropertyDefinition findDefinition(PropertyReference propertyReference);
+    Optional<PropertyDefinition> findDefinition(PropertyReference propertyReference);
 
     /**
      * Find the TypeDefinition corresponding to the given name in the given context.

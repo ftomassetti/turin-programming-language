@@ -1,8 +1,11 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+
+import java.util.Optional;
 
 public class PropertyReference extends Node {
     public String getName() {
@@ -21,7 +24,12 @@ public class PropertyReference extends Node {
     }
 
     public TypeUsage getType(SymbolResolver resolver) {
-        return resolver.findDefinition(this).getType();
+        Optional<PropertyDefinition> propertyDefinition = resolver.findDefinition(this);
+        if (propertyDefinition.isPresent()) {
+            return propertyDefinition.get().getType();
+        } else {
+            throw new UnsolvedSymbolException(this);
+        }
     }
 
     @Override

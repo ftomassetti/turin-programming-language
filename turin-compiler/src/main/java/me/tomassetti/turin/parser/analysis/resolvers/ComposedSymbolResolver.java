@@ -28,16 +28,14 @@ public class ComposedSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public PropertyDefinition findDefinition(PropertyReference propertyReference) {
+    public Optional<PropertyDefinition> findDefinition(PropertyReference propertyReference) {
         for (SymbolResolver element : elements) {
-            try {
-                PropertyDefinition definition = element.findDefinition(propertyReference);
+            Optional<PropertyDefinition> definition = element.findDefinition(propertyReference);
+            if (definition.isPresent()) {
                 return definition;
-            } catch (UnsolvedException re) {
-                // Ignore
             }
         }
-        throw new UnsolvedSymbolException(propertyReference);
+        return Optional.empty();
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.easymock.EasyMockSupport;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,13 +30,15 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
 
-        PropertyDefinition definition = srcSymbolResolver.findDefinition(propertyReference);
+        Optional<PropertyDefinition> optionalDefinition = srcSymbolResolver.findDefinition(propertyReference);
+        assertEquals(true, optionalDefinition.isPresent());
+        PropertyDefinition definition = optionalDefinition.get();
         assertEquals("name", definition.getName());
         assertEquals(true, definition.getType().isReferenceTypeUsage());
         assertEquals("java.lang.String", definition.getType().asReferenceTypeUsage().getQualifiedName(symbolResolver));
     }
 
-    @Test(expected = UnsolvedSymbolException.class)
+    @Test
     public void findDefinitionNegativeCase() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/basicManga.to"));
         SrcSymbolResolver srcSymbolResolver = new SrcSymbolResolver(ImmutableList.of(turinFile));
@@ -45,7 +48,8 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         replayAll();
 
-        srcSymbolResolver.findDefinition(propertyReference);
+        Optional<PropertyDefinition> optionalDefinition = srcSymbolResolver.findDefinition(propertyReference);
+        assertEquals(false, optionalDefinition.isPresent());
     }
 
 }
