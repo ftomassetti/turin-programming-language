@@ -46,4 +46,8 @@ public class FunctionDefinition extends InvokableDefinition implements Named {
         }
         return true;
     }
+
+    public String getQualifiedName() {
+        return contextName() + "." + name;
+    }
 }

@@ -21,16 +21,26 @@ public class SrcSymbolResolver implements SymbolResolver {
 
     private Map<String, TypeDefinition> typeDefinitions;
     private Map<String, PropertyDefinition> propertyDefinitions;
+    private Map<String, Program> programsDefinitions;
+    private Map<String, FunctionDefinition> functionDefinitions;
 
     public SrcSymbolResolver(List<TurinFile> turinFiles) {
         this.typeDefinitions = new HashMap<>();
         this.propertyDefinitions = new HashMap<>();
+        this.programsDefinitions = new HashMap<>();
+        this.functionDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
             for (TypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
                 typeDefinitions.put(typeDefinition.getQualifiedName(), typeDefinition);
             }
             for (PropertyDefinition propertyDefinition : turinFile.getTopLevelPropertyDefinitions()) {
                 propertyDefinitions.put(propertyDefinition.getQualifiedName(), propertyDefinition);
+            }
+            for (Program program : turinFile.getTopLevelPrograms()) {
+                programsDefinitions.put(program.getQualifiedName(), program);
+            }
+            for (FunctionDefinition functionDefinition : turinFile.getTopLevelFunctionDefinitions()) {
+                functionDefinitions.put(functionDefinition.getQualifiedName(), functionDefinition);
             }
         }
     }
@@ -73,6 +83,12 @@ public class SrcSymbolResolver implements SymbolResolver {
         // TODO consider also static fields and methods
         if (typeDefinitions.containsKey(name)) {
             return Optional.of(typeDefinitions.get(name));
+        } else if (propertyDefinitions.containsKey(name)) {
+            return Optional.of(propertyDefinitions.get(name));
+        } else if (functionDefinitions.containsKey(name)) {
+            return Optional.of(functionDefinitions.get(name));
+        } else if (programsDefinitions.containsKey(name)) {
+            return Optional.of(programsDefinitions.get(name));
         } else {
             return Optional.empty();
         }
