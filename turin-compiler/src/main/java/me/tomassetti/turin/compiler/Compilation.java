@@ -14,6 +14,7 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
+import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.InvokableDefinition;
@@ -600,8 +601,11 @@ public class Compilation {
             List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
-            JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
+            Optional<JvmMethodDefinition> methodDefinition = resolver.findJvmDefinition(functionCall);
+            if (!methodDefinition.isPresent()) {
+                throw new UnsolvedMethodException(functionCall);
+            }
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition.get())).build());
         } else {
             throw new UnsupportedOperationException(expr.toString());
         }
@@ -717,8 +721,11 @@ public class Compilation {
             List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
-            JvmMethodDefinition methodDefinition = resolver.findJvmDefinition(functionCall);
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
+            Optional<JvmMethodDefinition> methodDefinition = resolver.findJvmDefinition(functionCall);
+            if (!methodDefinition.isPresent()) {
+                throw new UnsolvedMethodException(functionCall);
+            }
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition.get())).build());
         } else if (expr instanceof Creation) {
             Creation creation = (Creation) expr;
             List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()

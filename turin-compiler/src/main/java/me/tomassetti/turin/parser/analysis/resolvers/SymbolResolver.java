@@ -53,7 +53,7 @@ public interface SymbolResolver {
     /**
      * Find the JVM method corresponding to this function call.
      */
-    JvmMethodDefinition findJvmDefinition(FunctionCall functionCall);
+    Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall);
 
     /**
      * Find whatever Node is corresponding to the given name in the given context.

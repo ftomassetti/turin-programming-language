@@ -64,7 +64,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
+    public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
         throw new UnsolvedMethodException(functionCall);
     }
 

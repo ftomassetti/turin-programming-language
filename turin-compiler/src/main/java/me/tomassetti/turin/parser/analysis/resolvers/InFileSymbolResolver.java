@@ -79,13 +79,13 @@ public class InFileSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
+    public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
         List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream()
                 .map((ap) -> ap.calcType(this).jvmType(this))
                 .collect(Collectors.toList());
         Expression function = functionCall.getFunction();
         boolean staticContext = function.isType(this) || (function instanceof StaticFieldAccess);
-        return function.findMethodFor(argsTypes, this, staticContext);
+        return Optional.of(function.findMethodFor(argsTypes, this, staticContext));
     }
 
     @Override

@@ -61,15 +61,14 @@ public class ComposedSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
+    public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
         for (SymbolResolver element : elements) {
-            try {
-                return element.findJvmDefinition(functionCall);
-            } catch (UnsolvedException re) {
-                // Ignore
+            Optional<JvmMethodDefinition> partial = element.findJvmDefinition(functionCall);
+            if (partial.isPresent()) {
+                return partial;
             }
         }
-        throw new UnsolvedMethodException(functionCall);
+        return Optional.empty();
     }
 
     @Override
