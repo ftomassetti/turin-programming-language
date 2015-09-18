@@ -22,6 +22,9 @@ public abstract class Node {
     private Position position;
 
     public Position getPosition() {
+        if (position == null) {
+            throw new IllegalStateException(this.toString());
+        }
         return position;
     }
 

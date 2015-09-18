@@ -34,6 +34,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         turinFile.add(nameProperty);
 
         TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
+        mangaCharacter.setPosition(Position.create(0, 0, 0, 0));
         PropertyDefinition ageProperty = new PropertyDefinition("age", intType);
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);

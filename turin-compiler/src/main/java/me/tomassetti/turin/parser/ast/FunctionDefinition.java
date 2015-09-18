@@ -11,7 +11,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FunctionDefinition extends InvokableDefinition {
+public class FunctionDefinition extends InvokableDefinition implements Named {
 
     public FunctionDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
         super(parameters, body, name, returnType);

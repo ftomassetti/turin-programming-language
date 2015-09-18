@@ -223,6 +223,7 @@ class ParseTreeToAst {
             statements.add(toAst(stmtCtx));
         }
         Program program = new Program(programCtx.name.getText(), new BlockStatement(statements), programCtx.formalParam.name.getText());
+        getPositionFrom(program, programCtx);
         return program;
     }
 

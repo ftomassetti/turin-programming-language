@@ -33,6 +33,7 @@ public class CompilerOnProgramTest extends AbstractCompilerTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of()), "args");
+        program.setPosition(Position.create(0, 0, 0, 0));
         turinFile.add(program);
 
         return turinFile;
@@ -54,6 +55,7 @@ public class CompilerOnProgramTest extends AbstractCompilerTest {
         FunctionCall printInvokation = new FunctionCall(println, ImmutableList.of(new ActualParam(stringLiteral)));
         Statement printStatement = new ExpressionStatement(printInvokation);
         Program program = new Program("SuperSimple", new BlockStatement(ImmutableList.of(printStatement)), "args");
+        program.setPosition(Position.create(0, 0, 0, 0));
         turinFile.add(program);
 
         return turinFile;

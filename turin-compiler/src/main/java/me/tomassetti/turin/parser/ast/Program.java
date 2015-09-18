@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Program extends Node {
+public class Program extends Node implements Named {
 
     private String name;
     private Statement statement;

@@ -1,0 +1,7 @@
+namespace foo
+
+program Baz(String[] args) {
+}
+
+program Baz(String[] args) {
+}

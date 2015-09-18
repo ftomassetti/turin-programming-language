@@ -1,12 +1,11 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TurinFile extends Node {
@@ -18,6 +17,28 @@ public class TurinFile extends Node {
     public void add(PropertyDefinition propertyDefinition) {
         topNodes.add(propertyDefinition);
         propertyDefinition.parent = this;
+    }
+
+    @Override
+    public boolean validate(Resolver resolver, ErrorCollector errorCollector) {
+        boolean valid = true;
+        Map<String, List<Position>> positions = new HashMap<>();
+        for (Node topNode : topNodes) {
+            if (topNode instanceof Named) {
+                Named named = (Named)topNode;
+                if (positions.containsKey(named.getName())) {
+                    positions.get(named.getName()).add(topNode.getPosition());
+                    List<String> positionsAsStrings = positions.get(named.getName()).stream().map((p)->p.toString()).collect(Collectors.toList());
+                    errorCollector.recordSemanticError(topNode.getPosition(), "Duplicate name \"" + named.getName() + "\" appearing at " + String.join(", ", positionsAsStrings));
+                    valid = false;
+                } else {
+                    List<Position> ps = new ArrayList<>();
+                    ps.add(topNode.getPosition());
+                    positions.put(named.getName(), ps);
+                }
+            }
+        }
+        return valid && super.validate(resolver, errorCollector);
     }
 
     public void add(ImportDeclaration importDeclaration) {
