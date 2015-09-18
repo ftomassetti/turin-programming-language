@@ -53,4 +53,8 @@ public class PropertyDefinition extends Node {
         result = 31 * result + type.hashCode();
         return result;
     }
+
+    public String getQualifiedName() {
+        return contextName() + "." + name;
+    }
 }

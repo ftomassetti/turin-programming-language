@@ -122,6 +122,10 @@ public class TurinFile extends Node {
         return topNodes.stream().filter((n)-> (n instanceof FunctionDefinition)).map((n) -> (FunctionDefinition)n).collect(Collectors.toList());
     }
 
+    public List<PropertyDefinition> getTopLevelPropertyDefinitions() {
+        return topNodes.stream().filter((n)-> (n instanceof PropertyDefinition)).map((n) -> (PropertyDefinition)n).collect(Collectors.toList());
+    }
+
     @Override
     public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         for (ImportDeclaration importDeclaration : imports) {
@@ -142,4 +146,5 @@ public class TurinFile extends Node {
         topNodes.add(functionDefinition);
         functionDefinition.parent = this;
     }
+
 }

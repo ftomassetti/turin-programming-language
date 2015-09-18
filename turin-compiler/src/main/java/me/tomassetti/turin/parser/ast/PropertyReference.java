@@ -4,9 +4,6 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-/**
- * Created by federico on 28/08/15.
- */
 public class PropertyReference extends Node {
     public String getName() {
         return name;

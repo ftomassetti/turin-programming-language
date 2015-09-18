@@ -20,27 +20,38 @@ import java.util.Optional;
 public class SrcSymbolResolver implements SymbolResolver {
 
     private List<TurinFile> turinFiles;
-    private Map<String, TypeDefinition> definitions;
+    private Map<String, TypeDefinition> typeDefinitions;
+    private Map<String, PropertyDefinition> propertyDefinitions;
 
     public SrcSymbolResolver(List<TurinFile> turinFiles) {
         this.turinFiles = turinFiles;
-        this.definitions = new HashMap<>();
+        this.typeDefinitions = new HashMap<>();
+        this.propertyDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
             for (TypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
-                definitions.put(typeDefinition.getQualifiedName(), typeDefinition);
+                typeDefinitions.put(typeDefinition.getQualifiedName(), typeDefinition);
+            }
+            for (PropertyDefinition propertyDefinition : turinFile.getTopLevelPropertyDefinitions()) {
+                propertyDefinitions.put(propertyDefinition.getQualifiedName(), propertyDefinition);
             }
         }
     }
 
     @Override
     public PropertyDefinition findDefinition(PropertyReference propertyReference) {
-        throw new UnsolvedSymbolException(propertyReference);
+        String name = propertyReference.contextName() + "." + propertyReference.getName();
+        if (propertyDefinitions.containsKey(name)) {
+            return propertyDefinitions.get(name);
+        } else {
+            throw new UnsolvedSymbolException(propertyReference);
+        }
+
     }
 
     @Override
     public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
-        if (definitions.containsKey(typeName)) {
-            return Optional.of(definitions.get(typeName));
+        if (typeDefinitions.containsKey(typeName)) {
+            return Optional.of(typeDefinitions.get(typeName));
         } else {
             return Optional.empty();
         }
@@ -48,8 +59,8 @@ public class SrcSymbolResolver implements SymbolResolver {
 
     @Override
     public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
-        if (definitions.containsKey(typeName)) {
-            return new ReferenceTypeUsage(definitions.get(typeName));
+        if (typeDefinitions.containsKey(typeName)) {
+            return new ReferenceTypeUsage(typeDefinitions.get(typeName));
         } else {
             throw new UnsolvedTypeException(typeName, context);
         }
@@ -63,8 +74,8 @@ public class SrcSymbolResolver implements SymbolResolver {
     @Override
     public Optional<Node> findSymbol(String name, Node context) {
         // TODO consider also static fields and methods
-        if (definitions.containsKey(name)) {
-            return Optional.of(definitions.get(name));
+        if (typeDefinitions.containsKey(name)) {
+            return Optional.of(typeDefinitions.get(name));
         } else {
             return Optional.empty();
         }
