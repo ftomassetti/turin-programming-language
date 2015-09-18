@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Solve considering TurinFiles.
+ * Solve symbols considering TurinFiles.
  */
 public class SrcSymbolResolver implements SymbolResolver {
 

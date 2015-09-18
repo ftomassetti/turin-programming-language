@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.junit.Test;
@@ -70,6 +71,30 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
 
         Optional<TypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        assertEquals(false, typeDefinition.isPresent());
+    }
+
+    @Test
+    public void findTypeUsageInPositiveCase() throws IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/basicManga.to"));
+        SrcSymbolResolver srcSymbolResolver = new SrcSymbolResolver(ImmutableList.of(turinFile));
+
+        SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+
+        Optional<TypeUsage> typeDefinition = srcSymbolResolver.findTypeUsageIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        assertEquals(true, typeDefinition.isPresent());
+        assertEquals(true, typeDefinition.get().isReferenceTypeUsage());
+        assertEquals("manga.MangaCharacter", typeDefinition.get().asReferenceTypeUsage().getQualifiedName(srcSymbolResolver));
+    }
+
+    @Test
+    public void findTypeUsageInNegativeCase() throws IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/basicManga.to"));
+        SrcSymbolResolver srcSymbolResolver = new SrcSymbolResolver(ImmutableList.of(turinFile));
+
+        SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+
+        Optional<TypeUsage> typeDefinition = srcSymbolResolver.findTypeUsageIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
         assertEquals(false, typeDefinition.isPresent());
     }
 
