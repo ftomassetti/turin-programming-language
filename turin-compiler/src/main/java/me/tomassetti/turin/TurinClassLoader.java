@@ -3,7 +3,7 @@ package me.tomassetti.turin;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 
 /**
- * ClassLoader use to load compiled classes.
+ * ClassLoader used to load classes compiled from Turin.
  */
 public class TurinClassLoader extends ClassLoader {
 

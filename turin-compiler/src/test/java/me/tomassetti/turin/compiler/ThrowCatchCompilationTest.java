@@ -53,7 +53,6 @@ public class ThrowCatchCompilationTest extends AbstractCompilerTest {
 
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, errorCollector);
-        assertEquals(0, classFileDefinitions.size());
 
         EasyMock.verify(errorCollector);
     }
