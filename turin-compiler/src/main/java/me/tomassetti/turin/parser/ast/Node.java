@@ -1,12 +1,11 @@
 package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -53,11 +52,11 @@ public abstract class Node {
         return parent.contextName();
     }
 
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         if (parent == null) {
             return Optional.empty();
         } else if (parent instanceof BlockStatement) {
@@ -79,7 +78,7 @@ public abstract class Node {
         }
     }
 
-    public final Node getField(QualifiedName fieldsPath, Resolver resolver) {
+    public final Node getField(QualifiedName fieldsPath, SymbolResolver resolver) {
         if (fieldsPath.isSimpleName()) {
             return getField(fieldsPath.getName(), resolver);
         } else {
@@ -95,7 +94,7 @@ public abstract class Node {
     /**
      * This is intended in a broad way: everything that can be accessed with a dot.
      */
-    public Node getField(String fieldName, Resolver resolver) {
+    public Node getField(String fieldName, SymbolResolver resolver) {
         return calcType(resolver).getFieldOnInstance(fieldName, this, resolver);
     }
 
@@ -110,7 +109,7 @@ public abstract class Node {
         return results;
     }
 
-    public boolean validate(Resolver resolver, ErrorCollector errorCollector) {
+    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
         boolean res = specificValidate(resolver, errorCollector);
         // if the node is wrong we do not check its children
         if (res) {
@@ -127,7 +126,7 @@ public abstract class Node {
     /**
      * @return if the node is valid
      */
-    protected boolean specificValidate(Resolver resolver, ErrorCollector errorCollector) {
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         // nothing to do
         return true;
     }

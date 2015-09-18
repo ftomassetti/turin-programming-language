@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -37,7 +37,7 @@ public abstract class InvokableDefinition extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         for (FormalParameter param : parameters) {
             if (param.getName().equals(name)) {
                 return Optional.of(param);

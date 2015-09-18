@@ -5,7 +5,7 @@ import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -40,12 +40,12 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this));
     }
 
     @Override
-    public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {
@@ -58,7 +58,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {
@@ -120,7 +120,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         List<ReferenceTypeUsage> ancestors = new ArrayList<>();
         if (clazz.getSuperclass() != null) {
             ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
@@ -195,12 +195,12 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Node getField(String fieldName, Resolver resolver) {
+    public Node getField(String fieldName, SymbolResolver resolver) {
         return internalGetField(fieldName, null);
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         return internalGetField(fieldName, instance);
     }
 

@@ -1,11 +1,10 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,7 +57,7 @@ public class FunctionCall extends Invokable {
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return function.calcType(resolver).returnTypeWhenInvokedWith(actualParams);
     }
 

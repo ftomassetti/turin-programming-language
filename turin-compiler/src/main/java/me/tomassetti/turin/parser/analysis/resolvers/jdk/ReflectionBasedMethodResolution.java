@@ -2,9 +2,8 @@ package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
 import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -47,7 +46,7 @@ class ReflectionBasedMethodResolution {
         }
     }
 
-    public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, Resolver resolver, List<Constructor> constructors, Node context) {
+    public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
         List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m)->new MethodOrConstructor(m)).collect(Collectors.toList());
         MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, "constructor");
         if (methodOrConstructor == null) {
@@ -56,7 +55,7 @@ class ReflectionBasedMethodResolution {
         return ReflectionTypeDefinitionFactory.toConstructorDefinition(methodOrConstructor.constructor);
     }
 
-    public static Method findMethodAmong(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext, List<Method> methods, Node context) {
+    public static Method findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
         List<MethodOrConstructor> methodOrConstructors = methods.stream()
                 .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                 .filter((m) -> m.getName().equals(name))
@@ -68,7 +67,7 @@ class ReflectionBasedMethodResolution {
         return methodOrConstructor.method;
     }
 
-    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, Resolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {
+    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {
         List<MethodOrConstructor> suitableMethods = new ArrayList<>();
         for (MethodOrConstructor method : methods) {
             if (method.getParameterCount() == argsTypes.size()) {
@@ -95,7 +94,7 @@ class ReflectionBasedMethodResolution {
         }
     }
 
-    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow, Resolver resolver) {
+    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow, SymbolResolver resolver) {
         MethodOrConstructor winningMethod = methods.get(0);
         for (MethodOrConstructor other : methods.subList(1, methods.size())) {
             if (isTheFirstMoreSpecific(winningMethod, other, resolver)) {
@@ -109,7 +108,7 @@ class ReflectionBasedMethodResolution {
         return winningMethod;
     }
 
-    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second, Resolver resolver) {
+    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second, SymbolResolver resolver) {
         boolean atLeastOneParamIsMoreSpecific = false;
         if (first.getParameterCount() != second.getParameterCount()) {
             throw new IllegalArgumentException();
@@ -127,7 +126,7 @@ class ReflectionBasedMethodResolution {
         return atLeastOneParamIsMoreSpecific;
     }
 
-    private static boolean isTheFirstMoreSpecific(Class<?> firstType, Class<?> secondType, Resolver resolver) {
+    private static boolean isTheFirstMoreSpecific(Class<?> firstType, Class<?> secondType, SymbolResolver resolver) {
         if (firstType.isPrimitive() || firstType.isArray()) {
             return false;
         }

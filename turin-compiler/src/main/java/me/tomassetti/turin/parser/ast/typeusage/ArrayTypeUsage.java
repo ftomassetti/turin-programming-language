@@ -2,9 +2,8 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 
 public class ArrayTypeUsage extends TypeUsage {
@@ -21,7 +20,7 @@ public class ArrayTypeUsage extends TypeUsage {
 
     @Override
 
-    public JvmType jvmType(Resolver resolver) {
+    public JvmType jvmType(SymbolResolver resolver) {
         return new JvmType("[" + componentType.jvmType(resolver).getSignature());
     }
 
@@ -38,7 +37,7 @@ public class ArrayTypeUsage extends TypeUsage {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         if (fieldName.equals("length")) {
             return new ArrayLength(instance);
         }

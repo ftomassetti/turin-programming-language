@@ -3,9 +3,8 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
@@ -44,19 +43,19 @@ public class ReferenceTypeUsage extends TypeUsage {
         this(td.getQualifiedName());
     }
 
-    public boolean isInterface(Resolver resolver) {
+    public boolean isInterface(SymbolResolver resolver) {
         return getTypeDefinition(resolver).isInterface();
     }
 
-    public boolean isClass(Resolver resolver) {
+    public boolean isClass(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 
-    public boolean isEnum(Resolver resolver) {
+    public boolean isEnum(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 
-    public boolean isTypeVariable(Resolver resolver) {
+    public boolean isTypeVariable(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 
@@ -89,13 +88,13 @@ public class ReferenceTypeUsage extends TypeUsage {
                 '}';
     }
 
-    public TypeDefinition getTypeDefinition(Resolver resolver) {
+    public TypeDefinition getTypeDefinition(SymbolResolver resolver) {
         TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(this.name, this, resolver);
         return typeDefinition;
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
         return typeDefinition.findMethodFor(methodName, argsTypes, resolver, staticContext);
     }
@@ -106,12 +105,12 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(Resolver resolver) {
+    public JvmType jvmType(SymbolResolver resolver) {
         TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
         return typeDefinition.jvmType();
     }
 
-    public String getQualifiedName(Resolver resolver) {
+    public String getQualifiedName(SymbolResolver resolver) {
         TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
         return typeDefinition.getQualifiedName();
     }
@@ -127,7 +126,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage type, Resolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }
@@ -143,13 +142,13 @@ public class ReferenceTypeUsage extends TypeUsage {
         return false;
     }
 
-    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         // TODO perhaps some generic type substitution needs to be done
         return getTypeDefinition(resolver).getAllAncestors(resolver);
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         return getTypeDefinition(resolver).getFieldOnInstance(fieldName, instance, resolver);
     }
 
@@ -181,7 +180,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
         return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
     }

@@ -1,12 +1,7 @@
 package me.tomassetti.turin.compiler;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.analysis.resolvers.ComposedResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.analysis.resolvers.SrcResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import org.junit.Test;

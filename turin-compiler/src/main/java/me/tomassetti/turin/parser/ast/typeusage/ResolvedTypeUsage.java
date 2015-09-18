@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 
@@ -19,7 +19,7 @@ public class ResolvedTypeUsage extends TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(Resolver resolver) {
+    public JvmType jvmType(SymbolResolver resolver) {
         return typeDefinition.jvmType();
     }
 

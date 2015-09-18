@@ -1,14 +1,11 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
-import me.tomassetti.turin.parser.ast.statements.BlockStatement;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class Program extends Node implements Named {
@@ -70,7 +67,7 @@ public class Program extends Node implements Named {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         if (name.equals(formalParameter.getName())) {
             return Optional.of(formalParameter);
         }

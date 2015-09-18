@@ -2,10 +2,9 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public abstract class TypeUsage extends Node {
 
-    public abstract JvmType jvmType(Resolver resolver);
+    public abstract JvmType jvmType(SymbolResolver resolver);
 
     public boolean isReferenceTypeUsage() {
         return false;
@@ -29,11 +28,11 @@ public abstract class TypeUsage extends Node {
         throw new UnsupportedOperationException();
     }
 
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    public boolean canBeAssignedTo(TypeUsage type, Resolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
@@ -53,7 +52,7 @@ public abstract class TypeUsage extends Node {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
@@ -67,7 +66,7 @@ public abstract class TypeUsage extends Node {
     /**
      * If this has an invokable name with the given methodName and the given arguments which type would be return?
      */
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

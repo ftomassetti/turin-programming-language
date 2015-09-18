@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.ast.expressions.literals;
 
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
@@ -17,7 +17,7 @@ public class BooleanLiteral extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return PrimitiveTypeUsage.BOOLEAN;
     }
 

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 /**
@@ -23,7 +23,7 @@ public class PropertyReference extends Node {
         return ImmutableList.of();
     }
 
-    public TypeUsage getType(Resolver resolver) {
+    public TypeUsage getType(SymbolResolver resolver) {
         return resolver.findDefinition(this).getType();
     }
 

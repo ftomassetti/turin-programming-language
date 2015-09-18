@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -30,21 +30,21 @@ public abstract class TypeDefinition extends Node implements Named {
         return new JvmType("L" + getQualifiedName().replaceAll("\\.", "/") + ";");
     }
 
-    public abstract JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext);
+    public abstract JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
 
-    public abstract JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams);
+    public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
     public abstract TypeUsage getField(String fieldName, boolean staticContext);
 
-    public abstract List<ReferenceTypeUsage> getAllAncestors(Resolver resolver);
+    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
     public abstract boolean isInterface();
 
-    public Node getFieldOnInstance(String fieldName, Node instance, Resolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

@@ -1,10 +1,9 @@
 package me.tomassetti.turin.parser.analysis.jar;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jar.JarTypeResolver;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import org.junit.Test;
@@ -64,7 +63,7 @@ public class JarTypeResolverTest {
     public void methodsCanBeFoundInClassFound() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Resolver resolver = new InFileResolver(jarTypeResolver);
+        SymbolResolver resolver = new InFileSymbolResolver(jarTypeResolver);
         Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         JvmMethodDefinition method = typeDefinition.get().findMethodFor("getComments", Collections.emptyList(), resolver, false);
         assertEquals("com/github/javaparser/ast/CompilationUnit", method.getOwnerInternalName());
@@ -76,7 +75,7 @@ public class JarTypeResolverTest {
     public void emptyConstructorCanBeFoundInClassFound() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Resolver resolver = new InFileResolver(jarTypeResolver);
+        SymbolResolver resolver = new InFileSymbolResolver(jarTypeResolver);
         Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         JvmConstructorDefinition constructor = typeDefinition.get().resolveConstructorCall(resolver, Collections.emptyList());
         assertEquals("com/github/javaparser/ast/CompilationUnit", constructor.getOwnerInternalName());

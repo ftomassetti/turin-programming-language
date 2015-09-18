@@ -1,6 +1,6 @@
 package me.tomassetti.turin.jvm;
 
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.Opcodes;
 
@@ -45,7 +45,7 @@ public enum JvmTypeCategory {
         }
     }
 
-    public static JvmTypeCategory from(TypeUsage typeUsage, Resolver resolver) {
+    public static JvmTypeCategory from(TypeUsage typeUsage, SymbolResolver resolver) {
         String signature = typeUsage.jvmType(resolver).getSignature();
         if (signature.startsWith("L")){
             return REFERENCE;

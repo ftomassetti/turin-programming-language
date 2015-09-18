@@ -19,6 +19,6 @@ public class UnsolvedSymbolException extends UnsolvedException {
     }
 
     public UnsolvedSymbolException(Node context, String typeName) {
-        super("Unsolve symbol "+ typeName + " in "+context.describe());
+        super("Unsolved symbol "+ typeName + " in "+context.describe());
     }
 }

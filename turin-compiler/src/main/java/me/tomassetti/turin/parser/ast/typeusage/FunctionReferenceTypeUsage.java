@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
@@ -42,7 +42,7 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(Resolver resolver) {
+    public JvmType jvmType(SymbolResolver resolver) {
         return returnType.jvmType(resolver);
     }
 

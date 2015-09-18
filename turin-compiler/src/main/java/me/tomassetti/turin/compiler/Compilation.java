@@ -14,7 +14,7 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.InvokableDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -47,12 +47,12 @@ public class Compilation {
     private static final String OBJECT_DESCRIPTOR = "L" + OBJECT_INTERNAL_NAME + ";";
 
     private ClassWriter cw;
-    private Resolver resolver;
+    private SymbolResolver resolver;
     private LocalVarsSymbolTable localVarsSymbolTable;
     private String internalClassName;
     private ErrorCollector errorCollector;
 
-    public Compilation(Resolver resolver, ErrorCollector errorCollector) {
+    public Compilation(SymbolResolver resolver, ErrorCollector errorCollector) {
         this.resolver = resolver;
         this.errorCollector = errorCollector;
     }
