@@ -55,11 +55,11 @@ public class SrcSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (typeDefinitions.containsKey(typeName)) {
-            return new ReferenceTypeUsage(typeDefinitions.get(typeName));
+            return Optional.of(new ReferenceTypeUsage(typeDefinitions.get(typeName)));
         } else {
-            throw new UnsolvedTypeException(typeName, context);
+            return Optional.empty();
         }
     }
 

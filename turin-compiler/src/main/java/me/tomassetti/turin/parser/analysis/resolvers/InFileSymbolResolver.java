@@ -60,9 +60,9 @@ public class InFileSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (PrimitiveTypeUsage.isPrimitiveTypeName(typeName)){
-            return PrimitiveTypeUsage.getByName(typeName);
+            return Optional.of(PrimitiveTypeUsage.getByName(typeName));
         }
         // note that this check has to come after the check for primitive types
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
@@ -72,10 +72,10 @@ public class InFileSymbolResolver implements SymbolResolver {
         // Note that our Turin basic types could shadow other types
         Optional<BasicTypeUsage> basicType = BasicTypeUsage.findByName(typeName);
         if (basicType.isPresent()) {
-            return basicType.get();
+            return Optional.of(basicType.get());
         }
 
-        return new ReferenceTypeUsage(getTypeDefinitionIn(typeName, context, resolver));
+        return Optional.of(new ReferenceTypeUsage(getTypeDefinitionIn(typeName, context, resolver)));
     }
 
     @Override

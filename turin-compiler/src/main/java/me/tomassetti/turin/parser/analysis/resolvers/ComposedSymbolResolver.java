@@ -41,27 +41,23 @@ public class ComposedSymbolResolver implements SymbolResolver {
     @Override
     public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
         for (SymbolResolver element : elements) {
-            try {
-                TypeDefinition definition = element.getTypeDefinitionIn(typeName, context, resolver);
-                return Optional.of(definition);
-            } catch (UnsolvedException re) {
-                // Ignore
+            Optional<TypeDefinition> definition = element.findTypeDefinitionIn(typeName, context, resolver);
+            if (definition.isPresent()) {
+                return definition;
             }
         }
         return Optional.empty();
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         for (SymbolResolver element : elements) {
-            try {
-                TypeUsage typeUsage = element.findTypeUsageIn(typeName, context, resolver);
+            Optional<TypeUsage> typeUsage = element.findTypeUsageIn(typeName, context, resolver);
+            if (typeUsage.isPresent()) {
                 return typeUsage;
-            } catch (UnsolvedException re) {
-                // Ignore
             }
         }
-        throw new UnsolvedTypeException(typeName, context);
+        return Optional.empty();
     }
 
     @Override

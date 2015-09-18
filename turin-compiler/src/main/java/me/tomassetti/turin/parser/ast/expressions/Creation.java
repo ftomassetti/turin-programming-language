@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -58,7 +59,11 @@ public class Creation extends Invokable {
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
         // this node will not have a context so we resolve the type already
-        return resolver.findTypeUsageIn(typeName, this, resolver);
+        Optional<TypeUsage> typeUsage = resolver.findTypeUsageIn(typeName, this, resolver);
+        if (!typeUsage.isPresent()) {
+            throw new UnsolvedTypeException(typeName, this);
+        }
+        return typeUsage.get();
     }
 
     public JvmConstructorDefinition jvmDefinition(SymbolResolver resolver) {

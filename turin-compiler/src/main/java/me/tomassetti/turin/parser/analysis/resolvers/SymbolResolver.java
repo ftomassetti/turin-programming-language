@@ -48,7 +48,7 @@ public interface SymbolResolver {
      * @param resolver top level resolver used during compilation. This is needed because this resolver could delegate
      *                 to that one during the resolution process.
      */
-    TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver);
+    Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver);
 
     /**
      * Find the JVM method corresponding to this function call.
