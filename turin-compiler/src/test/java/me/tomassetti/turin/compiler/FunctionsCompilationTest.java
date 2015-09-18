@@ -57,5 +57,24 @@ public class FunctionsCompilationTest {
         assertEquals("foo", invoke.invoke(null));
     }
 
+    @Test
+    public void compileFunctionReturningVoid() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/call_void_function.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
+        assertEquals(2, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        Class programClass = turinClassLoader.addClass(classFileDefinitions.get(1).getName(),
+                classFileDefinitions.get(1).getBytecode());
+
+        Method main = programClass.getMethod("main", String[].class);
+        main.invoke(null, (Object)new String[]{});
+    }
+
 }
 

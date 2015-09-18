@@ -24,10 +24,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBaseField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.statements.*;
-import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.objectweb.asm.*;
 
 import java.util.*;
@@ -429,7 +426,11 @@ public class Compilation {
 
         compile(invokableDefinition.getBody()).operate(mv);
 
-        // TODO add implicit return when needed
+        // add implicit return when needed
+        if (invokableDefinition.getReturnType() instanceof VoidTypeUsage) {
+           // TODO do not add if there is already a return at the end
+            new ReturnVoidBS().operate(mv);
+        }
 
         // calculated for us
         mv.visitMaxs(0, 0);
