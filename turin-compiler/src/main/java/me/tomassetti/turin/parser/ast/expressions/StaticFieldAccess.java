@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -51,7 +51,7 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
 
         TypeUsage fieldType = typeDefinition.getField(field, true);
@@ -59,13 +59,13 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
 
         return typeDefinition.findMethodFor(field, argsTypes, resolver, staticContext);
     }
 
-    private TypeDefinition typeDefinition(Resolver resolver) {
+    private TypeDefinition typeDefinition(SymbolResolver resolver) {
         return resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
     }
 
@@ -74,7 +74,7 @@ public class StaticFieldAccess extends Expression {
         return ImmutableList.of(subject);
     }
 
-    public JvmFieldDefinition toJvmField(Resolver resolver) {
+    public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
         TypeUsage fieldType = typeDefinition.getField(field, true);
         return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType(resolver).getSignature(), true);

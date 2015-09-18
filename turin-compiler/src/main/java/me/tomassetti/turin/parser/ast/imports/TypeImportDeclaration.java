@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.imports;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.NoContext;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
@@ -27,7 +27,7 @@ public class TypeImportDeclaration extends ImportDeclaration {
     }
 
     @Override
-    public Optional<Node> findAmongImported(String name, Resolver resolver) {
+    public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
         String targetName = alternativeName == null ? typeName : alternativeName;
         if (name.equals(targetName)) {
             Optional<TypeDefinition> res = resolver.findTypeDefinitionIn(qualifiedName.qualifiedName() + "." + typeName, NoContext.getInstance(), resolver);

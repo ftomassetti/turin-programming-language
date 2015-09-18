@@ -2,7 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
 import me.tomassetti.turin.parser.ast.*;
@@ -49,7 +49,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -71,7 +71,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = ExamplesAst.registryAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(2, classFileDefinitions.size());
 
@@ -96,7 +96,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = ExamplesAst.registryAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(2, classFileDefinitions.size());
 
@@ -120,7 +120,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = ExamplesAst.registryAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(2, classFileDefinitions.size());
 
@@ -149,7 +149,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -171,7 +171,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -193,7 +193,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -213,7 +213,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -233,7 +233,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -253,7 +253,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -273,7 +273,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -292,7 +292,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -311,7 +311,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -331,7 +331,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 
@@ -351,7 +351,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         TurinFile turinFile = mangaAst();
 
         // generate bytecode
-        Compiler instance = new Compiler(new InFileResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
+        Compiler instance = new Compiler(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
         assertEquals(1, classFileDefinitions.size());
 

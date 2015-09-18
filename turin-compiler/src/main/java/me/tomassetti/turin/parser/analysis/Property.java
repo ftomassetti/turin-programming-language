@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
@@ -18,14 +18,6 @@ public class Property extends Node {
     private String name;
     private TypeUsage typeUsage;
 
-    public String getName() {
-        return name;
-    }
-
-    public TypeUsage getTypeUsage() {
-        return typeUsage;
-    }
-
     private Property(String name, TypeUsage typeUsage) {
         if (!JvmNameUtils.isValidJavaIdentifier(name)) {
             throw new IllegalArgumentException();
@@ -34,18 +26,26 @@ public class Property extends Node {
         this.typeUsage = typeUsage;
     }
 
-    @Override
-    public TypeUsage calcType(Resolver resolver) {
-        return typeUsage;
-    }
-
     public static Property fromDefinition(PropertyDefinition propertyDefinition) {
         return new Property(propertyDefinition.getName(), propertyDefinition.getType());
     }
 
-    public static Property fromReference(PropertyReference propertyReference, Resolver resolver) {
+    public static Property fromReference(PropertyReference propertyReference, SymbolResolver resolver) {
         PropertyDefinition propertyDefinition = resolver.findDefinition(propertyReference);
         return new Property(propertyReference.getName(), propertyDefinition.getType());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public TypeUsage getTypeUsage() {
+        return typeUsage;
+    }
+
+    @Override
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return typeUsage;
     }
 
     public String getterName() {

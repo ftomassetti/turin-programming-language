@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.statements;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -53,7 +53,7 @@ public class ThrowStatement extends Statement {
     public static final String ERR_MESSAGE = "the throw statement should be used only with Exceptions";
 
     @Override
-    protected boolean specificValidate(Resolver resolver, ErrorCollector errorCollector) {
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         TypeUsage exceptionType = getException().calcType(resolver);
         if (!exceptionType.isReference()) {
             errorCollector.recordSemanticError(exception.getPosition(), ERR_MESSAGE);

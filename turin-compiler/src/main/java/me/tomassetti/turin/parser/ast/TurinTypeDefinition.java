@@ -6,12 +6,11 @@ import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.*;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         // TODO this should be implemented
         throw new UnsupportedOperationException();
     }
@@ -49,13 +48,13 @@ public class TurinTypeDefinition extends TypeDefinition {
         return ImmutableList.copyOf(members);
     }
 
-    private int numberOfProperties(Resolver resolver){
+    private int numberOfProperties(SymbolResolver resolver){
         // TODO consider inherited properties
         return getDirectProperties(resolver).size();
     }
 
     @Override
-    public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
         if (actualParams.size() != numberOfProperties(resolver)) {
             throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
         }
@@ -95,7 +94,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         // TODO to be implemented
         throw new UnsupportedOperationException();
     }
@@ -106,7 +105,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return false;
     }
 
-    private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, Resolver resolver) {
+    private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, SymbolResolver resolver) {
         TypeUsage[] types = new TypeUsage[actualParams.size()];
         int i = 0;
         for (ActualParam actualParam : actualParams) {
@@ -129,7 +128,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return Arrays.asList(types);
     }
 
-    private int findPosOfProperty(String name, Resolver resolver) {
+    private int findPosOfProperty(String name, SymbolResolver resolver) {
         List<Property> properties = getDirectProperties(resolver);
         for (int i=0; i<properties.size(); i++){
             if (properties.get(i).getName().equals(name)) {
@@ -173,7 +172,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         // TODO support references to methods
         for (Property property : this.getAllProperties(resolver)) {
             if (property.getName().equals(name)) {
@@ -187,25 +186,25 @@ public class TurinTypeDefinition extends TypeDefinition {
     /**
      * Does it override the toString method defined in Object?
      */
-    public boolean defineMethodToString(Resolver resolver) {
+    public boolean defineMethodToString(SymbolResolver resolver) {
         return isDefiningMethod("toString", Collections.emptyList(), resolver);
     }
 
     /**
      * Does it override the hashCode method defined in Object?
      */
-    public boolean defineMethodHashCode(Resolver resolver) {
+    public boolean defineMethodHashCode(SymbolResolver resolver) {
         return isDefiningMethod("hashCode", Collections.emptyList(), resolver);
     }
 
     /**
      * Does it override the equals method defined in Object?
      */
-    public boolean defineMethodEquals(Resolver resolver) {
+    public boolean defineMethodEquals(SymbolResolver resolver) {
         return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT), resolver);
     }
 
-    private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, Resolver resolver) {
+    private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, SymbolResolver resolver) {
         return getDirectMethods().stream().filter((m)->m.getName().equals(name))
                 .filter((m) -> m.getParameters().stream().map((p) -> p.calcType(resolver).jvmType(resolver)).collect(Collectors.toList())
                         .equals(paramTypes.stream().map((p) -> p.jvmType(resolver)).collect(Collectors.toList())))
@@ -217,7 +216,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return ImmutableList.copyOf(members);
     }
 
-    public List<Property> getDirectProperties(Resolver resolver) {
+    public List<Property> getDirectProperties(SymbolResolver resolver) {
         List<Property> properties = new ArrayList<>();
         for (Node member : members) {
             if (member instanceof PropertyDefinition) {
@@ -242,7 +241,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     /**
      * Get direct and inherited properties.
      */
-    public List<Property> getAllProperties(Resolver resolver) {
+    public List<Property> getAllProperties(SymbolResolver resolver) {
         // TODO consider also inherited properties
         return getDirectProperties(resolver);
     }

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.statements;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.TypeIdentifier;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -28,7 +28,7 @@ public class CatchClause extends Node {
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return new ReferenceTypeUsage(exceptionType.resolve(resolver));
     }
 
@@ -46,7 +46,7 @@ public class CatchClause extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         if (name.equals(variableName)) {
             return Optional.of(this);
         }

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
 import me.tomassetti.turin.jvm.JvmFieldDefinition;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -12,7 +12,7 @@ import java.util.Collections;
 public class ReflectionBaseField extends Node {
 
     @Override
-    public Node getField(String fieldName, Resolver resolver) {
+    public Node getField(String fieldName, SymbolResolver resolver) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
         return fieldType.getFieldOnInstance(fieldName, this, resolver);
     }
@@ -56,7 +56,7 @@ public class ReflectionBaseField extends Node {
         return Modifier.isStatic(field.getModifiers());
     }
 
-    public JvmFieldDefinition toJvmField(Resolver resolver) {
+    public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
         TypeUsage ownerType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getDeclaringClass());
         return new JvmFieldDefinition(ownerType.jvmType(resolver).getInternalName(), field.getName(), fieldType.jvmType(resolver).getSignature(), true);

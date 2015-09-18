@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.statements;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -32,7 +32,7 @@ public class VariableDeclaration extends Statement {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         if (name.equals(this.name)) {
             return Optional.of(this);
         }
@@ -40,7 +40,7 @@ public class VariableDeclaration extends Statement {
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         if (type == null) {
             return value.calcType(resolver);
         } else {
@@ -96,7 +96,7 @@ public class VariableDeclaration extends Statement {
         }
     }
 
-    public TypeUsage varType(Resolver resolver) {
+    public TypeUsage varType(SymbolResolver resolver) {
         if (type != null) {
             return type;
         } else {

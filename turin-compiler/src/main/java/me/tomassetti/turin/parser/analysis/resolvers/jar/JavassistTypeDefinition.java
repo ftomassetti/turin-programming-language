@@ -7,7 +7,7 @@ import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -28,7 +28,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, Resolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {
@@ -51,7 +51,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         try {
             return JavassistTypeDefinitionFactory.toMethodDefinition(JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this));
         } catch (NotFoundException e) {
@@ -60,7 +60,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public JvmConstructorDefinition resolveConstructorCall(Resolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {
@@ -82,7 +82,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(Resolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

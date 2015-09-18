@@ -5,10 +5,8 @@ import javassist.CtConstructor;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import me.tomassetti.turin.compiler.AmbiguousCallException;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -49,7 +47,7 @@ class JavassistBasedMethodResolution {
         }
     }
 
-    public static CtConstructor findConstructorAmong(List<JvmType> argsTypes, Resolver resolver, List<CtConstructor> constructors, Node context) {
+    public static CtConstructor findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
             MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, "constructor");
@@ -62,7 +60,7 @@ class JavassistBasedMethodResolution {
         }
     }
 
-    public static CtMethod findMethodAmong(String name, List<JvmType> argsTypes, Resolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
+    public static CtMethod findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = methods.stream()
                     .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
@@ -78,7 +76,7 @@ class JavassistBasedMethodResolution {
         }
     }
 
-    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, Resolver resolver, List<MethodOrConstructor> methods, Node context, String desc) throws NotFoundException {
+    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) throws NotFoundException {
         List<MethodOrConstructor> suitableMethods = new ArrayList<>();
         for (MethodOrConstructor method : methods) {
             if (method.getParameterCount() == argsTypes.size()) {
@@ -105,7 +103,7 @@ class JavassistBasedMethodResolution {
         }
     }
 
-    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow, Resolver resolver) throws NotFoundException {
+    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow, SymbolResolver resolver) throws NotFoundException {
         MethodOrConstructor winningMethod = methods.get(0);
         for (MethodOrConstructor other : methods.subList(1, methods.size())) {
             if (isTheFirstMoreSpecific(winningMethod, other, resolver)) {
@@ -119,7 +117,7 @@ class JavassistBasedMethodResolution {
         return winningMethod;
     }
 
-    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second, Resolver resolver) throws NotFoundException {
+    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second, SymbolResolver resolver) throws NotFoundException {
         boolean atLeastOneParamIsMoreSpecific = false;
         if (first.getParameterCount() != second.getParameterCount()) {
             throw new IllegalArgumentException();
@@ -137,7 +135,7 @@ class JavassistBasedMethodResolution {
         return atLeastOneParamIsMoreSpecific;
     }
 
-    private static boolean isTheFirstMoreSpecific(CtClass firstType, CtClass secondType, Resolver resolver) {
+    private static boolean isTheFirstMoreSpecific(CtClass firstType, CtClass secondType, SymbolResolver resolver) {
         if (firstType.isPrimitive() || firstType.isArray()) {
             return false;
         }

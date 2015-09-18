@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.imports;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -33,7 +33,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
     }
 
     @Override
-    public Optional<Node> findAmongImported(String name, Resolver resolver) {
+    public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
         if (alias == null) {
             throw new UnsupportedOperationException();
         } else {

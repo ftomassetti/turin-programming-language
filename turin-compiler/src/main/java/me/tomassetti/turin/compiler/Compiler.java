@@ -21,10 +21,10 @@ public class Compiler {
 
     private static String VERSION = "0.1 (Crocetta)";
 
-    private Resolver resolver;
+    private SymbolResolver resolver;
     private Options options;
 
-    public Compiler(Resolver resolver, Options options) {
+    public Compiler(SymbolResolver resolver, Options options) {
         this.resolver = resolver;
         this.options = options;
     }
@@ -101,12 +101,12 @@ public class Compiler {
         private List<String> sources = new ArrayList<>();
     }
 
-    private static Resolver getResolver(List<String> sources, List<String> classPathElements, List<TurinFile> turinFiles) {
+    private static SymbolResolver getResolver(List<String> sources, List<String> classPathElements, List<TurinFile> turinFiles) {
         TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
                 .add(JdkTypeResolver.getInstance())
                 .addAll(classPathElements.stream().map((cp) -> toTypeResolver(cp)).collect(Collectors.toList()))
                 .build());
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(typeResolver), new SrcResolver(turinFiles)));
+        return new ComposedSymbolResolver(ImmutableList.of(new InFileSymbolResolver(typeResolver), new SrcSymbolResolver(turinFiles)));
     }
 
     private static TypeResolver toTypeResolver(String classPathElement) {
@@ -205,7 +205,7 @@ public class Compiler {
                 return;
             }
         }
-        Resolver resolver = getResolver(options.sources, options.classPathElements, turinFiles.stream().map(TurinFileWithSource::getTurinFile).collect(Collectors.toList()));
+        SymbolResolver resolver = getResolver(options.sources, options.classPathElements, turinFiles.stream().map(TurinFileWithSource::getTurinFile).collect(Collectors.toList()));
 
         // Then we compile all files
         // TODO consider classpath

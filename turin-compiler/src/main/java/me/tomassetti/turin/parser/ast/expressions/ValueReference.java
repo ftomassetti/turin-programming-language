@@ -3,9 +3,8 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -22,7 +21,7 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             if (declaration.get() instanceof Expression) {
@@ -72,12 +71,12 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public Node getField(String fieldName, Resolver resolver) {
+    public Node getField(String fieldName, SymbolResolver resolver) {
         return resolve(resolver).getField(fieldName, resolver);
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             return declaration.get().calcType(resolver);
@@ -91,7 +90,7 @@ public class ValueReference extends Expression {
         return ImmutableList.of();
     }
 
-    public Node resolve(Resolver resolver) {
+    public Node resolve(SymbolResolver resolver) {
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             return declaration.get();

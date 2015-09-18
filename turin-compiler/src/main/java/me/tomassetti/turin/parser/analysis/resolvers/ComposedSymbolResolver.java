@@ -19,17 +19,17 @@ import java.util.Optional;
 /**
  * Combine several resolvers.
  */
-public class ComposedResolver implements Resolver {
+public class ComposedSymbolResolver implements SymbolResolver {
 
-    private List<Resolver> elements = new ArrayList<>();
+    private List<SymbolResolver> elements = new ArrayList<>();
 
-    public ComposedResolver(List<Resolver> elements) {
+    public ComposedSymbolResolver(List<SymbolResolver> elements) {
         this.elements = elements;
     }
 
     @Override
     public PropertyDefinition findDefinition(PropertyReference propertyReference) {
-        for (Resolver element : elements) {
+        for (SymbolResolver element : elements) {
             try {
                 PropertyDefinition definition = element.findDefinition(propertyReference);
                 return definition;
@@ -41,8 +41,8 @@ public class ComposedResolver implements Resolver {
     }
 
     @Override
-    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, Resolver resolver) {
-        for (Resolver element : elements) {
+    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+        for (SymbolResolver element : elements) {
             try {
                 TypeDefinition definition = element.getTypeDefinitionIn(typeName, context, resolver);
                 return Optional.of(definition);
@@ -54,8 +54,8 @@ public class ComposedResolver implements Resolver {
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context, Resolver resolver) {
-        for (Resolver element : elements) {
+    public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
+        for (SymbolResolver element : elements) {
             try {
                 TypeUsage typeUsage = element.findTypeUsageIn(typeName, context, resolver);
                 return typeUsage;
@@ -68,7 +68,7 @@ public class ComposedResolver implements Resolver {
 
     @Override
     public JvmMethodDefinition findJvmDefinition(FunctionCall functionCall) {
-        for (Resolver element : elements) {
+        for (SymbolResolver element : elements) {
             try {
                 return element.findJvmDefinition(functionCall);
             } catch (UnsolvedException re) {
@@ -80,7 +80,7 @@ public class ComposedResolver implements Resolver {
 
     @Override
     public Optional<Node> findSymbol(String name, Node context) {
-        for (Resolver element : elements) {
+        for (SymbolResolver element : elements) {
             Optional<Node> res = element.findSymbol(name, context);
             if (res.isPresent()) {
                 return res;

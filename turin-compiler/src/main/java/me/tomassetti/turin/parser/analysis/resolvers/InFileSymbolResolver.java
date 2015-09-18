@@ -19,11 +19,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class InFileResolver implements Resolver {
+/**
+ * Resolve symbols by looking in the file where the context node is contained.
+ */
+public class InFileSymbolResolver implements SymbolResolver {
 
     private TypeResolver typeResolver;
 
-    public InFileResolver(TypeResolver typeResolver) {
+    public InFileSymbolResolver(TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
     }
 
@@ -48,7 +51,7 @@ public class InFileResolver implements Resolver {
     }
 
     @Override
-    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, Resolver resolver) {
+    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
         // primitive names are not valid here
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
@@ -57,7 +60,7 @@ public class InFileResolver implements Resolver {
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context, Resolver resolver) {
+    public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (PrimitiveTypeUsage.isPrimitiveTypeName(typeName)){
             return PrimitiveTypeUsage.getByName(typeName);
         }
@@ -66,7 +69,7 @@ public class InFileResolver implements Resolver {
             throw new IllegalArgumentException(typeName);
         }
 
-        // Note that our Turin basic types shadow other types
+        // Note that our Turin basic types could shadow other types
         Optional<BasicTypeUsage> basicType = BasicTypeUsage.findByName(typeName);
         if (basicType.isPresent()) {
             return basicType.get();
@@ -90,7 +93,7 @@ public class InFileResolver implements Resolver {
         return context.findSymbol(name, this);
     }
 
-    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context, Resolver resolver) {
+    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context, SymbolResolver resolver) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }

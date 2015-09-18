@@ -17,8 +17,8 @@ import static org.junit.Assert.assertEquals;
 
 public class FunctionsCompilationTest {
 
-    private Resolver getResolverFor(TurinFile turinFile) {
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(JdkTypeResolver.getInstance()), new SrcResolver(ImmutableList.of(turinFile))));
+    private SymbolResolver getResolverFor(TurinFile turinFile) {
+        return new ComposedSymbolResolver(ImmutableList.of(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new SrcSymbolResolver(ImmutableList.of(turinFile))));
     }
 
     @Test

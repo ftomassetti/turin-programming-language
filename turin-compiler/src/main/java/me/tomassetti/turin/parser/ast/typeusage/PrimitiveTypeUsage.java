@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage other, Resolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
         // TODO auto-boxing/unboxing should be considered, probably not here
         if (!other.isPrimitive()) {
             return false;
@@ -55,7 +55,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(Resolver resolver) {
+    public JvmType jvmType(SymbolResolver resolver) {
         return jvmType;
     }
 

@@ -2,7 +2,7 @@ package me.tomassetti.turin.implicit;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -39,7 +39,7 @@ public class BasicTypeUsage extends TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(Resolver resolver) {
+    public JvmType jvmType(SymbolResolver resolver) {
         return correspondingPrimitiveTypeUsage.jvmType(resolver);
     }
 

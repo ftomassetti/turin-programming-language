@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,11 +47,11 @@ public abstract class AbstractCompilerTest {
         }
     }
 
-    protected Resolver getResolverFor(TurinFile turinFile) {
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(JdkTypeResolver.getInstance()), new SrcResolver(ImmutableList.of(turinFile))));
+    protected SymbolResolver getResolverFor(TurinFile turinFile) {
+        return new ComposedSymbolResolver(ImmutableList.of(new InFileSymbolResolver(JdkTypeResolver.getInstance()), new SrcSymbolResolver(ImmutableList.of(turinFile))));
     }
 
-    protected Resolver getResolverFor(TurinFile turinFile, List<String> jarFiles) {
+    protected SymbolResolver getResolverFor(TurinFile turinFile, List<String> jarFiles) {
         TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
                 .add(JdkTypeResolver.getInstance())
                 .addAll(jarFiles.stream().map((jf) -> {
@@ -63,7 +62,7 @@ public abstract class AbstractCompilerTest {
                     }
                 }).collect(Collectors.toList()))
                 .build());
-        return new ComposedResolver(ImmutableList.of(new InFileResolver(typeResolver), new SrcResolver(ImmutableList.of(turinFile))));
+        return new ComposedSymbolResolver(ImmutableList.of(new InFileSymbolResolver(typeResolver), new SrcSymbolResolver(ImmutableList.of(turinFile))));
     }
 
     public Method compileFunction(String exampleName, Class[] paramTypes) throws NoSuchMethodException, IOException {

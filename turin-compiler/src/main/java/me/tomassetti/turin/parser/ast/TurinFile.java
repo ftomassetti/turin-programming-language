@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 
 import java.util.*;
@@ -20,7 +20,7 @@ public class TurinFile extends Node {
     }
 
     @Override
-    public boolean validate(Resolver resolver, ErrorCollector errorCollector) {
+    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
         boolean valid = true;
         Map<String, List<Position>> positions = new HashMap<>();
         for (Node topNode : topNodes) {
@@ -123,7 +123,7 @@ public class TurinFile extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Resolver resolver) {
+    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         for (ImportDeclaration importDeclaration : imports) {
             Optional<Node> imported = importDeclaration.findAmongImported(name, resolver);
             if (imported.isPresent()) {

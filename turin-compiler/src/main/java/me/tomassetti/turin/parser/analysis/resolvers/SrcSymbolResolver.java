@@ -17,12 +17,12 @@ import java.util.Optional;
 /**
  * Solve considering TurinFiles.
  */
-public class SrcResolver implements Resolver {
+public class SrcSymbolResolver implements SymbolResolver {
 
     private List<TurinFile> turinFiles;
     private Map<String, TypeDefinition> definitions;
 
-    public SrcResolver(List<TurinFile> turinFiles) {
+    public SrcSymbolResolver(List<TurinFile> turinFiles) {
         this.turinFiles = turinFiles;
         this.definitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
@@ -38,7 +38,7 @@ public class SrcResolver implements Resolver {
     }
 
     @Override
-    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, Resolver resolver) {
+    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
         if (definitions.containsKey(typeName)) {
             return Optional.of(definitions.get(typeName));
         } else {
@@ -47,7 +47,7 @@ public class SrcResolver implements Resolver {
     }
 
     @Override
-    public TypeUsage findTypeUsageIn(String typeName, Node context, Resolver resolver) {
+    public TypeUsage findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (definitions.containsKey(typeName)) {
             return new ReferenceTypeUsage(definitions.get(typeName));
         } else {

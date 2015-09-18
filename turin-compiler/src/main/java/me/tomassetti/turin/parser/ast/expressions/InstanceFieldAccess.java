@@ -4,9 +4,8 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
@@ -38,7 +37,7 @@ public class InstanceFieldAccess extends Expression {
         return field;
     }
 
-    public boolean isArrayLength(Resolver resolver) {
+    public boolean isArrayLength(SymbolResolver resolver) {
         return getSubject().calcType(resolver).isArray() && field.equals("length");
     }
 
@@ -63,12 +62,12 @@ public class InstanceFieldAccess extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(Resolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return subject.getField(field, resolver).calcType(resolver);
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, Resolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 
@@ -77,7 +76,7 @@ public class InstanceFieldAccess extends Expression {
         return ImmutableList.of(subject);
     }
 
-    public JvmFieldDefinition toJvmField(Resolver resolver) {
+    public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 }
