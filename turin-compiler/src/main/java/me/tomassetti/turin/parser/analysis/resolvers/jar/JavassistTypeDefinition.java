@@ -14,9 +14,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.*;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -28,6 +26,12 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     public JavassistTypeDefinition(CtClass ctClass) {
         super(ctClass.getSimpleName());
+        if (ctClass.isPrimitive()) {
+            throw new IllegalArgumentException();
+        }
+        if (ctClass.isArray()) {
+            throw new IllegalArgumentException();
+        }
         this.ctClass = ctClass;
     }
 
@@ -127,14 +131,38 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     private static TypeUsage typeFor(CtMethod method, Node parentToAssign) {
         try {
-            SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
-            SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
-            List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
-            FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
-            functionReferenceTypeUsage.setParent(parentToAssign);
-            return functionReferenceTypeUsage;
+            if (method.getGenericSignature() != null) {
+                SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
+                SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
+                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
+                functionReferenceTypeUsage.setParent(parentToAssign);
+                return functionReferenceTypeUsage;
+            } else {
+                CtClass[] parameterTypes = method.getParameterTypes();
+                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType()));
+                functionReferenceTypeUsage.setParent(parentToAssign);
+                return functionReferenceTypeUsage;
+            }
         } catch (BadBytecode badBytecode) {
             throw new RuntimeException(badBytecode);
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static TypeUsage toTypeUsage(CtClass pt) {
+        try {
+            if (pt.isArray()) {
+                return new ArrayTypeUsage(toTypeUsage(pt.getComponentType()));
+            } else if (pt.isPrimitive()) {
+                return PrimitiveTypeUsage.getByName(pt.getSimpleName());
+            } else {
+                return new ReferenceTypeUsage(new JavassistTypeDefinition(pt));
+            }
+        } catch (NotFoundException e){
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,0 +1,8 @@
+namespace test
+
+import com.github.javaparser.JavaParser
+import com.github.javaparser.ast.expr.Expression
+
+Expression parse() {
+	return JavaParser.parseExpression("1 + 2")
+}

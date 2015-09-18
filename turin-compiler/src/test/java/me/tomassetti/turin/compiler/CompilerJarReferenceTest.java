@@ -2,6 +2,8 @@ package me.tomassetti.turin.compiler;
 
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
+import com.github.javaparser.ast.expr.BinaryExpr;
+import com.github.javaparser.ast.expr.Expression;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
@@ -31,5 +33,14 @@ public class CompilerJarReferenceTest extends AbstractCompilerTest {
     public void compileFunctionUsingContructorAndMethodTypeFromJar() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
         Method invoke = compileFunction("use_jar", new Class[]{String.class}, ImmutableList.of("src/test/resources/jars/javaparser-core-2.2.1.jar"));
         assertEquals("qwerty", invoke.invoke(null, "qwerty"));
+    }
+
+    @Test
+    public void compileFunctionUsinStaticMethodFromJar() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        Method invoke = compileFunction("use_jar_static_method", new Class[]{}, ImmutableList.of("src/test/resources/jars/javaparser-core-2.2.1.jar"));
+        Expression expression = (Expression) invoke.invoke(null);
+        assertEquals(true, expression instanceof BinaryExpr);
+        BinaryExpr binaryExpr = (BinaryExpr)expression;
+        assertEquals(BinaryExpr.Operator.plus, binaryExpr.getOperator());
     }
 }
