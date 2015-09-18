@@ -1,0 +1,5 @@
+namespace foo
+
+String foo1() = "foo1"
+
+String foo2() = foo1()

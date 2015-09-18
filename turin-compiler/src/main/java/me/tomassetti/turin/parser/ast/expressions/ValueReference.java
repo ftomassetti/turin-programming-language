@@ -6,6 +6,7 @@ import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.Resolver;
+import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -26,6 +27,13 @@ public class ValueReference extends Expression {
         if (declaration.isPresent()) {
             if (declaration.get() instanceof Expression) {
                 return ((Expression) declaration.get()).findMethodFor(argsTypes, resolver, staticContext);
+            } else if (declaration.get() instanceof FunctionDefinition) {
+                FunctionDefinition functionDefinition = (FunctionDefinition)declaration.get();
+                if (functionDefinition.match(argsTypes, resolver)) {
+                    return functionDefinition.jvmMethodDefinition(resolver);
+                } else {
+                    throw new IllegalArgumentException();
+                }
             } else {
                 throw new UnsupportedOperationException(declaration.get().getClass().getCanonicalName());
             }

@@ -109,6 +109,11 @@ public class TurinFile extends Node {
                 return imported;
             }
         }
+        for (FunctionDefinition functionDefinition : getTopLevelFunctionDefinitions()) {
+            if (functionDefinition.getName().equals(name)) {
+                return Optional.of(functionDefinition);
+            }
+        }
         return Optional.empty();
     }
 
