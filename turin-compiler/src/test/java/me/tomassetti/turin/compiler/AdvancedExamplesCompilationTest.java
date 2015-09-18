@@ -1,6 +1,7 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Test;
@@ -21,6 +22,12 @@ public class AdvancedExamplesCompilationTest extends AbstractCompilerTest {
         options.setClassPathElements(jars);
         Compiler instance = new Compiler(getResolverFor(turinFile, jars), options);
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        for (ClassFileDefinition classFileDefinition : classFileDefinitions) {
+            Class clazz = turinClassLoader.addClass(classFileDefinition.getName(), classFileDefinition.getBytecode());
+            clazz.getName();
+        }
     }
 
 }
