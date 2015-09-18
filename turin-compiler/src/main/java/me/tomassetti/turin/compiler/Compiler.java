@@ -208,7 +208,6 @@ public class Compiler {
         SymbolResolver resolver = getResolver(options.sources, options.classPathElements, turinFiles.stream().map(TurinFileWithSource::getTurinFile).collect(Collectors.toList()));
 
         // Then we compile all files
-        // TODO consider classpath
         Compiler instance = new Compiler(resolver, options);
         for (TurinFileWithSource turinFile : turinFiles) {
             for (ClassFileDefinition classFileDefinition : instance.compile(turinFile.getTurinFile(), new ErrorPrinter(turinFile.getSource().getPath()))) {
