@@ -30,7 +30,7 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
         return returnType;
     }
 

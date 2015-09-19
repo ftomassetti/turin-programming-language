@@ -124,25 +124,31 @@ public class JavassistTypeDefinition extends TypeDefinition {
             }
         });
         if (methods.size() != 1) {
-            throw new UnsupportedOperationException();
+            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, null)).collect(Collectors.toList()), methods);
+            overloadedFunctionReferenceTypeUsage.setParent(parentToAssign);
+            return overloadedFunctionReferenceTypeUsage;
         }
         return typeFor(methods.get(0), parentToAssign);
     }
 
-    private static TypeUsage typeFor(CtMethod method, Node parentToAssign) {
+    private static FunctionReferenceTypeUsage typeFor(CtMethod method, Node parentToAssign) {
         try {
             if (method.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
                 List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
-                functionReferenceTypeUsage.setParent(parentToAssign);
+                if (parentToAssign != null) {
+                    functionReferenceTypeUsage.setParent(parentToAssign);
+                }
                 return functionReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
                 List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType()));
-                functionReferenceTypeUsage.setParent(parentToAssign);
+                if (parentToAssign != null) {
+                    functionReferenceTypeUsage.setParent(parentToAssign);
+                }
                 return functionReferenceTypeUsage;
             }
         } catch (BadBytecode badBytecode) {

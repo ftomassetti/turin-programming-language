@@ -59,7 +59,7 @@ public abstract class TypeUsage extends Node {
     /**
      * If this is something invokable and can be invoked with the given arguments which type would be return?
      */
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
