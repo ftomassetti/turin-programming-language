@@ -179,22 +179,39 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         try {
-            SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
-            List<ReferenceTypeUsage> ancestors = new ArrayList<>();
-            if (ctClass.getSuperclass() != null) {
-                ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass());
-                ancestors.add(superTypeDefinition);
-                ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+            if (ctClass.getGenericSignature() != null) {
+                SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
+                List<ReferenceTypeUsage> ancestors = new ArrayList<>();
+                if (ctClass.getSuperclass() != null) {
+                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass());
+                    ancestors.add(superTypeDefinition);
+                    ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+                }
+                int i = 0;
+                for (CtClass interfaze : ctClass.getInterfaces()) {
+                    SignatureAttribute.ClassType genericInterfaze = classSignature.getInterfaces()[i];
+                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+                    ancestors.add(superTypeDefinition);
+                    ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+                    i++;
+                }
+                return ancestors;
+            } else {
+                List<ReferenceTypeUsage> ancestors = new ArrayList<>();
+                if (ctClass.getSuperclass() != null) {
+                    ReferenceTypeUsage superTypeDefinition = (ReferenceTypeUsage) toTypeUsage(ctClass.getSuperclass());
+                    ancestors.add(superTypeDefinition);
+                    ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+                }
+                int i = 0;
+                for (CtClass interfaze : ctClass.getInterfaces()) {
+                    ReferenceTypeUsage superTypeDefinition = (ReferenceTypeUsage)toTypeUsage(interfaze);
+                    ancestors.add(superTypeDefinition);
+                    ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
+                    i++;
+                }
+                return ancestors;
             }
-            int i = 0;
-            for (CtClass interfaze : ctClass.getInterfaces()) {
-                SignatureAttribute.ClassType genericInterfaze = classSignature.getInterfaces()[i];
-                ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
-                ancestors.add(superTypeDefinition);
-                ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
-                i++;
-            }
-            return ancestors;
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         } catch (BadBytecode badBytecode) {
