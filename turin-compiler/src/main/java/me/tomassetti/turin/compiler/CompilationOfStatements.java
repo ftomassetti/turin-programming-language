@@ -6,6 +6,7 @@ import me.tomassetti.turin.compiler.bytecode.returnop.ReturnValueBS;
 import me.tomassetti.turin.compiler.bytecode.returnop.ReturnVoidBS;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmTypeCategory;
+import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.statements.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -28,7 +29,8 @@ public class CompilationOfStatements {
             int pos = compilation.getLocalVarsSymbolTable().add(variableDeclaration.getName(), variableDeclaration);
             return new ComposedBytecodeSequence(ImmutableList.of(compilation.getPushUtils().pushExpression(variableDeclaration.getValue()), new LocalVarAssignmentBS(pos, JvmTypeCategory.from(variableDeclaration.varType(compilation.getResolver()), compilation.getResolver()))));
         } else if (statement instanceof ExpressionStatement) {
-            return compilation.executeEpression(((ExpressionStatement) statement).getExpression());
+            Expression expression = ((ExpressionStatement) statement).getExpression();
+            return new CompilationOfPush(compilation).pushExpression(expression);
         } else if (statement instanceof BlockStatement) {
             BlockStatement blockStatement = (BlockStatement) statement;
             List<BytecodeSequence> elements = blockStatement.getStatements().stream().map((s) -> compile(s)).collect(Collectors.toList());

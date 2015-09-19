@@ -249,27 +249,6 @@ public class Compilation {
         return ImmutableList.of(endClass(canonicalClassName));
     }
 
-    BytecodeSequence executeEpression(Expression expr) {
-        if (expr instanceof IntLiteral) {
-            return NoOp.getInstance();
-        } else if (expr instanceof StringLiteral) {
-            return NoOp.getInstance();
-        } else if (expr instanceof FunctionCall) {
-            FunctionCall functionCall = (FunctionCall)expr;
-            BytecodeSequence instancePush = pushUtils.pushInstance(functionCall);
-            List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
-                    .map((ap) -> pushUtils.pushExpression(ap))
-                    .collect(Collectors.toList());
-            Optional<JvmMethodDefinition> methodDefinition = resolver.findJvmDefinition(functionCall);
-            if (!methodDefinition.isPresent()) {
-                throw new UnsolvedMethodException(functionCall);
-            }
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition.get())).build());
-        } else {
-            throw new UnsupportedOperationException(expr.toString());
-        }
-    }
-
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
         TypeUsage pieceType = piece.calcType(resolver);
         if (pieceType.equals(ReferenceTypeUsage.STRING)) {

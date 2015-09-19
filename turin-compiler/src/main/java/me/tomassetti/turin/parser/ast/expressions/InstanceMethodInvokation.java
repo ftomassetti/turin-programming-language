@@ -22,6 +22,14 @@ public class InstanceMethodInvokation extends Invokable {
         this.methodName = methodName;
     }
 
+    @Override
+    public String toString() {
+        return "InstanceMethodInvokation{" +
+                "subject=" + subject +
+                ", methodName='" + methodName + '\'' +
+                '}';
+    }
+
     public Expression getSubject() {
         return subject;
     }
