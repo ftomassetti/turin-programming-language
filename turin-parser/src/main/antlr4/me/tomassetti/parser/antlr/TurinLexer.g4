@@ -7,6 +7,28 @@ lexer grammar TurinLexer;
 @lexer::members {
     public static final int WHITESPACE = 1;
     public static final int COMMENTS = 2;
+
+    private boolean useHiddenChannel = false;
+
+    public void setUseHiddenChannel(boolean value) {
+        this.useHiddenChannel = value;
+    }
+
+    public int whitespaceChannel() {
+        if (useHiddenChannel) {
+            return HIDDEN;
+        } else {
+            return WHITESPACE;
+        }
+    }
+
+    public int commentsChannel() {
+        if (useHiddenChannel) {
+            return HIDDEN;
+        } else {
+            return COMMENTS;
+        }
+    }
 }
 
 // It is suggested to define the token types reused in different mode.

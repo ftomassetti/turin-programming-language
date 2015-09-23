@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.parser.antlr.TurinLexer;
 import me.tomassetti.turin.parser.ast.TurinFile;
 
 import java.io.File;
