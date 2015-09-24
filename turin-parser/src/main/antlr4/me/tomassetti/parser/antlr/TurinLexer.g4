@@ -57,7 +57,6 @@ THROW_KW            : 'throw';
 TRY_KW              : 'try';
 CATCH_KW            : 'catch';
 
-
 // For definitions reused in mode in-interpolation we define and refer to fragments
 AND_KW              : F_AND;
 OR_KW               : F_OR;
@@ -106,6 +105,8 @@ COMMENT             : '/*' .*? '*/' -> channel(COMMENTS);
 
 LINE_COMMENT        : '//' ~[\r\n]* -> channel(COMMENTS);
 
+UNEXPECTED_CHAR     : . ;
+
 mode IN_STRING;
 
 STRING_STOP         : '"' -> popMode;
@@ -147,6 +148,7 @@ I_MOREEQ            : '>=' -> type(RELOP);
 I_MORE              : '>'  -> type(RELOP);
 I_STRING_START      : '"' -> type(STRING_START), pushMode(IN_STRING);
 I_WS                : (' ' | '\t')+ -> type(WS), channel(WHITESPACE);
+I_UNEXPECTED_CHAR   : . -> type(UNEXPECTED_CHAR);
 
 fragment F_AND            : 'and';
 fragment F_OR             : 'or';

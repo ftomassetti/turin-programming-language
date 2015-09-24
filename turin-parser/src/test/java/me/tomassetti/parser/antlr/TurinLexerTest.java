@@ -53,6 +53,9 @@ public class TurinLexerTest {
         List<Token> tokens = new ArrayList<>();
         Token token;
         while ((token = turinLexer.nextToken()).getType() != -1) {
+            if (token.getType() == TurinLexer.UNEXPECTED_CHAR) {
+                errors.add(TurinLexer.UNEXPECTED_CHAR);
+            }
             tokens.add(token);
         }
         assertTrue(errors.size() > 0);
