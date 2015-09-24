@@ -38,6 +38,7 @@ tokens { VALUE_ID, TYPE_ID, INT, LPAREN, RPAREN, COMMA, RELOP, AND_KW, OR_KW, NO
 NAMESPACE_KW        : 'namespace';
 PROGRAM_KW          : 'program';
 PROPERTY_KW         : 'property';
+DEFAULT_KW          : 'default';
 TYPE_KW             : 'type';
 VAL_KW              : 'val';
 HAS_KW              : 'has';

@@ -4,5 +4,5 @@ property String name
 
 type MangaCharacter {
     has name
-    has UInt age
+    UInt age
 }
