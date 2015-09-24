@@ -67,13 +67,13 @@ methodBody:
 //
 
 topLevelPropertyDeclaration:
-    PROPERTY_KW type=typeUsage COLON name=VALUE_ID nls;
+    PROPERTY_KW type=typeUsage name=VALUE_ID nls;
 
 topLevelFunctionDeclaration:
     type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
 
 inTypePropertyDeclaration:
-    HAS_KW type=typeUsage COLON name=VALUE_ID nls;
+    HAS_KW type=typeUsage name=VALUE_ID nls;
 
 propertyReference:
     HAS_KW name=VALUE_ID nls;

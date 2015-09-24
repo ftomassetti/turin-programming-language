@@ -1,8 +1,8 @@
 namespace manga
 
-property String : name
+property String name
 
 type MangaCharacter {
     has name
-    has UInt : age
+    has UInt age
 }

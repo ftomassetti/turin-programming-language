@@ -1,41 +1,41 @@
 namespace examples
 
 type UseBoolean {
-    has Boolean : b
+    has Boolean b
     String toString() = "#{b}"
 }
 
 type UseChar {
-    has Char : c
+    has Char c
     String toString() = "#{c}"
 }
 
 type UseByte {
-    has Byte : b
+    has Byte b
     String toString() = "#{b}"
 }
 
 type UseShort {
-    has Short : s
+    has Short s
     String toString() = "#{s}"
 }
 
 type UseInt {
-    has Int : i
+    has Int i
     String toString() = "#{i}"
 }
 
 type UseLong {
-    has Long : l
+    has Long l
     String toString() = "#{l}"
 }
 
 type UseFloat {
-    has Float : f
+    has Float f
     String toString() = "#{f}"
 }
 
 type UseDouble {
-    has Double : d
+    has Double d
     String toString() = "#{d}"
 }
