@@ -89,6 +89,9 @@ SLASH               : '/';
 PLUS                : '+';
 MINUS               : '-';
 
+PLACEHOLDER         : '_';
+NAME_PLACEHOLDER    : '_name';
+
 PRIMITIVE_TYPE      : F_PRIMITIVE_TYPE;
 BASIC_TYPE          : F_BASIC_TYPE;
 
