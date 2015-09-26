@@ -1,0 +1,20 @@
+namespace manga
+
+type Foo {
+   Int a
+   Int b = 10
+   Int c default 5
+   Int d default 7
+}
+
+Foo callMe(Int a, Int c) = Foo(a, c)
+
+Foo foo1() = {
+    val foo = Foo(1)
+    foo.setA(*=Foo(23))
+    return foo
+}
+
+Foo foo2() = callMe(*=Foo(1, 15))
+Foo foo3() = callMe(*=Foo(1, d=15))
+
