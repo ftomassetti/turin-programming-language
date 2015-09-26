@@ -96,7 +96,7 @@ public class CompilationOfPush {
                 compilation.appendToStringBuilder(piece, elements);
             }
 
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false, false)));
             return new ComposedBytecodeSequence(elements);
         } else if (expr instanceof ValueReference) {
             ValueReference valueReference = (ValueReference) expr;

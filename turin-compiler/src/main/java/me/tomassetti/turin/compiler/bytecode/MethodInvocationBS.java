@@ -23,8 +23,13 @@ public class MethodInvocationBS extends BytecodeSequence {
             mv.visitMethodInsn(INVOKESTATIC, jvmMethodDefinition.getOwnerInternalName(),
                     jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
         } else {
-            mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getOwnerInternalName(),
-                    jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
+            if (jvmMethodDefinition.isDeclaredOnInterface()) {
+                mv.visitMethodInsn(INVOKEINTERFACE, jvmMethodDefinition.getOwnerInternalName(),
+                        jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), true);
+            } else {
+                mv.visitMethodInsn(INVOKEVIRTUAL, jvmMethodDefinition.getOwnerInternalName(),
+                        jvmMethodDefinition.getName(), jvmMethodDefinition.getDescriptor(), false);
+            }
         }
     }
 

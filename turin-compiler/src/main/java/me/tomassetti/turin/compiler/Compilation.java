@@ -138,7 +138,7 @@ public class Compilation {
 
             appendToStringBuilder(new StringLiteral("}"), elements);
 
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false, false)));
             new ComposedBytecodeSequence(elements).operate(mv);
         }
         mv.visitInsn(ARETURN);
@@ -253,28 +253,28 @@ public class Compilation {
         TypeUsage pieceType = piece.calcType(resolver);
         if (pieceType.equals(ReferenceTypeUsage.STRING)) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isReference()) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(BasicTypeUsage.UINT) || (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt())) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.BOOLEAN)) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.CHAR)) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.LONG)) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(J)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(J)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.FLOAT)) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(F)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(F)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.DOUBLE)) {
             elements.add(pushUtils.pushExpression(piece));
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(D)Ljava/lang/StringBuilder;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(D)Ljava/lang/StringBuilder;", false, false)));
         } else {
             throw new UnsupportedOperationException(pieceType.toString());
         }

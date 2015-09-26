@@ -61,7 +61,9 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         try {
-            return JavassistTypeDefinitionFactory.toMethodDefinition(JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this));
+            return JavassistTypeDefinitionFactory.toMethodDefinition(
+                    JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this),
+                    ctClass.isInterface());
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }

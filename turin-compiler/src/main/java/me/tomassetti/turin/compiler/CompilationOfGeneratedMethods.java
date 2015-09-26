@@ -1,15 +1,16 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
-import me.tomassetti.turin.compiler.bytecode.NewInvocationBS;
-import me.tomassetti.turin.compiler.bytecode.ThrowBS;
+import me.tomassetti.turin.compiler.bytecode.*;
+import me.tomassetti.turin.compiler.bytecode.logicalop.CastBS;
+import me.tomassetti.turin.compiler.bytecode.pushop.PushLocalVar;
 import me.tomassetti.turin.compiler.bytecode.pushop.PushStringConst;
 import me.tomassetti.turin.compiler.bytecode.pushop.PushThis;
 import me.tomassetti.turin.compiler.bytecode.returnop.ReturnFalseBS;
 import me.tomassetti.turin.compiler.bytecode.returnop.ReturnTrueBS;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
+import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
@@ -124,9 +125,50 @@ public class CompilationOfGeneratedMethods {
 
         // now we should get values from the defaultParamsMap and assign them
         // to fields
-        TODO
-        we probably want to create a
-                we should also enforce the constraints
+        if (typeDefinition.hasDefaultProperties(compilation.getResolver())) {
+            int localVarIndex = 1 + typeDefinition.propertiesAppearingInConstructor(compilation.getResolver()).size();
+            for (Property property : typeDefinition.defaultPropeties(compilation.getResolver())) {
+                JvmType jvmType = property.getTypeUsage().jvmType(compilation.getResolver());
+                BytecodeSequence isPropertyInMap = new ComposedBytecodeSequence(
+                        // we push the map
+                        new PushLocalVar(Opcodes.ALOAD, localVarIndex),
+                        new PushStringConst(property.getName()),
+                        new MethodInvocationBS(new JvmMethodDefinition("java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", false, true)));
+                BytecodeSequence getSequence = new ComposedBytecodeSequence(
+                    // we push the map
+                    new PushLocalVar(Opcodes.ALOAD, localVarIndex),
+                    new PushStringConst(property.getName()),
+                    new MethodInvocationBS(new JvmMethodDefinition("java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false, true))
+                );
+                String propertyBoxedType = property.getTypeUsage().isPrimitive() ?
+                          property.getTypeUsage().asPrimitiveTypeUsage().getBoxType().jvmType(compilation.getResolver()).getInternalName()
+                        : property.getTypeUsage().jvmType(compilation.getResolver()).getInternalName();
+                BytecodeSequence assignPropertyFromMap = new ComposedBytecodeSequence(
+                        PushThis.getInstance(),
+                        getSequence,
+                        new CastBS(propertyBoxedType),
+                        property.getTypeUsage().isPrimitive() ?
+                                  new UnboxBS(property.getTypeUsage().jvmType(compilation.getResolver()))
+                                : NoOp.getInstance(),
+                        new BytecodeSequence() {
+                            @Override
+                            public void operate(MethodVisitor mv) {
+                                mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
+                            }
+                        });
+                BytecodeSequence assignPropertyFromDefaultValue =  new ComposedBytecodeSequence(
+                        PushThis.getInstance(),
+                        compilation.getPushUtils().pushExpression(property.getDefaultValue().get()),
+                        new BytecodeSequence() {
+                            @Override
+                            public void operate(MethodVisitor mv) {
+                                mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
+                            }
+                        });
+                new IfBS(isPropertyInMap, assignPropertyFromMap, assignPropertyFromDefaultValue).operate(mv);
+            }
+        }
+        // TODO we should also enforce the constraints
 
         mv.visitInsn(Opcodes.RETURN);
         // calculated for us

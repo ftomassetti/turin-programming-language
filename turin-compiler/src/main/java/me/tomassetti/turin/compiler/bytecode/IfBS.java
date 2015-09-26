@@ -1,9 +1,11 @@
 package me.tomassetti.turin.compiler.bytecode;
 
+import com.google.common.collect.ImmutableList;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.Collections;
 import java.util.List;
 
 public class IfBS extends BytecodeSequence {
@@ -14,6 +16,10 @@ public class IfBS extends BytecodeSequence {
     // they just push the values
     private List<BytecodeSequence> elifConditions;
     private List<BytecodeSequence> elifBodys;
+
+    public IfBS(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, BytecodeSequence elseBody) {
+        this(pushIfCondition, ifBody, Collections.emptyList(), Collections.emptyList(), elseBody);
+    }
 
     public IfBS(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, List<BytecodeSequence> elifConditions, List<BytecodeSequence> elifBodys, BytecodeSequence elseBody) {
         if (elifConditions.size() != elifBodys.size()) {

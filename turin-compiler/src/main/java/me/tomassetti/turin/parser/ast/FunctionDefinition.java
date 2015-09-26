@@ -30,7 +30,7 @@ public class FunctionDefinition extends InvokableDefinition implements Named {
     public JvmMethodDefinition jvmMethodDefinition(SymbolResolver resolver) {
         String qName = this.contextName() + ".Function_" + name;
         String descriptor = "(" + String.join("", parameters.stream().map((fp)->fp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList())) + ")" + returnType.jvmType(resolver).getDescriptor();
-        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), "invoke", descriptor, true);
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), "invoke", descriptor, true, false);
     }
 
     public boolean match(List<JvmType> argsTypes, SymbolResolver resolver) {

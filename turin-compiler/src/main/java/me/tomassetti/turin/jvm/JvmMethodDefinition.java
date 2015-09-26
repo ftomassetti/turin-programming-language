@@ -1,8 +1,5 @@
 package me.tomassetti.turin.jvm;
 
-import javassist.bytecode.SignatureAttribute;
-import org.objectweb.asm.signature.SignatureReader;
-import org.objectweb.asm.signature.SignatureVisitor;
 import sun.reflect.generics.parser.SignatureParser;
 import sun.reflect.generics.tree.ClassTypeSignature;
 import sun.reflect.generics.tree.MethodTypeSignature;
@@ -11,10 +8,12 @@ import sun.reflect.generics.tree.TypeSignature;
 public class JvmMethodDefinition extends JvmInvokableDefinition {
 
     private boolean _static;
+    private boolean declaredOnInterface;
 
-    public JvmMethodDefinition(String ownerInternalName, String methodName, String descriptor, boolean _static) {
+    public JvmMethodDefinition(String ownerInternalName, String methodName, String descriptor, boolean _static, boolean declaredOnInterface) {
         super(ownerInternalName, methodName, descriptor);
         this._static = _static;
+        this.declaredOnInterface = declaredOnInterface;
     }
 
     public boolean isStatic() {
@@ -30,5 +29,9 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
             throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
         }
         //return new JvmType().isPrimitive();
+    }
+
+    public boolean isDeclaredOnInterface() {
+        return declaredOnInterface;
     }
 }

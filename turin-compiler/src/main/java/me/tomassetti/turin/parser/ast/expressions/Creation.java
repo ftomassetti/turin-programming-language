@@ -152,14 +152,14 @@ public class Creation extends Invokable {
         if (turinType.hasDefaultProperties(resolver)) {
             Expression mapCreation = new Creation("turin.collections.MapBuilder", Collections.emptyList());
             for (Property property : turinType.defaultPropeties(resolver)) {
-                List<ActualParam> params = new ArrayList<>();
-                params.add(new ActualParam(new StringLiteral(property.getName())));
                 if (paramsAssigned.containsKey(property.getName())) {
+                    List<ActualParam> params = new ArrayList<>();
+                    params.add(new ActualParam(new StringLiteral(property.getName())));
                     params.add(new ActualParam(paramsAssigned.get(property.getName()).getValue()));
-                } else {
+                    mapCreation = new InstanceMethodInvokation(mapCreation, "put", params);
+                }/* else {
                     params.add(new ActualParam(property.getDefaultValue().get()));
-                }
-                mapCreation = new InstanceMethodInvokation(mapCreation, "put", params);
+                }*/
             }
             mapCreation = new InstanceMethodInvokation(mapCreation, "build", ImmutableList.of());
             ActualParam mapForDefaultParams = new ActualParam(mapCreation);

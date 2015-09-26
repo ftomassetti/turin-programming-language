@@ -59,10 +59,15 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return Optional.empty();
     }
 
+    public TypeUsage getBoxType() {
+        return boxType;
+    }
+
     private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
         this.name = name;
         this.jvmType = jvmType;
         this.boxType = boxType;
+
     }
 
     private TypeUsage boxType;
