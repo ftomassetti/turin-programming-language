@@ -52,6 +52,11 @@ public class Creation extends Invokable {
         return result;
     }
 
+    @Override
+    public boolean isOnOverloaded(SymbolResolver resolver) {
+        return resolver.getTypeDefinitionIn(typeName, this, resolver).hasManyConstructors();
+    }
+
     public Creation(String typeName, List<ActualParam> actualParams) {
         super(actualParams);
         originalParams = actualParams;
@@ -95,7 +100,7 @@ public class Creation extends Invokable {
     private void desugarizeCreationOfTurinType(SymbolResolver resolver, TurinTypeDefinition turinType) {
         // all named parameters should be after the named ones
         if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
-            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
+            throw new IllegalArgumentException("Named params should all be grouped after the positional ones:" + actualParams);
         }
 
         Map<String, ActualParam> paramsAssigned = new HashMap<>();

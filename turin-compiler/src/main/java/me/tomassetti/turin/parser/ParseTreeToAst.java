@@ -421,22 +421,27 @@ class ParseTreeToAst {
         return toAst(stringInterpolationElementContext.expression());
     }
 
-    private Creation toAst(TurinParser.CreationContext creation) {
+    private Creation toAst(TurinParser.CreationContext ctx) {
         String name;
-        if (creation.pakage != null) {
-            name = toAst(creation.pakage).qualifiedName() + "." + creation.name.getText();
+        if (ctx.pakage != null) {
+            name = toAst(ctx.pakage).qualifiedName() + "." + ctx.name.getText();
         } else {
-            name = creation.name.getText();
+            name = ctx.name.getText();
         }
-        return new Creation(name, creation.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+        Creation creation = new Creation(name, ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+        getPositionFrom(creation, ctx);
+        return creation;
     }
 
     private ActualParam toAst(TurinParser.ActualParamContext apCtx) {
+        ActualParam actualParam;
         if (apCtx.name != null) {
-            return new ActualParam(apCtx.name.getText(), toAst(apCtx.expression()));
+            actualParam = new ActualParam(apCtx.name.getText(), toAst(apCtx.expression()));
         } else {
-            return new ActualParam(toAst(apCtx.expression()));
+            actualParam = new ActualParam(toAst(apCtx.expression()), apCtx.asterisk != null);
         }
+        getPositionFrom(actualParam, apCtx);
+        return actualParam;
     }
 
     private FunctionCall toAstFunctionCall(TurinParser.ExpressionContext functionCallContext) {

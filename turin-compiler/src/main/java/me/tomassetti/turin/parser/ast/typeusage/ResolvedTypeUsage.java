@@ -24,6 +24,11 @@ public class ResolvedTypeUsage extends TypeUsage {
     }
 
     @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return typeDefinition.isMethodOverloaded(methodName);
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
     }

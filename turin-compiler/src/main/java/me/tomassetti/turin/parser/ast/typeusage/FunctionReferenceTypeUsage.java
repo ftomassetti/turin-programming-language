@@ -34,6 +34,11 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
         return returnType;
     }
 
+    @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
+    }
+
     public FunctionReferenceTypeUsage(List<TypeUsage> parameterTypes, TypeUsage returnType) {
         this.parameterTypes = parameterTypes;
         this.parameterTypes.forEach((pt)->pt.setParent(FunctionReferenceTypeUsage.this));

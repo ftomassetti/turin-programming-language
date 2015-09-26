@@ -143,6 +143,11 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return this;
     }
 
+    @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
+    }
+
     public boolean isLong() {
         return this == PrimitiveTypeUsage.LONG;
     }

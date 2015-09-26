@@ -10,7 +10,7 @@ public class ParamUtils {
     public static boolean allNamedParamsAreAtTheEnd(List<ActualParam> actualParams) {
         boolean findNamed = false;
         for (ActualParam actualParam : actualParams) {
-            if (findNamed && !actualParam.isNamed()) {
+            if (findNamed && (!actualParam.isNamed() && !actualParam.isAsterisk())) {
                 return false;
             }
             findNamed = findNamed || actualParam.isNamed();
@@ -22,10 +22,10 @@ public class ParamUtils {
         List<ActualParam> res = new ArrayList<>();
         boolean findNamed = false;
         for (ActualParam actualParam : actualParams) {
-            if (findNamed && !actualParam.isNamed()) {
+            if (findNamed && (!actualParam.isNamed() && !actualParam.isAsterisk())) {
                 throw new IllegalArgumentException();
             }
-            if (!actualParam.isNamed()) {
+            if (!actualParam.isNamed() && !actualParam.isAsterisk()) {
                 res.add(actualParam);
             }
             findNamed = findNamed || actualParam.isNamed();
@@ -37,10 +37,10 @@ public class ParamUtils {
         List<ActualParam> res = new ArrayList<>();
         boolean findNamed = false;
         for (ActualParam actualParam : actualParams) {
-            if (findNamed && !actualParam.isNamed()) {
+            if (findNamed && (!actualParam.isNamed() && !actualParam.isAsterisk())) {
                 throw new IllegalArgumentException();
             }
-            if (actualParam.isNamed()) {
+            if (actualParam.isNamed() && !actualParam.isAsterisk()) {
                 res.add(actualParam);
             }
             findNamed = findNamed || actualParam.isNamed();

@@ -152,13 +152,23 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     @Override
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
-        // TODO to be implemented
-        throw new UnsupportedOperationException();
+        // TODO consider superclasses
+        return ImmutableList.of(ReferenceTypeUsage.OBJECT);
     }
 
     @Override
     public boolean isInterface() {
         // TODO when it will be possible to declare interface fix this
+        return false;
+    }
+
+    @Override
+    public boolean hasManyConstructors() {
+        return false;
+    }
+
+    @Override
+    public boolean isMethodOverloaded(String methodName) {
         return false;
     }
 

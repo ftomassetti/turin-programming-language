@@ -76,6 +76,16 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public boolean hasManyConstructors() {
+        return clazz.getConstructors().length > 1;
+    }
+
+    @Override
+    public boolean isMethodOverloaded(String methodName) {
+        return Arrays.stream(clazz.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
+    }
+
+    @Override
     public TypeUsage getField(String fieldName, boolean staticContext) {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {

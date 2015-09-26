@@ -54,6 +54,16 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public boolean hasManyConstructors() {
+        return ctClass.getConstructors().length > 1;
+    }
+
+    @Override
+    public boolean isMethodOverloaded(String methodName) {
+        return Arrays.stream(ctClass.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
+    }
+
+    @Override
     public String getQualifiedName() {
         return ctClass.getName();
     }

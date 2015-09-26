@@ -61,4 +61,8 @@ public class FunctionCall extends Invokable {
         return function.calcType(resolver).returnTypeWhenInvokedWith(actualParams, resolver);
     }
 
+    @Override
+    public boolean isOnOverloaded(SymbolResolver resolver) {
+        return function.calcType(resolver).isOverloaded();
+    }
 }

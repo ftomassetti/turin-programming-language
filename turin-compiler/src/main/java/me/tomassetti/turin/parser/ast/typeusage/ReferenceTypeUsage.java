@@ -184,4 +184,9 @@ public class ReferenceTypeUsage extends TypeUsage {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
         return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
     }
+
+    @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return getTypeDefinition(resolver).isMethodOverloaded(methodName);
+    }
 }
