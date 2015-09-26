@@ -100,7 +100,7 @@ public class TurinTypeDefinition extends TypeDefinition {
 
         // use the unnamed params
         if (unnamedParams.size() > propertiesWhichCanBeAssignedWithoutName(resolver).size()) {
-            throw new IllegalArgumentException("Too many unnamed params: " + actualParams);
+            throw new UnsolvedConstructorException(getQualifiedName(), actualParams, "Too many unnamed params: " + actualParams);
         }
         int i = 0;
         for (ActualParam param : unnamedParams) {
@@ -118,7 +118,7 @@ public class TurinTypeDefinition extends TypeDefinition {
                 throw new IllegalArgumentException("Property " + param.getName() + " assigned several times");
             }
             if (!validNames.containsKey(param.getName())) {
-                throw new IllegalArgumentException("Unknown property " + param.getName());
+                throw new UnsolvedConstructorException(getQualifiedName(), actualParams, "Unknown property " + param.getName());
             }
             if (!param.getValue().calcType(resolver).canBeAssignedTo(validNames.get(param.getName()).getTypeUsage(), resolver)){
                 throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
