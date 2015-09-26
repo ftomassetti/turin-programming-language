@@ -19,59 +19,45 @@ import static org.junit.Assert.*;
 public class InitialValuesCompilationTest extends AbstractCompilerTest {
 
     @Test
-    public void compileThrowStatement() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
-        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/throw_statement.to"));
+    public void theConstructorDoNotConsiderThePropertiesWithInitialValues() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/initial_values.to"));
 
         // generate bytecode
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(1, classFileDefinitions.size());
+        assertEquals(2, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+        Class typeClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
-        assertEquals(0, functionClass.getConstructors().length);
-
-        Method invoke = functionClass.getMethod("invoke", String.class);
-        try {
-            invoke.invoke(null, "foo");
-            fail("exception should have been thrown");
-        } catch (InvocationTargetException e) {
-            assertTrue(e.getTargetException() instanceof UnsupportedOperationException);
-            UnsupportedOperationException unsupportedOperationException = (UnsupportedOperationException)e.getTargetException();
-            assertEquals("To be implemented", unsupportedOperationException.getMessage());
-        }
+        saveClassFile(classFileDefinitions.get(0), "tmp");
+        assertEquals(1, typeClass.getConstructors().length);
+        assertEquals(2, typeClass.getConstructors()[0].getParameterCount());
+        assertEquals(int.class, typeClass.getConstructors()[0].getParameterTypes()[0]);
+        assertEquals(int.class, typeClass.getConstructors()[0].getParameterTypes()[1]);
     }
 
     @Test
-    public void throwStatementDoesNotAcceptSomethingWhichIsNotAnException() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
-        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/throw_statement_using_string.to"));
+    public void initialValuesAreSetCorrectly() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/initial_values.to"));
 
-        ErrorCollector errorCollector = EasyMock.createMock(ErrorCollector.class);
-        errorCollector.recordSemanticError(Position.create(4, 10, 4, 29), ThrowStatement.ERR_MESSAGE);
-        EasyMock.replay(errorCollector);
-
-        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, errorCollector);
-
-        EasyMock.verify(errorCollector);
-    }
-
-    @Test
-    public void compileTryCatchStatement() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
-        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/try_catch_statement.to"));
-
+        // generate bytecode
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(1, classFileDefinitions.size());
+        assertEquals(2, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+        Class typeClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
-        Method method = functionClass.getMethod("invoke", int.class);
-        assertEquals(-1, method.invoke(null, 0));
-        assertEquals(-2, method.invoke(null, 1));
-        assertEquals(2, method.invoke(null, 2));
+        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(1).getName(),
+                classFileDefinitions.get(1).getBytecode());
+
+        Method invoke = functionClass.getMethod("invoke");
+        Object result = invoke.invoke(null);
+        assertEquals(1, typeClass.getMethod("getA").invoke(result));
+        assertEquals(10, typeClass.getMethod("getB").invoke(result));
+        assertEquals(12, typeClass.getMethod("getC").invoke(result));
+        assertEquals(2, typeClass.getMethod("getD").invoke(result));
     }
 
 }

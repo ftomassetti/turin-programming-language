@@ -4,6 +4,8 @@ import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
+import java.util.Optional;
+
 public class ExamplesAst {
 
     public static TurinFile registryAst() {
@@ -16,20 +18,20 @@ public class ExamplesAst {
 
         TurinTypeDefinition person = new TurinTypeDefinition("Person");
         person.setPosition(Position.create(0, 0, 0, 0));
-        PropertyDefinition firstNameProperty = new PropertyDefinition("firstName", new ReferenceTypeUsage("String"));
+        PropertyDefinition firstNameProperty = new PropertyDefinition("firstName", new ReferenceTypeUsage("String"), Optional.empty(), Optional.empty());
         person.add(firstNameProperty);
-        PropertyDefinition lastNameProperty = new PropertyDefinition("lastName", new ReferenceTypeUsage("String"));
+        PropertyDefinition lastNameProperty = new PropertyDefinition("lastName", new ReferenceTypeUsage("String"), Optional.empty(), Optional.empty());
         person.add(lastNameProperty);
 
         TurinTypeDefinition address = new TurinTypeDefinition("Address");
         address.setPosition(Position.create(0, 0, 0, 0));
-        PropertyDefinition streetProperty = new PropertyDefinition("street", new ReferenceTypeUsage("String"));
+        PropertyDefinition streetProperty = new PropertyDefinition("street", new ReferenceTypeUsage("String"), Optional.empty(), Optional.empty());
         address.add(streetProperty);
-        PropertyDefinition numberProperty = new PropertyDefinition("number", BasicTypeUsage.UINT);
+        PropertyDefinition numberProperty = new PropertyDefinition("number", BasicTypeUsage.UINT, Optional.empty(), Optional.empty());
         address.add(numberProperty);
-        PropertyDefinition cityProperty = new PropertyDefinition("city", new ReferenceTypeUsage("String"));
+        PropertyDefinition cityProperty = new PropertyDefinition("city", new ReferenceTypeUsage("String"), Optional.empty(), Optional.empty());
         address.add(cityProperty);
-        PropertyDefinition zipProperty = new PropertyDefinition("zip", BasicTypeUsage.UINT);
+        PropertyDefinition zipProperty = new PropertyDefinition("zip", BasicTypeUsage.UINT, Optional.empty(), Optional.empty());
         address.add(zipProperty);
 
         turinFile.add(person);
