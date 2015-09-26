@@ -4,14 +4,18 @@ import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeVariableTypeUsage;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +50,62 @@ class ReflectionBasedMethodResolution {
         }
     }
 
+    public static List<FormalParameter> formalParameters(Constructor constructor) {
+        List<FormalParameter> formalParameters = new ArrayList<>();
+        int i=0;
+        for (Type type : constructor.getGenericParameterTypes()) {
+            formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+            i++;
+        }
+        return formalParameters;
+    }
+
+    public static List<FormalParameter> formalParameters(Method method) {
+        List<FormalParameter> formalParameters = new ArrayList<>();
+        int i=0;
+        for (Type type : method.getGenericParameterTypes()) {
+            formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+            i++;
+        }
+        return formalParameters;
+    }
+
+    public static TypeUsage toTypeUsage(Type type) {
+        if (type instanceof Class) {
+            Class clazz = (Class)type;
+            if (clazz.isPrimitive()) {
+                return PrimitiveTypeUsage.getByName(clazz.getName());
+            }
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
+            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+            return referenceTypeUsage;
+        } else if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
+            List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+            return new ReferenceTypeUsage(typeDefinition, typeParams);
+        } else if (type instanceof TypeVariable) {
+            TypeVariable typeVariable = (TypeVariable)type;
+            return toTypeUsage(typeVariable);
+        } else {
+            throw new UnsupportedOperationException(type.getClass().getCanonicalName());
+        }
+    }
+
+    public static TypeUsage toTypeUsage(TypeVariable typeVariable) {
+        TypeVariableTypeUsage.GenericDeclaration genericDeclaration = null;
+        List<TypeUsage> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b)).collect(Collectors.toList());
+        if (typeVariable.getGenericDeclaration() instanceof Class) {
+            throw new UnsupportedOperationException();
+        } else if (typeVariable.getGenericDeclaration() instanceof Method) {
+            Method method = (Method)typeVariable.getGenericDeclaration();
+            genericDeclaration = TypeVariableTypeUsage.GenericDeclaration.onMethod(method.getDeclaringClass().getCanonicalName(), ReflectionTypeDefinitionFactory.toMethodDefinition(method).getDescriptor());
+        } else {
+            throw new UnsupportedOperationException(typeVariable.getGenericDeclaration().getClass().getCanonicalName());
+        }
+        return new TypeVariableTypeUsage(genericDeclaration, typeVariable.getName(), bounds);
+    }
+
     public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
         List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m)->new MethodOrConstructor(m)).collect(Collectors.toList());
         MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, "constructor");
@@ -55,12 +115,33 @@ class ReflectionBasedMethodResolution {
         return ReflectionTypeDefinitionFactory.toConstructorDefinition(methodOrConstructor.constructor);
     }
 
+    public static Constructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
+        List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m)->new MethodOrConstructor(m)).collect(Collectors.toList());
+        MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, "constructor");
+        if (methodOrConstructor == null) {
+            throw new RuntimeException("unresolved constructor for " + argsTypes);
+        }
+        return methodOrConstructor.constructor;
+    }
+
     public static Method findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
         List<MethodOrConstructor> methodOrConstructors = methods.stream()
                 .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                 .filter((m) -> m.getName().equals(name))
                 .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
         MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, name);
+        if (methodOrConstructor == null) {
+            throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
+        }
+        return methodOrConstructor.method;
+    }
+
+    public static Method findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
+        List<MethodOrConstructor> methodOrConstructors = methods.stream()
+                .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
+                .filter((m) -> m.getName().equals(name))
+                .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
+        MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, name);
         if (methodOrConstructor == null) {
             throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
         }
@@ -91,6 +172,33 @@ class ReflectionBasedMethodResolution {
             return suitableMethods.get(0);
         } else {
             return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), resolver);
+        }
+    }
+
+    private static MethodOrConstructor findMethodAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {
+        List<MethodOrConstructor> suitableMethods = new ArrayList<>();
+        for (MethodOrConstructor method : methods) {
+            if (method.getParameterCount() == argsTypes.size()) {
+                boolean match = true;
+                for (int i = 0; i < argsTypes.size(); i++) {
+                    TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
+                    TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    if (!actualType.canBeAssignedTo(formalType, resolver)) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    suitableMethods.add(method);
+                }
+            }
+        }
+
+        if (suitableMethods.size() == 0) {
+            return null;
+        } else if (suitableMethods.size() == 1) {
+            return suitableMethods.get(0);
+        } else {
+            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, argsTypes, desc), resolver);
         }
     }
 

@@ -2,6 +2,8 @@ package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -64,5 +66,31 @@ public class FunctionCall extends Invokable {
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
         return function.calcType(resolver).isOverloaded();
+    }
+
+    @Override
+    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+        return function.findFormalParametersFor(this, resolver).get();
+    }
+
+    public String getName() {
+        if (function instanceof FieldAccess) {
+            return ((FieldAccess) function).getField();
+        }
+        throw new UnsupportedOperationException(function.getClass().getCanonicalName());
+    }
+
+    public boolean isStatic(SymbolResolver resolver) {
+        Node f = function;
+        if (f instanceof ValueReference) {
+            f = ((ValueReference) function).resolve(resolver);
+        }
+        if (f instanceof FieldAccess) {
+            return false;
+        }
+        if (f instanceof ReflectionBasedSetOfOverloadedMethods) {
+            return ((ReflectionBasedSetOfOverloadedMethods) f).isStatic();
+        }
+        throw new UnsupportedOperationException(f.getClass().getCanonicalName());
     }
 }

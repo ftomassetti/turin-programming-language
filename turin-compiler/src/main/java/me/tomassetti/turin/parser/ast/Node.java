@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -129,5 +130,9 @@ public abstract class Node {
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         // nothing to do
         return true;
+    }
+
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }

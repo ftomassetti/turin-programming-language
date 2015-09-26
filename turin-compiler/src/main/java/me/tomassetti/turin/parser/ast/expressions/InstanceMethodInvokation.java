@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -57,5 +58,14 @@ public class InstanceMethodInvokation extends Invokable {
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
         return subject.calcType(resolver).isMethodOverloaded(resolver, methodName);
+    }
+
+    @Override
+    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+        TypeUsage typeUsage = subject.calcType(resolver);
+        if (!typeUsage.isReference()) {
+            throw new UnsupportedOperationException();
+        }
+        return typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver).getMethodParams(methodName, originalParams, resolver, false);
     }
 }

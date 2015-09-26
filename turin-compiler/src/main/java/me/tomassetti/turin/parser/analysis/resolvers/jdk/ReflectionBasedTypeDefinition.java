@@ -1,24 +1,31 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.NotFoundException;
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jar.JavassistBasedMethodResolution;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeVariableTypeUsage;
+import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.parser.ast.typeusage.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 class ReflectionBasedTypeDefinition extends TypeDefinition {
+    @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        return super.findFormalParametersFor(invokable, resolver);
+    }
 
     @Override
     public String toString() {
@@ -83,6 +90,26 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     @Override
     public boolean isMethodOverloaded(String methodName) {
         return Arrays.stream(clazz.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
+    }
+
+    @Override
+    public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+        Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
+                actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
+        return formalParameters(constructor);
+    }
+
+    @Override
+    public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        return formalParameters(ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this));
+    }
+
+    private List<FormalParameter> formalParameters(Constructor constructor) {
+        return ReflectionBasedMethodResolution.formalParameters(constructor);
+    }
+
+    private List<FormalParameter> formalParameters(Method method) {
+        return ReflectionBasedMethodResolution.formalParameters(method);
     }
 
     @Override
@@ -172,35 +199,11 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     private static TypeUsage toTypeUsage(Type type) {
-        if (type instanceof Class) {
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
-            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
-            return referenceTypeUsage;
-        } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
-            List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
-            return new ReferenceTypeUsage(typeDefinition, typeParams);
-        } else if (type instanceof TypeVariable) {
-            TypeVariable typeVariable = (TypeVariable)type;
-            return toTypeUsage(typeVariable);
-        } else {
-            throw new UnsupportedOperationException(type.getClass().getCanonicalName());
-        }
+        return ReflectionBasedMethodResolution.toTypeUsage(type);
     }
 
     private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
-        TypeVariableTypeUsage.GenericDeclaration genericDeclaration = null;
-        List<TypeUsage> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b)).collect(Collectors.toList());
-        if (typeVariable.getGenericDeclaration() instanceof Class) {
-            throw new UnsupportedOperationException();
-        } else if (typeVariable.getGenericDeclaration() instanceof Method) {
-            Method method = (Method)typeVariable.getGenericDeclaration();
-            genericDeclaration = TypeVariableTypeUsage.GenericDeclaration.onMethod(method.getDeclaringClass().getCanonicalName(), ReflectionTypeDefinitionFactory.toMethodDefinition(method).getDescriptor());
-        } else {
-            throw new UnsupportedOperationException(typeVariable.getGenericDeclaration().getClass().getCanonicalName());
-        }
-        return new TypeVariableTypeUsage(genericDeclaration, typeVariable.getName(), bounds);
+        return ReflectionBasedMethodResolution.toTypeUsage(typeVariable);
     }
 
     @Override

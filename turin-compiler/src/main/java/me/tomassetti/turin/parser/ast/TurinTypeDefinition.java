@@ -58,7 +58,7 @@ public class TurinTypeDefinition extends TypeDefinition {
      * Properties which can be referred to in the constructor
      */
     public List<Property> assignableProperties(SymbolResolver resolver) {
-        return getDirectProperties(resolver);
+        return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue()).collect(Collectors.toList());
     }
 
     public List<Property> propertiesAppearingInConstructor(SymbolResolver resolver) {
@@ -170,6 +170,18 @@ public class TurinTypeDefinition extends TypeDefinition {
     @Override
     public boolean isMethodOverloaded(String methodName) {
         return false;
+    }
+
+    @Override
+    public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+        return this.assignableProperties(resolver).stream()
+                .map((p)->new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
     }
 
     private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, SymbolResolver resolver) {

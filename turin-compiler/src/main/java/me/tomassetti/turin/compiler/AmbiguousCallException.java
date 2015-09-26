@@ -2,6 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.List;
 
@@ -13,6 +14,12 @@ public class AmbiguousCallException extends RuntimeException {
     private Node context;
     private String name;
     private List<JvmType> paramList;
+
+    public AmbiguousCallException(Node context, List<ActualParam> argsTypes, String name) {
+        // FIXME
+        this.context = context;
+        this.name = name;
+    }
 
     public Node getContext() {
         return context;

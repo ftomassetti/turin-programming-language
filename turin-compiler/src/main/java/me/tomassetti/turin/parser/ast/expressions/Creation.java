@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -14,6 +15,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Creation extends Invokable {
@@ -57,9 +59,14 @@ public class Creation extends Invokable {
         return resolver.getTypeDefinitionIn(typeName, this, resolver).hasManyConstructors();
     }
 
+    @Override
+    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(typeName, this, resolver);
+        return typeDefinition.getConstructorParams(actualParams, resolver);
+    }
+
     public Creation(String typeName, List<ActualParam> actualParams) {
         super(actualParams);
-        originalParams = actualParams;
         this.typeName = typeName;
     }
 
@@ -82,95 +89,6 @@ public class Creation extends Invokable {
         return resolver.getTypeDefinitionIn(typeName, this, resolver).resolveConstructorCall(resolver, originalParams);
     }
 
-    public void desugarize(SymbolResolver resolver) {
-        if (desugarized) {
-            return;
-        }
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(typeName, this, resolver);
-        if (typeDefinition instanceof TurinTypeDefinition) {
-            TurinTypeDefinition turinTypeDefinition = (TurinTypeDefinition)typeDefinition;
-            desugarizeCreationOfTurinType(resolver, turinTypeDefinition);
-        }
-        desugarized = true;
-    }
 
-    private boolean desugarized = false;
-    private List<ActualParam> originalParams;
 
-    private void desugarizeCreationOfTurinType(SymbolResolver resolver, TurinTypeDefinition turinType) {
-        // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
-            throw new IllegalArgumentException("Named params should all be grouped after the positional ones:" + actualParams);
-        }
-
-        Map<String, ActualParam> paramsAssigned = new HashMap<>();
-
-        List<Property> propertiesWhichCanBeAssignedWithoutName = turinType.propertiesWhichCanBeAssignedWithoutName(resolver);
-        List<ActualParam> unnamedParams = ParamUtils.unnamedParams(actualParams);
-        List<ActualParam> namedParams = ParamUtils.namedParams(actualParams);
-
-        // use the unnamed params
-        if (unnamedParams.size() > turinType.propertiesWhichCanBeAssignedWithoutName(resolver).size()) {
-            throw new IllegalArgumentException("Too many unnamed params: " + actualParams);
-        }
-        int i = 0;
-        for (ActualParam param : unnamedParams) {
-            if (!param.getValue().calcType(resolver).canBeAssignedTo(propertiesWhichCanBeAssignedWithoutName.get(i).getTypeUsage(), resolver)){
-                throw new UnsolvedConstructorException(turinType.getQualifiedName(), actualParams);
-            }
-            paramsAssigned.put(propertiesWhichCanBeAssignedWithoutName.get(i).getName(), param);
-            i++;
-        }
-        // use the named params
-        Map<String, Property> validNames = new HashMap<>();
-        turinType.assignableProperties(resolver).forEach((p) ->validNames.put(p.getName(), p));
-        for (ActualParam param : namedParams) {
-            if (paramsAssigned.containsKey(param.getName())) {
-                throw new IllegalArgumentException("Property " + param.getName() + " assigned several times");
-            }
-            if (!validNames.containsKey(param.getName())) {
-                throw new IllegalArgumentException("Unknown property " + param.getName());
-            }
-            if (!param.getValue().calcType(resolver).canBeAssignedTo(validNames.get(param.getName()).getTypeUsage(), resolver)){
-                throw new UnsolvedConstructorException(turinType.getQualifiedName(), actualParams);
-            }
-            paramsAssigned.put(param.getName(), param);
-        }
-
-        // verify that all properties with no default or initial value have been assigned
-        for (Property property : turinType.propertiesAppearingInConstructor(resolver)) {
-            if (!paramsAssigned.containsKey(property.getName())) {
-                throw new IllegalArgumentException("Property not assigned: " + property.getName());
-            }
-        }
-
-        List<ActualParam> orderedParams = new ArrayList<>();
-        for (Property property : turinType.propertiesAppearingInConstructor(resolver)) {
-            ActualParam actualParam = paramsAssigned.get(property.getName());
-            if (actualParam.isNamed()) {
-                actualParam = actualParam.toUnnamed();
-                actualParam.setParent(this);
-            }
-            orderedParams.add(actualParam);
-        }
-        // add the map with the default params
-        if (turinType.hasDefaultProperties(resolver)) {
-            Expression mapCreation = new Creation("turin.collections.MapBuilder", Collections.emptyList());
-            for (Property property : turinType.defaultPropeties(resolver)) {
-                if (paramsAssigned.containsKey(property.getName())) {
-                    List<ActualParam> params = new ArrayList<>();
-                    params.add(new ActualParam(new StringLiteral(property.getName())));
-                    params.add(new ActualParam(paramsAssigned.get(property.getName()).getValue()));
-                    mapCreation = new InstanceMethodInvokation(mapCreation, "put", params);
-                }/* else {
-                    params.add(new ActualParam(property.getDefaultValue().get()));
-                }*/
-            }
-            mapCreation = new InstanceMethodInvokation(mapCreation, "build", ImmutableList.of());
-            ActualParam mapForDefaultParams = new ActualParam(mapCreation);
-            mapForDefaultParams.setParent(this);
-            orderedParams.add(mapForDefaultParams);
-        }
-        actualParams = orderedParams;
-    }
 }

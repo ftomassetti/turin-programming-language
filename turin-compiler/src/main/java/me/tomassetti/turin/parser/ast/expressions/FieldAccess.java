@@ -4,10 +4,13 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FieldAccess extends Expression {
 
@@ -68,5 +71,17 @@ public class FieldAccess extends Expression {
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of(subject);
+    }
+
+    @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        if (invokable instanceof Creation) {
+            //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
+            throw new UnsupportedOperationException();
+        } else if (invokable instanceof FunctionCall) {
+            return subject.calcType(resolver).findFormalParametersFor(invokable, resolver);
+        } else {
+            throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
+        }
     }
 }

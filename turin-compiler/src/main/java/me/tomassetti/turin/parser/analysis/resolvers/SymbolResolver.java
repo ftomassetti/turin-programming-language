@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.List;
 import java.util.Optional;
 
 /**

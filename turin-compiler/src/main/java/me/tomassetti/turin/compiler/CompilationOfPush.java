@@ -153,6 +153,7 @@ public class CompilationOfPush {
             ));
         } else if (expr instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall) expr;
+            functionCall.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushInstance(functionCall);
             List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
@@ -186,6 +187,7 @@ public class CompilationOfPush {
             }
         } else if (expr instanceof InstanceMethodInvokation) {
             InstanceMethodInvokation instanceMethodInvokation = (InstanceMethodInvokation) expr;
+            instanceMethodInvokation.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
             List<BytecodeSequence> argumentsPush = new ArrayList<>();
