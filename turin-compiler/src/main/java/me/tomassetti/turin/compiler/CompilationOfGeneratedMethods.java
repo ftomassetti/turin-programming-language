@@ -183,6 +183,8 @@ public class CompilationOfGeneratedMethods {
                         }
                     });
             new IfBS(isPropertyInMap, assignPropertyFromMap, assignPropertyFromDefaultValue).operate(mv);
+            JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType(resolver).getDescriptor(),false);
+            enforceConstraint(property, mv, jvmType, new PushInstanceField(jvmFieldDefinition));
         }
     }
 
