@@ -1,5 +1,7 @@
 package me.tomassetti.turin.jvm;
 
+import sun.reflect.generics.tree.TypeSignature;
+
 import java.util.Arrays;
 
 public final class JvmNameUtils {
@@ -94,4 +96,5 @@ public final class JvmNameUtils {
     public static boolean isSimpleName(String name) {
         return -1 == name.indexOf('.');
     }
+
 }
