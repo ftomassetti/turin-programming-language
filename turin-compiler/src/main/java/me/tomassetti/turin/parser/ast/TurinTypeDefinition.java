@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
@@ -53,37 +54,93 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver).size();
     }
 
+    /**
+     * Properties which can be referred to in the constructor
+     */
+    public List<Property> assignableProperties(SymbolResolver resolver) {
+        return getDirectProperties(resolver);
+    }
+
+    public List<Property> propertiesAppearingInConstructor(SymbolResolver resolver) {
+        return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue() && !p.hasDefaultValue()).collect(Collectors.toList());
+    }
+
+    public List<Property> nonDefaultPropeties(SymbolResolver resolver) {
+        return getDirectProperties(resolver).stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+    }
+
+    public List<Property> defaultPropeties(SymbolResolver resolver) {
+        return getDirectProperties(resolver).stream().filter((p)->p.hasDefaultValue()).collect(Collectors.toList());
+    }
+
+    public List<Property> propertiesWhichCanBeAssignedWithoutName(SymbolResolver resolver) {
+        return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue()).collect(Collectors.toList());
+    }
+
+    public boolean hasDefaultProperties(SymbolResolver resolver) {
+        return getDirectProperties(resolver).stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
+    }
+
+    public int numberOfPropertiesUsedByConstructor(SymbolResolver resolver){
+        return propertiesAppearingInConstructor(resolver).size() + (hasDefaultProperties(resolver) ? 1 : 0);
+    }
+
     @Override
     public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
-        if (actualParams.size() != numberOfProperties(resolver)) {
-            throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+        // all named parameters should be after the named ones
+        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
-        // no unnamed parameters after the named ones
-        boolean namedFound = false;
-        for (ActualParam actualParam : actualParams) {
-            if (namedFound && !actualParam.isNamed()){
-                throw new IllegalArgumentException();
-            }
-            if (!namedFound && actualParam.isNamed()){
-                namedFound = true;
-            }
+        Set<String> paramsAssigned = new HashSet<>();
+
+        List<Property> propertiesWhichCanBeAssignedWithoutName = propertiesWhichCanBeAssignedWithoutName(resolver);
+        List<ActualParam> unnamedParams = ParamUtils.unnamedParams(actualParams);
+        List<ActualParam> namedParams = ParamUtils.namedParams(actualParams);
+
+        // use the unnamed params
+        if (unnamedParams.size() > propertiesWhichCanBeAssignedWithoutName(resolver).size()) {
+            throw new IllegalArgumentException("Too many unnamed params: " + actualParams);
         }
-
-        List<TypeUsage> paramTypesInOrder = orderConstructorParamTypes(actualParams, resolver);
-
-        List<Property> properties = getDirectProperties(resolver);
-        for (int i=0;i<properties.size();i++){
-            if (!paramTypesInOrder.get(i).canBeAssignedTo(properties.get(i).getTypeUsage(), resolver)){
+        int i = 0;
+        for (ActualParam param : unnamedParams) {
+            if (!param.getValue().calcType(resolver).canBeAssignedTo(propertiesWhichCanBeAssignedWithoutName.get(i).getTypeUsage(), resolver)){
                 throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+            }
+            paramsAssigned.add(propertiesWhichCanBeAssignedWithoutName.get(i).getName());
+            i++;
+        }
+        // use the named params
+        Map<String, Property> validNames = new HashMap<>();
+        assignableProperties(resolver).forEach((p) ->validNames.put(p.getName(), p));
+        for (ActualParam param : namedParams) {
+            if (paramsAssigned.contains(param.getName())) {
+                throw new IllegalArgumentException("Property " + param.getName() + " assigned several times");
+            }
+            if (!validNames.containsKey(param.getName())) {
+                throw new IllegalArgumentException("Unknown property " + param.getName());
+            }
+            if (!param.getValue().calcType(resolver).canBeAssignedTo(validNames.get(param.getName()).getTypeUsage(), resolver)){
+                throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+            }
+            paramsAssigned.add(param.getName());
+        }
+
+        // verify that all properties with no default or initial value have been assigned
+        for (Property property : propertiesAppearingInConstructor(resolver)) {
+            if (!paramsAssigned.contains(property.getName())) {
+                throw new IllegalArgumentException("Property not assigned: " + property.getName());
             }
         }
 
         // For type defined in Turin we generate one single constructor so
         // it is easy to find it
-        List<String> paramSignatures = paramTypesInOrder.stream()
-                .map((p) -> p.jvmType(resolver).getSignature())
+        List<String> paramSignatures = propertiesAppearingInConstructor(resolver).stream()
+                .map((p) -> p.getTypeUsage().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
+        if (hasDefaultProperties(resolver)) {
+            paramSignatures.add("Ljava/util/Map;");
+        }
         return new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
     }
 

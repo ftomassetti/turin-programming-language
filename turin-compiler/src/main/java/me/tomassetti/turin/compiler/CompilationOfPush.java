@@ -164,6 +164,7 @@ public class CompilationOfPush {
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition.get())).build());
         } else if (expr instanceof Creation) {
             Creation creation = (Creation) expr;
+            creation.desugarize(compilation.getResolver());
             List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
@@ -186,13 +187,31 @@ public class CompilationOfPush {
         } else if (expr instanceof InstanceMethodInvokation) {
             InstanceMethodInvokation instanceMethodInvokation = (InstanceMethodInvokation) expr;
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
-            List<BytecodeSequence> argumentsPush = instanceMethodInvokation.getActualParamValuesInOrder().stream()
-                    .map((ap) -> pushExpression(ap))
-                    .collect(Collectors.toList());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
+            List<BytecodeSequence> argumentsPush = new ArrayList<>();
+            int i=0;
+            for (Expression value : instanceMethodInvokation.getActualParamValuesInOrder()) {
+                boolean isPrimitive = value.calcType(compilation.getResolver()).isPrimitive();
+                if (isPrimitive && !methodDefinition.isParamPrimitive(i)){
+                    // need boxing
+                    argumentsPush.add(pushExpression(box(value)));
+                } else {
+                    argumentsPush.add(pushExpression(value));
+                }
+                i++;
+            }
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
+        }
+    }
+
+    private Expression box(Expression value) {
+        PrimitiveTypeUsage typeUsage = value.calcType(compilation.getResolver()).asPrimitiveTypeUsage();
+        if (typeUsage.isInt()) {
+            return new Creation("java.lang.Integer", ImmutableList.of(new ActualParam(value)));
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 }

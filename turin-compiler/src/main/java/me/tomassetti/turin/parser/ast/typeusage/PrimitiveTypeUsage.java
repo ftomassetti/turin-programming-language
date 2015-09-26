@@ -20,19 +20,29 @@ public class PrimitiveTypeUsage extends TypeUsage {
     private String name;
     private JvmType jvmType;
 
-    public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"));
-    public static PrimitiveTypeUsage CHAR = new PrimitiveTypeUsage("char",  new JvmType("C"));
-    public static PrimitiveTypeUsage BYTE = new PrimitiveTypeUsage("byte",  new JvmType("B"));
-    public static PrimitiveTypeUsage SHORT = new PrimitiveTypeUsage("short",  new JvmType("S"));
-    public static PrimitiveTypeUsage INT = new PrimitiveTypeUsage("int",  new JvmType("I"));
-    public static PrimitiveTypeUsage LONG = new PrimitiveTypeUsage("long",  new JvmType("J"));
-    public static PrimitiveTypeUsage FLOAT = new PrimitiveTypeUsage("float",  new JvmType("F"));
-    public static PrimitiveTypeUsage DOUBLE = new PrimitiveTypeUsage("double",  new JvmType("D"));
+    public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),
+            new ReferenceTypeUsage(Boolean.class.getCanonicalName()));
+    public static PrimitiveTypeUsage CHAR = new PrimitiveTypeUsage("char",  new JvmType("C"),
+            new ReferenceTypeUsage(Character.class.getCanonicalName()));
+    public static PrimitiveTypeUsage BYTE = new PrimitiveTypeUsage("byte",  new JvmType("B"),
+            new ReferenceTypeUsage(Byte.class.getCanonicalName()));
+    public static PrimitiveTypeUsage SHORT = new PrimitiveTypeUsage("short",  new JvmType("S"),
+            new ReferenceTypeUsage(Short.class.getCanonicalName()));
+    public static PrimitiveTypeUsage INT = new PrimitiveTypeUsage("int",  new JvmType("I"),
+            new ReferenceTypeUsage(Integer.class.getCanonicalName()));
+    public static PrimitiveTypeUsage LONG = new PrimitiveTypeUsage("long",  new JvmType("J"),
+            new ReferenceTypeUsage(Long.class.getCanonicalName()));
+    public static PrimitiveTypeUsage FLOAT = new PrimitiveTypeUsage("float",  new JvmType("F"),
+            new ReferenceTypeUsage(Float.class.getCanonicalName()));
+    public static PrimitiveTypeUsage DOUBLE = new PrimitiveTypeUsage("double",  new JvmType("D"),
+            new ReferenceTypeUsage(Double.class.getCanonicalName()));
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
     public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
-        // TODO auto-boxing/unboxing should be considered, probably not here
+        if (other.equals(boxType) || other.equals(ReferenceTypeUsage.OBJECT)) {
+            return true;
+        }
         if (!other.isPrimitive()) {
             return false;
         }
@@ -49,10 +59,13 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return Optional.empty();
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
         this.name = name;
         this.jvmType = jvmType;
+        this.boxType = boxType;
     }
+
+    private TypeUsage boxType;
 
     @Override
     public JvmType jvmType(SymbolResolver resolver) {
@@ -139,5 +152,9 @@ public class PrimitiveTypeUsage extends TypeUsage {
 
     public boolean isStoredInInt() {
         return (this == BYTE || this == SHORT || this == INT);
+    }
+
+    public boolean isInt() {
+        return this == INT;
     }
 }

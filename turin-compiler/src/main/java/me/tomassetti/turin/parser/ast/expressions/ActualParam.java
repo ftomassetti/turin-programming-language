@@ -62,4 +62,8 @@ public class ActualParam extends Node {
     public boolean isNamed() {
         return name != null;
     }
+
+    public ActualParam toUnnamed() {
+        return new ActualParam(value);
+    }
 }

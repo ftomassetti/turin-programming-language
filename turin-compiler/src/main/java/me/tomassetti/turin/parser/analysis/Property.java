@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
+import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -18,17 +19,29 @@ public class Property extends Node {
 
     private String name;
     private TypeUsage typeUsage;
+    private Optional<Expression> initialValue;
+    private Optional<Expression> defaultValue;
 
-    private Property(String name, TypeUsage typeUsage) {
+    public Optional<Expression> getInitialValue() {
+        return initialValue;
+    }
+
+    public Optional<Expression> getDefaultValue() {
+        return defaultValue;
+    }
+
+    private Property(String name, TypeUsage typeUsage, Optional<Expression> initialValue, Optional<Expression> defaultValue) {
         if (!JvmNameUtils.isValidJavaIdentifier(name)) {
             throw new IllegalArgumentException();
         }
         this.name = name;
         this.typeUsage = typeUsage;
+        this.initialValue = initialValue;
+        this.defaultValue = defaultValue;
     }
 
     public static Property fromDefinition(PropertyDefinition propertyDefinition) {
-        return new Property(propertyDefinition.getName(), propertyDefinition.getType());
+        return new Property(propertyDefinition.getName(), propertyDefinition.getType(), propertyDefinition.getInitialValue(), propertyDefinition.getDefaultValue());
     }
 
     public static Property fromReference(PropertyReference propertyReference, SymbolResolver resolver) {
@@ -36,7 +49,8 @@ public class Property extends Node {
         if (!propertyDefinition.isPresent()) {
             throw new UnsolvedSymbolException(propertyReference);
         }
-        return new Property(propertyReference.getName(), propertyDefinition.get().getType());
+        return new Property(propertyReference.getName(), propertyDefinition.get().getType(),
+                propertyDefinition.get().getInitialValue(), propertyDefinition.get().getDefaultValue());
     }
 
     public String getName() {
@@ -73,4 +87,11 @@ public class Property extends Node {
         return Collections.emptyList();
     }
 
+    public boolean hasDefaultValue() {
+        return defaultValue.isPresent();
+    }
+
+    public boolean hasInitialValue() {
+        return initialValue.isPresent();
+    }
 }

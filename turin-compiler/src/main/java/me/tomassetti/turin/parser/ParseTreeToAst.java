@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 class ParseTreeToAst {
@@ -127,7 +128,9 @@ class ParseTreeToAst {
     }
 
     private PropertyDefinition toAst(TurinParser.TopLevelPropertyDeclarationContext ctx) {
-        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type));
+        Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
+        Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
+        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type), initialValue, defaultValue);
         getPositionFrom(propertyDefinition, ctx);
         return propertyDefinition;
     }
@@ -194,8 +197,12 @@ class ParseTreeToAst {
         }
     }
 
-    private Node toAst(TurinParser.InTypePropertyDeclarationContext inTypePropertyDeclarationContext) {
-        PropertyDefinition propertyDefinition = new PropertyDefinition(inTypePropertyDeclarationContext.name.getText(), toAst(inTypePropertyDeclarationContext.type));
+    private Node toAst(TurinParser.InTypePropertyDeclarationContext ctx) {
+        Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
+        Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
+        PropertyDefinition propertyDefinition = new PropertyDefinition(
+                ctx.name.getText(), toAst(ctx.type),
+                initialValue, defaultValue);
         return propertyDefinition;
     }
 

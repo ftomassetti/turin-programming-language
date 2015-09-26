@@ -46,15 +46,19 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     @Override
     public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
-        List<JvmType> argsTypes = new ArrayList<>();
-        for (ActualParam actualParam : actualParams) {
-            if (actualParam.isNamed()) {
-                throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
-            } else {
-                argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
+        try {
+            List<JvmType> argsTypes = new ArrayList<>();
+            for (ActualParam actualParam : actualParams) {
+                if (actualParam.isNamed()) {
+                    throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
+                } else {
+                    argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
+                }
             }
+            return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()), this);
+        } catch (RuntimeException e){
+            throw new RuntimeException("Resolving constructor call on " + clazz.getCanonicalName(), e);
         }
-        return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()), this);
     }
 
     @Override

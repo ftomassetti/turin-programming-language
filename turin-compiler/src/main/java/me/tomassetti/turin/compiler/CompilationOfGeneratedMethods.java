@@ -81,8 +81,16 @@ public class CompilationOfGeneratedMethods {
     void generateConstructor(TurinTypeDefinition typeDefinition, String className) {
         // TODO consider also inherited properties
         List<Property> directProperties = typeDefinition.getDirectProperties(compilation.getResolver());
-        String paramsDescriptor = String.join("", directProperties.stream().map((dp) -> dp.getTypeUsage().jvmType(compilation.getResolver()).getDescriptor()).collect(Collectors.toList()));
-        String paramsSignature = String.join("", directProperties.stream().map((dp) -> dp.getTypeUsage().jvmType(compilation.getResolver()).getSignature()).collect(Collectors.toList()));
+        // we exclude all the values with an initial or a default value
+        List<Property> directPropertiesAsParameters = directProperties.stream()
+                .filter((p) -> !p.hasInitialValue() && !p.hasDefaultValue())
+                .collect(Collectors.toList());
+        String paramsDescriptor = String.join("", directPropertiesAsParameters.stream().map((dp) -> dp.getTypeUsage().jvmType(compilation.getResolver()).getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", directPropertiesAsParameters.stream().map((dp) -> dp.getTypeUsage().jvmType(compilation.getResolver()).getSignature()).collect(Collectors.toList()));
+        if (typeDefinition.hasDefaultProperties(compilation.getResolver())) {
+            paramsDescriptor += "Ljava/util/Map;";
+            paramsSignature  += "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;";
+        }
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(" + paramsDescriptor + ")V", "(" + paramsSignature + ")V", null);
         mv.visitCode();
 
@@ -90,19 +98,35 @@ public class CompilationOfGeneratedMethods {
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, Compilation.OBJECT_INTERNAL_NAME, "<init>", "()V", false);
 
         int propIndex = 0;
-        for (Property property : directProperties) {
+        for (Property property : directPropertiesAsParameters) {
             enforceConstraint(property, mv, property.getTypeUsage().jvmType(compilation.getResolver()), propIndex);
             propIndex++;
         }
 
         propIndex = 0;
-        for (Property property : directProperties) {
+        for (Property property : typeDefinition.propertiesAppearingInConstructor(compilation.getResolver())) {
             JvmType jvmType = property.getTypeUsage().jvmType(compilation.getResolver());
-            mv.visitVarInsn(Opcodes.ALOAD, 0);
+            mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
             mv.visitVarInsn(OpcodesUtils.loadTypeFor(jvmType), propIndex + 1);
             mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
             propIndex++;
         }
+        List<Property> directPropertiesWithInitialValue = directProperties.stream()
+                .filter((p) -> p.hasInitialValue())
+                .collect(Collectors.toList());
+        for (Property property : directPropertiesWithInitialValue) {
+            JvmType jvmType = property.getTypeUsage().jvmType(compilation.getResolver());
+            mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
+            compilation.getPushUtils().pushExpression(property.getInitialValue().get()).operate(mv);
+            mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
+            propIndex++;
+        }
+
+        // now we should get values from the defaultParamsMap and assign them
+        // to fields
+        TODO
+        we probably want to create a
+                we should also enforce the constraints
 
         mv.visitInsn(Opcodes.RETURN);
         // calculated for us
