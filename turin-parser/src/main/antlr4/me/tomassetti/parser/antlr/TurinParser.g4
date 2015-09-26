@@ -94,7 +94,7 @@ typeDeclaration:
 //
 
 actualParam:
-    expression | name=VALUE_ID ASSIGNMENT expression;
+    expression | name=VALUE_ID ASSIGNMENT expression | asterisk=ASTERISK ASSIGNMENT expression;
 
 parenExpression:
     LPAREN internal=expression RPAREN;
