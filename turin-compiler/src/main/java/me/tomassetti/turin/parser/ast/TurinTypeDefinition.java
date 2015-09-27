@@ -12,6 +12,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,14 +50,14 @@ public class TurinTypeDefinition extends TypeDefinition {
             {
                 String descriptor = "()" + property.getTypeUsage().jvmType(resolver).getDescriptor();
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.getterName(), descriptor, false, false);
-                InternalMethodDefinition getter = new InternalMethodDefinition(property.getterName(), Collections.emptyList(), jvmMethodDefinition);
+                InternalMethodDefinition getter = new InternalMethodDefinition(property.getterName(), Collections.emptyList(), property.getTypeUsage(), jvmMethodDefinition);
                 registerMethod(getter);
             }
             {
                 String descriptor = "(" + property.getTypeUsage().jvmType(resolver).getDescriptor() + ")V";
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.setterName(), descriptor, false, false);
                 FormalParameter param = new FormalParameter(property.getTypeUsage(), property.getName());
-                InternalMethodDefinition setter = new InternalMethodDefinition(property.setterName(), ImmutableList.of(param), jvmMethodDefinition);
+                InternalMethodDefinition setter = new InternalMethodDefinition(property.setterName(), ImmutableList.of(param), new VoidTypeUsage(), jvmMethodDefinition);
                 registerMethod(setter);
             }
         }
@@ -67,7 +68,14 @@ public class TurinTypeDefinition extends TypeDefinition {
         List<FormalParameter> params = this.assignableProperties(resolver).stream()
                 .map((p)->new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
-        constructors.add(new InternalConstructorDefinition(this, params));
+        List<String> paramSignatures = propertiesAppearingInConstructor(resolver).stream()
+                .map((p) -> p.getTypeUsage().jvmType(resolver).getSignature())
+                .collect(Collectors.toList());
+        if (hasDefaultProperties(resolver)) {
+            paramSignatures.add("Ljava/util/Map;");
+        }
+        JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
+        constructors.add(new InternalConstructorDefinition(params, constructorDefinition));
     }
 
     private void ensureIsInitialized(SymbolResolver resolver) {
@@ -82,28 +90,35 @@ public class TurinTypeDefinition extends TypeDefinition {
     @Override
     public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> actualParams, SymbolResolver resolver, boolean staticContext) {
         ensureIsInitialized(resolver);
-        for (Property property : getDirectProperties(resolver)) {
-            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
-                String descriptor = "()" + property.getTypeUsage().jvmType(resolver).getDescriptor();
-                return new JvmMethodDefinition(getInternalName(), methodName, descriptor, false, false);
+        List<InternalMethodDefinition> methods = methodsByName.get(methodName);
+        if (methods.size() == 0) {
+            throw new IllegalArgumentException("No method found with name " + methodName);
+        } else if (methods.size() == 1) {
+            if (methods.get(0).matchJvmTypes(resolver, actualParams)) {
+                return methods.get(0).getJvmMethodDefinition();
+            } else {
+                throw new IllegalArgumentException("No method found with name " + methodName + " which matches " + actualParams);
             }
-            // Consider that we know the call is valid and there is no overloading in Turin
-            if (methodName.equals(property.setterName())) {
-                String descriptor = "(" + property.getTypeUsage().jvmType(resolver).getDescriptor() + ")V";
-                return new JvmMethodDefinition(getInternalName(), methodName, descriptor, false, false);
-            }
+        } else {
+            throw new IllegalStateException("No overloaded methods should be present in Turin types");
         }
-        throw new UnsupportedOperationException(methodName+ " " +actualParams);
     }
 
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        for (Property property : getDirectProperties(resolver)) {
-            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
-                return property.getTypeUsage();
+        ensureIsInitialized(resolver);
+        List<InternalMethodDefinition> methods = methodsByName.get(methodName);
+        if (methods.size() == 0) {
+            throw new IllegalArgumentException("No method found with name " + methodName);
+        } else if (methods.size() == 1) {
+            if (methods.get(0).match(resolver, actualParams)) {
+                return methods.get(0).getReturnType();
+            } else {
+                throw new IllegalArgumentException("No method found with name " + methodName + " which matches " + actualParams);
             }
+        } else {
+            throw new IllegalStateException("No overloaded methods should be present in Turin types");
         }
-        throw new UnsupportedOperationException();
     }
 
     private String getInternalName() {
@@ -119,15 +134,6 @@ public class TurinTypeDefinition extends TypeDefinition {
         super(name);
     }
 
-    public ImmutableList<Node> getMembers() {
-        return ImmutableList.copyOf(members);
-    }
-
-    private int numberOfProperties(SymbolResolver resolver){
-        // TODO consider inherited properties
-        return getDirectProperties(resolver).size();
-    }
-
     /**
      * Properties which can be referred to in the constructor
      */
@@ -139,24 +145,12 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue() && !p.hasDefaultValue()).collect(Collectors.toList());
     }
 
-    public List<Property> nonDefaultPropeties(SymbolResolver resolver) {
-        return getDirectProperties(resolver).stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
-    }
-
     public List<Property> defaultPropeties(SymbolResolver resolver) {
         return getDirectProperties(resolver).stream().filter((p)->p.hasDefaultValue()).collect(Collectors.toList());
     }
 
-    public List<Property> propertiesWhichCanBeAssignedWithoutName(SymbolResolver resolver) {
-        return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue()).collect(Collectors.toList());
-    }
-
     public boolean hasDefaultProperties(SymbolResolver resolver) {
         return getDirectProperties(resolver).stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
-    }
-
-    public int numberOfPropertiesUsedByConstructor(SymbolResolver resolver){
-        return propertiesAppearingInConstructor(resolver).size() + (hasDefaultProperties(resolver) ? 1 : 0);
     }
 
     @Override
@@ -173,15 +167,7 @@ public class TurinTypeDefinition extends TypeDefinition {
             throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
         }
 
-        // For type defined in Turin we generate one single constructor so
-        // it is easy to find it
-        List<String> paramSignatures = propertiesAppearingInConstructor(resolver).stream()
-                .map((p) -> p.getTypeUsage().jvmType(resolver).getSignature())
-                .collect(Collectors.toList());
-        if (hasDefaultProperties(resolver)) {
-            paramSignatures.add("Ljava/util/Map;");
-        }
-        return new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
+        return constructor.get().getJvmConstructorDefinition();
     }
 
     @Override
@@ -208,101 +194,66 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return false;
+    public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
+        ensureIsInitialized(resolver);
+        return methodsByName.get(methodName).size() > 1;
     }
 
     @Override
     public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
-        return this.assignableProperties(resolver).stream()
-                .map((p)->new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
-                .collect(Collectors.toList());
+        // all named parameters should be after the named ones
+        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
+        }
+
+        ensureIsInitialized(resolver);
+        Optional<InternalConstructorDefinition> constructor = constructors.stream().filter((c)->c.match(resolver, actualParams)).findFirst();
+
+        if (!constructor.isPresent()){
+            throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+        }
+
+        return constructor.get().getFormalParameters();
     }
 
     @Override
     public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        for (Property property : getDirectProperties(resolver)) {
-            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
-                return Collections.emptyList();
-            }
-            if (methodName.equals(property.setterName()) && actualParams.size() == 1 ) {
-                ActualParam actualParam = actualParams.get(0);
-                if (actualParam.isAsterisk()) {
-                    TypeUsage actualType = actualParam.getValue().calcType(resolver);
-                    if (hasGetterFor(actualType, property.getName(), property.getTypeUsage(), resolver)) {
-                        return ImmutableList.of(new FormalParameter(property.getTypeUsage(), property.getName()));
-                    }
-                } else {
-                    TypeUsage actualType = actualParam.getValue().calcType(resolver);
-                    if (actualType.canBeAssignedTo(property.getTypeUsage(), resolver)) {
-                        return ImmutableList.of(new FormalParameter(property.getTypeUsage(), property.getName()));
-                    }
-                }
-            }
+        // all named parameters should be after the named ones
+        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
-        throw new UnsupportedOperationException(methodName);
-    }
-
-    private boolean hasGetterFor(TypeUsage actualType, String name, TypeUsage typeUsage, SymbolResolver resolver) {
-        if (actualType.isReference()) {
-            TypeDefinition typeDefinition = actualType.asReferenceTypeUsage().getTypeDefinition(resolver);
-            if (typeDefinition.hasMethodFor(Property.getterName(typeUsage, name), Collections.emptyList(), resolver, false)) {
-                TypeUsage returnType = typeDefinition.returnTypeWhenInvokedWith(Property.getterName(typeUsage, name), Collections.emptyList(), resolver, false);
-                if (!returnType.canBeAssignedTo(typeUsage, resolver)) {
-                    throw new IllegalArgumentException("Incompatible return type");
-                }
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        ensureIsInitialized(resolver);
+        if (!methodsByName.containsKey(methodName)) {
+            throw new UnsolvedMethodException(getQualifiedName(), methodName, actualParams);
         }
+        Optional<InternalMethodDefinition> method = methodsByName.get(methodName).stream().filter((m)->m.match(resolver, actualParams)).findFirst();
+
+        if (!method.isPresent()){
+            throw new UnsolvedMethodException(getQualifiedName(), methodName, actualParams);
+        }
+
+        return method.get().getFormalParameters();
     }
 
     @Override
     public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        // TODO consider methods inherited from object and setters
-        for (Property property : getDirectProperties(resolver)) {
-            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
-                return true;
-            }
+        // all named parameters should be after the named ones
+        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
-        return false;
-    }
 
-    private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, SymbolResolver resolver) {
-        TypeUsage[] types = new TypeUsage[actualParams.size()];
-        int i = 0;
-        for (ActualParam actualParam : actualParams) {
-            if (actualParam.isNamed()) {
-                int pos = findPosOfProperty(actualParam.getName(), resolver);
-                if (types[pos] != null) {
-                    throw new IllegalArgumentException();
-                }
-                types[pos] = actualParam.getValue().calcType(resolver);
-            } else {
-                types[i] = actualParam.getValue().calcType(resolver);
-            }
-            i++;
+        ensureIsInitialized(resolver);
+        if (!methodsByName.containsKey(methodName)) {
+            return false;
         }
-        for (TypeUsage tu : types) {
-            if (tu == null) {
-                throw new IllegalArgumentException();
-            }
-        }
-        return Arrays.asList(types);
-    }
+        Optional<InternalMethodDefinition> method = methodsByName.get(methodName).stream().filter((m)->m.match(resolver, actualParams)).findFirst();
 
-    private int findPosOfProperty(String name, SymbolResolver resolver) {
-        List<Property> properties = getDirectProperties(resolver);
-        for (int i=0; i<properties.size(); i++){
-            if (properties.get(i).getName().equals(name)) {
-                return i;
-            }
+        if (!method.isPresent()){
+            return false;
         }
-        throw new IllegalArgumentException(name);
+
+        return true;
     }
 
     public void add(PropertyReference propertyReference) {

@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.compiler.ParamUtils;
+import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
@@ -106,5 +107,20 @@ public abstract class InternalInvokableDefinition {
 
     public List<FormalParameter> getFormalParameters() {
         return formalParameters;
+    }
+
+    public boolean matchJvmTypes(SymbolResolver resolver, List<JvmType> jvmTypes) {
+        List<FormalParameter> formalParameters = getFormalParameters();
+        if (formalParameters.size() != jvmTypes.size()) {
+            return false;
+        }
+        for (int i=0;i<jvmTypes.size();i++) {
+            FormalParameter formalParameter = formalParameters.get(i);
+            JvmType jvmType = jvmTypes.get(i);
+            if (!formalParameter.getType().jvmType(resolver).isAssignableBy(jvmType)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -50,7 +50,7 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract boolean hasManyConstructors();
 
-    public abstract boolean isMethodOverloaded(String methodName);
+    public abstract boolean isMethodOverloaded(String methodName, SymbolResolver resolver);
 
     public abstract List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver);
 

@@ -203,6 +203,6 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return getTypeDefinition(resolver).isMethodOverloaded(methodName);
+        return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
     }
 }

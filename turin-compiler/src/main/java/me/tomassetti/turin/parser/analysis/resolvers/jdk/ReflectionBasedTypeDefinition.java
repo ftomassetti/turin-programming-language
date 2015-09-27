@@ -88,7 +88,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
+    public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
         return Arrays.stream(clazz.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
     }
 

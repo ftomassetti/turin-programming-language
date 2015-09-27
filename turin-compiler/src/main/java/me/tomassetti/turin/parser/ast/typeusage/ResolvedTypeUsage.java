@@ -25,7 +25,7 @@ public class ResolvedTypeUsage extends TypeUsage {
 
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return typeDefinition.isMethodOverloaded(methodName);
+        return typeDefinition.isMethodOverloaded(methodName, resolver);
     }
 
     @Override
