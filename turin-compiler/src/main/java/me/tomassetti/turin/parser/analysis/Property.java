@@ -66,10 +66,14 @@ public class Property extends Node {
         return typeUsage;
     }
 
+    public static String getterName(TypeUsage typeUsage, String propertyName) {
+        String prefix = typeUsage.equals(PrimitiveTypeUsage.BOOLEAN) ? "is" : "get";
+        String rest = propertyName.length() > 1 ? propertyName.substring(1) : "";
+        return prefix + Character.toUpperCase(propertyName.charAt(0)) + rest;
+    }
+
     public String getterName() {
-        String prefix = getTypeUsage().equals(PrimitiveTypeUsage.BOOLEAN) ? "is" : "get";
-        String rest = getName().length() > 1 ? getName().substring(1) : "";
-        return prefix + Character.toUpperCase(getName().charAt(0)) + rest;
+        return getterName(getTypeUsage(), getName());
     }
 
     public String setterName() {

@@ -15,6 +15,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JavassistBasedMethodResolution {
@@ -91,7 +92,7 @@ public class JavassistBasedMethodResolution {
         }
     }
 
-    public static CtMethod findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
+    public static Optional<CtMethod> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = methods.stream()
                     .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
@@ -99,9 +100,10 @@ public class JavassistBasedMethodResolution {
                     .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
             MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, name);
             if (methodOrConstructor == null) {
-                throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
+                return Optional.empty();
+            } else {
+                return Optional.of(methodOrConstructor.method);
             }
-            return methodOrConstructor.method;
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }

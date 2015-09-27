@@ -1,7 +1,9 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import me.tomassetti.turin.compiler.ParamUtils;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
@@ -31,9 +33,28 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        // TODO this should be implemented
+    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> actualParams, SymbolResolver resolver, boolean staticContext) {
+        for (Property property : getDirectProperties(resolver)) {
+            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
+                String descriptor = "()" + property.getTypeUsage().jvmType(resolver).getDescriptor();
+                return new JvmMethodDefinition(getInternalName(), methodName, descriptor, false, false);
+            }
+        }
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        for (Property property : getDirectProperties(resolver)) {
+            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
+                return property.getTypeUsage();
+            }
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    private String getInternalName() {
+        return JvmNameUtils.canonicalToInternal(getQualifiedName());
     }
 
     public void add(PropertyDefinition propertyDefinition){
@@ -92,7 +113,9 @@ public class TurinTypeDefinition extends TypeDefinition {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
-        Set<String> paramsAssigned = new HashSet<>();
+        // TODO verify BEFORE that the call is correct
+
+        /*Set<String> paramsAssigned = new HashSet<>();
 
         List<Property> propertiesWhichCanBeAssignedWithoutName = propertiesWhichCanBeAssignedWithoutName(resolver);
         List<ActualParam> unnamedParams = ParamUtils.unnamedParams(actualParams);
@@ -131,7 +154,7 @@ public class TurinTypeDefinition extends TypeDefinition {
             if (!paramsAssigned.contains(property.getName())) {
                 throw new IllegalArgumentException("Property not assigned: " + property.getName());
             }
-        }
+        }*/
 
         // For type defined in Turin we generate one single constructor so
         // it is easy to find it
@@ -181,7 +204,30 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     @Override
     public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        throw new UnsupportedOperationException();
+        for (Property property : getDirectProperties(resolver)) {
+            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
+                return Collections.emptyList();
+            }
+            if (methodName.equals(property.setterName()) && actualParams.size() == 1 ) {
+                TypeUsage actualType = actualParams.get(0).getValue().calcType(resolver);
+                if (actualType.canBeAssignedTo(property.getTypeUsage(), resolver)){
+                    return ImmutableList.of(new FormalParameter(property.getTypeUsage(), property.getName()));
+                }
+            }
+        }
+
+        throw new UnsupportedOperationException(methodName);
+    }
+
+    @Override
+    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        // TODO consider methods inherited from object and setters
+        for (Property property : getDirectProperties(resolver)) {
+            if (methodName.equals(property.getterName()) && actualParams.size() == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<TypeUsage> orderConstructorParamTypes(List<ActualParam> actualParams, SymbolResolver resolver) {

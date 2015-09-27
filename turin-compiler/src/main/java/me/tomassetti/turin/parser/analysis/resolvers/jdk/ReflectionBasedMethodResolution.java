@@ -17,6 +17,7 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 class ReflectionBasedMethodResolution {
@@ -136,16 +137,16 @@ class ReflectionBasedMethodResolution {
         return methodOrConstructor.method;
     }
 
-    public static Method findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
+    public static Optional<Method> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
         List<MethodOrConstructor> methodOrConstructors = methods.stream()
                 .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                 .filter((m) -> m.getName().equals(name))
                 .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
         MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, name);
         if (methodOrConstructor == null) {
-            throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
+            return Optional.empty();
         }
-        return methodOrConstructor.method;
+        return Optional.of(methodOrConstructor.method);
     }
 
     private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {

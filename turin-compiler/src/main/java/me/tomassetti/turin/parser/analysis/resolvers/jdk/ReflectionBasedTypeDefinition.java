@@ -101,7 +101,17 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     @Override
     public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return formalParameters(ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this));
+        Optional<Method> res = ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
+        if (res.isPresent()) {
+            return formalParameters(res.get());
+        } else {
+            throw new RuntimeException("unresolved method " + name + " for " + actualParams);
+        }
+    }
+
+    @Override
+    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        return ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this).isPresent();
     }
 
     private List<FormalParameter> formalParameters(Constructor constructor) {

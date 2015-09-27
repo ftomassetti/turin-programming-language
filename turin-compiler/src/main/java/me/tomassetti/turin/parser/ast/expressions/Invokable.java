@@ -85,12 +85,35 @@ public abstract class Invokable extends Expression {
         return !defaultParameters(resolver).isEmpty();
     }
 
+    protected final boolean hasAsteriskActualParameter() {
+        return originalParams.stream().filter((p)->p.isAsterisk()).findFirst().isPresent();
+    }
+
     private void concreteDesugarize(SymbolResolver resolver) {
         // all named parameters should be after the named ones
         if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones:" + actualParams);
         }
+        if (hasAsteriskActualParameter()){
+            concreteDesugarizeWithAsterisk(resolver);
+        } else {
+            concreteDesugarizeWithoutAsterisk(resolver);
+        }
+    }
 
+    private void concreteDesugarizeWithAsterisk(SymbolResolver resolver) {
+        if (actualParams.size() != 1) {
+            throw new IllegalStateException();
+        }
+        ActualParam asteriskParam = actualParams.get(0);
+
+        Map<String, ActualParam> paramsAssigned = new HashMap<>();
+
+        List<FormalParameter> formalParams = formalParameters(resolver);
+        actualParams = ParamUtils.namedParamsFromAsteriskValue(formalParams, asteriskParam.getValue(), resolver, this);
+    }
+
+    private void concreteDesugarizeWithoutAsterisk(SymbolResolver resolver) {
         Map<String, ActualParam> paramsAssigned = new HashMap<>();
 
         List<FormalParameter> formalParams = formalParameters(resolver);
@@ -157,6 +180,7 @@ public abstract class Invokable extends Expression {
                 }
             }
             mapCreation = new InstanceMethodInvokation(mapCreation, "build", ImmutableList.of());
+            mapCreation.setParent(this);
             ActualParam mapForDefaultParams = new ActualParam(mapCreation);
             mapForDefaultParams.setParent(this);
             orderedParams.add(mapForDefaultParams);

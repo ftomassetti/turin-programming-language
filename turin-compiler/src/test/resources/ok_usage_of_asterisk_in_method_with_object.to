@@ -9,7 +9,7 @@ type Foo {
 
 Foo callMe(Int a, Int c) = Foo(a, c)
 
-Foo foo1() = {
+Foo foo1() {
     val foo = Foo(1)
     foo.setA(*=Foo(23))
     return foo

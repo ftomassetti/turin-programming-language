@@ -70,9 +70,20 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     @Override
     public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        CtMethod method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
+        Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
                 actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
-        return formalParameters(method);
+        if (method.isPresent()) {
+            return formalParameters(method.get());
+        } else {
+            throw new RuntimeException("unresolved method " + name + " for " + actualParams);
+        }
+    }
+
+    @Override
+    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
+                actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
+        return method.isPresent();
     }
 
     private List<FormalParameter> formalParameters(CtConstructor constructor) {

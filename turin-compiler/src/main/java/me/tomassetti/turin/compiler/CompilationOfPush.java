@@ -211,7 +211,10 @@ public class CompilationOfPush {
     private Expression box(Expression value) {
         PrimitiveTypeUsage typeUsage = value.calcType(compilation.getResolver()).asPrimitiveTypeUsage();
         if (typeUsage.isInt()) {
-            return new Creation("java.lang.Integer", ImmutableList.of(new ActualParam(value)));
+            Node parent = value.getParent();
+            Creation creation = new Creation("java.lang.Integer", ImmutableList.of(new ActualParam(value)));
+            creation.setParent(parent);
+            return creation;
         } else {
             throw new UnsupportedOperationException();
         }

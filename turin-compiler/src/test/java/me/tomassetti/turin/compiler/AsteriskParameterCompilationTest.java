@@ -127,7 +127,7 @@ public class AsteriskParameterCompilationTest extends AbstractCompilerTest {
 
     @Test
     public void correctUsageOfAsteriskOnMethodWithObject() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
-        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/ok_usage_of_asterisk_in_creation_with_object.to"));
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/ok_usage_of_asterisk_in_method_with_object.to"));
 
         // generate bytecode
         Compiler.Options options = new Compiler.Options();

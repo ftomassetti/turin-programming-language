@@ -58,8 +58,8 @@ public class ActualParam extends Node {
 
     public ActualParam(Expression value, boolean asterisk) {
         this.value = value;
-        this.asterisk = asterisk;
         this.value.setParent(this);
+        this.asterisk = asterisk;
     }
 
     public ActualParam(String name, Expression value) {
