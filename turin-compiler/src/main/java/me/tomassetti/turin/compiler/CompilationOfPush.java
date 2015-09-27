@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static me.tomassetti.turin.compiler.BoxUnboxing.*;
+
 public class CompilationOfPush {
     private final Compilation compilation;
 
@@ -196,7 +198,7 @@ public class CompilationOfPush {
                 boolean isPrimitive = value.calcType(compilation.getResolver()).isPrimitive();
                 if (isPrimitive && !methodDefinition.isParamPrimitive(i)){
                     // need boxing
-                    argumentsPush.add(pushExpression(box(value)));
+                    argumentsPush.add(pushExpression(box(value, compilation.getResolver())));
                 } else {
                     argumentsPush.add(pushExpression(value));
                 }
@@ -208,15 +210,4 @@ public class CompilationOfPush {
         }
     }
 
-    private Expression box(Expression value) {
-        PrimitiveTypeUsage typeUsage = value.calcType(compilation.getResolver()).asPrimitiveTypeUsage();
-        if (typeUsage.isInt()) {
-            Node parent = value.getParent();
-            Creation creation = new Creation("java.lang.Integer", ImmutableList.of(new ActualParam(value)));
-            creation.setParent(parent);
-            return creation;
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
 }

@@ -13,11 +13,12 @@ public class AmbiguousCallException extends RuntimeException {
 
     private Node context;
     private String name;
-    private List<JvmType> paramList;
+    private List<JvmType> actualParamTypes;
+    private List<ActualParam> actualParams;
 
-    public AmbiguousCallException(Node context, List<ActualParam> argsTypes, String name) {
-        // FIXME
+    public AmbiguousCallException(Node context, List<ActualParam> actualParams, String name) {
         this.context = context;
+        this.actualParams = actualParams;
         this.name = name;
     }
 
@@ -29,14 +30,18 @@ public class AmbiguousCallException extends RuntimeException {
         return name;
     }
 
-    public List<JvmType> getParamList() {
-        return paramList;
+    public List<JvmType> getActualParamTypes() {
+        return actualParamTypes;
     }
 
-    public AmbiguousCallException(Node context, String name, List<JvmType> paramList) {
+    public List<ActualParam> getActualParams() {
+        return actualParams;
+    }
+
+    public AmbiguousCallException(Node context, String name, List<JvmType> actualParamTypes) {
         this.context = context;
         this.name = name;
-        this.paramList = paramList;
+        this.actualParamTypes = actualParamTypes;
     }
 
 }

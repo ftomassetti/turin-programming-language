@@ -36,9 +36,8 @@ public class CompilationOfGeneratedMethods {
         this.cw = cw;
     }
 
-    void enforceConstraint(Property property, MethodVisitor mv, JvmType jvmType, BytecodeSequence getValue) {
+    private void enforceConstraint(Property property, MethodVisitor mv, BytecodeSequence getValue) {
         if (property.getTypeUsage().equals(BasicTypeUsage.UINT)) {
-            // index 0 is the "this"
             getValue.operate(mv);
             Label label = new Label();
 
@@ -50,7 +49,6 @@ public class CompilationOfGeneratedMethods {
 
             mv.visitLabel(label);
         } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(compilation.getResolver()).equals(String.class.getCanonicalName())) {
-            // index 0 is the "this"
             getValue.operate(mv);
             Label label = new Label();
 
@@ -64,9 +62,8 @@ public class CompilationOfGeneratedMethods {
         }
     }
 
-
-    void enforceConstraint(Property property, MethodVisitor mv, JvmType jvmType, int varIndex) {
-        enforceConstraint(property, mv, jvmType, new BytecodeSequence() {
+    private void enforceConstraint(Property property, MethodVisitor mv, JvmType jvmType, int varIndex) {
+        enforceConstraint(property, mv, new BytecodeSequence() {
             @Override
             public void operate(MethodVisitor mv) {
                 mv.visitVarInsn(OpcodesUtils.loadTypeFor(jvmType), varIndex + 1);
@@ -184,7 +181,7 @@ public class CompilationOfGeneratedMethods {
                     });
             new IfBS(isPropertyInMap, assignPropertyFromMap, assignPropertyFromDefaultValue).operate(mv);
             JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType(resolver).getDescriptor(),false);
-            enforceConstraint(property, mv, jvmType, new PushInstanceField(jvmFieldDefinition));
+            enforceConstraint(property, mv, new PushInstanceField(jvmFieldDefinition));
         }
     }
 
@@ -198,7 +195,7 @@ public class CompilationOfGeneratedMethods {
             compilation.getPushUtils().pushExpression(property.getInitialValue().get()).operate(mv);
             mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
             JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType(resolver).getDescriptor(),false);
-            enforceConstraint(property, mv, property.getTypeUsage().jvmType(resolver), new PushInstanceField(jvmFieldDefinition));
+            enforceConstraint(property, mv, new PushInstanceField(jvmFieldDefinition));
         }
     }
 
