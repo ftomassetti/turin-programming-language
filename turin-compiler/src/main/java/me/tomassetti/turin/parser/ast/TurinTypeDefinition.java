@@ -156,7 +156,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     @Override
     public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
         // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+        if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
@@ -202,7 +202,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     @Override
     public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
         // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+        if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
@@ -219,7 +219,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     @Override
     public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+        if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
@@ -239,7 +239,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     @Override
     public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+        if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 

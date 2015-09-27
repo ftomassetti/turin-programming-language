@@ -4,7 +4,6 @@ import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
-import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -15,7 +14,7 @@ public abstract class InternalInvokableDefinition {
 
     public boolean match(SymbolResolver resolver, List<ActualParam> actualParams) {
         // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+        if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
         if (actualParams.stream().filter((p)->p.isAsterisk()).findFirst().isPresent()) {

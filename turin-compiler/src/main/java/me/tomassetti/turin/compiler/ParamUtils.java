@@ -20,9 +20,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParamUtils {
+public final class ParamUtils {
 
-    public static boolean allNamedParamsAreAtTheEnd(List<ActualParam> actualParams) {
+    private ParamUtils() {
+        // prevent instantiation
+    }
+
+    public static boolean verifyOrder(List<ActualParam> actualParams) {
         boolean findNamed = false;
         for (ActualParam actualParam : actualParams) {
             if (findNamed && (!actualParam.isNamed() && !actualParam.isAsterisk())) {
@@ -41,15 +45,11 @@ public class ParamUtils {
         return actualParams.stream().filter((p) -> p.isNamed()).collect(Collectors.toList());
     }
 
-    public static List<ActualParam> asteriskParams(List<ActualParam> actualParams) {
-        return actualParams.stream().filter((p) -> p.isAsterisk()).collect(Collectors.toList());
-    }
-
     public static boolean hasDefaultParams(List<FormalParameter> formalParameters) {
         return formalParameters.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
     }
 
-    public static Either<String, List<ActualParam>> translateAsteriskParam(List<FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
+    public static Either<String, List<ActualParam>> desugarizeAsteriskParam(List<FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
         TypeUsage type = value.calcType(resolver);
         if (!type.isReference()) {
             return Either.left("An asterisk param should be an object");
@@ -93,6 +93,9 @@ public class ParamUtils {
         return Either.right(actualParams);
     }
 
+    /**
+     * Corresponding getter method name
+     */
     public static String getterName(FormalParameter formalParameter) {
         return Property.getterName(formalParameter.getType(), formalParameter.getName());
     }

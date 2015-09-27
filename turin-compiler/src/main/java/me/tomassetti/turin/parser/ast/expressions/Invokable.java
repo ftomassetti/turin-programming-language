@@ -90,7 +90,7 @@ public abstract class Invokable extends Expression {
 
     private void concreteDesugarize(SymbolResolver resolver) {
         // all named parameters should be after the named ones
-        if (!ParamUtils.allNamedParamsAreAtTheEnd(actualParams)) {
+        if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones:" + actualParams);
         }
         if (hasAsteriskActualParameter()){
@@ -109,7 +109,7 @@ public abstract class Invokable extends Expression {
         Map<String, ActualParam> paramsAssigned = new HashMap<>();
 
         List<FormalParameter> formalParams = formalParameters(resolver);
-        Either<String, List<ActualParam>> res = ParamUtils.translateAsteriskParam(formalParams, asteriskParam.getValue(), resolver, this);
+        Either<String, List<ActualParam>> res = ParamUtils.desugarizeAsteriskParam(formalParams, asteriskParam.getValue(), resolver, this);
         if (res.isLeft()) {
             throw new IllegalArgumentException(res.getLeft());
         }
