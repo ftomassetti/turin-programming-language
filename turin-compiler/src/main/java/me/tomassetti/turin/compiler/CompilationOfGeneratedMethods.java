@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.compiler.bytecode.logicalop.CastBS;
+import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalNotBS;
 import me.tomassetti.turin.compiler.bytecode.pushop.PushInstanceField;
 import me.tomassetti.turin.compiler.bytecode.pushop.PushLocalVar;
 import me.tomassetti.turin.compiler.bytecode.pushop.PushStringConst;
@@ -16,7 +17,10 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
+import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -60,6 +64,14 @@ public class CompilationOfGeneratedMethods {
 
             mv.visitLabel(label);
         }
+        for (PropertyConstraint constraint : property.getConstraints()) {
+            compilation.getLocalVarsSymbolTable().recordAlias("placeholder", getValue);
+
+            compilation.getPushUtils().pushExpression(constraint.getCondition()).operate(mv);
+            JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, ImmutableList.of(compilation.getPushUtils().pushExpression(constraint.getMessage())));
+            new IfBS(new LogicalNotBS(compilation.getPushUtils().pushExpression(constraint.getCondition())), new ThrowBS(instantiateException)).operate(mv);
+        }
     }
 
     private void enforceConstraint(Property property, MethodVisitor mv, JvmType jvmType, int varIndex) {
@@ -72,11 +84,17 @@ public class CompilationOfGeneratedMethods {
     }
 
     void generateSetter(Property property, String internalClassName) {
+        compilation.setLocalVarsSymbolTable(LocalVarsSymbolTable.forInstanceMethod());
+
         String setterName = property.setterName();
         JvmType jvmType = property.getTypeUsage().jvmType(compilation.getResolver());
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, setterName, "(" + jvmType.getDescriptor() + ")V", "(" + jvmType.getSignature() + ")V", null);
         mv.visitCode();
 
+        compilation.getLocalVarsSymbolTable().add(property.getName(), new FormalParameter(property.getTypeUsage(), property.getName()));
+
+        compilation.getLocalVarsSymbolTable().recordAlias("placeholder",
+                new PushLocalVar(OpcodesUtils.loadTypeFor(jvmType), 1));
         enforceConstraint(property, mv, jvmType, 0);
 
         // Assignment

@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -29,12 +30,12 @@ public class TypeDefinitionTest {
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty());
+        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
         turinFile.add(nameProperty);
 
         mangaCharacter = new TurinTypeDefinition("MangaCharacter");
-        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty());
+        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty(), Collections.emptyList());
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
         mangaCharacter.add(ageProperty);

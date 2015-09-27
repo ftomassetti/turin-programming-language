@@ -183,4 +183,9 @@ public class PrimitiveTypeUsage extends TypeUsage {
     public boolean isBoolean() {
         return this == PrimitiveTypeUsage.BOOLEAN;
     }
+
+    @Override
+    public String describe() {
+        return name;
+    }
 }

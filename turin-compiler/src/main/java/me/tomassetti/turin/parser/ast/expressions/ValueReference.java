@@ -16,9 +16,15 @@ import java.util.Optional;
 public class ValueReference extends Expression {
 
     private String name;
+    private TypeUsage precalculatedType;
 
     public ValueReference(String name) {
         this.name = name;
+    }
+
+    public ValueReference(String name, TypeUsage precalculatedType) {
+        this.name = name;
+        this.precalculatedType = precalculatedType; // parent not set on-purpose
     }
 
     @Override
@@ -83,6 +89,9 @@ public class ValueReference extends Expression {
 
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
+        if (precalculatedType != null) {
+            return precalculatedType;
+        }
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             return declaration.get().calcType(resolver);

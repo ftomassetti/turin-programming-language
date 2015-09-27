@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitio
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,12 +32,12 @@ public class ReferenceTypeUsageTest {
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty());
+        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
         turinFile.add(nameProperty);
 
         TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
-        ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty());
+        ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty(), Collections.emptyList());
         nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
         mangaCharacter.add(ageProperty);

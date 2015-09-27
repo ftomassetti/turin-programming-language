@@ -23,10 +23,7 @@ public class Point {
 
     @Override
     public String toString() {
-        return "Point{" +
-                "line=" + line +
-                ", column=" + column +
-                '}';
+        return "line " + line + ", col " + column;
     }
 
     @Override

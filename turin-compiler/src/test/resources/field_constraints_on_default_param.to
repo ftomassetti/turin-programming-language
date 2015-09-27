@@ -1,7 +1,7 @@
 namespace field_constraints
 
 type Options {
-    Int indentationSize default 4 : _ >= 1 and _ <= 20 ("#{_name} should be between 1 and 20, instead it is #{_}"
+    Int indentationSize default 4 : _ >= 1 and _ <= 20 | "#{_name} should be between 1 and 20, instead it is #{_}"
 }
 
 Void foo1() {

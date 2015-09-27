@@ -18,6 +18,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,7 +131,8 @@ class ParseTreeToAst {
     private PropertyDefinition toAst(TurinParser.TopLevelPropertyDeclarationContext ctx) {
         Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
         Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
-        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type), initialValue, defaultValue);
+        List<PropertyConstraint> constraints = Collections.emptyList();
+        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type), initialValue, defaultValue, constraints);
         getPositionFrom(propertyDefinition, ctx);
         return propertyDefinition;
     }
@@ -200,10 +202,19 @@ class ParseTreeToAst {
     private Node toAst(TurinParser.InTypePropertyDeclarationContext ctx) {
         Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
         Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
+        List<PropertyConstraint> constraints = ctx.constraint.stream().map((cctx)->toAst(cctx)).collect(Collectors.toList());
         PropertyDefinition propertyDefinition = new PropertyDefinition(
                 ctx.name.getText(), toAst(ctx.type),
-                initialValue, defaultValue);
+                initialValue, defaultValue, constraints);
         return propertyDefinition;
+    }
+
+    private PropertyConstraint toAst(TurinParser.ConstraintDeclarationContext ctx) {
+        Expression condition = toAst(ctx.condition);
+        Expression message = ctx.message == null ? new StringLiteral("Condition violated: " + ctx.condition.getText()) : toAst(ctx.message);
+        PropertyConstraint propertyConstraint = new PropertyConstraint(condition, message);
+        getPositionFrom(propertyConstraint, ctx);
+        return propertyConstraint;
     }
 
     private PropertyReference toAst(TurinParser.PropertyReferenceContext propertyReferenceContext) {
@@ -320,7 +331,7 @@ class ParseTreeToAst {
         } else if (exprCtx.not != null) {
             return new NotOperation(toAst(exprCtx.value));
         } else if (exprCtx.relOp != null) {
-            return relationalOperationToAst(exprCtx.relOp.getText(), exprCtx.left, exprCtx.right);
+            return relationalOperationToAst(exprCtx.relOp.getText(), exprCtx.left, exprCtx.right, getPosition(exprCtx));
         } else if (exprCtx.array != null) {
             return new ArrayAccess(toAst(exprCtx.array), toAst(exprCtx.index));
         } else if (exprCtx.fieldName != null) {
@@ -357,11 +368,13 @@ class ParseTreeToAst {
         return new LogicOperation(operator, leftExpr, rightExpr);
     }
 
-    private Expression relationalOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
+    private Expression relationalOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right, Position position) {
         Expression leftExpr = toAst(left);
         Expression rightExpr = toAst(right);
         RelationalOperation.Operator operator = RelationalOperation.Operator.fromSymbol(operatorStr);
-        return new RelationalOperation(operator, leftExpr, rightExpr);
+        RelationalOperation relationalOperation = new RelationalOperation(operator, leftExpr, rightExpr);
+        relationalOperation.setPosition(position);
+        return relationalOperation;
     }
 
     private Expression toAst(TurinParser.BasicExpressionContext exprCtx) {
@@ -379,8 +392,50 @@ class ParseTreeToAst {
             return new BooleanLiteral(exprCtx.booleanLiteral().positive != null);
         } else if (exprCtx.staticFieldReference() != null) {
             return toAst(exprCtx.staticFieldReference());
+        } else if (exprCtx.placeholderUsage() != null) {
+            return toAst(exprCtx.placeholderUsage());
+        } else if (exprCtx.placeholderNameUsage() != null) {
+            return toAst(exprCtx.placeholderNameUsage());
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
+        }
+    }
+
+    private Expression toAst(TurinParser.PlaceholderUsageContext ctx) {
+        ParserRuleContext parent = ctx.getParent();
+        String fieldName = null;
+        while (parent != null && fieldName == null) {
+            if (parent instanceof TurinParser.InTypePropertyDeclarationContext) {
+                fieldName = ((TurinParser.InTypePropertyDeclarationContext)parent).name.getText();
+            } else {
+                parent = parent.getParent();
+            }
+        }
+        if (fieldName == null) {
+            return new SemanticError("A placeholder should be used only inside in-type property declarations", getPosition(ctx));
+        } else {
+            Placeholder placeholder = new Placeholder();
+            getPositionFrom(placeholder, ctx);
+            return placeholder;
+        }
+    }
+
+    private Expression toAst(TurinParser.PlaceholderNameUsageContext ctx) {
+        ParserRuleContext parent = ctx.getParent();
+        String fieldName = null;
+        while (parent != null && fieldName == null) {
+            if (parent instanceof TurinParser.InTypePropertyDeclarationContext) {
+                fieldName = ((TurinParser.InTypePropertyDeclarationContext)parent).name.getText();
+            } else {
+                parent = parent.getParent();
+            }
+        }
+        if (fieldName == null) {
+            return new SemanticError("A placeholder should be used only inside in-type property declarations", getPosition(ctx));
+        } else {
+            StringLiteral stringLiteral = new StringLiteral(fieldName);
+            getPositionFrom(stringLiteral, ctx);
+            return stringLiteral;
         }
     }
 

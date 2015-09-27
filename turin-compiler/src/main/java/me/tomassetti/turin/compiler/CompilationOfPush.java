@@ -15,6 +15,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBaseField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.Placeholder;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
@@ -106,6 +107,8 @@ public class CompilationOfPush {
             if (index.isPresent()) {
                 TypeUsage type = compilation.getLocalVarsSymbolTable().findDeclaration(valueReference.getName()).get().calcType(compilation.getResolver());
                 return new PushLocalVar(compilation.loadTypeForTypeUsage(type), index.get());
+            } else if (compilation.getLocalVarsSymbolTable().hasAlias(valueReference.getName())) {
+                return compilation.getLocalVarsSymbolTable().getAlias(valueReference.getName());
             } else {
                 return push(valueReference.resolve(compilation.getResolver()));
             }
@@ -193,10 +196,10 @@ public class CompilationOfPush {
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
             List<BytecodeSequence> argumentsPush = new ArrayList<>();
-            int i=0;
+            int i = 0;
             for (Expression value : instanceMethodInvokation.getActualParamValuesInOrder()) {
                 boolean isPrimitive = value.calcType(compilation.getResolver()).isPrimitive();
-                if (isPrimitive && !methodDefinition.isParamPrimitive(i)){
+                if (isPrimitive && !methodDefinition.isParamPrimitive(i)) {
                     // need boxing
                     argumentsPush.add(pushExpression(box(value, compilation.getResolver())));
                 } else {
@@ -205,6 +208,8 @@ public class CompilationOfPush {
                 i++;
             }
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
+        } else if (expr instanceof Placeholder) {
+            return compilation.getLocalVarsSymbolTable().getAlias("placeholder");
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

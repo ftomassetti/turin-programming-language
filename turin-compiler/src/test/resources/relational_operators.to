@@ -1,25 +1,30 @@
 namespace examples
 
 type A {
-    Boolean foo1()  = 0 == 0
-    Boolean foo2()  = 1 == 1
-    Boolean foo3()  = 0 == 1
-    Boolean foo4()  = 1 == 0
-    Boolean foo5()  = 0 != 0
-    Boolean foo6()  = 1 != 1
-    Boolean foo7()  = 0 != 1
-    Boolean foo8()  = 1 != 0
-    Boolean foo9()  = 1 < 0
-    Boolean foo10() = 0 < 0
-    Boolean foo11() = 0 < 1
-    Boolean foo12() = 1 <= 0
-    Boolean foo13() = 0 <= 0
-    Boolean foo14() = 0 <= 1
-    Boolean foo15() = 1 > 0
-    Boolean foo16() = 0 > 0
-    Boolean foo17() = 0 > 1
-    Boolean foo18() = 1 >= 0
-    Boolean foo19() = 0 >= 0
-    Boolean foo20() = 0 >= 1
+    Boolean foo1()  = 20 == 20
+    Boolean foo2()  = 50 == 50
+    Boolean foo3()  = 20 == 50
+    Boolean foo4()  = 50 == 20
+    Boolean foo5()  = 20 != 20
+    Boolean foo6()  = 50 != 50
+    Boolean foo7()  = 20 != 50
+    Boolean foo8()  = 50 != 20
+    Boolean foo9()  = 50 < 20
+    Boolean foo10() = 20 < 20
+    Boolean foo11() = 20 < 50
+    Boolean foo12() = 50 <= 20
+    Boolean foo13() = 20 <= 20
+    Boolean foo14() = 20 <= 50
+    Boolean foo15() = 50 > 20
+    Boolean foo16() = 20 > 20
+    Boolean foo17() = 20 > 50
+    Boolean foo18() = 50 >= 20
+    Boolean foo19() = 20 >= 20
+    Boolean foo20() = 20 >= 50
+
+    Boolean foo21(Int a) = a >= 1 and a <= 20
+    Boolean foo22(Int a) = a >= 1
+    Boolean foo23(Int a) = a <= 20
+    Boolean foo24(Int a) = a >= 1 or a <= 20
 }
 

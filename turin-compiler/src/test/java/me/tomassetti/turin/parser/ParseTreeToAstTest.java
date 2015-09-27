@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -31,12 +32,12 @@ public class ParseTreeToAstTest {
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty());
+        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
         turinFile.add(nameProperty);
 
         TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
-        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty());
+        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty(), Collections.emptyList());
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
         mangaCharacter.add(ageProperty);
@@ -56,12 +57,12 @@ public class ParseTreeToAstTest {
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty());
+        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
         turinFile.add(nameProperty);
 
         TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
-        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty());
+        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty(), Collections.emptyList());
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
         mangaCharacter.add(ageProperty);

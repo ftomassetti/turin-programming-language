@@ -44,6 +44,10 @@ public class Compilation {
     private String internalClassName;
     private ErrorCollector errorCollector;
 
+    public void setLocalVarsSymbolTable(LocalVarsSymbolTable localVarsSymbolTable) {
+        this.localVarsSymbolTable = localVarsSymbolTable;
+    }
+
     public Compilation(SymbolResolver resolver, ErrorCollector errorCollector) {
         this.resolver = resolver;
         this.errorCollector = errorCollector;

@@ -1,10 +1,9 @@
 package me.tomassetti.turin.compiler;
 
+import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
 import me.tomassetti.turin.parser.ast.Node;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * An instance is created for each method.
@@ -19,6 +18,22 @@ public class LocalVarsSymbolTable {
     private int startIndex;
     private LocalVarsSymbolTable parent;
     private Block currentBlock = new Block(null);
+    private Map<String, BytecodeSequence> aliases = new HashMap<>();
+
+    public void recordAlias(String name, BytecodeSequence bs) {
+        aliases.put(name, bs);
+    }
+
+    public boolean hasAlias(String name) {
+        return aliases.containsKey(name);
+    }
+
+    public BytecodeSequence getAlias(String name) {
+        if (!hasAlias(name)) {
+            throw new IllegalArgumentException();
+        }
+        return aliases.get(name);
+    }
 
     // Each instance is equals just to itself, by design.
     private class Block {

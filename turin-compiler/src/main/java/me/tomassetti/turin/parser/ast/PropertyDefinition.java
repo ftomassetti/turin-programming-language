@@ -1,6 +1,5 @@
 package me.tomassetti.turin.parser.ast;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -14,6 +13,11 @@ public class PropertyDefinition extends Node {
     private TypeUsage type;
     private Optional<Expression> initialValue;
     private Optional<Expression> defaultValue;
+    private List<PropertyConstraint> constraints;
+
+    public List<PropertyConstraint> getConstraints() {
+        return constraints;
+    }
 
     public Optional<Expression> getInitialValue() {
         return initialValue;
@@ -23,11 +27,14 @@ public class PropertyDefinition extends Node {
         return defaultValue;
     }
 
-    public PropertyDefinition(String name, TypeUsage type, Optional<Expression> initialValue, Optional<Expression> defaultValue) {
+    public PropertyDefinition(String name, TypeUsage type, Optional<Expression> initialValue, Optional<Expression> defaultValue,
+                              List<PropertyConstraint> constraints) {
         this.name = name;
         this.type = type;
         this.initialValue = initialValue;
         this.defaultValue = defaultValue;
+        this.constraints = constraints;
+        this.constraints.forEach((c)->c.setParent(PropertyDefinition.this));
     }
 
     public String getName() {
@@ -48,6 +55,7 @@ public class PropertyDefinition extends Node {
         if (defaultValue.isPresent()) {
             children.add(defaultValue.get());
         }
+        children.addAll(constraints);
         return children;
     }
 
@@ -58,6 +66,7 @@ public class PropertyDefinition extends Node {
                 ", type=" + type +
                 ", initialValue=" + initialValue +
                 ", defaultValue=" + defaultValue +
+                ", constraints=" + constraints +
                 '}';
     }
 
@@ -68,6 +77,7 @@ public class PropertyDefinition extends Node {
 
         PropertyDefinition that = (PropertyDefinition) o;
 
+        if (!constraints.equals(that.constraints)) return false;
         if (!defaultValue.equals(that.defaultValue)) return false;
         if (!initialValue.equals(that.initialValue)) return false;
         if (!name.equals(that.name)) return false;
@@ -82,6 +92,7 @@ public class PropertyDefinition extends Node {
         result = 31 * result + type.hashCode();
         result = 31 * result + initialValue.hashCode();
         result = 31 * result + defaultValue.hashCode();
+        result = 31 * result + constraints.hashCode();
         return result;
     }
 

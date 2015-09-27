@@ -7,8 +7,22 @@ import org.objectweb.asm.Opcodes;
 
 public class LogicalNotBS extends BytecodeSequence {
 
+    private BytecodeSequence valueToNegate;
+
+    public LogicalNotBS(BytecodeSequence valueToNegate) {
+        this.valueToNegate = valueToNegate;
+    }
+
+    public LogicalNotBS() {
+        this.valueToNegate = null;
+    }
+
     @Override
+
     public void operate(MethodVisitor mv) {
+        if (valueToNegate != null) {
+            valueToNegate.operate(mv);
+        }
         // it is very weird that there is not a single instruction for this...
         Label l0 = new Label();
         mv.visitJumpInsn(Opcodes.IFNE, l0);

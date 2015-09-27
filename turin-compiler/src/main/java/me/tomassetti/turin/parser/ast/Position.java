@@ -10,10 +10,7 @@ public class Position {
 
     @Override
     public String toString() {
-        return "Position{" +
-                "start=" + start +
-                ", end=" + end +
-                '}';
+        return "at " + start + " - " + end;
     }
 
     @Override

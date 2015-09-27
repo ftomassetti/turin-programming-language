@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.analysis;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.PropertyReference;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -10,6 +11,7 @@ import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,6 +23,11 @@ public class Property extends Node {
     private TypeUsage typeUsage;
     private Optional<Expression> initialValue;
     private Optional<Expression> defaultValue;
+    private List<PropertyConstraint> constraints;
+
+    public List<PropertyConstraint> getConstraints() {
+        return constraints;
+    }
 
     public Optional<Expression> getInitialValue() {
         return initialValue;
@@ -30,7 +37,8 @@ public class Property extends Node {
         return defaultValue;
     }
 
-    private Property(String name, TypeUsage typeUsage, Optional<Expression> initialValue, Optional<Expression> defaultValue) {
+    private Property(String name, TypeUsage typeUsage, Optional<Expression> initialValue,
+                     Optional<Expression> defaultValue, List<PropertyConstraint> constraints) {
         if (!JvmNameUtils.isValidJavaIdentifier(name)) {
             throw new IllegalArgumentException();
         }
@@ -38,10 +46,13 @@ public class Property extends Node {
         this.typeUsage = typeUsage;
         this.initialValue = initialValue;
         this.defaultValue = defaultValue;
+        this.constraints = constraints;
     }
 
     public static Property fromDefinition(PropertyDefinition propertyDefinition) {
-        return new Property(propertyDefinition.getName(), propertyDefinition.getType(), propertyDefinition.getInitialValue(), propertyDefinition.getDefaultValue());
+        return new Property(propertyDefinition.getName(), propertyDefinition.getType(),
+                propertyDefinition.getInitialValue(), propertyDefinition.getDefaultValue(),
+                propertyDefinition.getConstraints());
     }
 
     public static Property fromReference(PropertyReference propertyReference, SymbolResolver resolver) {
@@ -50,7 +61,8 @@ public class Property extends Node {
             throw new UnsolvedSymbolException(propertyReference);
         }
         return new Property(propertyReference.getName(), propertyDefinition.get().getType(),
-                propertyDefinition.get().getInitialValue(), propertyDefinition.get().getDefaultValue());
+                propertyDefinition.get().getInitialValue(), propertyDefinition.get().getDefaultValue(),
+                propertyDefinition.get().getConstraints());
     }
 
     public String getName() {

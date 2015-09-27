@@ -67,7 +67,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -86,7 +86,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -102,7 +102,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -121,7 +121,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsage.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 

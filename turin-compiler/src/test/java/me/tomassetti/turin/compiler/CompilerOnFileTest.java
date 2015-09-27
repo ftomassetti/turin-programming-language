@@ -578,5 +578,53 @@ public class CompilerOnFileTest extends AbstractCompilerTest {
         assertEquals("A", method.invoke(aInstance, true, true,  true));
     }
 
+    @Test
+    public void compileMathAndLogicalOperations() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relational_operators.to"));
+
+        // generate bytecode
+        Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        assertEquals(1, classFileDefinitions.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        Class aClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+                classFileDefinitions.get(0).getBytecode());
+        assertEquals(1, aClass.getConstructors().length);
+        Object aInstance = aClass.getConstructors()[0].newInstance();
+
+        Method foo22 = aClass.getMethod("foo22", int.class);
+        assertEquals(false,  foo22.invoke(aInstance, -10));
+        assertEquals(false,  foo22.invoke(aInstance, 0));
+        assertEquals(true,  foo22.invoke(aInstance, 1));
+        assertEquals(true,  foo22.invoke(aInstance, 5));
+        assertEquals(true,  foo22.invoke(aInstance, 20));
+        assertEquals(true,  foo22.invoke(aInstance, 50));
+
+        Method foo23 = aClass.getMethod("foo23", int.class);
+        assertEquals(true,  foo23.invoke(aInstance, -10));
+        assertEquals(true,  foo23.invoke(aInstance, 0));
+        assertEquals(true,  foo23.invoke(aInstance, 1));
+        assertEquals(true,  foo23.invoke(aInstance, 5));
+        assertEquals(true,  foo23.invoke(aInstance, 20));
+        assertEquals(false,  foo23.invoke(aInstance, 50));
+
+        Method foo21 = aClass.getMethod("foo21", int.class);
+        assertEquals(false,  foo21.invoke(aInstance, -10));
+        assertEquals(false,  foo21.invoke(aInstance, 0));
+        assertEquals(true,  foo21.invoke(aInstance, 1));
+        assertEquals(true,  foo21.invoke(aInstance, 5));
+        assertEquals(true,  foo21.invoke(aInstance, 20));
+        assertEquals(false,  foo21.invoke(aInstance, 50));
+
+        Method foo24 = aClass.getMethod("foo24", int.class);
+        assertEquals(true,  foo24.invoke(aInstance, -10));
+        assertEquals(true,  foo24.invoke(aInstance, 0));
+        assertEquals(true,  foo24.invoke(aInstance, 1));
+        assertEquals(true,  foo24.invoke(aInstance, 5));
+        assertEquals(true,  foo24.invoke(aInstance, 20));
+        assertEquals(true,  foo24.invoke(aInstance, 50));
+    }
+
 }
 

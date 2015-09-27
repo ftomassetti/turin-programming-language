@@ -17,6 +17,10 @@ public class IfBS extends BytecodeSequence {
     private List<BytecodeSequence> elifConditions;
     private List<BytecodeSequence> elifBodys;
 
+    public IfBS(BytecodeSequence pushIfCondition, BytecodeSequence ifBody) {
+        this(pushIfCondition, ifBody, null);
+    }
+
     public IfBS(BytecodeSequence pushIfCondition, BytecodeSequence ifBody, BytecodeSequence elseBody) {
         this(pushIfCondition, ifBody, Collections.emptyList(), Collections.emptyList(), elseBody);
     }

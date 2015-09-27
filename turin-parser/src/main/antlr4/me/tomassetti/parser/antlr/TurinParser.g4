@@ -124,9 +124,9 @@ expression:
     | left=expression mathOperator=SLASH    right=expression
     | left=expression mathOperator=PLUS     right=expression
     | left=expression mathOperator=MINUS    right=expression
+    | left=expression relOp=RELOP           right=expression
     | left=expression logicOperator=AND_KW  right=expression
     | left=expression logicOperator=OR_KW   right=expression
-    | left=expression relOp=RELOP           right=expression
     | not=NOT_KW value=expression
     ;
 
