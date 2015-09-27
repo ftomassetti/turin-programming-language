@@ -31,7 +31,6 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
         } else {
             throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
         }
-        //return new JvmType().isPrimitive();
     }
 
     public boolean isDeclaredOnInterface() {

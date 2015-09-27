@@ -167,4 +167,20 @@ public class PrimitiveTypeUsage extends TypeUsage {
     public boolean isInt() {
         return this == INT;
     }
+
+    public boolean isShort() {
+        return this == PrimitiveTypeUsage.SHORT;
+    }
+
+    public boolean isChar() {
+        return this == PrimitiveTypeUsage.CHAR;
+    }
+
+    public boolean isByte() {
+        return this == PrimitiveTypeUsage.BYTE;
+    }
+
+    public boolean isBoolean() {
+        return this == PrimitiveTypeUsage.BOOLEAN;
+    }
 }
