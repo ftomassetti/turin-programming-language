@@ -4,22 +4,42 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FunctionDefinition extends InvokableDefinition implements Named {
 
+    private List<AnnotationUsage> annotations = new ArrayList<>();
+
+    public void addAnnotation(AnnotationUsage annotation) {
+        annotation.setParent(this);
+        annotations.add(annotation);
+    }
+
+    public List<AnnotationUsage> getAnnotations() {
+        return annotations;
+    }
+
+    @Override
+    public Iterable<Node> getChildren() {
+        List<Node> children = new ArrayList<>();
+        for (Node n : super.getChildren()) {
+            children.add(n);
+        }
+        children.addAll(annotations);
+        return children;
+    }
+
     public FunctionDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
         super(parameters, body, name, returnType);
-        this.returnType.parent = this;
-        this.parameters.forEach((p) -> p.parent = FunctionDefinition.this );
-        this.body.parent = this;
     }
 
     @Override

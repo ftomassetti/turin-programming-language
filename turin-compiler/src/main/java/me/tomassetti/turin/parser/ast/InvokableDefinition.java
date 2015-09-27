@@ -19,9 +19,12 @@ public abstract class InvokableDefinition extends Node {
 
     public InvokableDefinition(List<FormalParameter> parameters, Statement body, String name, TypeUsage returnType) {
         this.parameters = parameters;
+        this.parameters.forEach((p) -> p.parent = this );
         this.body = body;
+        this.body.parent = this;
         this.name = name;
         this.returnType = returnType;
+        this.returnType.parent = this;
     }
 
     public TypeUsage getReturnType() {

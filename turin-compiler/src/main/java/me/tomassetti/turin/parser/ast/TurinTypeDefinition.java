@@ -9,6 +9,7 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -22,6 +23,13 @@ import java.util.stream.Collectors;
  */
 public class TurinTypeDefinition extends TypeDefinition {
     private List<Node> members = new ArrayList<>();
+
+    private List<AnnotationUsage> annotations = new ArrayList<>();
+
+    public void addAnnotation(AnnotationUsage annotation) {
+        annotation.setParent(this);
+        annotations.add(annotation);
+    }
 
     public String getQualifiedName() {
         String contextName = contextName();
@@ -329,9 +337,16 @@ public class TurinTypeDefinition extends TypeDefinition {
                 .count() > 0;
     }
 
+    public List<AnnotationUsage> getAnnotations() {
+        return annotations;
+    }
+
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.copyOf(members);
+        return ImmutableList.<Node>builder()
+                .addAll(members)
+                .addAll(annotations)
+                .build();
     }
 
     public List<Property> getDirectProperties(SymbolResolver resolver) {

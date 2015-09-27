@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.InvokableDefinition;
+import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
@@ -82,6 +83,10 @@ public class Compilation {
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
+
+        for (AnnotationUsage annotation : functionDefinition.getAnnotations()) {
+            cw.visitAnnotation(annotation.getDescriptor(resolver), true);
+        }
 
         generateInvokable(functionDefinition, "invoke", true);
 
@@ -159,6 +164,10 @@ public class Compilation {
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         // TODO consider generic signature, superclass and interfaces
         cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
+
+        for (AnnotationUsage annotation : typeDefinition.getAnnotations()) {
+            cw.visitAnnotation(annotation.getDescriptor(resolver), true);
+        }
 
         for (Property property : typeDefinition.getDirectProperties(resolver)){
             generateField(property);

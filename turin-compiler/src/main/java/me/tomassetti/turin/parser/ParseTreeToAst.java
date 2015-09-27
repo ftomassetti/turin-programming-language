@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
@@ -125,7 +126,18 @@ class ParseTreeToAst {
         List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         FunctionDefinition functionDefinition = new FunctionDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(functionDefinition, ctx);
+        ctx.annotations.forEach((anCtx)->{
+            AnnotationUsage annotationUsage = toAst(anCtx);
+            functionDefinition.addAnnotation(annotationUsage);
+        });
         return functionDefinition;
+    }
+
+    private AnnotationUsage toAst(TurinParser.AnnotationUsageContext ctx) {
+        // we skip the @ character
+        AnnotationUsage annotationUsage = new AnnotationUsage(ctx.annotation.getText().substring(1));
+        getPositionFrom(annotationUsage, ctx);
+        return annotationUsage;
     }
 
     private PropertyDefinition toAst(TurinParser.TopLevelPropertyDeclarationContext ctx) {
@@ -152,6 +164,10 @@ class ParseTreeToAst {
                 throw new UnsupportedOperationException();
             }
         }
+        ctx.annotations.forEach((anCtx)->{
+            AnnotationUsage annotationUsage = toAst(anCtx);
+            typeDefinition.addAnnotation(annotationUsage);
+        });
         return typeDefinition;
     }
 

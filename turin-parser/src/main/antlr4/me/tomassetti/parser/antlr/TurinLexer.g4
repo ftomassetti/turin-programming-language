@@ -110,6 +110,8 @@ COMMENT             : '/*' .*? '*/' -> channel(COMMENTS);
 
 LINE_COMMENT        : '//' ~[\r\n]* -> channel(COMMENTS);
 
+ANNOTATION_ID       : F_ANNOTATION_ID;
+
 UNEXPECTED_CHAR     : . ;
 
 mode IN_STRING;
@@ -165,6 +167,7 @@ fragment F_NOT              : 'not';
 fragment F_VALUE_ID         : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
 fragment F_TYPE_ID          : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_ANNOTATION_ID    : '@'('_')*('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_INT              : ('-')?('0'|(('1'..'9')('0'..'9')*));
 fragment F_PRIMITIVE_TYPE   : 'Byte'|'Int'|'Long'|'Boolean'|'Char'|'Float'|'Double'|'Short';
 fragment F_BASIC_TYPE       : 'UInt';
