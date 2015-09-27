@@ -1,15 +1,11 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.NotFoundException;
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jar.JavassistBasedMethodResolution;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -238,7 +234,9 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         boolean isStatic = instance == null;
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName) && Modifier.isStatic(field.getModifiers()) == isStatic) {
-                return new ReflectionBaseField(field);
+                ReflectionBasedField rbf = new ReflectionBasedField(field);
+                rbf.setParent(instance);
+                return rbf;
             }
         }
         List<Method> matchingMethods = new ArrayList<>();
@@ -251,7 +249,9 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             // TODO improve the error returned
             throw new UnsolvedSymbolException(fieldName);
         } else {
-            return new ReflectionBasedSetOfOverloadedMethods(matchingMethods, instance);
+            ReflectionBasedSetOfOverloadedMethods rbsoom = new ReflectionBasedSetOfOverloadedMethods(matchingMethods, instance);
+            rbsoom.setParent(instance);
+            return rbsoom;
         }
     }
 }

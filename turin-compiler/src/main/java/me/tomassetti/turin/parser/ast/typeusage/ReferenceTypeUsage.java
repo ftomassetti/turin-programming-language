@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
@@ -25,10 +26,12 @@ public class ReferenceTypeUsage extends TypeUsage {
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
     private boolean fullyQualifiedName;
+    private TypeDefinition cachedTypeDefinition;
 
     public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsage> typeParams) {
         this(typeDefinition.getQualifiedName(), false);
         this.typeParams = typeParams;
+        this.cachedTypeDefinition = typeDefinition;
     }
 
     public ReferenceTypeUsage(String name) {
@@ -53,6 +56,7 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     public ReferenceTypeUsage(TypeDefinition td) {
         this(td.getQualifiedName(), true);
+        this.cachedTypeDefinition = td;
     }
 
     public boolean isInterface(SymbolResolver resolver) {
@@ -95,13 +99,19 @@ public class ReferenceTypeUsage extends TypeUsage {
     @Override
     public String toString() {
         return "ReferenceTypeUsage{" +
-                "name='" + name + '\'' +
-
+                "typeParams=" + typeParams +
+                ", typeParameterValues=" + typeParameterValues +
+                ", name='" + name + '\'' +
+                ", fullyQualifiedName=" + fullyQualifiedName +
+                ", cachedTypeDefinition=" + cachedTypeDefinition +
                 '}';
     }
 
     public TypeDefinition getTypeDefinition(SymbolResolver resolver) {
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(this.name, this, resolver);
+        if (cachedTypeDefinition != null) {
+            return cachedTypeDefinition;
+        }
+        TypeDefinition typeDefinition = resolver.getRoot().getTypeDefinitionIn(this.name, this, resolver.getRoot());
         return typeDefinition;
     }
 

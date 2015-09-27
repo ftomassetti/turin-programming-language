@@ -1,10 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.parser.analysis.UnsolvedException;
-import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
-import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -20,8 +16,21 @@ public class ComposedSymbolResolver implements SymbolResolver {
 
     private List<SymbolResolver> elements = new ArrayList<>();
 
+    private SymbolResolver parent = null;
+
+    @Override
+    public SymbolResolver getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(SymbolResolver parent) {
+        this.parent = parent;
+    }
+
     public ComposedSymbolResolver(List<SymbolResolver> elements) {
         this.elements = elements;
+        this.elements.forEach((e)->e.setParent(ComposedSymbolResolver.this));
     }
 
     @Override

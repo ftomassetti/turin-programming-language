@@ -24,6 +24,18 @@ public class SrcSymbolResolver implements SymbolResolver {
     private Map<String, Program> programsDefinitions;
     private Map<String, FunctionDefinition> functionDefinitions;
 
+    private SymbolResolver parent = null;
+
+    @Override
+    public SymbolResolver getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(SymbolResolver parent) {
+        this.parent = parent;
+    }
+
     public SrcSymbolResolver(List<TurinFile> turinFiles) {
         this.typeDefinitions = new HashMap<>();
         this.propertyDefinitions = new HashMap<>();

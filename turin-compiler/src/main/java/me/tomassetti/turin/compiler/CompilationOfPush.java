@@ -11,7 +11,7 @@ import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBaseField;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
@@ -65,8 +65,8 @@ public class CompilationOfPush {
     }
 
     BytecodeSequence push(Node node) {
-        if (node instanceof ReflectionBaseField) {
-            ReflectionBaseField reflectionBaseField = (ReflectionBaseField) node;
+        if (node instanceof ReflectionBasedField) {
+            ReflectionBasedField reflectionBaseField = (ReflectionBasedField) node;
             if (reflectionBaseField.isStatic()) {
                 return new PushStaticField(reflectionBaseField.toJvmField(compilation.getResolver()));
             } else {

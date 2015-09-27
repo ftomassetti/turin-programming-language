@@ -26,6 +26,18 @@ public class InFileSymbolResolver implements SymbolResolver {
 
     private TypeResolver typeResolver;
 
+    private SymbolResolver parent = null;
+
+    @Override
+    public SymbolResolver getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(SymbolResolver parent) {
+        this.parent = parent;
+    }
+
     public InFileSymbolResolver(TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
     }

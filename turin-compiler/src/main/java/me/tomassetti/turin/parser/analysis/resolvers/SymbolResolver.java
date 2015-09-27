@@ -14,6 +14,17 @@ import java.util.Optional;
  */
 public interface SymbolResolver {
 
+    public SymbolResolver getParent();
+    public void setParent(SymbolResolver parent);
+
+    public default SymbolResolver getRoot() {
+        if (getParent() == null) {
+            return this;
+        } else {
+            return getParent().getRoot();
+        }
+    }
+
     /**
      * Given a PropertyReference it finds the corresponding declaration.
      */

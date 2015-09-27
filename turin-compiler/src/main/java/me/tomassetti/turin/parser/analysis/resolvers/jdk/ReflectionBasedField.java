@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-public class ReflectionBaseField extends Node {
+public class ReflectionBasedField extends Node {
 
     @Override
     public Node getField(String fieldName, SymbolResolver resolver) {
@@ -22,7 +22,7 @@ public class ReflectionBaseField extends Node {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ReflectionBaseField that = (ReflectionBaseField) o;
+        ReflectionBasedField that = (ReflectionBasedField) o;
 
         if (!field.equals(that.field)) return false;
 
@@ -43,7 +43,7 @@ public class ReflectionBaseField extends Node {
 
     private Field field;
 
-    public ReflectionBaseField(Field field) {
+    public ReflectionBasedField(Field field) {
         this.field = field;
     }
 
