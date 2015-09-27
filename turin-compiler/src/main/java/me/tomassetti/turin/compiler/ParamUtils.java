@@ -109,7 +109,7 @@ public class ParamUtils {
         return actualParams;
     }
 
-    private static String getterName(FormalParameter formalParameter) {
+    public static String getterName(FormalParameter formalParameter) {
         return Property.getterName(formalParameter.getType(), formalParameter.getName());
     }
 }
