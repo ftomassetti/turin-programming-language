@@ -75,7 +75,9 @@ public class InFileSymbolResolver implements SymbolResolver {
             return Optional.of(basicType.get());
         }
 
-        return Optional.of(new ReferenceTypeUsage(getTypeDefinitionIn(typeName, context, resolver)));
+        ReferenceTypeUsage ref = new ReferenceTypeUsage(getTypeDefinitionIn(typeName, context, resolver));
+        ref.setParent(context);
+        return Optional.of(ref);
     }
 
     @Override

@@ -66,6 +66,6 @@ public class InstanceMethodInvokation extends Invokable {
         if (!typeUsage.isReference()) {
             throw new UnsupportedOperationException();
         }
-        return typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver).getMethodParams(methodName, originalParams, resolver, false);
+        return typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver).getMethodParams(methodName, actualParams, resolver, false);
     }
 }

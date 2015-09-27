@@ -39,8 +39,13 @@ public class TurinTypeDefinition extends TypeDefinition {
                 String descriptor = "()" + property.getTypeUsage().jvmType(resolver).getDescriptor();
                 return new JvmMethodDefinition(getInternalName(), methodName, descriptor, false, false);
             }
+            // Consider that we know the call is valid and there is no overloading in Turin
+            if (methodName.equals(property.setterName())) {
+                String descriptor = "(" + property.getTypeUsage().jvmType(resolver).getDescriptor() + ")V";
+                return new JvmMethodDefinition(getInternalName(), methodName, descriptor, false, false);
+            }
         }
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(methodName+ " " +actualParams);
     }
 
     @Override
@@ -209,14 +214,39 @@ public class TurinTypeDefinition extends TypeDefinition {
                 return Collections.emptyList();
             }
             if (methodName.equals(property.setterName()) && actualParams.size() == 1 ) {
-                TypeUsage actualType = actualParams.get(0).getValue().calcType(resolver);
-                if (actualType.canBeAssignedTo(property.getTypeUsage(), resolver)){
-                    return ImmutableList.of(new FormalParameter(property.getTypeUsage(), property.getName()));
+                ActualParam actualParam = actualParams.get(0);
+                if (actualParam.isAsterisk()) {
+                    TypeUsage actualType = actualParam.getValue().calcType(resolver);
+                    if (hasGetterFor(actualType, property.getName(), property.getTypeUsage(), resolver)) {
+                        return ImmutableList.of(new FormalParameter(property.getTypeUsage(), property.getName()));
+                    }
+                } else {
+                    TypeUsage actualType = actualParam.getValue().calcType(resolver);
+                    if (actualType.canBeAssignedTo(property.getTypeUsage(), resolver)) {
+                        return ImmutableList.of(new FormalParameter(property.getTypeUsage(), property.getName()));
+                    }
                 }
             }
         }
 
         throw new UnsupportedOperationException(methodName);
+    }
+
+    private boolean hasGetterFor(TypeUsage actualType, String name, TypeUsage typeUsage, SymbolResolver resolver) {
+        if (actualType.isReference()) {
+            TypeDefinition typeDefinition = actualType.asReferenceTypeUsage().getTypeDefinition(resolver);
+            if (typeDefinition.hasMethodFor(Property.getterName(typeUsage, name), Collections.emptyList(), resolver, false)) {
+                TypeUsage returnType = typeDefinition.returnTypeWhenInvokedWith(Property.getterName(typeUsage, name), Collections.emptyList(), resolver, false);
+                if (!returnType.canBeAssignedTo(typeUsage, resolver)) {
+                    throw new IllegalArgumentException("Incompatible return type");
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     @Override

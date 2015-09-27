@@ -2,6 +2,7 @@ package me.tomassetti.turin.jvm;
 
 import sun.reflect.generics.parser.SignatureParser;
 import sun.reflect.generics.tree.ClassTypeSignature;
+import sun.reflect.generics.tree.IntSignature;
 import sun.reflect.generics.tree.MethodTypeSignature;
 import sun.reflect.generics.tree.TypeSignature;
 
@@ -25,6 +26,8 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
         TypeSignature typeSignature = methodTypeSignature.getParameterTypes()[i];
         if (typeSignature instanceof ClassTypeSignature) {
             return false;
+        } else if (typeSignature instanceof IntSignature) {
+            return true;
         } else {
             throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
         }
