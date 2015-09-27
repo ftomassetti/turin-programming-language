@@ -15,6 +15,15 @@ public class TypeImportDeclaration extends ImportDeclaration {
     private String typeName;
     private String alternativeName;
 
+    @Override
+    public String toString() {
+        return "TypeImportDeclaration{" +
+                "qualifiedName=" + qualifiedName +
+                ", typeName='" + typeName + '\'' +
+                ", alternativeName='" + alternativeName + '\'' +
+                '}';
+    }
+
     public TypeImportDeclaration(QualifiedName qualifiedName, String typeName) {
         this.qualifiedName = qualifiedName;
         this.typeName = typeName;

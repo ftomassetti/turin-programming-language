@@ -42,6 +42,13 @@ allPackageImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT ASTERISK nls;
 
 //
+// Annotations
+//
+
+annotationUsage:
+    annotation=ANNOTATION_ID;
+
+//
 
 typeUsage:
     ref=TYPE_ID
@@ -71,6 +78,7 @@ topLevelPropertyDeclaration:
     (NL? COLON constraint+=constraintDeclaration (commaNl constraint+=constraintDeclaration)*)? nls;
 
 topLevelFunctionDeclaration:
+    (annotations+=annotationUsage nls)*
     type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
 
 constraintDeclaration:
@@ -87,6 +95,7 @@ typeMember:
     inTypePropertyDeclaration | propertyReference | methodDefinition;
 
 typeDeclaration:
+    (annotations+=annotationUsage nls)*
     TYPE_KW name=TYPE_ID LBRACKET nls
     (typeMembers += typeMember)*
     RBRACKET nls;

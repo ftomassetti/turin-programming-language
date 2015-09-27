@@ -1,0 +1,10 @@
+namespace annotations
+
+import turin.test.Test
+
+@Test
+Int getByIndex(Int[] array, Int index) = array[index]
+
+@Test
+type A {
+}
