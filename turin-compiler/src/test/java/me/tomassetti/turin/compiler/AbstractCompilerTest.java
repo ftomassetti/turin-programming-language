@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,6 +62,8 @@ public abstract class AbstractCompilerTest {
     }
 
     protected SymbolResolver getResolverFor(TurinFile turinFile, List<String> jarFiles) {
+        jarFiles = new ArrayList<>(jarFiles);
+        jarFiles.add("../turin-standard-library/target/turin-standard-library-0.0.1-20150926-SNAPSHOT.jar");
         TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
                 .add(JdkTypeResolver.getInstance())
                 .addAll(jarFiles.stream().map((jf) -> {

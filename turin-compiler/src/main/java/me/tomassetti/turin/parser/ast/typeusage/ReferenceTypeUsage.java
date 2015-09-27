@@ -24,13 +24,19 @@ public class ReferenceTypeUsage extends TypeUsage {
     private List<TypeUsage> typeParams;
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
+    private boolean fullyQualifiedName;
 
     public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsage> typeParams) {
-        this(typeDefinition.getQualifiedName());
+        this(typeDefinition.getQualifiedName(), false);
         this.typeParams = typeParams;
     }
 
     public ReferenceTypeUsage(String name) {
+        this(name, false);
+    }
+
+
+    public ReferenceTypeUsage(String name, boolean fullyQualifiedName) {
         if (name.contains("/")) {
             throw new IllegalArgumentException(name);
         }
@@ -42,10 +48,11 @@ public class ReferenceTypeUsage extends TypeUsage {
         }
         this.name = name;
         this.typeParams = Collections.emptyList();
+        this.fullyQualifiedName = fullyQualifiedName;
     }
 
     public ReferenceTypeUsage(TypeDefinition td) {
-        this(td.getQualifiedName());
+        this(td.getQualifiedName(), true);
     }
 
     public boolean isInterface(SymbolResolver resolver) {
@@ -116,6 +123,9 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     public String getQualifiedName(SymbolResolver resolver) {
+        if (fullyQualifiedName) {
+            return name;
+        }
         TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
         return typeDefinition.getQualifiedName();
     }

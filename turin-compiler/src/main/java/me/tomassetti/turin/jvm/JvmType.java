@@ -54,7 +54,7 @@ public class JvmType {
         } else if (signature.startsWith("L") && signature.endsWith(";")) {
             String typeName = signature.substring(1, signature.length() - 1);
             typeName = typeName.replaceAll("/", ".");
-            return new ReferenceTypeUsage(typeName);
+            return new ReferenceTypeUsage(typeName, true);
         } else {
             throw new UnsupportedOperationException(signature);
         }
