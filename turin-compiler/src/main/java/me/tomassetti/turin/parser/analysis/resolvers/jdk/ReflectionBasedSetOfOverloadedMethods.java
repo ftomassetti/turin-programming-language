@@ -3,14 +3,18 @@ package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class ReflectionBasedSetOfOverloadedMethods extends Expression {
 
@@ -58,5 +62,15 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        if (invokable instanceof FunctionCall) {
+            FunctionCall functionCall = (FunctionCall)invokable;
+            return Optional.of(ReflectionBasedMethodResolution.formalParameters(ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods, this).get()));
+        }
+        throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
+        // return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this));
     }
 }

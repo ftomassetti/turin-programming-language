@@ -8,12 +8,14 @@ import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class JavassistBasedMethodResolution {
@@ -60,6 +62,20 @@ public class JavassistBasedMethodResolution {
         }
     }
 
+    public static CtConstructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors, Node context) {
+        try {
+            List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
+            MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, "constructor");
+            if (methodOrConstructor == null) {
+                throw new RuntimeException("unresolved constructor for " + argsTypes);
+            }
+            return methodOrConstructor.constructor;
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public static CtMethod findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = methods.stream()
@@ -71,6 +87,23 @@ public class JavassistBasedMethodResolution {
                 throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
             }
             return methodOrConstructor.method;
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Optional<CtMethod> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
+        try {
+            List<MethodOrConstructor> methodOrConstructors = methods.stream()
+                    .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
+                    .filter((m) -> m.getName().equals(name))
+                    .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
+            MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, name);
+            if (methodOrConstructor == null) {
+                return Optional.empty();
+            } else {
+                return Optional.of(methodOrConstructor.method);
+            }
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -100,6 +133,34 @@ public class JavassistBasedMethodResolution {
             return suitableMethods.get(0);
         } else {
             return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), resolver);
+        }
+    }
+
+    private static MethodOrConstructor findMethodAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) throws NotFoundException {
+        // TODO reorder params considering name
+        List<MethodOrConstructor> suitableMethods = new ArrayList<>();
+        for (MethodOrConstructor method : methods) {
+            if (method.getParameterCount() == argsTypes.size()) {
+                boolean match = true;
+                for (int i = 0; i < argsTypes.size(); i++) {
+                    TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
+                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    if (!actualType.canBeAssignedTo(formalType, resolver)) {
+                        match = false;
+                    }
+                }
+                if (match) {
+                    suitableMethods.add(method);
+                }
+            }
+        }
+
+        if (suitableMethods.size() == 0) {
+            return null;
+        } else if (suitableMethods.size() == 1) {
+            return suitableMethods.get(0);
+        } else {
+            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, argsTypes, desc), resolver);
         }
     }
 

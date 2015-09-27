@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
@@ -13,6 +14,8 @@ import java.util.List;
  * For example it can be a type definition with generic type parameter specified.
  */
 public abstract class TypeUsage extends Node {
+
+    private boolean overloaded;
 
     public abstract JvmType jvmType(SymbolResolver resolver);
 
@@ -68,5 +71,11 @@ public abstract class TypeUsage extends Node {
      */
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    public abstract boolean isMethodOverloaded(SymbolResolver resolver, String methodName);
+
+    public boolean isOverloaded() {
+        return overloaded;
     }
 }

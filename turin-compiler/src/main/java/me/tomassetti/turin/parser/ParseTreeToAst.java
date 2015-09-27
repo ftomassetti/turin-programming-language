@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 class ParseTreeToAst {
@@ -127,7 +128,9 @@ class ParseTreeToAst {
     }
 
     private PropertyDefinition toAst(TurinParser.TopLevelPropertyDeclarationContext ctx) {
-        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type));
+        Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
+        Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
+        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type), initialValue, defaultValue);
         getPositionFrom(propertyDefinition, ctx);
         return propertyDefinition;
     }
@@ -194,8 +197,12 @@ class ParseTreeToAst {
         }
     }
 
-    private Node toAst(TurinParser.InTypePropertyDeclarationContext inTypePropertyDeclarationContext) {
-        PropertyDefinition propertyDefinition = new PropertyDefinition(inTypePropertyDeclarationContext.name.getText(), toAst(inTypePropertyDeclarationContext.type));
+    private Node toAst(TurinParser.InTypePropertyDeclarationContext ctx) {
+        Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
+        Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
+        PropertyDefinition propertyDefinition = new PropertyDefinition(
+                ctx.name.getText(), toAst(ctx.type),
+                initialValue, defaultValue);
         return propertyDefinition;
     }
 
@@ -414,22 +421,27 @@ class ParseTreeToAst {
         return toAst(stringInterpolationElementContext.expression());
     }
 
-    private Creation toAst(TurinParser.CreationContext creation) {
+    private Creation toAst(TurinParser.CreationContext ctx) {
         String name;
-        if (creation.pakage != null) {
-            name = toAst(creation.pakage).qualifiedName() + "." + creation.name.getText();
+        if (ctx.pakage != null) {
+            name = toAst(ctx.pakage).qualifiedName() + "." + ctx.name.getText();
         } else {
-            name = creation.name.getText();
+            name = ctx.name.getText();
         }
-        return new Creation(name, creation.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+        Creation creation = new Creation(name, ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+        getPositionFrom(creation, ctx);
+        return creation;
     }
 
     private ActualParam toAst(TurinParser.ActualParamContext apCtx) {
+        ActualParam actualParam;
         if (apCtx.name != null) {
-            return new ActualParam(apCtx.name.getText(), toAst(apCtx.expression()));
+            actualParam = new ActualParam(apCtx.name.getText(), toAst(apCtx.expression()));
         } else {
-            return new ActualParam(toAst(apCtx.expression()));
+            actualParam = new ActualParam(toAst(apCtx.expression()), apCtx.asterisk != null);
         }
+        getPositionFrom(actualParam, apCtx);
+        return actualParam;
     }
 
     private FunctionCall toAstFunctionCall(TurinParser.ExpressionContext functionCallContext) {

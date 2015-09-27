@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,12 +31,12 @@ public class ReferenceTypeUsageTest {
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
+        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty());
 
         turinFile.add(nameProperty);
 
         TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
-        ageProperty = new PropertyDefinition("age", intType);
+        ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty());
         nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
         mangaCharacter.add(ageProperty);

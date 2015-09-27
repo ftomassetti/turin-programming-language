@@ -4,11 +4,13 @@ import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FunctionDefinition extends InvokableDefinition implements Named {
@@ -27,10 +29,15 @@ public class FunctionDefinition extends InvokableDefinition implements Named {
         return functionReferenceTypeUsage;
     }
 
+    @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        return Optional.of(parameters);
+    }
+
     public JvmMethodDefinition jvmMethodDefinition(SymbolResolver resolver) {
         String qName = this.contextName() + ".Function_" + name;
         String descriptor = "(" + String.join("", parameters.stream().map((fp)->fp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList())) + ")" + returnType.jvmType(resolver).getDescriptor();
-        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), "invoke", descriptor, true);
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), "invoke", descriptor, true, false);
     }
 
     public boolean match(List<JvmType> argsTypes, SymbolResolver resolver) {

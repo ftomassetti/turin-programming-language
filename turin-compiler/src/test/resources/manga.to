@@ -1,10 +1,10 @@
 namespace manga
 
-property String : name
+property String name
 
 type MangaCharacter {
     has name
-    has UInt : age
+    UInt age
 }
 
 program MangaExample(String[] args) {

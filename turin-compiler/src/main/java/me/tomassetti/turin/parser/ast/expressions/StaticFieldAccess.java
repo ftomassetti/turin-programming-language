@@ -5,11 +5,13 @@ import me.tomassetti.turin.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
+import java.util.Optional;
 
 public class StaticFieldAccess extends Expression {
 
@@ -56,6 +58,19 @@ public class StaticFieldAccess extends Expression {
 
         TypeUsage fieldType = typeDefinition.getField(field, true);
         return fieldType;
+    }
+
+    @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        TypeDefinition typeDefinition = typeDefinition(resolver);
+
+        if (invokable instanceof Creation) {
+            return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
+        } else if (invokable instanceof FunctionCall) {
+            return Optional.of(typeDefinition.getMethodParams(field, invokable.getActualParams(), resolver, true));
+        } else {
+            throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
+        }
     }
 
     @Override

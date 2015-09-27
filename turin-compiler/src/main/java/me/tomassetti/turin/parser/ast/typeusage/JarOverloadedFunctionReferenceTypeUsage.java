@@ -57,6 +57,11 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
+    }
+
+    @Override
     public JvmType jvmType(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }

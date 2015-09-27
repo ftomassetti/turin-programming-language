@@ -2,15 +2,17 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.expressions.Invokable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * It could represent also a reference to a Type Variable.
@@ -33,6 +35,9 @@ public class ReferenceTypeUsage extends TypeUsage {
             throw new IllegalArgumentException(name);
         }
         if (name.startsWith(".")) {
+            throw new IllegalArgumentException();
+        }
+        if (JvmNameUtils.isPrimitiveTypeName(name)) {
             throw new IllegalArgumentException();
         }
         this.name = name;
@@ -180,8 +185,24 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        if (invokable instanceof FunctionCall) {
+            FunctionCall functionCall = (FunctionCall)invokable;
+            TypeDefinition typeDefinition = getTypeDefinition(resolver);
+            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic(resolver)));
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
         return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+    }
+
+    @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
     }
 }

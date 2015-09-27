@@ -38,6 +38,7 @@ tokens { VALUE_ID, TYPE_ID, INT, LPAREN, RPAREN, COMMA, RELOP, AND_KW, OR_KW, NO
 NAMESPACE_KW        : 'namespace';
 PROGRAM_KW          : 'program';
 PROPERTY_KW         : 'property';
+DEFAULT_KW          : 'default';
 TYPE_KW             : 'type';
 VAL_KW              : 'val';
 HAS_KW              : 'has';
@@ -87,6 +88,9 @@ ASTERISK            : '*';
 SLASH               : '/';
 PLUS                : '+';
 MINUS               : '-';
+
+PLACEHOLDER         : '_';
+NAME_PLACEHOLDER    : '_name';
 
 PRIMITIVE_TYPE      : F_PRIMITIVE_TYPE;
 BASIC_TYPE          : F_BASIC_TYPE;

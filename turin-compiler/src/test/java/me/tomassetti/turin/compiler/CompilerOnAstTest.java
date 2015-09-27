@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -29,13 +30,13 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
-        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType);
+        PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty());
 
         turinFile.add(nameProperty);
 
         TurinTypeDefinition mangaCharacter = new TurinTypeDefinition("MangaCharacter");
         mangaCharacter.setPosition(Position.create(0, 0, 0, 0));
-        PropertyDefinition ageProperty = new PropertyDefinition("age", intType);
+        PropertyDefinition ageProperty = new PropertyDefinition("age", intType, Optional.empty(), Optional.empty());
         PropertyReference nameRef = new PropertyReference("name");
         mangaCharacter.add(nameRef);
         mangaCharacter.add(ageProperty);

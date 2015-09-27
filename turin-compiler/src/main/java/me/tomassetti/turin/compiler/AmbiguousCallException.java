@@ -2,6 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.List;
 
@@ -12,7 +13,14 @@ public class AmbiguousCallException extends RuntimeException {
 
     private Node context;
     private String name;
-    private List<JvmType> paramList;
+    private List<JvmType> actualParamTypes;
+    private List<ActualParam> actualParams;
+
+    public AmbiguousCallException(Node context, List<ActualParam> actualParams, String name) {
+        this.context = context;
+        this.actualParams = actualParams;
+        this.name = name;
+    }
 
     public Node getContext() {
         return context;
@@ -22,14 +30,18 @@ public class AmbiguousCallException extends RuntimeException {
         return name;
     }
 
-    public List<JvmType> getParamList() {
-        return paramList;
+    public List<JvmType> getActualParamTypes() {
+        return actualParamTypes;
     }
 
-    public AmbiguousCallException(Node context, String name, List<JvmType> paramList) {
+    public List<ActualParam> getActualParams() {
+        return actualParams;
+    }
+
+    public AmbiguousCallException(Node context, String name, List<JvmType> actualParamTypes) {
         this.context = context;
         this.name = name;
-        this.paramList = paramList;
+        this.actualParamTypes = actualParamTypes;
     }
 
 }

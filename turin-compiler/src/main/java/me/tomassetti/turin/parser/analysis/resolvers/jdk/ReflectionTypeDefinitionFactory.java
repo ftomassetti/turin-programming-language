@@ -26,7 +26,7 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public static JvmMethodDefinition toMethodDefinition(Method method){
-        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getCanonicalName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()));
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getCanonicalName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()), method.getDeclaringClass().isInterface());
     }
 
     public static String calcSignature(Class<?> clazz) {

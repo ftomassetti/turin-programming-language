@@ -15,4 +15,10 @@ public class UnsolvedConstructorException extends UnsolvedException {
         this.typeCanonicalName = typeCanonicalName;
         this.paramList = paramList;
     }
+
+    public UnsolvedConstructorException(String typeCanonicalName, List<ActualParam> paramList, String detail) {
+        super("Unsolved constructor for " + typeCanonicalName + " with params " + paramList + ": " + detail);
+        this.typeCanonicalName = typeCanonicalName;
+        this.paramList = paramList;
+    }
 }

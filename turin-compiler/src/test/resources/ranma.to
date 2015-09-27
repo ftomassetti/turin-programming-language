@@ -2,11 +2,11 @@ namespace manga
 
 import java.lang.System.out.println as print
 
-property String : name
+property String name
 
 type MangaCharacter {
     has name
-    has UInt : age
+    UInt age
 }
 
 program MangaExample(String[] args) {

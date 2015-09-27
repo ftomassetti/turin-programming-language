@@ -39,6 +39,11 @@ public class BasicTypeUsage extends TypeUsage {
     }
 
     @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
+    }
+
+    @Override
     public JvmType jvmType(SymbolResolver resolver) {
         return correspondingPrimitiveTypeUsage.jvmType(resolver);
     }

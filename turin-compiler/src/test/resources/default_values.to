@@ -1,0 +1,13 @@
+namespace foo
+
+type Foo {
+   Int a
+   Int b = 10
+   Int c default 5
+   Int d default 7
+}
+
+Foo foo1() = Foo(1, 2, 3)
+Foo foo2() = Foo(1, 2)
+Foo foo3() = Foo(1, d=3)
+Foo foo4() = Foo(1, d=3, c=2)

@@ -67,13 +67,18 @@ methodBody:
 //
 
 topLevelPropertyDeclaration:
-    PROPERTY_KW type=typeUsage COLON name=VALUE_ID nls;
+    PROPERTY_KW (type=typeUsage)? name=VALUE_ID (DEFAULT_KW defaultValue=expression |ASSIGNMENT initialValue=expression)?
+    (NL? COLON constraint+=constraintDeclaration (commaNl constraint+=constraintDeclaration)*)? nls;
 
 topLevelFunctionDeclaration:
     type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
 
+constraintDeclaration:
+    condition=expression (LPAREN message=expression RPAREN)?;
+
 inTypePropertyDeclaration:
-    HAS_KW type=typeUsage COLON name=VALUE_ID nls;
+    (type=typeUsage)? name=VALUE_ID (DEFAULT_KW defaultValue=expression |ASSIGNMENT initialValue=expression)?
+    (NL? COLON constraint+=constraintDeclaration (commaNl constraint+=constraintDeclaration)*)? nls;
 
 propertyReference:
     HAS_KW name=VALUE_ID nls;
@@ -89,13 +94,21 @@ typeDeclaration:
 //
 
 actualParam:
-    expression | name=VALUE_ID ASSIGNMENT expression;
+    expression | name=VALUE_ID ASSIGNMENT expression | asterisk=ASTERISK ASSIGNMENT expression;
 
 parenExpression:
     LPAREN internal=expression RPAREN;
 
+placeholderUsage:
+    PLACEHOLDER;
+
+placeholderNameUsage:
+    PLACEHOLDER_NAME;
+
 basicExpression:
-    booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral | valueReference | parenExpression | staticFieldReference;
+    booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral
+    | valueReference | parenExpression | staticFieldReference
+    | placeholderUsage | placeholderNameUsage;
 
 booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;

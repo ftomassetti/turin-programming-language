@@ -1,13 +1,21 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.Property;
+import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Creation extends Invokable {
@@ -46,6 +54,17 @@ public class Creation extends Invokable {
         return result;
     }
 
+    @Override
+    public boolean isOnOverloaded(SymbolResolver resolver) {
+        return resolver.getTypeDefinitionIn(typeName, this, resolver).hasManyConstructors();
+    }
+
+    @Override
+    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(typeName, this, resolver);
+        return typeDefinition.getConstructorParams(actualParams, resolver);
+    }
+
     public Creation(String typeName, List<ActualParam> actualParams) {
         super(actualParams);
         this.typeName = typeName;
@@ -67,6 +86,9 @@ public class Creation extends Invokable {
     }
 
     public JvmConstructorDefinition jvmDefinition(SymbolResolver resolver) {
-        return resolver.getTypeDefinitionIn(typeName, this, resolver).resolveConstructorCall(resolver, actualParams);
+        return resolver.getTypeDefinitionIn(typeName, this, resolver).resolveConstructorCall(resolver, originalParams);
     }
+
+
+
 }

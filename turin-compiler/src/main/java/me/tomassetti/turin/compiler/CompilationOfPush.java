@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static me.tomassetti.turin.compiler.BoxUnboxing.*;
+
 public class CompilationOfPush {
     private final Compilation compilation;
 
@@ -96,7 +98,7 @@ public class CompilationOfPush {
                 compilation.appendToStringBuilder(piece, elements);
             }
 
-            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)));
+            elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false, false)));
             return new ComposedBytecodeSequence(elements);
         } else if (expr instanceof ValueReference) {
             ValueReference valueReference = (ValueReference) expr;
@@ -153,6 +155,7 @@ public class CompilationOfPush {
             ));
         } else if (expr instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall) expr;
+            functionCall.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushInstance(functionCall);
             List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
@@ -164,6 +167,7 @@ public class CompilationOfPush {
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition.get())).build());
         } else if (expr instanceof Creation) {
             Creation creation = (Creation) expr;
+            creation.desugarize(compilation.getResolver());
             List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
                     .map((ap) -> pushExpression(ap))
                     .collect(Collectors.toList());
@@ -185,14 +189,25 @@ public class CompilationOfPush {
             }
         } else if (expr instanceof InstanceMethodInvokation) {
             InstanceMethodInvokation instanceMethodInvokation = (InstanceMethodInvokation) expr;
+            instanceMethodInvokation.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
-            List<BytecodeSequence> argumentsPush = instanceMethodInvokation.getActualParamValuesInOrder().stream()
-                    .map((ap) -> pushExpression(ap))
-                    .collect(Collectors.toList());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
+            List<BytecodeSequence> argumentsPush = new ArrayList<>();
+            int i=0;
+            for (Expression value : instanceMethodInvokation.getActualParamValuesInOrder()) {
+                boolean isPrimitive = value.calcType(compilation.getResolver()).isPrimitive();
+                if (isPrimitive && !methodDefinition.isParamPrimitive(i)){
+                    // need boxing
+                    argumentsPush.add(pushExpression(box(value, compilation.getResolver())));
+                } else {
+                    argumentsPush.add(pushExpression(value));
+                }
+                i++;
+            }
             return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
     }
+
 }

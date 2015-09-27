@@ -1,9 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jar;
 
-import javassist.CtClass;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.NotFoundException;
+import javassist.*;
 import javassist.bytecode.BadBytecode;
 import javassist.bytecode.SignatureAttribute;
 import me.tomassetti.turin.compiler.SemanticErrorException;
@@ -11,6 +8,7 @@ import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -54,6 +52,69 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public boolean hasManyConstructors() {
+        return ctClass.getConstructors().length > 1;
+    }
+
+    @Override
+    public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
+        return Arrays.stream(ctClass.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
+    }
+
+    @Override
+    public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+        CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
+                actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
+        return formalParameters(constructor);
+    }
+
+    @Override
+    public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
+                actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
+        if (method.isPresent()) {
+            return formalParameters(method.get());
+        } else {
+            throw new RuntimeException("unresolved method " + name + " for " + actualParams);
+        }
+    }
+
+    @Override
+    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
+                actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
+        return method.isPresent();
+    }
+
+    private List<FormalParameter> formalParameters(CtConstructor constructor) {
+        try {
+            List<FormalParameter> formalParameters = new ArrayList<>();
+            int i=0;
+            for (CtClass type : constructor.getParameterTypes()) {
+                formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+                i++;
+            }
+            return formalParameters;
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<FormalParameter> formalParameters(CtMethod method) {
+        try {
+            List<FormalParameter> formalParameters = new ArrayList<>();
+            int i=0;
+            for (CtClass type : method.getParameterTypes()) {
+                formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+                i++;
+            }
+            return formalParameters;
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public String getQualifiedName() {
         return ctClass.getName();
     }
@@ -61,7 +122,9 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         try {
-            return JavassistTypeDefinitionFactory.toMethodDefinition(JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this));
+            return JavassistTypeDefinitionFactory.toMethodDefinition(
+                    JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this),
+                    ctClass.isInterface());
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }

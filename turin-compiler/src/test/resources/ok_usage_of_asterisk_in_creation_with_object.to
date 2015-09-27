@@ -1,0 +1,14 @@
+namespace manga
+
+type Foo {
+   Int a
+   Int b = 10
+   Int c default 5
+   Int d default 7
+}
+
+Foo foo1() = Foo(*=Foo(1))
+Foo foo2() = Foo(*=Foo(1, 15))
+Foo foo3() = Foo(*=Foo(1, d=15))
+
+

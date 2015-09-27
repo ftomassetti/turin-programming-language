@@ -14,6 +14,11 @@ public class VoidTypeUsage extends TypeUsage {
     }
 
     @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
     }

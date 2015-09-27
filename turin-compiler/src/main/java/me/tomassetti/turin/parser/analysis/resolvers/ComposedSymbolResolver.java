@@ -5,10 +5,7 @@ import me.tomassetti.turin.parser.analysis.UnsolvedException;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
-import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.PropertyDefinition;
-import me.tomassetti.turin.parser.ast.PropertyReference;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 

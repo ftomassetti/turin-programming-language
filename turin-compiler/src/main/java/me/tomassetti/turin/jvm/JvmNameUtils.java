@@ -1,6 +1,10 @@
 package me.tomassetti.turin.jvm;
 
+import com.google.common.collect.ImmutableSet;
+import sun.reflect.generics.tree.TypeSignature;
+
 import java.util.Arrays;
+import java.util.Set;
 
 public final class JvmNameUtils {
 
@@ -93,5 +97,10 @@ public final class JvmNameUtils {
 
     public static boolean isSimpleName(String name) {
         return -1 == name.indexOf('.');
+    }
+
+    public static boolean isPrimitiveTypeName(String name) {
+        Set<String> names = ImmutableSet.of("boolean", "char", "byte", "short", "int", "long", "float", "double");
+        return names.contains(name);
     }
 }

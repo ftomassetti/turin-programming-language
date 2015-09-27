@@ -61,6 +61,11 @@ public class TypeVariableTypeUsage extends TypeUsage {
     }
 
     @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         throw new UnsupportedOperationException();
     }

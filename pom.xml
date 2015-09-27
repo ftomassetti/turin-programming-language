@@ -4,6 +4,7 @@
     <modules>
         <module>turin-parser</module>
         <module>turin-compiler</module>
+        <module>turin-standard-library</module>
     </modules>
 
     <parent>
