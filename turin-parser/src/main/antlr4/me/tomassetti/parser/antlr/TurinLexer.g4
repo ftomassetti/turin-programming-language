@@ -33,7 +33,7 @@ lexer grammar TurinLexer;
 
 // It is suggested to define the token types reused in different mode.
 // See mode in-interpolation below
-tokens { VALUE_ID, TYPE_ID, INT, LPAREN, RPAREN, COMMA, RELOP, AND_KW, OR_KW, NOT_KW }
+tokens { NAME_PLACEHOLDER, PLACEHOLDER, VALUE_ID, TYPE_ID, INT, LPAREN, RPAREN, COMMA, RELOP, AND_KW, OR_KW, NOT_KW }
 
 NAMESPACE_KW        : 'namespace';
 PROGRAM_KW          : 'program';
@@ -88,9 +88,10 @@ ASTERISK            : '*';
 SLASH               : '/';
 PLUS                : '+';
 MINUS               : '-';
+PIPE                : '|';
 
-PLACEHOLDER         : '_';
-NAME_PLACEHOLDER    : '_name';
+NAME_PLACEHOLDER    : F_NAME_PLACEHOLDER;
+PLACEHOLDER         : F_PLACEHOLDER;
 
 PRIMITIVE_TYPE      : F_PRIMITIVE_TYPE;
 BASIC_TYPE          : F_BASIC_TYPE;
@@ -129,6 +130,8 @@ I_OR_KW             : F_OR -> type(OR_KW);
 I_NOT_KW            : F_NOT -> type(NOT_KW);
 I_IF_KW             : 'if' -> type(IF_KW);
 I_ELSE_KW           : 'else' -> type(ELSE_KW);
+I_NAME_PLACEHOLDER  : F_NAME_PLACEHOLDER -> type(NAME_PLACEHOLDER);
+I_PLACEHOLDER       : F_PLACEHOLDER -> type(PLACEHOLDER);
 I_VALUE_ID          : F_VALUE_ID   -> type(VALUE_ID);
 I_TYPE_ID           : F_TYPE_ID -> type(TYPE_ID);
 I_INT               : F_INT -> type(INT);
@@ -154,15 +157,17 @@ I_STRING_START      : '"' -> type(STRING_START), pushMode(IN_STRING);
 I_WS                : (' ' | '\t')+ -> type(WS), channel(WHITESPACE);
 I_UNEXPECTED_CHAR   : . -> type(UNEXPECTED_CHAR);
 
-fragment F_AND            : 'and';
-fragment F_OR             : 'or';
-fragment F_NOT            : 'not';
-fragment F_VALUE_ID       : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_NAME_PLACEHOLDER : '_name';
+fragment F_PLACEHOLDER      : '_';
+fragment F_AND              : 'and';
+fragment F_OR               : 'or';
+fragment F_NOT              : 'not';
+fragment F_VALUE_ID         : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
-fragment F_TYPE_ID        : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
-fragment F_INT            : ('-')?('0'|(('1'..'9')('0'..'9')*));
-fragment F_PRIMITIVE_TYPE : 'Byte'|'Int'|'Long'|'Boolean'|'Char'|'Float'|'Double'|'Short';
-fragment F_BASIC_TYPE     : 'UInt';
+fragment F_TYPE_ID          : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_INT              : ('-')?('0'|(('1'..'9')('0'..'9')*));
+fragment F_PRIMITIVE_TYPE   : 'Byte'|'Int'|'Long'|'Boolean'|'Char'|'Float'|'Double'|'Short';
+fragment F_BASIC_TYPE       : 'UInt';
 
-fragment ESCAPE_SEQUENCE  : '\\r'|'\\n'|'\\t'|'\\"'|'\\\\';
-fragment SHARP            : '#'{ _input.LA(1)!='{' }?;
+fragment ESCAPE_SEQUENCE    : '\\r'|'\\n'|'\\t'|'\\"'|'\\\\';
+fragment SHARP              : '#'{ _input.LA(1)!='{' }?;

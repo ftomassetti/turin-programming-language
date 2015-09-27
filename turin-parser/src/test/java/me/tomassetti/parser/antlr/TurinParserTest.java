@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TurinParserTest {
@@ -80,5 +81,19 @@ public class TurinParserTest {
         assertEquals(1, root.fileMember().size());
         TurinParser.TopLevelFunctionDeclarationContext function = root.members.get(0).topLevelFunctionDeclaration();
         TurinParser.ExpressionContext funcBody = function.methodBody().expression();
+    }
+
+    @Test
+    public void parseFieldConstraint() throws IOException {
+        TurinParser.TurinFileContext root = parse("field_constraint");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.TypeDeclarationContext type = root.members.get(0).typeDeclaration();
+        assertEquals(1, type.typeMembers.size());
+        TurinParser.TypeMemberContext propMember = type.typeMembers.get(0);
+        assertNotNull(propMember.inTypePropertyDeclaration());
+        TurinParser.InTypePropertyDeclarationContext prop = propMember.inTypePropertyDeclaration();
+        assertEquals(1, prop.constraintDeclaration().size());
+        assertNotNull(prop.constraintDeclaration().get(0).message);
+        TurinParser.ExpressionContext msg = prop.constraintDeclaration().get(0).message;
     }
 }

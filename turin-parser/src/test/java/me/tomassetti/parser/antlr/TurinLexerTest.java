@@ -152,6 +152,30 @@ public class TurinLexerTest {
     }
 
     @Test
+    public void parsePlaceholder() throws IOException {
+        String code = "_";
+        verify(code, TurinLexer.PLACEHOLDER);
+    }
+
+    @Test
+    public void parseNamePlaceholder() throws IOException {
+        String code = "_name";
+        verify(code, TurinLexer.NAME_PLACEHOLDER);
+    }
+
+    @Test
+    public void parsePlaceholderInStringInterpolation() throws IOException {
+        String code = "\"#{_}\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.INTERPOLATION_START, TurinLexer.PLACEHOLDER, TurinLexer.INTERPOLATION_END, TurinLexer.STRING_STOP);
+    }
+
+    @Test
+    public void parseNamePlaceholderInStringInterpolation() throws IOException {
+        String code = "\"#{_name}\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.INTERPOLATION_START, TurinLexer.NAME_PLACEHOLDER, TurinLexer.INTERPOLATION_END, TurinLexer.STRING_STOP);
+    }
+
+    @Test
     public void parseBasicKeywords() throws IOException {
         String code = "namespace property val has type program";
         verify(code, TurinLexer.NAMESPACE_KW, TurinLexer.PROPERTY_KW, TurinLexer.VAL_KW, TurinLexer.HAS_KW, TurinLexer.TYPE_KW, TurinLexer.PROGRAM_KW);

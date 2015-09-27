@@ -74,7 +74,7 @@ topLevelFunctionDeclaration:
     type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
 
 constraintDeclaration:
-    condition=expression (LPAREN message=expression RPAREN)?;
+    condition=expression (PIPE message=expression)?;
 
 inTypePropertyDeclaration:
     (type=typeUsage)? name=VALUE_ID (DEFAULT_KW defaultValue=expression |ASSIGNMENT initialValue=expression)?
@@ -103,7 +103,7 @@ placeholderUsage:
     PLACEHOLDER;
 
 placeholderNameUsage:
-    PLACEHOLDER_NAME;
+    NAME_PLACEHOLDER;
 
 basicExpression:
     booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral
