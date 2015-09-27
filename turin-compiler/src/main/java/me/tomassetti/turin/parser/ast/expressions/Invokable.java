@@ -3,13 +3,12 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.UnsolvedInvokableException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.util.Either;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,7 +109,11 @@ public abstract class Invokable extends Expression {
         Map<String, ActualParam> paramsAssigned = new HashMap<>();
 
         List<FormalParameter> formalParams = formalParameters(resolver);
-        actualParams = ParamUtils.namedParamsFromAsteriskValue(formalParams, asteriskParam.getValue(), resolver, this);
+        Either<String, List<ActualParam>> res = ParamUtils.translateAsteriskParam(formalParams, asteriskParam.getValue(), resolver, this);
+        if (res.isLeft()) {
+            throw new IllegalArgumentException(res.getLeft());
+        }
+        actualParams = res.getRight();
     }
 
     private void concreteDesugarizeWithoutAsterisk(SymbolResolver resolver) {

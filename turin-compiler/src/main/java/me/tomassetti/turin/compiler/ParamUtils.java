@@ -13,10 +13,12 @@ import me.tomassetti.turin.parser.ast.expressions.InstanceMethodInvokation;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.util.Either;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParamUtils {
 
@@ -32,43 +34,25 @@ public class ParamUtils {
     }
 
     public static List<ActualParam> unnamedParams(List<ActualParam> actualParams) {
-        List<ActualParam> res = new ArrayList<>();
-        boolean findNamed = false;
-        for (ActualParam actualParam : actualParams) {
-            if (findNamed && (!actualParam.isNamed() && !actualParam.isAsterisk())) {
-                throw new IllegalArgumentException();
-            }
-            if (!actualParam.isNamed() && !actualParam.isAsterisk()) {
-                res.add(actualParam);
-            }
-            findNamed = findNamed || actualParam.isNamed();
-        }
-        return res;
+       return actualParams.stream().filter((p)->!p.isNamed() && !p.isAsterisk()).collect(Collectors.toList());
     }
 
     public static List<ActualParam> namedParams(List<ActualParam> actualParams) {
-        List<ActualParam> res = new ArrayList<>();
-        boolean findNamed = false;
-        for (ActualParam actualParam : actualParams) {
-            if (findNamed && (!actualParam.isNamed() && !actualParam.isAsterisk())) {
-                throw new IllegalArgumentException();
-            }
-            if (actualParam.isNamed() && !actualParam.isAsterisk()) {
-                res.add(actualParam);
-            }
-            findNamed = findNamed || actualParam.isNamed();
-        }
-        return res;
+        return actualParams.stream().filter((p) -> p.isNamed()).collect(Collectors.toList());
+    }
+
+    public static List<ActualParam> asteriskParams(List<ActualParam> actualParams) {
+        return actualParams.stream().filter((p) -> p.isAsterisk()).collect(Collectors.toList());
     }
 
     public static boolean hasDefaultParams(List<FormalParameter> formalParameters) {
         return formalParameters.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
     }
 
-    public static List<ActualParam> namedParamsFromAsteriskValue(List<FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
+    public static Either<String, List<ActualParam>> translateAsteriskParam(List<FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
         TypeUsage type = value.calcType(resolver);
         if (!type.isReference()) {
-            throw new IllegalArgumentException("An asterisk param should be an object");
+            return Either.left("An asterisk param should be an object");
         }
         List<ActualParam> actualParams = new ArrayList<>();
         TypeDefinition typeDefinition = type.asReferenceTypeUsage().getTypeDefinition(resolver);
@@ -93,7 +77,7 @@ public class ParamUtils {
                 }
             } else {
                 if (!formalParameter.hasDefaultValue()) {
-                    throw new IllegalArgumentException("the given value has not a getter '" + getterName + "'");
+                    return Either.left("the given value has not a getter '" + getterName + "'");
                 }
             }
         }
@@ -106,7 +90,7 @@ public class ParamUtils {
             actualParams.add(mapForDefaultParams);
         }
 
-        return actualParams;
+        return Either.right(actualParams);
     }
 
     public static String getterName(FormalParameter formalParameter) {
