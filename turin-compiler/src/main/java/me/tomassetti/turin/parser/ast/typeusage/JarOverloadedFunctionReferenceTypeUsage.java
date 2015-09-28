@@ -1,17 +1,14 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import com.google.common.collect.ImmutableList;
 import javassist.CtMethod;
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jar.JavassistBasedMethodResolution;
-import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.analysis.resolvers.compiled.JavassistBasedMethodResolution;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage {

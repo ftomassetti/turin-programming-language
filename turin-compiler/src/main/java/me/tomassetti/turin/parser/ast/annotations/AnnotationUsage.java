@@ -22,6 +22,13 @@ public class AnnotationUsage extends Node {
     }
 
     @Override
+    public String toString() {
+        return "AnnotationUsage{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+
+    @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.of();
     }

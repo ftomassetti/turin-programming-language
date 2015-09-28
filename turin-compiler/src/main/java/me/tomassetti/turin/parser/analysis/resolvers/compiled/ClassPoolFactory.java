@@ -1,12 +1,7 @@
-package me.tomassetti.turin.parser.analysis.resolvers.jar;
+package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import javassist.ClassPath;
 import javassist.ClassPool;
-import javassist.NotFoundException;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
 
 public enum ClassPoolFactory {
 

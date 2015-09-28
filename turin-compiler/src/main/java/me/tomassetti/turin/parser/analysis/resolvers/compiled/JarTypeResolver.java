@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.analysis.resolvers.jar;
+package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import javassist.ClassPath;
 import javassist.ClassPool;

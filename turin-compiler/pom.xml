@@ -64,7 +64,7 @@
         <dependency>
             <groupId>me.tomassetti</groupId>
             <artifactId>turin-standard-library</artifactId>
-            <version>0.0.1-20150926-SNAPSHOT</version>
+            <version>0.0.1-20150928-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>

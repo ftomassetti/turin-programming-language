@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.TurinFileWithSource;
 import me.tomassetti.turin.parser.analysis.resolvers.*;
-import me.tomassetti.turin.parser.analysis.resolvers.jar.JarTypeResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.compiled.JarTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
 
