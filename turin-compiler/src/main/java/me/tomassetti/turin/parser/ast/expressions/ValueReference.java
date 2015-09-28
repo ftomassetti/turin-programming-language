@@ -105,9 +105,15 @@ public class ValueReference extends Expression {
         return ImmutableList.of();
     }
 
+    private Node cache;
+
     public Node resolve(SymbolResolver resolver) {
+        if (cache != null) {
+            return cache;
+        }
         Optional<Node> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
+            cache = declaration.get();
             return declaration.get();
         } else {
             throw new UnsolvedSymbolException(this);

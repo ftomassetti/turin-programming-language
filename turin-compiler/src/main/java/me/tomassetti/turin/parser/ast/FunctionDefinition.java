@@ -57,8 +57,16 @@ public class FunctionDefinition extends InvokableDefinition implements Named {
         return Optional.of(parameters);
     }
 
-    public JvmMethodDefinition jvmMethodDefinition(SymbolResolver resolver) {
+    protected String getGeneratedClassQualifiedName() {
         String qName = this.contextName() + "." + CLASS_PREFIX + name;
+        if (!JvmNameUtils.isValidQualifiedName(qName)) {
+            throw new IllegalStateException(qName);
+        }
+        return qName;
+    }
+
+    public JvmMethodDefinition jvmMethodDefinition(SymbolResolver resolver) {
+        String qName = getGeneratedClassQualifiedName();
         String descriptor = "(" + String.join("", parameters.stream().map((fp)->fp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList())) + ")" + returnType.jvmType(resolver).getDescriptor();
         return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), INVOKE_METHOD_NAME, descriptor, true, false);
     }

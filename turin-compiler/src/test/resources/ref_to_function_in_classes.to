@@ -1,0 +1,5 @@
+namespace me.tomassetti.javaformatter
+
+void foo() {
+	fatalError("Not using Turin!")
+}

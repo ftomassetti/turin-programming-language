@@ -104,7 +104,19 @@ public class InFileSymbolResolver implements SymbolResolver {
 
     @Override
     public Optional<Node> findSymbol(String name, Node context) {
-        return context.findSymbol(name, this);
+        if (context == null) {
+            Optional<TypeDefinition> typeDefinition = typeResolver.resolveAbsoluteTypeName(name);
+            if (typeDefinition.isPresent()) {
+                return Optional.of(typeDefinition.get());
+            }
+            Optional<FunctionDefinition> functionDefinition = typeResolver.resolveAbsoluteFunctionName(name);
+            if (functionDefinition.isPresent()) {
+                return Optional.of(functionDefinition.get());
+            }
+            return Optional.empty();
+        } else {
+            return context.findSymbol(name, this);
+        }
     }
 
     private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context, SymbolResolver resolver) {

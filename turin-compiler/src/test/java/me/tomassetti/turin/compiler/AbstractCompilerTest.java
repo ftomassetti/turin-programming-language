@@ -5,6 +5,7 @@ import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.*;
+import me.tomassetti.turin.parser.analysis.resolvers.compiled.DirClassesTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.compiled.JarTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.Position;
@@ -62,6 +63,10 @@ public abstract class AbstractCompilerTest {
     }
 
     protected SymbolResolver getResolverFor(TurinFile turinFile, List<String> jarFiles) {
+        return getResolverFor(turinFile, jarFiles, Collections.emptyList());
+    }
+
+    protected SymbolResolver getResolverFor(TurinFile turinFile, List<String> jarFiles, List<String> classesDirs) {
         jarFiles = new ArrayList<>(jarFiles);
         jarFiles.add("../turin-standard-library/target/turin-standard-library-0.0.1-20150926-SNAPSHOT.jar");
         TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
@@ -69,6 +74,13 @@ public abstract class AbstractCompilerTest {
                 .addAll(jarFiles.stream().map((jf) -> {
                     try {
                         return new JarTypeResolver(new File(jf));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toList()))
+                .addAll(classesDirs.stream().map((d) -> {
+                    try {
+                        return new DirClassesTypeResolver(new File(d));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

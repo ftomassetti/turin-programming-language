@@ -108,4 +108,20 @@ public final class JvmNameUtils {
         String[] parts = qualifiedName.split("\\.");
         return parts[parts.length - 1];
     }
+
+    public static String getPackagePart(String qualifiedName) {
+        int index = qualifiedName.lastIndexOf('.');
+        if (index == -1) {
+            throw new IllegalArgumentException();
+        }
+        return qualifiedName.substring(0, index);
+    }
+
+    public static String getSimplePart(String qualifiedName) {
+        int index = qualifiedName.lastIndexOf('.');
+        if (index == -1) {
+            throw new IllegalArgumentException();
+        }
+        return qualifiedName.substring(index + 1);
+    }
 }

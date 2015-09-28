@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.compiler.*;
 import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.Parser;
@@ -16,7 +17,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -96,6 +96,17 @@ public class DirClassTypeResolverTest extends AbstractCompilerTest {
         assertEquals("msg", paramsTypeFatalError.get(0).getName());
         assertEquals("cu", paramsTypeFormat.get(0).getName());
         assertEquals("path", paramsTypeParse.get(0).getName());
+    }
+
+    @Test
+    public void referenceToFunctionInClasses() throws IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/ref_to_function_in_classes.to"));
+        me.tomassetti.turin.compiler.Compiler instance = new Compiler(getResolverFor(turinFile,
+                ImmutableList.of("src/test/resources/jars/javaparser-core-2.2.1.jar"),
+                ImmutableList.of(tmpDir.getAbsolutePath())), new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new AbstractCompilerTest.MyErrorCollector());
+        assertEquals(1, classFileDefinitions.size());
+        // it should compile without errors
     }
 
 }

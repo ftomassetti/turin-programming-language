@@ -158,7 +158,8 @@ public class TurinFile extends Node {
                 return Optional.of(typeDefinition);
             }
         }
-        return Optional.empty();
+        String qName = namespaceDefinition.getName() + "." + name;
+        return resolver.findSymbol(qName, null);
     }
 
     public void add(FunctionDefinition functionDefinition) {

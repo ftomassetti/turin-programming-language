@@ -18,6 +18,16 @@ public class LoadedFunctionDefinition extends FunctionDefinition {
         this.qualifiedName = qualifiedName;
     }
 
+    protected String getGeneratedClassQualifiedName() {
+        String packagePart = JvmNameUtils.getPackagePart(qualifiedName);
+        String simpleName = JvmNameUtils.getSimplePart(qualifiedName);
+        String qName = packagePart + "." + CLASS_PREFIX + simpleName;
+        if (!JvmNameUtils.isValidQualifiedName(qName)) {
+            throw new IllegalStateException(qName);
+        }
+        return qName;
+    }
+
     @Override
     public String getQualifiedName() {
         return qualifiedName;
