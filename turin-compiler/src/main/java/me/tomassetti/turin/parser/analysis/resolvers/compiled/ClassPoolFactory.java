@@ -13,6 +13,9 @@ public enum ClassPoolFactory {
     public void addJar(ClassPath classPath) {
         classPool.appendClassPath(classPath);
     }
+    public void addClassesDir(ClassPath classPath) {
+        classPool.appendClassPath(classPath);
+    }
 
     public ClassPool getClassPool() {
         return classPool;
