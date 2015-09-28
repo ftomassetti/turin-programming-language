@@ -1,17 +1,17 @@
 namespace examples
 
 type A {
-    Boolean foo1() = false and false
-    Boolean foo2() = false and true
-    Boolean foo3() = true  and false
-    Boolean foo4() = true  and true
-    Boolean foo5() = false or false
-    Boolean foo6() = false or true
-    Boolean foo7() = true  or false
-    Boolean foo8() = true  or true
-    Boolean foo9() = not false
-    Boolean foo10() = not true
-    Boolean foo11() = not false or not true
-    Boolean foo12() = not ((false or true) or false)
+    boolean foo1() = false and false
+    boolean foo2() = false and true
+    boolean foo3() = true  and false
+    boolean foo4() = true  and true
+    boolean foo5() = false or false
+    boolean foo6() = false or true
+    boolean foo7() = true  or false
+    boolean foo8() = true  or true
+    boolean foo9() = not false
+    boolean foo10() = not true
+    boolean foo11() = not false or not true
+    boolean foo12() = not ((false or true) or false)
 }
 

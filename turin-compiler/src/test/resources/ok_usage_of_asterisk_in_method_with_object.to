@@ -1,13 +1,13 @@
 namespace manga
 
 type Foo {
-   Int a
-   Int b = 10
-   Int c default 5
-   Int d default 7
+   int a
+   int b = 10
+   int c default 5
+   int d default 7
 }
 
-Foo callMe(Int a, Int c) = Foo(a, c)
+Foo callMe(int a, int c) = Foo(a, c)
 
 Foo foo1() {
     val foo = Foo(1)

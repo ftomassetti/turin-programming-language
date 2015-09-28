@@ -1,6 +1,6 @@
 namespace foo
 
-Void foo() {
+void foo() {
 }
 
 program A(String[] args) {

@@ -1,7 +1,7 @@
 namespace examples
 
 type A {
-    Boolean foo1() = false
-    Boolean foo2() = true
+    boolean foo1() = false
+    boolean foo2() = true
 }
 

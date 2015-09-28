@@ -6,7 +6,7 @@ import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.JavaParser
 import java.io.File
 
-Void fatalError(String msg) {
+void fatalError(String msg) {
 	eprint(msg)
 	System.exit(1)
 }

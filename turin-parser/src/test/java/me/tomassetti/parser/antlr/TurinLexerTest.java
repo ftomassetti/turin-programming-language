@@ -257,7 +257,7 @@ public class TurinLexerTest {
 
     @Test
     public void parseMethodDefinitionWithExpressionBody() throws IOException {
-        String code = "Void toString() = \"foo\"";
+        String code = "void toString() = \"foo\"";
         verify(code, TurinLexer.VOID_KW, TurinLexer.VALUE_ID, TurinLexer.LPAREN, TurinLexer.RPAREN, TurinLexer.ASSIGNMENT, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 

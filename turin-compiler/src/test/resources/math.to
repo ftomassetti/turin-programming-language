@@ -1,7 +1,7 @@
 namespace examples
 
 type Math {
-    Int b
-    Int c
-    Int calc(Int a) = a + b * c
+    int b
+    int c
+    int calc(int a) = a + b * c
 }

@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 public class BasicTypeUsage extends TypeUsage {
 
-    public static BasicTypeUsage UINT = new BasicTypeUsage("UInt", PrimitiveTypeUsage.INT);
+    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsage.INT);
 
     private static ImmutableList<BasicTypeUsage> BASIC_TYPES = ImmutableList.of(UINT);
 

@@ -1,9 +1,9 @@
 namespace reftolocalvar
 
 type Options {
-    Boolean newLinesAfterLBracket default false
-    Boolean useTabs               default false
-    Int     indentationSize       default 4 : _ >= 1 and _ <= 20 | "#{_name} should be between 1 and 20, instead it is #{_}"
+    boolean newLinesAfterLBracket default false
+    boolean useTabs               default false
+    int     indentationSize       default 4 : _ >= 1 and _ <= 20 | "#{_name} should be between 1 and 20, instead it is #{_}"
 }
 
 Options p() {

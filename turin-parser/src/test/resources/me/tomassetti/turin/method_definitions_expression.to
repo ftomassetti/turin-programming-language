@@ -2,6 +2,6 @@ namespace foo
 
 type MyClass {
 
-    Void toString() = "foo"
+    void toString() = "foo"
 
 }

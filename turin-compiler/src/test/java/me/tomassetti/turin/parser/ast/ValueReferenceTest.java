@@ -26,7 +26,7 @@ public class ValueReferenceTest {
     public void solveReferenceToLocalVariable() throws IOException {
         String code = "namespace examples\n" +
                 "program Example(String[] args) {\n" +
-                "    val UInt a = 0\n" +
+                "    val uint a = 0\n" +
                 "    a\n" +
                 "}\n";
         InputStream stream = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
@@ -57,7 +57,7 @@ public class ValueReferenceTest {
     public void solveReferenceToMethodParam() throws IOException {
         String code = "namespace examples\n" +
                 "type Example {\n" +
-                "    Void foo(Int a) = a\n" +
+                "    void foo(int a) = a\n" +
                 "}\n";
         InputStream stream = new ByteArrayInputStream(code.getBytes(StandardCharsets.UTF_8));
         TurinFile turinFile = new Parser().parse(stream);

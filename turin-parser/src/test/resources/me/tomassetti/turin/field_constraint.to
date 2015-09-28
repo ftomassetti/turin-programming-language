@@ -1,5 +1,5 @@
 namespace field_constraints
 
 type Options {
-    Int a : true | "#{_name} should be between 1 and 20, instead it is #{_}"
+    int a : true | "#{_name} should be between 1 and 20, instead it is #{_}"
 }

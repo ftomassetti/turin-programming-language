@@ -2,7 +2,7 @@ namespace trycatch
 
 import java.io.IOException
 
-Int parse(Int i) {
+int parse(int i) {
     try {
         if i == 0 {
             throw IOException("foo")

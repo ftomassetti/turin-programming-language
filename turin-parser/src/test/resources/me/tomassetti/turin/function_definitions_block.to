@@ -1,5 +1,5 @@
 namespace foo
 
-Int sum(Int a, Int b) {
+int sum(int a, int b) {
     return a + b
 }

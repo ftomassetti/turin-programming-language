@@ -6,7 +6,7 @@ property String name
 
 type MangaCharacter {
     has name
-    UInt age
+    uint age
 
     String toString() = "#{name}, #{age}"
 }

@@ -4,7 +4,7 @@ import java.lang.System.out.println as print
 import java.lang.System.err.println as eprint
 import com.github.javaparser.ast.CompilationUnit
 
-Void fatalError(String msg) {
+void fatalError(String msg) {
 	eprint(msg)
 	System.exit(1)
 }

@@ -4,7 +4,7 @@ property String name
 
 type MangaCharacter {
     has name
-    UInt age
+    uint age
 }
 
 program MangaExample(String[] args) {

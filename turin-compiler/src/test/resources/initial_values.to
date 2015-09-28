@@ -1,10 +1,10 @@
 namespace foo
 
 type Foo {
-   Int a
-   Int b = 10
-   Int c = 12
-   Int d
+   int a
+   int b = 10
+   int c = 12
+   int d
 }
 
 Foo foo1() = Foo(1, 2)

@@ -1,10 +1,10 @@
 namespace manga
 
 type Foo {
-   Int a
-   Int b = 10
-   Int c default 5
-   Int d default 7
+   int a
+   int b = 10
+   int c default 5
+   int d default 7
 }
 
 Foo foo2() = StringBuilder().append(*=Foo())

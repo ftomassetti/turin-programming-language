@@ -46,7 +46,7 @@ ABSTRACT_KW         : 'abstract';
 SHARED_KW           : 'shared';
 IMPORT_KW           : 'import';
 AS_KW               : 'as';
-VOID_KW             : 'Void';
+VOID_KW             : 'void';
 RETURN_KW           : 'return';
 FALSE_KW            : 'false';
 TRUE_KW             : 'true';
@@ -169,8 +169,8 @@ fragment F_VALUE_ID         : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '
 fragment F_TYPE_ID          : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_ANNOTATION_ID    : '@'('_')*('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_INT              : ('-')?('0'|(('1'..'9')('0'..'9')*));
-fragment F_PRIMITIVE_TYPE   : 'Byte'|'Int'|'Long'|'Boolean'|'Char'|'Float'|'Double'|'Short';
-fragment F_BASIC_TYPE       : 'UInt';
+fragment F_PRIMITIVE_TYPE   : 'byte'|'int'|'long'|'boolean'|'char'|'float'|'double'|'short';
+fragment F_BASIC_TYPE       : 'uint'|'ulong'|'ufloat'|'udouble'|'ushort'|'ubyte';
 
 fragment ESCAPE_SEQUENCE    : '\\r'|'\\n'|'\\t'|'\\"'|'\\\\';
 fragment SHARP              : '#'{ _input.LA(1)!='{' }?;

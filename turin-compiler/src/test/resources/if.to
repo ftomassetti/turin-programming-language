@@ -2,14 +2,14 @@ namespace examples
 
 type A {
 
-    String foo1(Boolean a) {
+    String foo1(boolean a) {
         if a {
             return "A"
         }
         return "B"
     }
 
-    String foo2(Boolean a) {
+    String foo2(boolean a) {
         if a {
             return "A"
         } else {
@@ -17,7 +17,7 @@ type A {
         }
     }
 
-    String foo3(Boolean a, Boolean b, Boolean c) {
+    String foo3(boolean a, boolean b, boolean c) {
         if a {
            return "A"
         } elif b {
@@ -29,7 +29,7 @@ type A {
         }
     }
 
-    String foo4(Boolean a, Boolean b, Boolean c) {
+    String foo4(boolean a, boolean b, boolean c) {
         if a {
            return "A"
         } elif b {

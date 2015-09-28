@@ -1,7 +1,7 @@
 namespace foo
 
-Void bar() {
+void bar() {
 }
 
-Void bar(Int i) {
+void bar(int i) {
 }
