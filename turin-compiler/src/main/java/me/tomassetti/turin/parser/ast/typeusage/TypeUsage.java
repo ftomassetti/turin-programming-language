@@ -78,4 +78,8 @@ public abstract class TypeUsage extends Node {
     public boolean isOverloaded() {
         return overloaded;
     }
+
+    public boolean isVoid() {
+        return false;
+    }
 }

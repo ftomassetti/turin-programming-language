@@ -8,10 +8,7 @@ import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.*;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -77,10 +74,12 @@ public class JavassistTypeDefinitionFactory {
             } catch (NotFoundException e) {
                 throw new RuntimeException(e);
             }
+        } else if (type.getName().equals(void.class.getCanonicalName())) {
+            return new VoidTypeUsage();
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsage.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsage(type.getName());
+            return new ReferenceTypeUsage(type.getName(), true);
         }
     }
 

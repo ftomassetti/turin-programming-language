@@ -5,6 +5,7 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
+import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.io.File;
@@ -128,6 +129,11 @@ public class JarTypeResolver implements TypeResolver {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<FunctionDefinition> resolveAbsoluteFunctionName(String typeName) {
+        throw new UnsupportedOperationException();
     }
 
 }

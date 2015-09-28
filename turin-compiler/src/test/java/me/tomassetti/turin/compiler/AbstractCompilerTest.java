@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractCompilerTest {
 
-    protected static class MyErrorCollector implements ErrorCollector {
+    public static class MyErrorCollector implements ErrorCollector {
 
         @Override
         public void recordSemanticError(Position position, String description) {

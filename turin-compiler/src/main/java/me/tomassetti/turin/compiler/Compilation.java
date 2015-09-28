@@ -77,7 +77,7 @@ public class Compilation {
     }
 
     private List<ClassFileDefinition> compile(FunctionDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
-        String canonicalClassName = namespaceDefinition.getName() + ".Function_"+functionDefinition.getName();
+        String canonicalClassName = namespaceDefinition.getName() + "." + FunctionDefinition.CLASS_PREFIX + functionDefinition.getName();
         String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
@@ -215,8 +215,17 @@ public class Compilation {
 
         mv.visitCode();
 
+        Label start = new Label();
+        Label end = new Label();
+        mv.visitLabel(start);
         for (FormalParameter formalParameter : invokableDefinition.getParameters()) {
-            localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
+            int index = localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
+            mv.visitLocalVariable(formalParameter.getName(),
+                    formalParameter.getType().jvmType(resolver).getDescriptor(),
+                    formalParameter.getType().jvmType(resolver).getSignature(),
+                    start,
+                    end,
+                    index);
         }
 
         compilationOfStatements.compile(invokableDefinition.getBody()).operate(mv);
@@ -227,6 +236,7 @@ public class Compilation {
             new ReturnVoidBS().operate(mv);
         }
 
+        mv.visitLabel(end);
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();

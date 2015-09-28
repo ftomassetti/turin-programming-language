@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
+import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.Optional;
@@ -24,5 +25,10 @@ public class JdkTypeResolver implements TypeResolver {
             throw new IllegalArgumentException(typeName);
         }
         return ReflectionTypeDefinitionFactory.getInstance().findTypeDefinition(typeName);
+    }
+
+    @Override
+    public Optional<FunctionDefinition> resolveAbsoluteFunctionName(String typeName) {
+        return Optional.empty();
     }
 }

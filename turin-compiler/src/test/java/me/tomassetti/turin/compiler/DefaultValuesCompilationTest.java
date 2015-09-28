@@ -28,7 +28,6 @@ public class DefaultValuesCompilationTest extends AbstractCompilerTest {
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class typeClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
-        saveClassFile(classFileDefinitions.get(0), "tmp");
         assertEquals(1, typeClass.getConstructors().length);
         assertEquals(2, typeClass.getConstructors()[0].getParameterCount());
         assertEquals(int.class, typeClass.getConstructors()[0].getParameterTypes()[0]);

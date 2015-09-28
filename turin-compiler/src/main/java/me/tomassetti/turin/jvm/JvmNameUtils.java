@@ -103,4 +103,9 @@ public final class JvmNameUtils {
         Set<String> names = ImmutableSet.of("boolean", "char", "byte", "short", "int", "long", "float", "double");
         return names.contains(name);
     }
+
+    public static String canonicalToSimple(String qualifiedName) {
+        String[] parts = qualifiedName.split("\\.");
+        return parts[parts.length - 1];
+    }
 }

@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 
 public class FunctionDefinition extends InvokableDefinition implements Named {
 
+    public static final String CLASS_PREFIX = "Function_";
+    public static final String INVOKE_METHOD_NAME = "invoke";
+
     private List<AnnotationUsage> annotations = new ArrayList<>();
 
     public void addAnnotation(AnnotationUsage annotation) {
@@ -55,9 +58,9 @@ public class FunctionDefinition extends InvokableDefinition implements Named {
     }
 
     public JvmMethodDefinition jvmMethodDefinition(SymbolResolver resolver) {
-        String qName = this.contextName() + ".Function_" + name;
+        String qName = this.contextName() + "." + CLASS_PREFIX + name;
         String descriptor = "(" + String.join("", parameters.stream().map((fp)->fp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList())) + ")" + returnType.jvmType(resolver).getDescriptor();
-        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), "invoke", descriptor, true, false);
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), INVOKE_METHOD_NAME, descriptor, true, false);
     }
 
     public boolean match(List<JvmType> argsTypes, SymbolResolver resolver) {
