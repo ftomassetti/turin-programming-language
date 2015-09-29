@@ -5,6 +5,7 @@ import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.TurinFile;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class ResolutionOfOverloadedMethodsTest extends AbstractCompilerTest {
         Class testClass = turinClassLoader.addClass(classFileDefinitionsTest.get(0));
 
         testClass.getMethod("invoke").invoke(null);
+        Assert.assertEquals(1, 3);
     }
 
 }

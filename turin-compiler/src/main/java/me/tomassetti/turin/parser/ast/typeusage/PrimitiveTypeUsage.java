@@ -19,23 +19,28 @@ public class PrimitiveTypeUsage extends TypeUsage {
 
     private String name;
     private JvmType jvmType;
+    private List<PrimitiveTypeUsage> promotionsTypes;
 
     public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),
             new ReferenceTypeUsage(Boolean.class.getCanonicalName()));
     public static PrimitiveTypeUsage CHAR = new PrimitiveTypeUsage("char",  new JvmType("C"),
             new ReferenceTypeUsage(Character.class.getCanonicalName()));
-    public static PrimitiveTypeUsage BYTE = new PrimitiveTypeUsage("byte",  new JvmType("B"),
-            new ReferenceTypeUsage(Byte.class.getCanonicalName()));
-    public static PrimitiveTypeUsage SHORT = new PrimitiveTypeUsage("short",  new JvmType("S"),
-            new ReferenceTypeUsage(Short.class.getCanonicalName()));
-    public static PrimitiveTypeUsage INT = new PrimitiveTypeUsage("int",  new JvmType("I"),
-            new ReferenceTypeUsage(Integer.class.getCanonicalName()));
     public static PrimitiveTypeUsage LONG = new PrimitiveTypeUsage("long",  new JvmType("J"),
             new ReferenceTypeUsage(Long.class.getCanonicalName()));
-    public static PrimitiveTypeUsage FLOAT = new PrimitiveTypeUsage("float",  new JvmType("F"),
-            new ReferenceTypeUsage(Float.class.getCanonicalName()));
+    public static PrimitiveTypeUsage INT = new PrimitiveTypeUsage("int",  new JvmType("I"),
+            new ReferenceTypeUsage(Integer.class.getCanonicalName()),
+            ImmutableList.of(LONG));
+    public static PrimitiveTypeUsage SHORT = new PrimitiveTypeUsage("short",  new JvmType("S"),
+            new ReferenceTypeUsage(Short.class.getCanonicalName()),
+            ImmutableList.of(INT, LONG));
+    public static PrimitiveTypeUsage BYTE = new PrimitiveTypeUsage("byte",  new JvmType("B"),
+            new ReferenceTypeUsage(Byte.class.getCanonicalName()),
+            ImmutableList.of(SHORT, INT, LONG));
     public static PrimitiveTypeUsage DOUBLE = new PrimitiveTypeUsage("double",  new JvmType("D"),
             new ReferenceTypeUsage(Double.class.getCanonicalName()));
+    public static PrimitiveTypeUsage FLOAT = new PrimitiveTypeUsage("float",  new JvmType("F"),
+            new ReferenceTypeUsage(Float.class.getCanonicalName()),
+            ImmutableList.of(DOUBLE));
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
@@ -46,7 +51,9 @@ public class PrimitiveTypeUsage extends TypeUsage {
         if (!other.isPrimitive()) {
             return false;
         }
-        // TODO consider promotions
+        if (promotionsTypes.contains(other)) {
+            return true;
+        }
         return jvmType(resolver).equals(other.jvmType(resolver));
     }
 
@@ -63,11 +70,15 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return boxType;
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType, List<PrimitiveTypeUsage> promotionsTypes) {
         this.name = name;
         this.jvmType = jvmType;
         this.boxType = boxType;
+        this.promotionsTypes = promotionsTypes;
+    }
 
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
+        this(name, jvmType, boxType, Collections.emptyList());
     }
 
     private TypeUsage boxType;
