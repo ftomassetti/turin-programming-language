@@ -1,0 +1,8 @@
+namespace foo
+
+import turin.test.Test
+
+@Test
+void fooTestSuccess() {
+    org.junit.Assert.assertEquals(1, bar())
+}

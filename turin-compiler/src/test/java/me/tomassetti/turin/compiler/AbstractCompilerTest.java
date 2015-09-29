@@ -67,6 +67,10 @@ public abstract class AbstractCompilerTest {
     }
 
     protected SymbolResolver getResolverFor(TurinFile turinFile, List<String> jarFiles, List<String> classesDirs) {
+        return getResolverFor(ImmutableList.of(turinFile), jarFiles, classesDirs);
+    }
+
+    protected SymbolResolver getResolverFor(List<TurinFile> turinFiles, List<String> jarFiles, List<String> classesDirs) {
         jarFiles = new ArrayList<>(jarFiles);
         jarFiles.add("../turin-standard-library/target/turin-standard-library-0.0.1-20150928-SNAPSHOT.jar");
         TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
@@ -86,7 +90,7 @@ public abstract class AbstractCompilerTest {
                     }
                 }).collect(Collectors.toList()))
                 .build());
-        return new ComposedSymbolResolver(ImmutableList.of(new InFileSymbolResolver(typeResolver), new SrcSymbolResolver(ImmutableList.of(turinFile))));
+        return new ComposedSymbolResolver(ImmutableList.of(new InFileSymbolResolver(typeResolver), new SrcSymbolResolver(turinFiles)));
     }
 
     public Method compileFunction(String exampleName, Class[] paramTypes) throws NoSuchMethodException, IOException {

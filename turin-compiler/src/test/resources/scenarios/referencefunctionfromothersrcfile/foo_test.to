@@ -1,0 +1,9 @@
+namespace foo
+
+import turin.test.Test
+
+@Test
+void fooTestSuccess() {
+    // reference to function
+    bar()
+}
