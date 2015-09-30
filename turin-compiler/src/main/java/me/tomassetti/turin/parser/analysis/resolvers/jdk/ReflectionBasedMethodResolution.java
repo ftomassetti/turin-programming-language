@@ -173,7 +173,7 @@ class ReflectionBasedMethodResolution {
         } else if (suitableMethods.size() == 1) {
             return suitableMethods.get(0);
         } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), resolver);
+            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), argsTypes, resolver);
         }
     }
 
@@ -200,17 +200,21 @@ class ReflectionBasedMethodResolution {
         } else if (suitableMethods.size() == 1) {
             return suitableMethods.get(0);
         } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, argsTypes, desc), resolver);
+            return findMostSpecific(suitableMethods,
+                    new AmbiguousCallException(context, argsTypes, desc),
+                    argsTypes.stream().map((ap)->ap.getValue().calcType(resolver).jvmType(resolver)).collect(Collectors.toList()),
+                    resolver);
         }
     }
 
-    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow, SymbolResolver resolver) {
+    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow,
+                                                        List<JvmType> argsTypes, SymbolResolver resolver) {
         MethodOrConstructor winningMethod = methods.get(0);
         for (MethodOrConstructor other : methods.subList(1, methods.size())) {
-            if (isTheFirstMoreSpecific(winningMethod, other, resolver)) {
-            } else if (isTheFirstMoreSpecific(other, winningMethod, resolver)) {
+            if (isTheFirstMoreSpecific(winningMethod, other, argsTypes, resolver)) {
+            } else if (isTheFirstMoreSpecific(other, winningMethod, argsTypes, resolver)) {
                 winningMethod = other;
-            } else if (!isTheFirstMoreSpecific(winningMethod, other, resolver)) {
+            } else if (!isTheFirstMoreSpecific(winningMethod, other, argsTypes, resolver)) {
                 // neither is more specific
                 throw exceptionToThrow;
             }
@@ -218,7 +222,8 @@ class ReflectionBasedMethodResolution {
         return winningMethod;
     }
 
-    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second, SymbolResolver resolver) {
+    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second,
+                                                  List<JvmType> argsTypes, SymbolResolver resolver) {
         boolean atLeastOneParamIsMoreSpecific = false;
         if (first.getParameterCount() != second.getParameterCount()) {
             throw new IllegalArgumentException();
@@ -226,9 +231,9 @@ class ReflectionBasedMethodResolution {
         for (int i=0;i<first.getParameterCount();i++){
             Class<?> paramFirst = first.getParameterType(i);
             Class<?> paramSecond = second.getParameterType(i);
-            if (isTheFirstMoreSpecific(paramFirst, paramSecond, resolver)) {
+            if (isTheFirstMoreSpecific(paramFirst, paramSecond, argsTypes.get(i), resolver)) {
                 atLeastOneParamIsMoreSpecific = true;
-            } else if (isTheFirstMoreSpecific(paramSecond, paramFirst, resolver)) {
+            } else if (isTheFirstMoreSpecific(paramSecond, paramFirst, argsTypes.get(i), resolver)) {
                 return false;
             }
         }
@@ -236,7 +241,19 @@ class ReflectionBasedMethodResolution {
         return atLeastOneParamIsMoreSpecific;
     }
 
-    private static boolean isTheFirstMoreSpecific(Class<?> firstType, Class<?> secondType, SymbolResolver resolver) {
+    private static boolean isTheFirstMoreSpecific(Class<?> firstType, Class<?> secondType, JvmType targetType, SymbolResolver resolver) {
+        boolean firstIsPrimitive = firstType.isPrimitive();
+        boolean secondIsPrimitive = secondType.isPrimitive();
+        boolean targetTypeIsPrimitive = targetType.isPrimitive();
+
+        // it is a match or a primitive promotion
+        if (targetTypeIsPrimitive && firstIsPrimitive && !secondIsPrimitive) {
+            return true;
+        }
+        if (targetTypeIsPrimitive && !firstIsPrimitive && secondIsPrimitive) {
+            return false;
+        }
+
         if (firstType.isPrimitive() || firstType.isArray()) {
             return false;
         }
