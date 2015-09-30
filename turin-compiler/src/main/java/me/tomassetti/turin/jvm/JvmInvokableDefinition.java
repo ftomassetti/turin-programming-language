@@ -1,5 +1,8 @@
 package me.tomassetti.turin.jvm;
 
+import sun.reflect.generics.parser.SignatureParser;
+import sun.reflect.generics.tree.*;
+
 public abstract class JvmInvokableDefinition {
     protected String ownerInternalName;
     protected String name;
@@ -24,5 +27,55 @@ public abstract class JvmInvokableDefinition {
 
     public String getDescriptor() {
         return descriptor;
+    }
+
+    public boolean isParamPrimitive(int i) {
+        MethodTypeSignature methodTypeSignature = SignatureParser.make().parseMethodSig(descriptor);
+        TypeSignature typeSignature = methodTypeSignature.getParameterTypes()[i];
+        if (typeSignature instanceof ClassTypeSignature) {
+            return false;
+        } else if (typeSignature instanceof BaseType) {
+            return true;
+        } else {
+            throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
+        }
+    }
+
+    public JvmType getParamType(int i) {
+        MethodTypeSignature methodTypeSignature = SignatureParser.make().parseMethodSig(descriptor);
+        TypeSignature typeSignature = methodTypeSignature.getParameterTypes()[i];
+        return toJvmType(typeSignature);
+    }
+
+    private JvmType toJvmType(TypeSignature typeSignature) {
+        if (typeSignature instanceof LongSignature) {
+            return JvmType.LONG;
+        } else if (typeSignature instanceof IntSignature) {
+            return JvmType.INT;
+        } else if (typeSignature instanceof BooleanSignature) {
+            return JvmType.BOOLEAN;
+        } else if (typeSignature instanceof CharSignature) {
+            return JvmType.CHAR;
+        } else if (typeSignature instanceof ByteSignature) {
+            return JvmType.BYTE;
+        } else if (typeSignature instanceof ShortSignature) {
+            return JvmType.SHORT;
+        } else if (typeSignature instanceof FloatSignature) {
+            return JvmType.FLOAT;
+        } else if (typeSignature instanceof DoubleSignature) {
+            return JvmType.DOUBLE;
+        } else if (typeSignature instanceof SimpleClassTypeSignature) {
+            SimpleClassTypeSignature simpleClassTypeSignature = (SimpleClassTypeSignature)typeSignature;
+            // TODO consider dollar and parameters
+            return new JvmType(simpleClassTypeSignature.getName());
+        } else if (typeSignature instanceof ClassTypeSignature) {
+            ClassTypeSignature classTypeSignature = (ClassTypeSignature)typeSignature;
+            if (classTypeSignature.getPath().size() == 1) {
+                return toJvmType(classTypeSignature.getPath().get(0));
+            }
+            throw new UnsupportedOperationException(classTypeSignature.getPath().toString());
+        } else {
+            throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
+        }
     }
 }

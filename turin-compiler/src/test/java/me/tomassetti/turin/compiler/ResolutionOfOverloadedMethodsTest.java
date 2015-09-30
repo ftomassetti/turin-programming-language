@@ -57,7 +57,6 @@ public class ResolutionOfOverloadedMethodsTest extends AbstractCompilerTest {
         Class testClass = turinClassLoader.addClass(classFileDefinitionsTest.get(0));
 
         testClass.getMethod("invoke").invoke(null);
-        Assert.assertEquals(1, 3);
     }
 
 }

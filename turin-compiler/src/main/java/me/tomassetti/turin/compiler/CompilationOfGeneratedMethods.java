@@ -20,7 +20,6 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
-import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -48,7 +47,7 @@ public class CompilationOfGeneratedMethods {
             // if the value is >= 0 we jump and skip the throw exception
             mv.visitJumpInsn(Opcodes.IFGE, label);
             JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
-            BytecodeSequence instantiateException = new NewInvocationBS(constructor, ImmutableList.of(new PushStringConst(property.getName() + " should be positive")));
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " should be positive"));
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
@@ -59,7 +58,7 @@ public class CompilationOfGeneratedMethods {
             // if not null skip the throw
             mv.visitJumpInsn(Opcodes.IFNONNULL, label);
             JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
-            BytecodeSequence instantiateException = new NewInvocationBS(constructor, ImmutableList.of(new PushStringConst(property.getName() + " cannot be null")));
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " cannot be null"));
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
@@ -69,7 +68,7 @@ public class CompilationOfGeneratedMethods {
 
             compilation.getPushUtils().pushExpression(constraint.getCondition()).operate(mv);
             JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
-            BytecodeSequence instantiateException = new NewInvocationBS(constructor, ImmutableList.of(compilation.getPushUtils().pushExpression(constraint.getMessage())));
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, compilation.getPushUtils().pushExpression(constraint.getMessage()));
             new IfBS(new LogicalNotBS(compilation.getPushUtils().pushExpression(constraint.getCondition())), new ThrowBS(instantiateException)).operate(mv);
         }
     }

@@ -6,11 +6,10 @@ import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalAndBS;
 import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalNotBS;
 import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalOrBS;
 import me.tomassetti.turin.compiler.bytecode.pushop.*;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmFieldDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
+import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
@@ -22,11 +21,10 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static me.tomassetti.turin.compiler.BoxUnboxing.*;
@@ -93,7 +91,7 @@ public class CompilationOfPush {
             StringInterpolation stringInterpolation = (StringInterpolation) expr;
 
             List<BytecodeSequence> elements = new ArrayList<BytecodeSequence>();
-            elements.add(new NewInvocationBS(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
+            elements.add(new NewInvocationBS(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), NoOp.getInstance()));
 
             for (Expression piece : stringInterpolation.getElements()) {
                 compilation.appendToStringBuilder(piece, elements);
@@ -160,21 +158,22 @@ public class CompilationOfPush {
             FunctionCall functionCall = (FunctionCall) expr;
             functionCall.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushInstance(functionCall);
-            List<BytecodeSequence> argumentsPush = functionCall.getActualParamValuesInOrder().stream()
-                    .map((ap) -> pushExpression(ap))
-                    .collect(Collectors.toList());
             Optional<JvmMethodDefinition> methodDefinition = compilation.getResolver().findJvmDefinition(functionCall);
             if (!methodDefinition.isPresent()) {
                 throw new UnsolvedMethodException(functionCall);
             }
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition.get())).build());
+            BytecodeSequence argumentsPush = adaptAndPushAllParameters(
+                    functionCall.getActualParamValuesInOrder(), methodDefinition.get()
+            );
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
+                    .add(instancePush)
+                    .add(argumentsPush)
+                    .add(new MethodInvocationBS(methodDefinition.get())).build());
         } else if (expr instanceof Creation) {
             Creation creation = (Creation) expr;
             creation.desugarize(compilation.getResolver());
-            List<BytecodeSequence> argumentsPush = creation.getActualParamValuesInOrder().stream()
-                    .map((ap) -> pushExpression(ap))
-                    .collect(Collectors.toList());
             JvmConstructorDefinition constructorDefinition = creation.jvmDefinition(compilation.getResolver());
+            BytecodeSequence argumentsPush = adaptAndPushAllParameters(creation.getActualParamValuesInOrder(), constructorDefinition);
             return new NewInvocationBS(constructorDefinition, argumentsPush);
         } else if (expr instanceof ArrayAccess) {
             ArrayAccess arrayAccess = (ArrayAccess) expr;
@@ -195,23 +194,50 @@ public class CompilationOfPush {
             instanceMethodInvokation.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
-            List<BytecodeSequence> argumentsPush = new ArrayList<>();
-            int i = 0;
-            for (Expression value : instanceMethodInvokation.getActualParamValuesInOrder()) {
-                boolean isPrimitive = value.calcType(compilation.getResolver()).isPrimitive();
-                if (isPrimitive && !methodDefinition.isParamPrimitive(i)) {
-                    // need boxing
-                    argumentsPush.add(pushExpression(box(value, compilation.getResolver())));
-                } else {
-                    argumentsPush.add(pushExpression(value));
-                }
-                i++;
-            }
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder().add(instancePush).addAll(argumentsPush).add(new MethodInvocationBS(methodDefinition)).build());
+            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
+                    .add(instancePush)
+                    .add(adaptAndPushAllParameters(instanceMethodInvokation.getActualParamValuesInOrder(), methodDefinition))
+                    .add(new MethodInvocationBS(methodDefinition)).build());
         } else if (expr instanceof Placeholder) {
             return compilation.getLocalVarsSymbolTable().getAlias("placeholder");
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
+        }
+    }
+
+    private BytecodeSequence adaptAndPushAllParameters(List<Expression> actualValues, JvmInvokableDefinition invokableDefinition) {
+        List<BytecodeSequence> elements = new LinkedList<>();
+        for (int i=0; i<actualValues.size(); i++) {
+            Expression value = actualValues.get(i);
+            JvmType formalType = invokableDefinition.getParamType(i);
+            elements.add(adaptAndPush(value, formalType));
+        }
+        return new ComposedBytecodeSequence(elements);
+    }
+
+    private BytecodeSequence adaptAndPush(Expression value, JvmType formalType) {
+        JvmType actualType = value.calcType(compilation.getResolver()).jvmType(compilation.getResolver());
+        boolean isPrimitive = actualType.isPrimitive();
+        if (isPrimitive && !formalType.isPrimitive()) {
+            // need boxing
+            return pushExpression(box(value, compilation.getResolver()));
+        } if (isPrimitive && formalType.isPrimitive() && !actualType.equals(formalType)) {
+            // need primitive conversion
+            return convertAndPush(value, formalType);
+        } else {
+            return pushExpression(value);
+        }
+    }
+
+    private BytecodeSequence convertAndPush(Expression value, JvmType formalType) {
+        JvmType actualType = value.calcType(compilation.getResolver()).jvmType(compilation.getResolver());
+        if (actualType.equals(JvmType.INT) && formalType.equals(JvmType.LONG)) {
+            return new ComposedBytecodeSequence(
+                    pushExpression(value),
+                    new IntToLongBS()
+            );
+        } else {
+            throw new UnsupportedOperationException("actual: " + actualType + ", formal: " + formalType);
         }
     }
 

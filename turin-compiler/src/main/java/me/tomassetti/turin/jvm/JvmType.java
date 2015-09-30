@@ -10,6 +10,16 @@ import java.util.Optional;
 
 public class JvmType {
 
+    public static final JvmType DOUBLE = new JvmType("D");
+    public static final JvmType FLOAT = new JvmType("F");
+    public static final JvmType CHAR = new JvmType("C");
+    public static final JvmType BOOLEAN = new JvmType("Z");
+    public static final JvmType BYTE = new JvmType("B");
+    public static final JvmType SHORT = new JvmType("S");
+    public static final JvmType INT = new JvmType("I");
+    public static final JvmType LONG = new JvmType("J");
+    public static final JvmType VOID = new JvmType("V");
+
     private String signature;
 
     public String getSignature() {
@@ -130,4 +140,5 @@ public class JvmType {
             return false;
         }
     }
+
 }

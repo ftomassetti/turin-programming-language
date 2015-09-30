@@ -129,7 +129,7 @@ public class Compilation {
             pushUtils.pushExpression(new StringLiteral(typeDefinition.getName())).operate(mv);
         } else {
             List<BytecodeSequence> elements = new ArrayList<>();
-            elements.add(new NewInvocationBS(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), Collections.emptyList()));
+            elements.add(new NewInvocationBS(new JvmConstructorDefinition("java/lang/StringBuilder", "()V"), NoOp.getInstance()));
             appendToStringBuilder(new StringLiteral(typeDefinition.getName()+"{"), elements);
 
             int remaining = typeDefinition.getAllProperties(resolver).size();

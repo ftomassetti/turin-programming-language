@@ -18,18 +18,6 @@ public class JvmMethodDefinition extends JvmInvokableDefinition {
         return _static;
     }
 
-    public boolean isParamPrimitive(int i) {
-        MethodTypeSignature methodTypeSignature = SignatureParser.make().parseMethodSig(descriptor);
-        TypeSignature typeSignature = methodTypeSignature.getParameterTypes()[i];
-        if (typeSignature instanceof ClassTypeSignature) {
-            return false;
-        } else if (typeSignature instanceof BaseType) {
-            return true;
-        } else {
-            throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
-        }
-    }
-
     public boolean isDeclaredOnInterface() {
         return declaredOnInterface;
     }
