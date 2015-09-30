@@ -5,6 +5,7 @@ lexer grammar TurinLexer;
 }
 
 @lexer::members {
+
     public static final int WHITESPACE = 1;
     public static final int COMMENTS = 2;
 
