@@ -96,7 +96,7 @@ public class JvmType {
     }
 
     public int returnOpcode() {
-        if (signature.equals("L")){
+        if (signature.equals("J")){
             return Opcodes.LRETURN;
         } else if (signature.equals("V")) {
             return Opcodes.RETURN;
@@ -113,5 +113,21 @@ public class JvmType {
 
     public boolean isAssignableBy(JvmType other) {
         return this.equals(other);
+    }
+
+    public boolean isPrimitive() {
+        if (signature.equals("J")){
+            return true;
+        } else if (signature.equals("V")) {
+            return true;
+        } else if (signature.equals("F")) {
+            return true;
+        } else if (signature.equals("D")) {
+            return true;
+        } else if (signature.equals("B")||signature.equals("S")||signature.equals("C")||signature.equals("I")||signature.equals("Z")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

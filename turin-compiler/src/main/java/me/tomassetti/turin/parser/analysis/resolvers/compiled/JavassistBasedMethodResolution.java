@@ -132,7 +132,7 @@ public class JavassistBasedMethodResolution {
         } else if (suitableMethods.size() == 1) {
             return suitableMethods.get(0);
         } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), resolver);
+            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), argsTypes, resolver);
         }
     }
 
@@ -160,17 +160,23 @@ public class JavassistBasedMethodResolution {
         } else if (suitableMethods.size() == 1) {
             return suitableMethods.get(0);
         } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, argsTypes, desc), resolver);
+            return findMostSpecific(suitableMethods,
+                    new AmbiguousCallException(context, argsTypes, desc),
+                    argsTypes.stream().map((ap)->ap.getValue().calcType(resolver).jvmType(resolver)).collect(Collectors.toList()),
+                    resolver);
         }
     }
 
-    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods, AmbiguousCallException exceptionToThrow, SymbolResolver resolver) throws NotFoundException {
+    private static MethodOrConstructor findMostSpecific(List<MethodOrConstructor> methods,
+                                                        AmbiguousCallException exceptionToThrow,
+                                                        List<JvmType> argsTypes,
+                                                        SymbolResolver resolver) throws NotFoundException {
         MethodOrConstructor winningMethod = methods.get(0);
         for (MethodOrConstructor other : methods.subList(1, methods.size())) {
-            if (isTheFirstMoreSpecific(winningMethod, other, resolver)) {
-            } else if (isTheFirstMoreSpecific(other, winningMethod, resolver)) {
+            if (isTheFirstMoreSpecific(winningMethod, other, argsTypes, resolver)) {
+            } else if (isTheFirstMoreSpecific(other, winningMethod, argsTypes, resolver)) {
                 winningMethod = other;
-            } else if (!isTheFirstMoreSpecific(winningMethod, other, resolver)) {
+            } else if (!isTheFirstMoreSpecific(winningMethod, other, argsTypes, resolver)) {
                 // neither is more specific
                 throw exceptionToThrow;
             }
@@ -178,7 +184,9 @@ public class JavassistBasedMethodResolution {
         return winningMethod;
     }
 
-    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second, SymbolResolver resolver) throws NotFoundException {
+    private static boolean isTheFirstMoreSpecific(MethodOrConstructor first, MethodOrConstructor second,
+                                                  List<JvmType> argsTypes,
+                                                  SymbolResolver resolver) throws NotFoundException {
         boolean atLeastOneParamIsMoreSpecific = false;
         if (first.getParameterCount() != second.getParameterCount()) {
             throw new IllegalArgumentException();
@@ -186,9 +194,9 @@ public class JavassistBasedMethodResolution {
         for (int i=0;i<first.getParameterCount();i++){
             CtClass paramFirst = first.getParameterType(i);
             CtClass paramSecond = second.getParameterType(i);
-            if (isTheFirstMoreSpecific(paramFirst, paramSecond, resolver)) {
+            if (isTheFirstMoreSpecific(paramFirst, paramSecond, argsTypes.get(i), resolver)) {
                 atLeastOneParamIsMoreSpecific = true;
-            } else if (isTheFirstMoreSpecific(paramSecond, paramFirst, resolver)) {
+            } else if (isTheFirstMoreSpecific(paramSecond, paramFirst, argsTypes.get(i), resolver)) {
                 return false;
             }
         }
@@ -196,7 +204,19 @@ public class JavassistBasedMethodResolution {
         return atLeastOneParamIsMoreSpecific;
     }
 
-    private static boolean isTheFirstMoreSpecific(CtClass firstType, CtClass secondType, SymbolResolver resolver) {
+    private static boolean isTheFirstMoreSpecific(CtClass firstType, CtClass secondType, JvmType targetType, SymbolResolver resolver) {
+        boolean firstIsPrimitive = firstType.isPrimitive();
+        boolean secondIsPrimitive = secondType.isPrimitive();
+        boolean targetTypeIsPrimitive = targetType.isPrimitive();
+
+        // it is a match or a primitive promotion
+        if (targetTypeIsPrimitive && firstIsPrimitive && !secondIsPrimitive) {
+            return true;
+        }
+        if (targetTypeIsPrimitive && !firstIsPrimitive && secondIsPrimitive) {
+            return false;
+        }
+
         if (firstType.isPrimitive() || firstType.isArray()) {
             return false;
         }
