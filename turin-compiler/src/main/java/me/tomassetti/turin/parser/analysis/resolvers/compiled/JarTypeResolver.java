@@ -16,6 +16,9 @@ public class JarTypeResolver extends AbstractCompiledTypeResolver<JarClasspathEl
      * Note that it adds itself in the global ClassPool.
      */
     public JarTypeResolver(File file) throws IOException {
+        if (file == null) {
+            throw new IllegalArgumentException("Null is not an acceptable value for file");
+        }
         if (!file.exists() || !file.isFile()) {
             throw new IllegalArgumentException("Not existing or not a file: " + file.getPath());
         }
