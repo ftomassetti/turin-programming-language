@@ -83,9 +83,9 @@ class ParseTreeToAst {
     private ImportDeclaration toAst(TurinParser.TypeImportDeclarationContext ctx) {
         ImportDeclaration importDeclaration;
         if (ctx.alternativeName == null) {
-             importDeclaration = new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText());
+             importDeclaration = new TypeImportDeclaration(toAst(ctx.packagePart), idText(ctx.typeName));
         } else {
-            importDeclaration = new TypeImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), ctx.alternativeName.getText());
+            importDeclaration = new TypeImportDeclaration(toAst(ctx.packagePart), idText(ctx.typeName), idText(ctx.alternativeName));
         }
         getPositionFrom(importDeclaration, ctx);
         return importDeclaration;
@@ -94,9 +94,9 @@ class ParseTreeToAst {
     private ImportDeclaration toAst(TurinParser.SingleFieldImportDeclarationContext ctx) {
         ImportDeclaration importDeclaration;
         if (ctx.alternativeName == null) {
-            importDeclaration = new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName));
+            importDeclaration = new SingleFieldImportDeclaration(toAst(ctx.packagePart), idText(ctx.typeName), toAst(ctx.fieldName));
         } else {
-            importDeclaration = new SingleFieldImportDeclaration(toAst(ctx.packagePart), ctx.typeName.getText(), toAst(ctx.fieldName), ctx.alternativeName.getText());
+            importDeclaration = new SingleFieldImportDeclaration(toAst(ctx.packagePart), idText(ctx.typeName), toAst(ctx.fieldName), idText(ctx.alternativeName));
         }
         getPositionFrom(importDeclaration, ctx);
         return importDeclaration;
@@ -124,7 +124,7 @@ class ParseTreeToAst {
 
     private FunctionDefinition toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
         List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        FunctionDefinition functionDefinition = new FunctionDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        FunctionDefinition functionDefinition = new FunctionDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(functionDefinition, ctx);
         ctx.annotations.forEach((anCtx)->{
             AnnotationUsage annotationUsage = toAst(anCtx);
@@ -144,13 +144,13 @@ class ParseTreeToAst {
         Optional<Expression> initialValue = ctx.initialValue == null ? Optional.empty() : Optional.of(toAst(ctx.initialValue));
         Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
         List<PropertyConstraint> constraints = Collections.emptyList();
-        PropertyDefinition propertyDefinition = new PropertyDefinition(ctx.name.getText(), toAst(ctx.type), initialValue, defaultValue, constraints);
+        PropertyDefinition propertyDefinition = new PropertyDefinition(idText(ctx.name), toAst(ctx.type), initialValue, defaultValue, constraints);
         getPositionFrom(propertyDefinition, ctx);
         return propertyDefinition;
     }
 
     private TurinTypeDefinition toAst(TurinParser.TypeDeclarationContext ctx) {
-        TurinTypeDefinition typeDefinition = new TurinTypeDefinition(ctx.name.getText());
+        TurinTypeDefinition typeDefinition = new TurinTypeDefinition(idText(ctx.name));
         getPositionFrom(typeDefinition, ctx);
         for (TurinParser.TypeMemberContext memberCtx : ctx.typeMember()) {
             Node memberNode = toAst(memberCtx);
@@ -185,7 +185,7 @@ class ParseTreeToAst {
 
     private Node toAst(TurinParser.MethodDefinitionContext ctx) {
         List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        MethodDefinition methodDefinition = new MethodDefinition(ctx.name.getText(), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        MethodDefinition methodDefinition = new MethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(methodDefinition, ctx);
         return methodDefinition;
     }
@@ -202,7 +202,7 @@ class ParseTreeToAst {
     }
 
     private FormalParameter toAst(TurinParser.FormalParamContext formalParamContext) {
-        return new FormalParameter(toAst(formalParamContext.type), formalParamContext.name.getText());
+        return new FormalParameter(toAst(formalParamContext.type), idText(formalParamContext.name));
     }
 
     private TypeUsage toAst(TurinParser.ReturnTypeContext type) {
@@ -220,7 +220,7 @@ class ParseTreeToAst {
         Optional<Expression> defaultValue = ctx.defaultValue == null ? Optional.empty() : Optional.of(toAst(ctx.defaultValue));
         List<PropertyConstraint> constraints = ctx.constraint.stream().map((cctx)->toAst(cctx)).collect(Collectors.toList());
         PropertyDefinition propertyDefinition = new PropertyDefinition(
-                ctx.name.getText(), toAst(ctx.type),
+                idText(ctx.name), toAst(ctx.type),
                 initialValue, defaultValue, constraints);
         return propertyDefinition;
     }
@@ -234,7 +234,7 @@ class ParseTreeToAst {
     }
 
     private PropertyReference toAst(TurinParser.PropertyReferenceContext propertyReferenceContext) {
-        return new PropertyReference(propertyReferenceContext.name.getText());
+        return new PropertyReference(idText(propertyReferenceContext.name));
     }
 
     private TypeUsage toAst(TurinParser.TypeUsageContext type) {
@@ -256,7 +256,7 @@ class ParseTreeToAst {
         for (TurinParser.StatementContext stmtCtx : programCtx.statements) {
             statements.add(toAst(stmtCtx));
         }
-        Program program = new Program(programCtx.name.getText(), new BlockStatement(statements), programCtx.formalParam.name.getText());
+        Program program = new Program(idText(programCtx.name), new BlockStatement(statements), idText(programCtx.formalParam.name));
         getPositionFrom(program, programCtx);
         return program;
     }
@@ -290,7 +290,7 @@ class ParseTreeToAst {
     private CatchClause toAst(TurinParser.CatchClauseContext ctx) {
         BlockStatement body = new BlockStatement(ctx.body.stream().map((s)->toAst(s)).collect(Collectors.toList()));
         TypeIdentifier type = toAst(ctx.type);
-        CatchClause catchCause = new CatchClause(type, ctx.varName.getText(), body);
+        CatchClause catchCause = new CatchClause(type, idText(ctx.varName), body);
         getPositionFrom(catchCause, ctx);
         return catchCause;
     }
@@ -327,9 +327,9 @@ class ParseTreeToAst {
 
     private VariableDeclaration toAst(TurinParser.VarDeclContext varDeclContext) {
         if (varDeclContext.type != null) {
-            return new VariableDeclaration(varDeclContext.name.getText(), toAst(varDeclContext.value), toAst(varDeclContext.type));
+            return new VariableDeclaration(idText(varDeclContext.name), toAst(varDeclContext.value), toAst(varDeclContext.type));
         } else {
-            return new VariableDeclaration(varDeclContext.name.getText(), toAst(varDeclContext.value));
+            return new VariableDeclaration(idText(varDeclContext.name), toAst(varDeclContext.value));
         }
     }
 
@@ -361,13 +361,13 @@ class ParseTreeToAst {
 
     private InstanceMethodInvokation toInstanceMethodAccessAst(TurinParser.ExpressionContext ctx) {
         List<ActualParam> params = ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList());
-        InstanceMethodInvokation instanceMethodInvokation = new InstanceMethodInvokation(toAst(ctx.container), ctx.methodName.getText(), params);
+        InstanceMethodInvokation instanceMethodInvokation = new InstanceMethodInvokation(toAst(ctx.container), idText(ctx.methodName), params);
         getPositionFrom(instanceMethodInvokation, ctx);
         return instanceMethodInvokation;
     }
 
     private InstanceFieldAccess toInstanceFieldAccessAst(TurinParser.ExpressionContext ctx) {
-        return new InstanceFieldAccess(toAst(ctx.container), ctx.fieldName.getText());
+        return new InstanceFieldAccess(toAst(ctx.container), idText(ctx.fieldName));
     }
 
     private Expression mathOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
@@ -422,7 +422,7 @@ class ParseTreeToAst {
         String fieldName = null;
         while (parent != null && fieldName == null) {
             if (parent instanceof TurinParser.InTypePropertyDeclarationContext) {
-                fieldName = ((TurinParser.InTypePropertyDeclarationContext)parent).name.getText();
+                fieldName = idText(((TurinParser.InTypePropertyDeclarationContext)parent).name);
             } else {
                 parent = parent.getParent();
             }
@@ -441,7 +441,7 @@ class ParseTreeToAst {
         String fieldName = null;
         while (parent != null && fieldName == null) {
             if (parent instanceof TurinParser.InTypePropertyDeclarationContext) {
-                fieldName = ((TurinParser.InTypePropertyDeclarationContext)parent).name.getText();
+                fieldName = idText(((TurinParser.InTypePropertyDeclarationContext)parent).name);
             } else {
                 parent = parent.getParent();
             }
@@ -456,19 +456,27 @@ class ParseTreeToAst {
     }
 
     private Expression toAst(TurinParser.StaticFieldReferenceContext ctx) {
-        return new StaticFieldAccess(toAst(ctx.typeReference()), ctx.name.getText());
+        return new StaticFieldAccess(toAst(ctx.typeReference()), idText(ctx.name));
     }
 
     private TypeIdentifier toAst(TurinParser.TypeReferenceContext ctx) {
         if (ctx.packag != null) {
-            return new TypeIdentifier(toAst(ctx.packag), ctx.name.getText());
+            return new TypeIdentifier(toAst(ctx.packag), idText(ctx.name));
         } else {
-            return new TypeIdentifier(ctx.name.getText());
+            return new TypeIdentifier(idText(ctx.name));
+        }
+    }
+
+    private String idText(Token token) {
+        if (token.getText().startsWith("v#") || token.getText().startsWith("T#")) {
+            return token.getText().substring(2);
+        } else {
+            return token.getText();
         }
     }
 
     private ValueReference toAst(TurinParser.ValueReferenceContext valueReferenceContext) {
-        ValueReference expression = new ValueReference(valueReferenceContext.getText());
+        ValueReference expression = new ValueReference(idText(valueReferenceContext.name));
         getPositionFrom(expression, valueReferenceContext);
         return expression;
     }
@@ -495,9 +503,9 @@ class ParseTreeToAst {
     private Creation toAst(TurinParser.CreationContext ctx) {
         String name;
         if (ctx.pakage != null) {
-            name = toAst(ctx.pakage).qualifiedName() + "." + ctx.name.getText();
+            name = toAst(ctx.pakage).qualifiedName() + "." + idText(ctx.name);
         } else {
-            name = ctx.name.getText();
+            name = idText(ctx.name);
         }
         Creation creation = new Creation(name, ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
         getPositionFrom(creation, ctx);
@@ -507,7 +515,7 @@ class ParseTreeToAst {
     private ActualParam toAst(TurinParser.ActualParamContext apCtx) {
         ActualParam actualParam;
         if (apCtx.name != null) {
-            actualParam = new ActualParam(apCtx.name.getText(), toAst(apCtx.expression()));
+            actualParam = new ActualParam(idText(apCtx.name), toAst(apCtx.expression()));
         } else {
             actualParam = new ActualParam(toAst(apCtx.expression()), apCtx.asterisk != null);
         }
@@ -536,6 +544,7 @@ class ParseTreeToAst {
     }
 
     private NamespaceDefinition toAst(TurinParser.NamespaceDeclContext namespaceContext) {
-        return new NamespaceDefinition(namespaceContext.name.getText());
+        // in this way we take care of the escaped IDs
+        return new NamespaceDefinition(toAst(namespaceContext.name).qualifiedName());
     }
 }
