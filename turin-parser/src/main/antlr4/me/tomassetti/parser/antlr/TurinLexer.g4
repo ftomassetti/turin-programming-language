@@ -97,9 +97,9 @@ PLACEHOLDER         : F_PLACEHOLDER;
 PRIMITIVE_TYPE      : F_PRIMITIVE_TYPE;
 BASIC_TYPE          : F_BASIC_TYPE;
 
-VALUE_ID            : F_VALUE_ID;
+VALUE_ID            : F_VALUE_ID | F_ESCAPED_VALUE_ID;
 // Only for types
-TYPE_ID             : F_TYPE_ID;
+TYPE_ID             : F_TYPE_ID | F_ESCAPED_TYPE_ID;
 INT                 : F_INT;
 
 STRING_START        : '"' -> pushMode(IN_STRING);
@@ -135,8 +135,8 @@ I_IF_KW             : 'if' -> type(IF_KW);
 I_ELSE_KW           : 'else' -> type(ELSE_KW);
 I_NAME_PLACEHOLDER  : F_NAME_PLACEHOLDER -> type(NAME_PLACEHOLDER);
 I_PLACEHOLDER       : F_PLACEHOLDER -> type(PLACEHOLDER);
-I_VALUE_ID          : F_VALUE_ID   -> type(VALUE_ID);
-I_TYPE_ID           : F_TYPE_ID -> type(TYPE_ID);
+I_VALUE_ID          : (F_VALUE_ID | F_ESCAPED_VALUE_ID) -> type(VALUE_ID);
+I_TYPE_ID           : (F_TYPE_ID  | F_ESCAPED_TYPE_ID)  -> type(TYPE_ID);
 I_INT               : F_INT -> type(INT);
 I_COMMA             : ',' -> type(COMMA);
 I_LPAREN            : '(' -> type(LPAREN);
@@ -160,18 +160,20 @@ I_STRING_START      : '"' -> type(STRING_START), pushMode(IN_STRING);
 I_WS                : (' ' | '\t')+ -> type(WS), channel(WHITESPACE);
 I_UNEXPECTED_CHAR   : . -> type(UNEXPECTED_CHAR);
 
-fragment F_NAME_PLACEHOLDER : '_name';
-fragment F_PLACEHOLDER      : '_';
-fragment F_AND              : 'and';
-fragment F_OR               : 'or';
-fragment F_NOT              : 'not';
-fragment F_VALUE_ID         : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_NAME_PLACEHOLDER  : '_name';
+fragment F_PLACEHOLDER       : '_';
+fragment F_AND               : 'and';
+fragment F_OR                : 'or';
+fragment F_NOT               : 'not';
+fragment F_VALUE_ID          : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_ESCAPED_VALUE_ID  : 'v#'('_')*('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types
-fragment F_TYPE_ID          : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
-fragment F_ANNOTATION_ID    : '@'('_')*('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
-fragment F_INT              : ('-')?('0'|(('1'..'9')('0'..'9')*));
-fragment F_PRIMITIVE_TYPE   : 'byte'|'int'|'long'|'boolean'|'char'|'float'|'double'|'short';
-fragment F_BASIC_TYPE       : 'uint'|'ulong'|'ufloat'|'udouble'|'ushort'|'ubyte';
+fragment F_TYPE_ID           : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_ESCAPED_TYPE_ID   : 'T#'('_')*('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_ANNOTATION_ID     : '@'('_')*('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_INT               : ('-')?('0'|(('1'..'9')('0'..'9')*));
+fragment F_PRIMITIVE_TYPE    : 'byte'|'int'|'long'|'boolean'|'char'|'float'|'double'|'short';
+fragment F_BASIC_TYPE        : 'uint'|'ulong'|'ufloat'|'udouble'|'ushort'|'ubyte';
 
-fragment ESCAPE_SEQUENCE    : '\\r'|'\\n'|'\\t'|'\\"'|'\\\\';
-fragment SHARP              : '#'{ _input.LA(1)!='{' }?;
+fragment ESCAPE_SEQUENCE     : '\\r'|'\\n'|'\\t'|'\\"'|'\\\\';
+fragment SHARP               : '#'{ _input.LA(1)!='{' }?;
