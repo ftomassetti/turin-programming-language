@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
@@ -40,14 +39,11 @@ public class ReferenceTypeUsage extends TypeUsage {
 
 
     public ReferenceTypeUsage(String name, boolean fullyQualifiedName) {
-        if (name.contains("/")) {
+        if (JvmNameUtils.isPrimitiveTypeName(name)) {
             throw new IllegalArgumentException(name);
         }
-        if (name.startsWith(".")) {
-            throw new IllegalArgumentException();
-        }
-        if (JvmNameUtils.isPrimitiveTypeName(name)) {
-            throw new IllegalArgumentException();
+        if (!JvmNameUtils.isValidQualifiedName(name)) {
+            throw new IllegalArgumentException(name);
         }
         this.name = name;
         this.typeParams = Collections.emptyList();

@@ -14,7 +14,7 @@ public class SemanticError extends Expression {
     private Position position;
 
     @Override
-    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         errorCollector.recordSemanticError(position, message);
         return false;
     }

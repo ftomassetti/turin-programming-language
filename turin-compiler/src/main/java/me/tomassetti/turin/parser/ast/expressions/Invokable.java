@@ -40,7 +40,7 @@ public abstract class Invokable extends Expression {
     public abstract boolean isOnOverloaded(SymbolResolver resolver);
 
     @Override
-    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         boolean otherParams = actualParams.stream().filter((p)->!p.isAsterisk()).findFirst().isPresent();
         List<ActualParam> asterisks = actualParams.stream().filter((p)->p.isAsterisk()).collect(Collectors.toList());
         if (asterisks.size() > 1) {
@@ -57,7 +57,7 @@ public abstract class Invokable extends Expression {
             errorCollector.recordSemanticError(asterisks.get(0).getPosition(), "Asterisk parameter cannot be used on overloaded methods");
             return false;
         }
-        return super.validate(resolver, errorCollector);
+        return super.specificValidate(resolver, errorCollector);
     }
 
     /**

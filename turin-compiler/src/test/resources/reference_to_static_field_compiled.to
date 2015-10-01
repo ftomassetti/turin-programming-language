@@ -1,0 +1,7 @@
+namespace refstat
+
+import java.nio.charset.*
+
+Charset charset() {
+    return StandardCharsets.v#UTF_8
+}

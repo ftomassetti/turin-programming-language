@@ -31,7 +31,7 @@ public class PropertyConstraint extends Node {
     }
 
     @Override
-    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         TypeUsage conditionType = condition.calcType(resolver);
         if (!conditionType.isPrimitive() || !conditionType.asPrimitiveTypeUsage().isBoolean()) {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint condition must have boolean type, instead it has type " + conditionType.describe());
@@ -43,7 +43,7 @@ public class PropertyConstraint extends Node {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint message must have String type, instead it has type " + messageType.describe());
             return false;
         }
-        return super.validate(resolver, errorCollector);
+        return super.specificValidate(resolver, errorCollector);
     }
 
 

@@ -20,6 +20,7 @@ public abstract class Node {
 
     protected Node parent;
     private Position position;
+    private Boolean valid;
 
     public Position getPosition() {
         if (position == null) {
@@ -113,7 +114,7 @@ public abstract class Node {
         return results;
     }
 
-    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
+    public final boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
         boolean res = specificValidate(resolver, errorCollector);
         // if the node is wrong we do not check its children
         if (res) {
@@ -124,7 +125,15 @@ public abstract class Node {
                 }
             }
         }
+        valid = res;
         return res;
+    }
+
+    public boolean isValid() {
+        if (valid == null) {
+            throw new IllegalStateException("Not validated");
+        }
+        return valid;
     }
 
     /**

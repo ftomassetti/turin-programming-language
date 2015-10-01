@@ -30,6 +30,15 @@ public class ArrayTypeUsage extends TypeUsage {
     }
 
     @Override
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+        if (type.isArray()) {
+            return this.getComponentType().equals(type.asArrayTypeUsage().getComponentType());
+        } else {
+            return type.equals(ReferenceTypeUsage.OBJECT);
+        }
+    }
+
+    @Override
     public String toString() {
         return "ArrayTypeUsage{" +
                 "componentType=" + componentType +

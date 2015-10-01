@@ -8,10 +8,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeVariableTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.*;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -76,6 +73,9 @@ class ReflectionBasedMethodResolution {
             Class clazz = (Class)type;
             if (clazz.isPrimitive()) {
                 return PrimitiveTypeUsage.getByName(clazz.getName());
+            }
+            if (clazz.isArray()) {
+                return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType()));
             }
             TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);

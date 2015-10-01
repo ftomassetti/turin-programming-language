@@ -9,7 +9,8 @@ public enum JvmTypeCategory {
     LONG,
     FLOAT,
     DOUBLE,
-    REFERENCE;
+    REFERENCE,
+    ARRAY;
 
     public int storeOpcode(){
         switch (this){
@@ -22,6 +23,8 @@ public enum JvmTypeCategory {
             case DOUBLE:
                 return Opcodes.DSTORE;
             case REFERENCE:
+                return Opcodes.ASTORE;
+            case ARRAY:
                 return Opcodes.ASTORE;
             default:
                 throw new UnsupportedOperationException();
@@ -49,6 +52,9 @@ public enum JvmTypeCategory {
         String signature = typeUsage.jvmType(resolver).getSignature();
         if (signature.startsWith("L")){
             return REFERENCE;
+        }
+        if (signature.startsWith("[")){
+            return ARRAY;
         }
 
         switch (signature) {

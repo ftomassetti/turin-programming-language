@@ -1,5 +1,6 @@
 package me.tomassetti.turin.jvm;
 
+import me.tomassetti.turin.parser.ast.expressions.ArrayAccess;
 import sun.reflect.generics.parser.SignatureParser;
 import sun.reflect.generics.tree.*;
 
@@ -69,11 +70,14 @@ public abstract class JvmInvokableDefinition {
             // TODO consider dollar and parameters
             return new JvmType(simpleClassTypeSignature.getName());
         } else if (typeSignature instanceof ClassTypeSignature) {
-            ClassTypeSignature classTypeSignature = (ClassTypeSignature)typeSignature;
+            ClassTypeSignature classTypeSignature = (ClassTypeSignature) typeSignature;
             if (classTypeSignature.getPath().size() == 1) {
                 return toJvmType(classTypeSignature.getPath().get(0));
             }
             throw new UnsupportedOperationException(classTypeSignature.getPath().toString());
+        } else if (typeSignature instanceof ArrayTypeSignature) {
+            ArrayTypeSignature arrayTypeSignature = (ArrayTypeSignature)typeSignature;
+            return new JvmType("[" + toJvmType(arrayTypeSignature.getComponentType()).getDescriptor());
         } else {
             throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
         }

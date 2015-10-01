@@ -20,7 +20,7 @@ public class TurinFile extends Node {
     }
 
     @Override
-    public boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         boolean valid = true;
         Map<String, List<Position>> positions = new HashMap<>();
         for (Node topNode : topNodes) {
@@ -38,7 +38,7 @@ public class TurinFile extends Node {
                 }
             }
         }
-        return valid && super.validate(resolver, errorCollector);
+        return valid && super.specificValidate(resolver, errorCollector);
     }
 
     public void add(ImportDeclaration importDeclaration) {
