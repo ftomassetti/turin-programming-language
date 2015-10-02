@@ -8,8 +8,10 @@ import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,6 +82,31 @@ public class ReferencesInOtherSrcFileTest extends AbstractCompilerTest {
         Class testClass = turinClassLoader.addClass(classFileDefinitionsTest.get(0));
 
         testClass.getMethod("invoke").invoke(null);
+    }
+
+    @Test
+    public void referenceFunctionTypeFromOtherClassesDir() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        TurinFile turinFileSrc = new Parser().parse(this.getClass().getResourceAsStream("/scenarios/referencetoseparateclassdir/classdira/foo.to"));
+
+        SymbolResolver resolver1 = getResolverFor(ImmutableList.of(turinFileSrc),
+                Collections.emptyList(),
+                Collections.emptyList());
+        File tmpDir = Files.createTempDirectory("classes").toFile();
+        tmpDir.deleteOnExit();
+        // generate bytecode
+        Compiler instance1 = new Compiler(resolver1, new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitionsSrc = instance1.compile(turinFileSrc, new MyErrorCollector());
+        assertEquals(1, classFileDefinitionsSrc.size());
+        saveClassFile(classFileDefinitionsSrc.get(0), tmpDir.getAbsolutePath());
+
+        TurinFile turinFileTest = new Parser().parse(this.getClass().getResourceAsStream("/scenarios/referencetoseparateclassdir/classdirb/foo_test.to"));
+        SymbolResolver resolver2 = getResolverFor(ImmutableList.of(turinFileTest),
+                Collections.emptyList(),
+                ImmutableList.of(tmpDir.getAbsolutePath()));
+        Compiler instance2 = new Compiler(resolver2, new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitionsTest = instance2.compile(turinFileTest, new MyErrorCollector());
+        assertEquals(1, classFileDefinitionsTest.size());
+        // if it compiles that is enough
     }
 
 }

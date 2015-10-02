@@ -130,7 +130,13 @@ public class InFileSymbolResolver implements SymbolResolver {
             throw new IllegalArgumentException(typeName);
         }
         if (context == null) {
-            return Optional.empty();
+            // implicitly look into java.lang package
+            Optional<TypeDefinition> result = typeResolver.resolveAbsoluteTypeName("java.lang." + typeName);
+            if (result.isPresent()) {
+                return result;
+            }
+
+            return typeResolver.resolveAbsoluteTypeName(typeName);
         }
         for (Node child : context.getChildren()) {
             if (child instanceof TypeDefinition) {
@@ -150,15 +156,6 @@ public class InFileSymbolResolver implements SymbolResolver {
                     }
                 }
             }
-        }
-        if (context.getParent() == null) {
-            // implicitly look into java.lang package
-            Optional<TypeDefinition> result = typeResolver.resolveAbsoluteTypeName("java.lang." + typeName);
-            if (result.isPresent()) {
-                return result;
-            }
-
-            return typeResolver.resolveAbsoluteTypeName(typeName);
         }
         if (!context.contextName().isEmpty()) {
             String qName = context.contextName() + "." + typeName;

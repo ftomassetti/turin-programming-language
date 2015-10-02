@@ -1,0 +1,5 @@
+namespace refsrc
+
+type Abc {
+    int a = 9876
+}
