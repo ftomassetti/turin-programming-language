@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.ParamUtils;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
@@ -25,6 +26,8 @@ public class Creation extends Invokable {
     public String getTypeName() {
         return typeName;
     }
+
+    private TypeUsage typeCache;
 
     @Override
     public String toString() {
@@ -70,6 +73,19 @@ public class Creation extends Invokable {
         this.typeName = typeName;
     }
 
+
+    @Override
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
+        // this node will not have a context so we resolve the type already
+        Optional<TypeUsage> typeUsage = resolver.findTypeUsageIn(typeName, this, resolver);
+        if (!typeUsage.isPresent()) {
+            errorCollector.recordSemanticError(getPosition(), "Unable to find type " + typeName);
+            return false;
+        }
+        typeCache = typeUsage.get();
+        return super.specificValidate(resolver, errorCollector);
+    }
+
     @Override
     public Iterable<Node> getChildren() {
         return ImmutableList.copyOf(actualParams);
@@ -77,6 +93,9 @@ public class Creation extends Invokable {
 
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
+        if (typeCache != null) {
+            return (typeCache);
+        }
         // this node will not have a context so we resolve the type already
         Optional<TypeUsage> typeUsage = resolver.findTypeUsageIn(typeName, this, resolver);
         if (!typeUsage.isPresent()) {

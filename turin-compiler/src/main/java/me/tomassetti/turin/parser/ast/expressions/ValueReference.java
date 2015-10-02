@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
@@ -98,6 +99,17 @@ public class ValueReference extends Expression {
         } else {
             throw new UnsolvedSymbolException(this);
         }
+    }
+
+    @Override
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
+        try {
+            resolve(resolver);
+        } catch (UnsolvedSymbolException e) {
+            errorCollector.recordSemanticError(getPosition(), "Symbol not found: " + e.getMessage());
+        }
+
+        return super.specificValidate(resolver, errorCollector);
     }
 
     @Override

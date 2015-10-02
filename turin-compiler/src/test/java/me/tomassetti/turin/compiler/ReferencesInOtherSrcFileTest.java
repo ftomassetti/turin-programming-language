@@ -15,7 +15,28 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class ResolutionOfOverloadedMethodsTest extends AbstractCompilerTest {
+public class ReferencesInOtherSrcFileTest extends AbstractCompilerTest {
+
+    @Test
+    public void referenceFunctionTypeFromOtherSrcFile() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        TurinFile turinFileSrc = new Parser().parse(this.getClass().getResourceAsStream("/scenarios/referencetypefromothersrcfile/foo.to"));
+        TurinFile turinFileTest = new Parser().parse(this.getClass().getResourceAsStream("/scenarios/referencetypefromothersrcfile/foo_test.to"));
+
+        SymbolResolver resolver = getResolverFor(ImmutableList.of(turinFileSrc, turinFileTest),
+                Collections.emptyList(),
+                Collections.emptyList());
+        Compiler instance = new Compiler(resolver, new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitionsSrc = instance.compile(turinFileSrc, new MyErrorCollector());
+        assertEquals(1, classFileDefinitionsSrc.size());
+        List<ClassFileDefinition> classFileDefinitionsTest = instance.compile(turinFileTest, new MyErrorCollector());
+        assertEquals(1, classFileDefinitionsTest.size());
+
+        TurinClassLoader turinClassLoader = new TurinClassLoader();
+        turinClassLoader.addClass(classFileDefinitionsSrc.get(0));
+        Class testClass = turinClassLoader.addClass(classFileDefinitionsTest.get(0));
+
+        assertEquals(9876, testClass.getMethod("invoke").invoke(null));
+    }
 
     @Test
     public void referenceFunctionFromOtherSrcFile() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {

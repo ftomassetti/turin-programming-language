@@ -39,7 +39,7 @@ public interface SymbolResolver {
      *                 to that one during the resolution process.
      */
     default TypeDefinition getTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
-        Optional<TypeDefinition> result = findTypeDefinitionIn(typeName, context, resolver);
+        Optional<TypeDefinition> result = findTypeDefinitionIn(typeName, context, resolver.getRoot());
         if (result.isPresent()) {
             return result.get();
         } else {

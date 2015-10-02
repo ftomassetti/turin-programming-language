@@ -87,9 +87,14 @@ public class InFileSymbolResolver implements SymbolResolver {
             return Optional.of(basicType.get());
         }
 
-        ReferenceTypeUsage ref = new ReferenceTypeUsage(getTypeDefinitionIn(typeName, context, resolver));
-        ref.setParent(context);
-        return Optional.of(ref);
+        Optional<TypeDefinition> typeDefinition = findTypeDefinitionIn(typeName, context, resolver.getRoot());
+        if (typeDefinition.isPresent()) {
+            ReferenceTypeUsage ref = new ReferenceTypeUsage(typeDefinition.get());
+            ref.setParent(context);
+            return Optional.of(ref);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -151,6 +156,8 @@ public class InFileSymbolResolver implements SymbolResolver {
 
             return typeResolver.resolveAbsoluteTypeName(typeName);
         }
+        String qName = context.contextName() + "." + typeName;
+
         return findTypeDefinitionInHelper(typeName, context.getParent(), resolver);
     }
 

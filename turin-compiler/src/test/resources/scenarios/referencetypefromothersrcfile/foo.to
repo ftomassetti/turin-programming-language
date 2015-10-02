@@ -1,0 +1,5 @@
+namespace foo
+
+type Abc {
+    int a = 9876
+}
