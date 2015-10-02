@@ -1,5 +1,5 @@
 namespace foo
 
 int ref() {
-    return A().getA()
+    return Abc().getA()
 }

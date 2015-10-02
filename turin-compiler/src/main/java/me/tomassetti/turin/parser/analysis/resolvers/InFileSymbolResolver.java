@@ -15,6 +15,7 @@ import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -128,6 +129,9 @@ public class InFileSymbolResolver implements SymbolResolver {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
+        if (context == null) {
+            return Optional.empty();
+        }
         for (Node child : context.getChildren()) {
             if (child instanceof TypeDefinition) {
                 TypeDefinition typeDefinition = (TypeDefinition)child;
@@ -156,8 +160,13 @@ public class InFileSymbolResolver implements SymbolResolver {
 
             return typeResolver.resolveAbsoluteTypeName(typeName);
         }
-        String qName = context.contextName() + "." + typeName;
-
+        if (!context.contextName().isEmpty()) {
+            String qName = context.contextName() + "." + typeName;
+            Optional<TypeDefinition>  partial = getRoot().findTypeDefinitionIn(qName, null, getRoot());
+            if (partial.isPresent()) {
+                return partial;
+            }
+        }
         return findTypeDefinitionInHelper(typeName, context.getParent(), resolver);
     }
 

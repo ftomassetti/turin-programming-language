@@ -80,8 +80,13 @@ public class StaticFieldAccess extends Expression {
         return typeDefinition.findMethodFor(field, argsTypes, resolver, staticContext);
     }
 
+    private TypeDefinition typeDefinitionCache;
+
     private TypeDefinition typeDefinition(SymbolResolver resolver) {
-        return resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
+        if (typeDefinitionCache == null) {
+            typeDefinitionCache = resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
+        }
+        return typeDefinitionCache;
     }
 
     @Override
