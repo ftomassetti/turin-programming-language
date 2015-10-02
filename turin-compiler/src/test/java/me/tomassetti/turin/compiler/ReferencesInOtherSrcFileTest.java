@@ -109,4 +109,45 @@ public class ReferencesInOtherSrcFileTest extends AbstractCompilerTest {
         // if it compiles that is enough
     }
 
+    @Test
+    public void referenceConstructorFromOtherClassesDir() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        TurinFile turinFileSrc = new Parser().parse(this.getClass().getResourceAsStream("/scenarios/constructorinseparateclassdir/classdira/foo.to"));
+
+        SymbolResolver resolver1 = getResolverFor(ImmutableList.of(turinFileSrc),
+                Collections.emptyList(),
+                Collections.emptyList());
+        File tmpDir = Files.createTempDirectory("classes").toFile();
+        tmpDir.deleteOnExit();
+        // generate bytecode
+        Compiler instance1 = new Compiler(resolver1, new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitionsSrc = instance1.compile(turinFileSrc, new MyErrorCollector());
+        assertEquals(1, classFileDefinitionsSrc.size());
+        saveClassFile(classFileDefinitionsSrc.get(0), tmpDir.getAbsolutePath());
+
+        TurinFile turinFileTest = new Parser().parse(this.getClass().getResourceAsStream("/scenarios/constructorinseparateclassdir/classdirb/foo_test.to"));
+        SymbolResolver resolver2 = getResolverFor(ImmutableList.of(turinFileTest),
+                Collections.emptyList(),
+                ImmutableList.of(tmpDir.getAbsolutePath()));
+        Compiler instance2 = new Compiler(resolver2, new Compiler.Options());
+        List<ClassFileDefinition> classFileDefinitionsTest = instance2.compile(turinFileTest, new MyErrorCollector());
+        assertEquals(3, classFileDefinitionsTest.size());
+        // if it compiles that is enough
+
+        // we need to add it, otherwise we cannot invoke the methods by reflection
+        TurinClassLoader classLoader = new TurinClassLoader();
+        Class abc = classLoader.addClass(classFileDefinitionsSrc.get(0));
+        Class foo1 = classLoader.addClass(classFileDefinitionsTest.get(0));
+        Object res1 = foo1.getMethod("invoke").invoke(null);
+        assertEquals(27, res1.getClass().getMethod("getA").invoke(res1));
+        assertEquals(5, res1.getClass().getMethod("getB").invoke(res1));
+        Class foo2 = classLoader.addClass(classFileDefinitionsTest.get(1));
+        Object res2 = foo2.getMethod("invoke").invoke(null);
+        assertEquals(27, res2.getClass().getMethod("getA").invoke(res2));
+        assertEquals(28, res2.getClass().getMethod("getB").invoke(res2));
+        Class foo3 = classLoader.addClass(classFileDefinitionsTest.get(2));
+        Object res3 = foo3.getMethod("invoke").invoke(null);
+        assertEquals(28, res3.getClass().getMethod("getA").invoke(res3));
+        assertEquals(27, res3.getClass().getMethod("getB").invoke(res3));
+    }
+
 }

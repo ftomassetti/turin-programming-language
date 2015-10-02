@@ -1,0 +1,13 @@
+namespace refsrc
+
+Abc foo1() {
+    return Abc(27)
+}
+
+Abc foo2() {
+    return Abc(27, 28)
+}
+
+Abc foo3() {
+    return Abc(b=27, a=28)
+}

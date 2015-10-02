@@ -124,4 +124,8 @@ public final class JvmNameUtils {
         }
         return qualifiedName.substring(index + 1);
     }
+
+    public static String canonicalToDescriptor(String canonicalName) {
+        return "L" + canonicalToInternal(canonicalName) + ";";
+    }
 }

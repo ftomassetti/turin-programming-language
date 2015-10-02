@@ -71,6 +71,20 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
     }
 
+    public List<InternalConstructorDefinition> getConstructors() {
+        return constructors;
+    }
+
+    public InternalConstructorDefinition getOnlyConstructor(SymbolResolver resolver) {
+        if (constructors == null) {
+            initializeConstructors(resolver);
+        }
+        if (constructors.size() != 1) {
+            throw new IllegalStateException();
+        }
+        return constructors.get(0);
+    }
+
     private void initializeConstructors(SymbolResolver resolver) {
         constructors = new ArrayList<>();
         List<FormalParameter> params = this.assignableProperties(resolver).stream()

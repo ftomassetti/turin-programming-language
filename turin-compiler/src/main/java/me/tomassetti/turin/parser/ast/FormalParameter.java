@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +53,23 @@ public class FormalParameter extends Node {
         result = 31 * result + name.hashCode();
         result = 31 * result + defaultValue.hashCode();
         return result;
+    }
+
+    private static class DefaultValuePlaceholder extends Expression {
+
+        @Override
+        public Iterable<Node> getChildren() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public TypeUsage calcType(SymbolResolver resolver) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static FormalParameter createWithDefaultValuePlaceholder(TypeUsage type, String name) {
+        return new FormalParameter(type, name, Optional.of(new DefaultValuePlaceholder()));
     }
 
     public FormalParameter(TypeUsage type, String name) {

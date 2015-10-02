@@ -1,0 +1,5 @@
+namespace refsrc
+
+int ref() {
+    return Abc().getA()
+}

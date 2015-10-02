@@ -7,16 +7,15 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.InvokableDefinition;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
-import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.objectweb.asm.*;
+import turin.compilation.DefaultParam;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -195,6 +194,20 @@ public class Compilation {
         generateInvokable(methodDefinition, methodDefinition.getName(), false);
     }
 
+    void addDefaultParamAnnotations(MethodVisitor mv, List<FormalParameter> formalParameters) {
+        int defaultParamIndex = 0;
+        for (FormalParameter defaultParam : formalParameters.stream()
+                .filter((p)->p.hasDefaultValue())
+                .collect(Collectors.toList())) {
+            AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmNameUtils.canonicalToDescriptor(DefaultParam.class.getCanonicalName()), true);
+            annotationVisitor.visit("name", defaultParam.getName());
+            annotationVisitor.visit("typeSignature", defaultParam.getType().jvmType(resolver).getSignature());
+            annotationVisitor.visit("index", defaultParamIndex);
+            annotationVisitor.visitEnd();
+            defaultParamIndex++;
+        }
+    }
+
     private void generateInvokable(InvokableDefinition invokableDefinition, String invokableName, boolean isStatic) {
         if (isStatic) {
             localVarsSymbolTable = LocalVarsSymbolTable.forStaticMethod();
@@ -212,6 +225,8 @@ public class Compilation {
             modifiers = modifiers | ACC_STATIC;
         }
         MethodVisitor mv = cw.visitMethod(modifiers, invokableName, methodDescriptor, methodSignature, null);
+
+        addDefaultParamAnnotations(mv, invokableDefinition.getParameters());
 
         mv.visitCode();
 

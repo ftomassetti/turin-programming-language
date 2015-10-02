@@ -1,0 +1,6 @@
+namespace refsrc
+
+type Abc {
+    int a
+    int b default 5
+}

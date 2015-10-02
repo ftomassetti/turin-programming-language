@@ -1,6 +1,5 @@
 package me.tomassetti.turin.compiler;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.bytecode.*;
 import me.tomassetti.turin.compiler.bytecode.logicalop.CastBS;
 import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalNotBS;
@@ -123,7 +122,28 @@ public class CompilationOfGeneratedMethods {
             paramsSignature  += "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;";
         }
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(" + paramsDescriptor + ")V", "(" + paramsSignature + ")V", null);
+
+        compilation.addDefaultParamAnnotations(mv, typeDefinition.getOnlyConstructor(resolver).getFormalParameters());
+
         mv.visitCode();
+
+        compilation.setLocalVarsSymbolTable(LocalVarsSymbolTable.forInstanceMethod());
+
+        Label start = new Label();
+        Label end = new Label();
+        mv.visitLabel(start);
+        for (FormalParameter formalParameter : typeDefinition.getOnlyConstructor(resolver).getFormalParameters()) {
+            if (!formalParameter.hasDefaultValue()) {
+                int index = compilation.getLocalVarsSymbolTable().add(formalParameter.getName(), formalParameter);
+                mv.visitLocalVariable(formalParameter.getName(),
+                        formalParameter.getType().jvmType(resolver).getDescriptor(),
+                        formalParameter.getType().jvmType(resolver).getSignature(),
+                        start,
+                        end,
+                        index);
+            }
+        }
+
 
         //
         // Invoke super constructor
@@ -151,9 +171,12 @@ public class CompilationOfGeneratedMethods {
         }
 
         mv.visitInsn(Opcodes.RETURN);
+        mv.visitLabel(end);
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();
+
+        compilation.setLocalVarsSymbolTable(null);
     }
 
     private void assignDefaultPropertiesFromMapParam(TurinTypeDefinition typeDefinition, final String className, SymbolResolver resolver, MethodVisitor mv) {

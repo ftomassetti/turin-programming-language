@@ -1,8 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import javassist.*;
-import javassist.bytecode.BadBytecode;
-import javassist.bytecode.SignatureAttribute;
+import javassist.bytecode.*;
 import me.tomassetti.turin.compiler.SemanticErrorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
@@ -13,8 +12,12 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import turin.compilation.DefaultParam;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,8 +64,89 @@ public class JavassistTypeDefinition extends TypeDefinition {
         return Arrays.stream(ctClass.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
     }
 
+    class DefaultParamData {
+        String name;
+        String signature;
+        int index;
+    }
+
+    private List<DefaultParamData> getDefaultParamData(CtBehavior behavior) {
+        List<DefaultParamData> defaultParams = new LinkedList<>();
+        try {
+            for (Object annotation : behavior.getAnnotations()) {
+                if (Proxy.isProxyClass(annotation.getClass()) && DefaultParam.class.isInstance(annotation)) {
+                    DefaultParam defaultParam = (DefaultParam)annotation;
+                    DefaultParamData defaultParamData = new DefaultParamData();
+                    defaultParamData.name = defaultParam.name();
+                    defaultParamData.signature = defaultParam.typeSignature();
+                    defaultParamData.index = defaultParam.index();
+                    defaultParams.add(defaultParamData);
+                } else {
+                    String annotationName = annotation.getClass().getCanonicalName();
+                    if (annotationName.equals(DefaultParam.class.getCanonicalName())) {
+                        try {
+                            DefaultParamData defaultParam = new DefaultParamData();
+                            defaultParam.name = (String)annotation.getClass().getMethod("name").invoke(annotation);
+                            defaultParam.signature = (String)annotation.getClass().getMethod("signature").invoke(annotation);
+                            defaultParam.index = (int)annotation.getClass().getMethod("index").invoke(annotation);
+                            defaultParams.add(defaultParam);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        } catch (NoSuchMethodException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return defaultParams;
+    }
+
+    private boolean hasDefaultParamAnnotation(CtBehavior ctBehavior) {
+        return getDefaultParamData(ctBehavior).size() > 0;
+    }
+
+    private List<FormalParameter> getFormalParametersConsideringDefaultParams(CtBehavior ctBehavior) {
+        List<DefaultParamData> defaultParamDatas = getDefaultParamData(ctBehavior);
+        defaultParamDatas.sort(new Comparator<DefaultParamData>() {
+            @Override
+            public int compare(DefaultParamData o1, DefaultParamData o2) {
+                return Integer.compare(o1.index, o2.index);
+            }
+        });
+        List<FormalParameter> formalParameters = new ArrayList<>();
+        try {
+            MethodInfo methodInfo = ctBehavior.getMethodInfo();
+            CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+            LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
+
+            // the last one is the map of default params so we skip it
+            for (int i=0;i<ctBehavior.getParameterTypes().length - 1;i++) {
+                CtClass type = ctBehavior.getParameterTypes()[i];
+                String paramName = attr.variableName(i);
+                formalParameters.add(new FormalParameter(toTypeUsage(type), paramName));
+            }
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        for (DefaultParamData defaultParamData : defaultParamDatas) {
+            TypeUsage paramType = new JvmType(defaultParamData.signature).toTypeUsage();
+            formalParameters.add(FormalParameter.createWithDefaultValuePlaceholder(paramType, defaultParamData.name));
+        }
+        return formalParameters;
+    }
+
     @Override
     public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+        // if this is the compiled version of a turin type we have to handle default parameters
+        if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
+            return getFormalParametersConsideringDefaultParams(ctClass.getConstructors()[0]);
+        }
+
         CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
                 actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
         return formalParameters(constructor);
@@ -132,6 +216,15 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     @Override
     public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
+        // if this is the compiled version of a turin type we have to handle default parameters
+        if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
+            try {
+                return JavassistTypeDefinitionFactory.toConstructorDefinition(ctClass.getConstructors()[0]);
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {
