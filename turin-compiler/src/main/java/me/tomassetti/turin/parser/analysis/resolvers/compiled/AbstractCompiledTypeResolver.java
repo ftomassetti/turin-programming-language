@@ -66,6 +66,9 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
         String className = relativePath.substring(0, relativePath.length() - ".class".length());
         className = className.replaceAll("/", ".");
         className = className.replaceAll("\\$", ".");
+        if (className.startsWith(".")) {
+            className = className.substring(1);
+        }
         return className;
     }
 
