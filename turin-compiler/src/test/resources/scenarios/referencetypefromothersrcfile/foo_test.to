@@ -1,4 +1,4 @@
-namespace foo
+namespace refsrc
 
 int ref() {
     return Abc().getA()

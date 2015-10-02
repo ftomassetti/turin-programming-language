@@ -28,8 +28,10 @@ public class ReferencesInOtherSrcFileTest extends AbstractCompilerTest {
         Compiler instance = new Compiler(resolver, new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitionsSrc = instance.compile(turinFileSrc, new MyErrorCollector());
         assertEquals(1, classFileDefinitionsSrc.size());
+        saveClassFile(classFileDefinitionsSrc.get(0), "tmp");
         List<ClassFileDefinition> classFileDefinitionsTest = instance.compile(turinFileTest, new MyErrorCollector());
         assertEquals(1, classFileDefinitionsTest.size());
+        saveClassFile(classFileDefinitionsTest.get(0), "tmp");
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         turinClassLoader.addClass(classFileDefinitionsSrc.get(0));

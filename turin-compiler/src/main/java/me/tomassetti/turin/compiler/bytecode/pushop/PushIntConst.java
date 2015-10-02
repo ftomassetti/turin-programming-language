@@ -18,7 +18,7 @@ public class PushIntConst extends BytecodeSequence {
             useLdcInsn = true;
         } else {
             useLdcInsn = false;
-            if (value < Byte.MIN_VALUE || value < Byte.MAX_VALUE) {
+            if (value < Byte.MIN_VALUE || value > Byte.MAX_VALUE) {
                 this.operation = Opcodes.SIPUSH;
             } else {
                 this.operation = Opcodes.BIPUSH;
