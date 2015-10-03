@@ -97,6 +97,10 @@ public abstract class AbstractCompilerTest {
         return compileFunction(exampleName, paramTypes, Collections.emptyList());
     }
 
+    protected ErrorCollector getErrorCollector() {
+        return new MyErrorCollector();
+    }
+
     public Method compileFunction(String exampleName, Class[] paramTypes, List<String> classPathElements) throws NoSuchMethodException, IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/" + exampleName + ".to"));
 
@@ -104,7 +108,7 @@ public abstract class AbstractCompilerTest {
         Compiler.Options options = new Compiler.Options();
         options.setClassPathElements(classPathElements);
         Compiler instance = new Compiler(getResolverFor(turinFile, classPathElements), options);
-        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, getErrorCollector());
         saveClassFile(classFileDefinitions.get(0), "tmp");
         assertEquals(1, classFileDefinitions.size());
 
@@ -115,6 +119,16 @@ public abstract class AbstractCompilerTest {
 
         Method invoke = functionClass.getMethod("invoke", paramTypes);
         return invoke;
+    }
+
+    public void attemptToCompile(String exampleName, List<String> classPathElements) throws NoSuchMethodException, IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/" + exampleName + ".to"));
+
+        // generate bytecode
+        Compiler.Options options = new Compiler.Options();
+        options.setClassPathElements(classPathElements);
+        Compiler instance = new Compiler(getResolverFor(turinFile, classPathElements), options);
+        List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, getErrorCollector());
     }
 
 }
