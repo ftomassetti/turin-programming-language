@@ -1,5 +1,7 @@
 # Turin programming language
 
+[![Documentation](https://readthedocs.org/projects/turin-programming-language/badge/?version=latest)](http://turin-programming-language.readthedocs.org/en/latest/?badge=latest)
+
 Turin is a pragmatic static language for the JVM.
 
 # Documentation
