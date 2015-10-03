@@ -118,8 +118,11 @@ UNEXPECTED_CHAR     : . ;
 mode IN_STRING;
 
 STRING_STOP         : '"' -> popMode;
-STRING_CONTENT      : (~["\\#]|ESCAPE_SEQUENCE|SHARP)+;
+STRING_CONTENT      : (~["\\#]|F_SHARP)+;
 INTERPOLATION_START : '#{' -> pushMode(IN_INTERPOLATION);
+ESCAPE_SEQUENCE     : F_ESCAPE_SEQUENCE;
+
+S_UNEXPECTED_CHAR   : . -> type(UNEXPECTED_CHAR);
 
 mode IN_INTERPOLATION;
 
@@ -175,5 +178,5 @@ fragment F_INT               : ('-')?('0'|(('1'..'9')('0'..'9')*));
 fragment F_PRIMITIVE_TYPE    : 'byte'|'int'|'long'|'boolean'|'char'|'float'|'double'|'short';
 fragment F_BASIC_TYPE        : 'uint'|'ulong'|'ufloat'|'udouble'|'ushort'|'ubyte';
 
-fragment ESCAPE_SEQUENCE     : '\\r'|'\\n'|'\\t'|'\\"'|'\\\\';
-fragment SHARP               : '#'{ _input.LA(1)!='{' }?;
+fragment F_ESCAPE_SEQUENCE   : '\\r'|'\\n'|'\\t'|'\\f'|'\\b'|'\\"'|'\\\\';
+fragment F_SHARP             : '#'{ _input.LA(1)!='{' }?;

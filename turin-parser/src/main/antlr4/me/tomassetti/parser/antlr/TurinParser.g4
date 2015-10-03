@@ -158,7 +158,7 @@ interpolatedStringLiteral:
     STRING_START (elements+=stringElement)+ STRING_STOP;
 
 stringElement:
-    STRING_CONTENT | stringInterpolationElement;
+    STRING_CONTENT | stringInterpolationElement | ESCAPE_SEQUENCE;
 
 stringInterpolationElement:
    INTERPOLATION_START value=expression INTERPOLATION_END;

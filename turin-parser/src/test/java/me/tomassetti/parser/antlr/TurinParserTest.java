@@ -96,4 +96,5 @@ public class TurinParserTest {
         assertNotNull(prop.constraintDeclaration().get(0).message);
         TurinParser.ExpressionContext msg = prop.constraintDeclaration().get(0).message;
     }
+    
 }

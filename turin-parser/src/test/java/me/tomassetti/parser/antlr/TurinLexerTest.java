@@ -214,7 +214,8 @@ public class TurinLexerTest {
     @Test
     public void parseStringWithStringEndEscape() throws IOException {
         String code = "\"Hel\\\"lo!\"";
-        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT, TurinLexer.ESCAPE_SEQUENCE,
+                TurinLexer.STRING_CONTENT, TurinLexer.STRING_STOP);
     }
 
     @Test
@@ -283,5 +284,11 @@ public class TurinLexerTest {
     public void parseNegative() throws IOException {
         String code = "-19";
         verify(code, TurinLexer.INT);
+    }
+
+    @Test
+    public void parseEscapeSequence() throws IOException {
+        String code = "\"\\n\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.ESCAPE_SEQUENCE, TurinLexer.STRING_STOP);
     }
 }
