@@ -20,29 +20,35 @@ public class AllFieldsImportDeclaration extends ImportDeclaration {
         this.typeName = typeName;
     }
 
+    private void lookForTypeDefinition(SymbolResolver resolver) {
+        if (typeDefinitionCache != null) {
+            return;
+        }
+
+        typeDefinitionCache = resolver.findTypeDefinitionIn(canonicalTypeName(), this, resolver.getRoot());
+    }
+
+    public String canonicalTypeName() {
+        return packagePart.qualifiedName() + "." + typeName;
+    }
+
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
-        String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-        Optional<TypeDefinition> result = resolver.findTypeDefinitionIn(typeName, this, resolver.getRoot());
-        if (result.isPresent()) {
-            typeDefinitionCache = result.get();
-        } else {
-            errorCollector.recordSemanticError(getPosition(), "Import not resolver: " + canonicalTypeName);
+        lookForTypeDefinition(resolver);
+        if (!typeDefinitionCache.isPresent()) {
+            errorCollector.recordSemanticError(getPosition(), "Import not resolver: " + canonicalTypeName());
             return false;
         }
         return super.specificValidate(resolver, errorCollector);
     }
 
-    private TypeDefinition typeDefinitionCache;
+    private Optional<TypeDefinition> typeDefinitionCache;
 
     @Override
     public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
-        if (typeDefinitionCache == null) {
-            String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-            typeDefinitionCache = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
-        }
-        if (typeDefinitionCache.hasField(name, true)) {
-            return Optional.of(typeDefinitionCache.getField(QualifiedName.create(name), resolver));
+        lookForTypeDefinition(resolver);
+        if (typeDefinitionCache.isPresent() && typeDefinitionCache.get().hasField(name, true)) {
+            return Optional.of(typeDefinitionCache.get().getField(QualifiedName.create(name), resolver));
         } else {
             return Optional.empty();
         }
