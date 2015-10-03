@@ -71,7 +71,7 @@ annotationUsage:
 //
 
 typeUsage:
-    ref=TYPE_ID
+    ref=typeReference (LSQUARE typeParams+=typeUsage (COMMA typeParams+=typeUsage)* RSQUARE)?
     | arrayBase=typeUsage LSQUARE RSQUARE
     | primitiveType = PRIMITIVE_TYPE
     | basicType = BASIC_TYPE;
@@ -187,7 +187,7 @@ intLiteral:
     INT;
 
 creation:
-    (pakage=qualifiedId POINT)? name=TYPE_ID LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
+    ref=typeUsage LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;
 
 varDecl:
     VAL_KW (type=typeUsage)? name=VALUE_ID ASSIGNMENT value=expression nls;

@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.imports;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
@@ -32,20 +33,24 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
         this.alias = alias;
     }
 
+    private String exposedName() {
+        if (alias == null) {
+            return fieldsPath.getName();
+        } else {
+            return alias;
+        }
+    }
+
     @Override
     public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
-        if (alias == null) {
-            throw new UnsupportedOperationException();
-        } else {
-            if (alias.equals(name)) {
-                String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-                TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
+        if (exposedName().equals(name)) {
+            String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
+            TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
 
-                Node importedValue = typeDefinition.getField(fieldsPath, resolver);
-                return Optional.of(importedValue);
-            } else {
-                return Optional.empty();
-            }
+            Node importedValue = typeDefinition.getField(fieldsPath, resolver);
+            return Optional.of(importedValue);
+        } else {
+            return Optional.empty();
         }
     }
 

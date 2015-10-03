@@ -12,6 +12,11 @@ import java.util.Collections;
 public class ReflectionBasedField extends Node {
 
     @Override
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
+    }
+
+    @Override
     public Node getField(String fieldName, SymbolResolver resolver) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
         return fieldType.getFieldOnInstance(fieldName, this, resolver);

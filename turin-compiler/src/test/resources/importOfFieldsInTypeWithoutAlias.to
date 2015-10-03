@@ -1,0 +1,5 @@
+namespace imports
+
+import java.lang.System.out
+
+Object foo() = out

@@ -3,8 +3,10 @@ package me.tomassetti.turin.parser.ast;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QualifiedName extends Node {
 
@@ -107,5 +109,9 @@ public class QualifiedName extends Node {
         } else {
             return new QualifiedName(base.rest(), name);
         }
+    }
+
+    public static QualifiedName create(String path) {
+        return create(Arrays.stream(path.split("\\.")).collect(Collectors.toList()));
     }
 }

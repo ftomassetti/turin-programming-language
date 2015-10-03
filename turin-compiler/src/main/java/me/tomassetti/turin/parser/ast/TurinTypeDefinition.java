@@ -193,7 +193,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getField(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
         // TODO to be implemented
         throw new UnsupportedOperationException();
     }
@@ -276,6 +276,11 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean hasField(String name, boolean staticContext) {
+        throw new UnsupportedOperationException();
     }
 
     public void add(PropertyReference propertyReference) {

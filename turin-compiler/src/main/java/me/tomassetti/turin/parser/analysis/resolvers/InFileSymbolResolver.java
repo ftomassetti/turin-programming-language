@@ -69,7 +69,7 @@ public class InFileSymbolResolver implements SymbolResolver {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
-        return findTypeDefinitionInHelper(typeName, context, resolver);
+        return findTypeDefinitionInHelper(typeName, context, null, resolver);
     }
 
     @Override
@@ -125,7 +125,8 @@ public class InFileSymbolResolver implements SymbolResolver {
         }
     }
 
-    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context, SymbolResolver resolver) {
+    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context,
+                                                                Node previousContext, SymbolResolver resolver) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
@@ -146,13 +147,16 @@ public class InFileSymbolResolver implements SymbolResolver {
                     return Optional.of(typeDefinition);
                 }
             } else if (child instanceof ImportDeclaration) {
-                ImportDeclaration importDeclaration = (ImportDeclaration)child;
-                Optional<Node> resolvedNode = importDeclaration.findAmongImported(typeName, resolver);
-                if (resolvedNode.isPresent()) {
-                    if (resolvedNode.get() instanceof TypeDefinition) {
-                        return Optional.of((TypeDefinition)resolvedNode.get());
-                    } else {
-                        throw new SemanticErrorException(context, "" + typeName + " is not a type");
+                // this is necessary to avoid infinite recursion
+                if (child != previousContext) {
+                    ImportDeclaration importDeclaration = (ImportDeclaration) child;
+                    Optional<Node> resolvedNode = importDeclaration.findAmongImported(typeName, resolver);
+                    if (resolvedNode.isPresent()) {
+                        if (resolvedNode.get() instanceof TypeDefinition) {
+                            return Optional.of((TypeDefinition) resolvedNode.get());
+                        } else {
+                            throw new SemanticErrorException(context, "" + typeName + " is not a type");
+                        }
                     }
                 }
             }
@@ -164,7 +168,7 @@ public class InFileSymbolResolver implements SymbolResolver {
                 return partial;
             }
         }
-        return findTypeDefinitionInHelper(typeName, context.getParent(), resolver);
+        return findTypeDefinitionInHelper(typeName, context.getParent(), context, resolver);
     }
 
 }

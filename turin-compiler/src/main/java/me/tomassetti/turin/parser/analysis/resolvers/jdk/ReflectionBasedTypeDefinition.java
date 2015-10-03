@@ -18,9 +18,32 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class ReflectionBasedTypeDefinition extends TypeDefinition {
+
     @Override
     public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return super.findFormalParametersFor(invokable, resolver);
+    }
+
+    @Override
+    public boolean hasField(String fieldName, boolean staticContext) {
+        for (Field field : clazz.getFields()) {
+            if (field.getName().equals(fieldName)) {
+                if (Modifier.isStatic(field.getModifiers()) == staticContext) {
+                    return true;
+                }
+            }
+        }
+
+        for (Method method : clazz.getMethods()) {
+            if (method.getName().equals(fieldName)) {
+                if (Modifier.isStatic(method.getModifiers()) == staticContext) {
+                    return true;
+                }
+            }
+        }
+
+        // TODO consider inherited fields and methods
+        return false;
     }
 
     @Override
@@ -119,7 +142,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getField(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {

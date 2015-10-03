@@ -1,0 +1,5 @@
+namespace imports
+
+import java.util.*
+
+List[String] foo() = LinkedList[String]()

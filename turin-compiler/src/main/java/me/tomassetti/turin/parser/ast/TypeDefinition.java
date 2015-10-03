@@ -34,7 +34,7 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
-    public abstract TypeUsage getField(String fieldName, boolean staticContext);
+    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext);
 
     public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
@@ -57,4 +57,6 @@ public abstract class TypeDefinition extends Node implements Named {
     public abstract List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
     public abstract boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
+
+    public abstract boolean hasField(String name, boolean staticContext);
 }

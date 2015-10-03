@@ -1,38 +1,31 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class Creation extends Invokable {
 
-    private String typeName;
+    private TypeUsage type;
 
-    public String getTypeName() {
-        return typeName;
+    public TypeUsage getType() {
+        return type;
     }
-
-    private TypeUsage typeCache;
 
     @Override
     public String toString() {
         return "Creation{" +
-                "typeName='" + typeName + '\'' +
+                "type='" + type + '\'' +
                 ", actualParams=" + actualParams +
                 '}';
     }
@@ -45,44 +38,44 @@ public class Creation extends Invokable {
         Creation creation = (Creation) o;
 
         if (!actualParams.equals(creation.actualParams)) return false;
-        if (!typeName.equals(creation.typeName)) return false;
+        if (!type.equals(creation.type)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = typeName.hashCode();
+        int result = type.hashCode();
         result = 31 * result + actualParams.hashCode();
         return result;
     }
 
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
-        return resolver.getTypeDefinitionIn(typeName, this, resolver).hasManyConstructors();
+        return getTypeDefinition(resolver).hasManyConstructors();
+    }
+
+    private TypeDefinition getTypeDefinition(SymbolResolver resolver) {
+        return type.asReferenceTypeUsage().getTypeDefinition(resolver);
     }
 
     @Override
     protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(typeName, this, resolver);
-        return typeDefinition.getConstructorParams(actualParams, resolver);
+        return getTypeDefinition(resolver).getConstructorParams(actualParams, resolver);
+    }
+
+    public Creation(TypeUsage type, List<ActualParam> actualParams) {
+        super(actualParams);
+        this.type = type;
+        this.type.setParent(this);
     }
 
     public Creation(String typeName, List<ActualParam> actualParams) {
-        super(actualParams);
-        this.typeName = typeName;
+        this(new ReferenceTypeUsage(typeName), actualParams);
     }
-
 
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
-        // this node will not have a context so we resolve the type already
-        Optional<TypeUsage> typeUsage = resolver.findTypeUsageIn(typeName, this, resolver);
-        if (!typeUsage.isPresent()) {
-            errorCollector.recordSemanticError(getPosition(), "Unable to find type " + typeName);
-            return false;
-        }
-        typeCache = typeUsage.get();
         return super.specificValidate(resolver, errorCollector);
     }
 
@@ -93,19 +86,11 @@ public class Creation extends Invokable {
 
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
-        if (typeCache != null) {
-            return (typeCache);
-        }
-        // this node will not have a context so we resolve the type already
-        Optional<TypeUsage> typeUsage = resolver.findTypeUsageIn(typeName, this, resolver);
-        if (!typeUsage.isPresent()) {
-            throw new UnsolvedTypeException(typeName, this);
-        }
-        return typeUsage.get();
+        return type;
     }
 
     public JvmConstructorDefinition jvmDefinition(SymbolResolver resolver) {
-        return resolver.getTypeDefinitionIn(typeName, this, resolver).resolveConstructorCall(resolver, originalParams);
+        return getTypeDefinition(resolver).resolveConstructorCall(resolver, originalParams);
     }
 
 

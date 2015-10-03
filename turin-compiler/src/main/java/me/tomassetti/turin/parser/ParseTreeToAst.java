@@ -9,10 +9,7 @@ import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
-import me.tomassetti.turin.parser.ast.imports.AllPackageImportDeclaration;
-import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
-import me.tomassetti.turin.parser.ast.imports.SingleFieldImportDeclaration;
-import me.tomassetti.turin.parser.ast.imports.TypeImportDeclaration;
+import me.tomassetti.turin.parser.ast.imports.*;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -68,7 +65,7 @@ class ParseTreeToAst {
 
     private ImportDeclaration toAst(TurinParser.ImportDeclarationContext ctx) {
         if (ctx.allFieldsImportDeclaration() != null) {
-            throw new UnsupportedOperationException();
+            return toAst(ctx.allFieldsImportDeclaration());
         } else if (ctx.singleFieldImportDeclaration() != null) {
             return toAst(ctx.singleFieldImportDeclaration());
         } else if (ctx.typeImportDeclaration() != null) {
@@ -78,6 +75,12 @@ class ParseTreeToAst {
         } else {
             throw new UnsupportedOperationException(ctx.toString());
         }
+    }
+
+    private AllFieldsImportDeclaration toAst(TurinParser.AllFieldsImportDeclarationContext ctx) {
+        AllFieldsImportDeclaration node = new AllFieldsImportDeclaration(toAst(ctx.packagePart), idText(ctx.typeName));
+        getPositionFrom(node, ctx);
+        return node;
     }
 
     private ImportDeclaration toAst(TurinParser.TypeImportDeclarationContext ctx) {
@@ -524,13 +527,7 @@ class ParseTreeToAst {
     }
 
     private Creation toAst(TurinParser.CreationContext ctx) {
-        String name;
-        if (ctx.pakage != null) {
-            name = toAst(ctx.pakage).qualifiedName() + "." + idText(ctx.name);
-        } else {
-            name = idText(ctx.name);
-        }
-        Creation creation = new Creation(name, ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
+        Creation creation = new Creation(toAst(ctx.ref), ctx.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
         getPositionFrom(creation, ctx);
         return creation;
     }

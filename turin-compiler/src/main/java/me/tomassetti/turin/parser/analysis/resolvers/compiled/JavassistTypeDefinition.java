@@ -37,6 +37,11 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public boolean hasField(String name, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
@@ -241,7 +246,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getField(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
         for (CtField field : ctClass.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
