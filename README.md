@@ -1,6 +1,10 @@
 # Turin programming language
 
-Turin is a static language compiled for the JVM.
+Turin is a pragmatic static language for the JVM.
+
+# Documentation
+
+Available [here](http://turin-programming-language.readthedocs.org/en/latest/).
 
 # Philosophy
 
