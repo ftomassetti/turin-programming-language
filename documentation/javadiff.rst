@@ -1,6 +1,3 @@
-Differences with Java
----------------------
-
 Why should someone use Turin instead of Java? In our opinion Turin is in general cleaner and benefit from the experience
 of using Java for 20 years to find improvements. In this section we list a few specific points.
 

@@ -12,8 +12,25 @@ A few general things:
 * newlines are meaningful
 * value and type identifiers are different
 
+Differences w.r.t. Java
+=======================
+
 .. toctree::
    :maxdepth: 2
 
    javadiff
-   syntax
+
+Syntax
+======
+
+.. toctree::
+   :maxdepth: 2
+
+   namespace
+   imports
+   functions
+   properties
+   types
+   programs
+
+
