@@ -1,5 +1,6 @@
 # Turin programming language
 
+[![Build Status](https://travis-ci.org/ftomassetti/turin-programming-language.svg?branch=master)](https://travis-ci.org/ftomassetti/turin-programming-language)
 [![Documentation](https://readthedocs.org/projects/turin-programming-language/badge/?version=latest)](http://turin-programming-language.readthedocs.org/en/latest/?badge=latest)
 
 Turin is a pragmatic static language for the JVM.
