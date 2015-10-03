@@ -6,38 +6,58 @@ options {   tokenVocab = TurinLexer; }
 
 }
 
+//
+// File
+//
+
 turinFile:
     namespace=namespaceDecl nls
     (imports+=importDeclaration)*
     (members+=fileMember)*
     EOF;
 
+//
 // Base
+//
 
 nls: NL+;
 
 qualifiedId:
     (parts+=VALUE_ID POINT)* parts+=VALUE_ID;
 
+//
 // Namespace
+//
 
 namespaceDecl:
     NAMESPACE_KW name=qualifiedId;
 
+//
 // Imports
+//
 
 importDeclaration:
-    typeImportDeclaration | singleFieldImportDeclaration | allFieldsImportDeclaration | allPackageImportDeclaration;
+    typeImportDeclaration |
+    singleFieldImportDeclaration |
+    allFieldsImportDeclaration |
+    allPackageImportDeclaration;
 
+// e.g., import java.util.Collections
+// e.g., import java.util.Collections as Coll
 typeImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT typeName=TYPE_ID (AS_KW alternativeName=TYPE_ID)? nls ;
 
+// e.g., import java.lang.System.out
+// e.g., import java.lang.System.out.println
+// e.g., import java.lang.System.out.println as print
 singleFieldImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT typeName=TYPE_ID POINT fieldName=qualifiedId (AS_KW alternativeName=VALUE_ID)? nls;
 
+// e.g., import java.lang.System.*
 allFieldsImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT typeName=TYPE_ID POINT ASTERISK nls;
 
+// e.g., import java.util.*
 allPackageImportDeclaration:
     IMPORT_KW packagePart=qualifiedId POINT ASTERISK nls;
 
