@@ -8,7 +8,6 @@
     <name>turin-programming-language</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 
-
     <parent>
         <groupId>me.tomassetti</groupId>
         <artifactId>turin-parent</artifactId>

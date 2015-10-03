@@ -291,4 +291,14 @@ public class TurinLexerTest {
         String code = "\"\\n\"";
         verify(code, TurinLexer.STRING_START, TurinLexer.ESCAPE_SEQUENCE, TurinLexer.STRING_STOP);
     }
+
+    @Test
+    public void parseSeveralEscapeSequences() throws IOException {
+        String code = "\"class A\\n{\\n}\\n\"";
+        verify(code, TurinLexer.STRING_START, TurinLexer.STRING_CONTENT,
+                TurinLexer.ESCAPE_SEQUENCE, TurinLexer.STRING_CONTENT,
+                TurinLexer.ESCAPE_SEQUENCE, TurinLexer.STRING_CONTENT,
+                TurinLexer.ESCAPE_SEQUENCE,
+                TurinLexer.STRING_STOP);
+    }
 }

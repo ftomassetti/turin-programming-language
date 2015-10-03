@@ -481,6 +481,27 @@ class ParseTreeToAst {
         return expression;
     }
 
+    private String unescape(String s) {
+        switch (s) {
+            case "\\r":
+                return "\r";
+            case "\\n":
+                return "\n";
+            case "\\b":
+                return "\b";
+            case "\\f":
+                return "\f";
+            case "\\t":
+                return "\t";
+            case "\\\\":
+                return "\\";
+            case "\\\"":
+                return "\"";
+            default:
+                throw new UnsupportedOperationException(s);
+        }
+    }
+
     private Expression toAst(TurinParser.InterpolatedStringLiteralContext interpolatedStringLiteralContext) {
         StringInterpolation stringInterpolation = new StringInterpolation();
         for (TurinParser.StringElementContext element :interpolatedStringLiteralContext.elements){
@@ -488,6 +509,8 @@ class ParseTreeToAst {
                 stringInterpolation.add(toAst(element.stringInterpolationElement()));
             } else if (element.STRING_CONTENT() != null) {
                 stringInterpolation.add(new StringLiteral(element.STRING_CONTENT().getText()));
+            } else if (element.ESCAPE_SEQUENCE() != null) {
+                stringInterpolation.add(new StringLiteral(unescape(element.ESCAPE_SEQUENCE().getText())));
             } else {
                 throw new UnsupportedOperationException();
             }
