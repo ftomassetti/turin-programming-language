@@ -101,5 +101,13 @@ public class ImportsTest extends AbstractCompilerTest {
         verify(errorCollector);
     }
 
+    @Test
+    public void importOfUnexistingType() throws NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException {
+        errorCollector = createMock(ErrorCollector.class);
+        errorCollector.recordSemanticError(Position.create(3, 0, 3, 27), "Import not resolved: java.lang.SystemBaz");
+        replay(errorCollector);
+        attemptToCompile("importOfUnexistingType", Collections.emptyList());
+        verify(errorCollector);
+    }
 
 }
