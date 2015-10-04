@@ -35,4 +35,14 @@ public class ComposedTypeResolver implements TypeResolver {
         }
         return Optional.empty();
     }
+
+    @Override
+    public boolean existPackage(String packageName) {
+        for (TypeResolver element : elements) {
+            if (element.existPackage(packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

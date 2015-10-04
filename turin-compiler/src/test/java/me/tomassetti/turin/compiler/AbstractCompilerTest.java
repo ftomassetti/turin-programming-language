@@ -14,6 +14,7 @@ import me.tomassetti.turin.parser.ast.TurinFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,7 +123,11 @@ public abstract class AbstractCompilerTest {
     }
 
     public void attemptToCompile(String exampleName, List<String> classPathElements) throws NoSuchMethodException, IOException {
-        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/" + exampleName + ".to"));
+        InputStream is = this.getClass().getResourceAsStream("/" + exampleName + ".to");
+        if (is == null) {
+            throw new RuntimeException();
+        }
+        TurinFile turinFile = new Parser().parse(is);
 
         // generate bytecode
         Compiler.Options options = new Compiler.Options();

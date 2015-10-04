@@ -36,7 +36,7 @@ public class AllFieldsImportDeclaration extends ImportDeclaration {
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         lookForTypeDefinition(resolver);
         if (!typeDefinitionCache.isPresent()) {
-            errorCollector.recordSemanticError(getPosition(), "Import not resolver: " + canonicalTypeName());
+            errorCollector.recordSemanticError(getPosition(), "Import not resolved: " + canonicalTypeName());
             return false;
         }
         return super.specificValidate(resolver, errorCollector);

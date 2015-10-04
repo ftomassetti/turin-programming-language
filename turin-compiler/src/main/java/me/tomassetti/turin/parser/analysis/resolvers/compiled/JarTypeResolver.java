@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
 
 import java.io.File;
@@ -29,9 +30,15 @@ public class JarTypeResolver extends AbstractCompiledTypeResolver<JarClasspathEl
             if (entry != null && !entry.isDirectory() && entry.getName().endsWith(".class")) {
                 if (file.getName().startsWith(FunctionDefinition.CLASS_PREFIX)) {
                     String name = classFileToFunctionName(entry.getName());
+                    if (!JvmNameUtils.isSimpleName(name)) {
+                        packages.add(JvmNameUtils.getPackagePart(name));
+                    }
                     functionElements.put(name, new JarClasspathElement(this, jarFile, entry, name));
                 } else {
                     String name = entryPathToClassName(entry.getName());
+                    if (!JvmNameUtils.isSimpleName(name)) {
+                        packages.add(JvmNameUtils.getPackagePart(name));
+                    }
                     classpathElements.put(name, new JarClasspathElement(this, jarFile, entry, name));
                 }
             }

@@ -9,16 +9,14 @@ import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Solve symbols considering TurinFiles.
  */
 public class SrcSymbolResolver implements SymbolResolver {
 
+    private Set<String> packages = new HashSet<>();
     private Map<String, TypeDefinition> typeDefinitions;
     private Map<String, PropertyDefinition> propertyDefinitions;
     private Map<String, Program> programsDefinitions;
@@ -43,15 +41,19 @@ public class SrcSymbolResolver implements SymbolResolver {
         this.functionDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
             for (TypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
+                packages.add(typeDefinition.contextName());
                 typeDefinitions.put(typeDefinition.getQualifiedName(), typeDefinition);
             }
             for (PropertyDefinition propertyDefinition : turinFile.getTopLevelPropertyDefinitions()) {
+                packages.add(propertyDefinition.contextName());
                 propertyDefinitions.put(propertyDefinition.getQualifiedName(), propertyDefinition);
             }
             for (Program program : turinFile.getTopLevelPrograms()) {
+                packages.add(program.contextName());
                 programsDefinitions.put(program.getQualifiedName(), program);
             }
             for (FunctionDefinition functionDefinition : turinFile.getTopLevelFunctionDefinitions()) {
+                packages.add(functionDefinition.contextName());
                 functionDefinitions.put(functionDefinition.getQualifiedName(), functionDefinition);
             }
         }
@@ -104,5 +106,10 @@ public class SrcSymbolResolver implements SymbolResolver {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public boolean existPackage(String packageName) {
+        return packages.contains(packageName);
     }
 }

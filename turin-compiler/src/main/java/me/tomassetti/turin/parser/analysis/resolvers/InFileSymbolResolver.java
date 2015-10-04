@@ -125,6 +125,11 @@ public class InFileSymbolResolver implements SymbolResolver {
         }
     }
 
+    @Override
+    public boolean existPackage(String packageName) {
+        return typeResolver.existPackage(packageName);
+    }
+
     private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context,
                                                                 Node previousContext, SymbolResolver resolver) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {

@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.imports;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
@@ -15,6 +16,16 @@ public class AllPackageImportDeclaration extends ImportDeclaration {
 
     public AllPackageImportDeclaration(QualifiedName qualifiedName) {
         this.qualifiedName = qualifiedName;
+    }
+
+    @Override
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
+        if (!resolver.existPackage(qualifiedName.qualifiedName())) {
+            errorCollector.recordSemanticError(getPosition(), "Import not resolved: " + qualifiedName.qualifiedName());
+            return false;
+        }
+
+        return super.specificValidate(resolver, errorCollector);
     }
 
     @Override

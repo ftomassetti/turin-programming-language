@@ -71,7 +71,9 @@ class ParseTreeToAst {
         } else if (ctx.typeImportDeclaration() != null) {
             return toAst(ctx.typeImportDeclaration());
         } else if (ctx.allPackageImportDeclaration() != null) {
-            return new AllPackageImportDeclaration(toAst(ctx.allPackageImportDeclaration().packagePart));
+            AllPackageImportDeclaration node = new AllPackageImportDeclaration(toAst(ctx.allPackageImportDeclaration().packagePart));
+            getPositionFrom(node, ctx);
+            return node;
         } else {
             throw new UnsupportedOperationException(ctx.toString());
         }

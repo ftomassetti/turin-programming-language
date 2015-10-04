@@ -71,4 +71,6 @@ public interface SymbolResolver {
      * Find whatever Node is corresponding to the given name in the given context.
      */
     Optional<Node> findSymbol(String name, Node context);
+
+    boolean existPackage(String packageName);
 }

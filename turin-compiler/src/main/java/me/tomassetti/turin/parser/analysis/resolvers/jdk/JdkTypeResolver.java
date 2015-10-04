@@ -31,4 +31,9 @@ public class JdkTypeResolver implements TypeResolver {
     public Optional<FunctionDefinition> resolveAbsoluteFunctionName(String typeName) {
         return Optional.empty();
     }
+
+    @Override
+    public boolean existPackage(String packageName) {
+        return Package.getPackage(packageName) != null;
+    }
 }

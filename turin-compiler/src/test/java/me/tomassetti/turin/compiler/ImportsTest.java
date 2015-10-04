@@ -77,9 +77,18 @@ public class ImportsTest extends AbstractCompilerTest {
     @Test
     public void importOfAllFieldsInUnexistingType() throws NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException {
         errorCollector = createMock(ErrorCollector.class);
-        errorCollector.recordSemanticError(Position.create(3, 0, 3, 36), "Import not resolver: java.lang.SystemUnexisting");
+        errorCollector.recordSemanticError(Position.create(3, 0, 3, 36), "Import not resolved: java.lang.SystemUnexisting");
         replay(errorCollector);
         attemptToCompile("importOfAllFieldsInUnexistingType", Collections.emptyList());
+        verify(errorCollector);
+    }
+
+    @Test
+    public void importOfTypesInPackageInUnexistingPackage() throws NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException {
+        errorCollector = createMock(ErrorCollector.class);
+        errorCollector.recordSemanticError(Position.create(3, 0, 3, 24), "Import not resolved: foo.unexisting");
+        replay(errorCollector);
+        attemptToCompile("importOfTypesFromUnexistingPackage", Collections.emptyList());
         verify(errorCollector);
     }
 

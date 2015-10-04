@@ -88,4 +88,14 @@ public class ComposedSymbolResolver implements SymbolResolver {
         return Optional.empty();
     }
 
+    @Override
+    public boolean existPackage(String packageName) {
+        for (SymbolResolver element : elements) {
+            if (element.existPackage(packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -22,6 +22,12 @@ import java.util.*;
 public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> implements TypeResolver  {
     protected Map<String, CE> classpathElements = new HashMap<>();
     protected Map<String, CE> functionElements = new HashMap<>();
+    protected Set<String> packages = new HashSet<>();
+
+    @Override
+    public boolean existPackage(String packageName) {
+        return packages.contains(packageName);
+    }
 
     protected class CompiledClassPath implements ClassPath {
 
