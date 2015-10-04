@@ -1,6 +1,7 @@
 package me.tomassetti.turin.compiler;
 
-import me.tomassetti.turin.*;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
+import me.tomassetti.turin.classloading.TurinClassLoader;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;

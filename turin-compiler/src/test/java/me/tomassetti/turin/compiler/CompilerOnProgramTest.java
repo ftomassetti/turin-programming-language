@@ -1,7 +1,8 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.TurinClassLoader;
+import me.tomassetti.turin.classloading.TurinClassLoader;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;

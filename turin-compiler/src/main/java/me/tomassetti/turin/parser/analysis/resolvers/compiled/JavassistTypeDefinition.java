@@ -2,8 +2,7 @@ package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import javassist.*;
 import javassist.bytecode.*;
-import javassist.bytecode.analysis.Type;
-import me.tomassetti.turin.compiler.SemanticErrorException;
+import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;

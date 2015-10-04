@@ -1,12 +1,9 @@
 package me.tomassetti.turin.compiler;
 
-import me.tomassetti.turin.TurinClassLoader;
-import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.classloading.TurinClassLoader;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.ast.Position;
 import me.tomassetti.turin.parser.ast.TurinFile;
-import me.tomassetti.turin.parser.ast.statements.ThrowStatement;
-import org.easymock.EasyMock;
 import org.junit.Test;
 
 import java.io.IOException;

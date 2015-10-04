@@ -7,11 +7,20 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Creation;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-public class BoxUnboxing {
+public final class BoxUnboxing {
+
+    private BoxUnboxing() {
+        // prevent instantiation
+    }
 
     public static Expression box(Expression value, SymbolResolver resolver) {
-        PrimitiveTypeUsage typeUsage = value.calcType(resolver).asPrimitiveTypeUsage();
+        TypeUsage type = value.calcType(resolver);
+        if (!type.isPrimitive()) {
+            throw new IllegalArgumentException("type is not primitive, cannot box this value");
+        }
+        PrimitiveTypeUsage typeUsage = type.asPrimitiveTypeUsage();
         if (typeUsage.isInt()) {
             Node parent = value.getParent();
             Creation creation = new Creation(Integer.class.getCanonicalName(), ImmutableList.of(new ActualParam(value)));
@@ -53,7 +62,7 @@ public class BoxUnboxing {
             creation.setParent(parent);
             return creation;
         } else {
-            throw new UnsupportedOperationException();
+            throw new RuntimeException("Unexpected primitive type: " + typeUsage);
         }
     }
 }

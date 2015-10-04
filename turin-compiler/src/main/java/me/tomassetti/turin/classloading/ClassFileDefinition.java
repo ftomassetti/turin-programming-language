@@ -1,4 +1,4 @@
-package me.tomassetti.turin.compiler;
+package me.tomassetti.turin.classloading;
 
 /**
  * Elements necessary to define a class file.

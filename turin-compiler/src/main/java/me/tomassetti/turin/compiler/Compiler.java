@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.TurinFileWithSource;
 import me.tomassetti.turin.parser.analysis.resolvers.*;

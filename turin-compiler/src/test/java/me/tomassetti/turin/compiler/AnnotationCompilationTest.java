@@ -1,6 +1,7 @@
 package me.tomassetti.turin.compiler;
 
-import me.tomassetti.turin.TurinClassLoader;
+import me.tomassetti.turin.classloading.TurinClassLoader;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Test;
@@ -8,9 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

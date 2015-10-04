@@ -1,6 +1,6 @@
-package me.tomassetti.turin;
+package me.tomassetti.turin.classloading;
 
-import me.tomassetti.turin.compiler.ClassFileDefinition;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 
 /**

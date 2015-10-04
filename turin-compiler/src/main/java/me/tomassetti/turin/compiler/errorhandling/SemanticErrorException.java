@@ -1,4 +1,4 @@
-package me.tomassetti.turin.compiler;
+package me.tomassetti.turin.compiler.errorhandling;
 
 import me.tomassetti.turin.parser.ast.Node;
 

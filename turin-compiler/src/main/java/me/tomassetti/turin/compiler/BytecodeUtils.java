@@ -7,7 +7,11 @@ import me.tomassetti.turin.parser.ast.expressions.MathOperation;
 import me.tomassetti.turin.parser.ast.expressions.RelationalOperation;
 import org.objectweb.asm.Opcodes;
 
-public class BytecodeUtils {
+public final class BytecodeUtils {
+
+    private BytecodeUtils() {
+        // prevent instantiation
+    }
 
     public static RelationalOperationBS createRelationOperation(RelationalOperation.Operator operator) {
         int jumpOpcode;
@@ -54,7 +58,7 @@ public class BytecodeUtils {
                         opcode = Opcodes.DMUL;
                         break;
                     default:
-                        throw new UnsupportedOperationException(operandsType.name());
+                        throw new UnsupportedOperationException(operator + " " +operandsType.name());
                 }
                 break;
             case SUM:
@@ -72,7 +76,7 @@ public class BytecodeUtils {
                         opcode = Opcodes.DADD;
                         break;
                     default:
-                        throw new UnsupportedOperationException(operandsType.name());
+                        throw new UnsupportedOperationException(operator + " " +operandsType.name());
                 }
                 break;
             case SUBTRACTION:
@@ -90,7 +94,7 @@ public class BytecodeUtils {
                         opcode = Opcodes.DSUB;
                         break;
                     default:
-                        throw new UnsupportedOperationException(operandsType.name());
+                        throw new UnsupportedOperationException(operator + " " +operandsType.name());
                 }
                 break;
             case DIVISION:
@@ -108,7 +112,7 @@ public class BytecodeUtils {
                         opcode = Opcodes.DDIV;
                         break;
                     default:
-                        throw new UnsupportedOperationException(operandsType.name());
+                        throw new UnsupportedOperationException(operator + " " +operandsType.name());
                 }
                 break;
             default:

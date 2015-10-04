@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.TurinClassLoader;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.*;
 import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.Parser;
@@ -16,9 +16,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;

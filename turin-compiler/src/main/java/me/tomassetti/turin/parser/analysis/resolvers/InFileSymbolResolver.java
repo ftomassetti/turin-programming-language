@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
-import me.tomassetti.turin.compiler.SemanticErrorException;
+import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;

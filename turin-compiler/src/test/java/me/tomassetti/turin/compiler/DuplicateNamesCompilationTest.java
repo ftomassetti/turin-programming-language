@@ -1,19 +1,14 @@
 package me.tomassetti.turin.compiler;
 
-import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.TurinClassLoader;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.Position;
 import me.tomassetti.turin.parser.ast.TurinFile;
-import me.tomassetti.turin.parser.ast.statements.ThrowStatement;
 import org.easymock.EasyMock;
-import org.easymock.internal.matchers.Any;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 public class DuplicateNamesCompilationTest extends AbstractCompilerTest {
 

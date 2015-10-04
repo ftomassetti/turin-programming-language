@@ -7,6 +7,7 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
+import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.Property;

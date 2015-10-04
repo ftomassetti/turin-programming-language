@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import javassist.CtMethod;
-import me.tomassetti.turin.compiler.SemanticErrorException;
+import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.compiled.JavassistBasedMethodResolution;
