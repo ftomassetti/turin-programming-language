@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmNameUtils;
 
 import java.util.Arrays;
 import java.util.Collections;

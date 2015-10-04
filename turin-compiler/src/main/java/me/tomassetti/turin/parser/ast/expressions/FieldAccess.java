@@ -1,12 +1,11 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;

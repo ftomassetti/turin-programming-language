@@ -1,6 +1,6 @@
 package me.tomassetti.turin.compiler;
 
-import me.tomassetti.turin.compiler.bytecode.BytecodeSequence;
+import me.tomassetti.bytecode_generation.BytecodeSequence;
 import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.*;

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.turin.compiler.ParamUtils;
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.TypeDefinition;

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;

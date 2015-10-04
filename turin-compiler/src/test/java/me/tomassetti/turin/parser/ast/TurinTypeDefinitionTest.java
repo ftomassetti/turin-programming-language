@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
+import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;

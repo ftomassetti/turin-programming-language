@@ -1,15 +1,14 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.bytecode.*;
-import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalAndBS;
-import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalNotBS;
-import me.tomassetti.turin.compiler.bytecode.logicalop.LogicalOrBS;
-import me.tomassetti.turin.compiler.bytecode.pushop.*;
-import me.tomassetti.turin.jvm.*;
+import me.tomassetti.bytecode_generation.*;
+import me.tomassetti.bytecode_generation.logicalop.LogicalAndBS;
+import me.tomassetti.bytecode_generation.logicalop.LogicalNotBS;
+import me.tomassetti.bytecode_generation.logicalop.LogicalOrBS;
+import me.tomassetti.bytecode_generation.pushop.*;
+import me.tomassetti.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
@@ -21,13 +20,13 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
-import static me.tomassetti.turin.compiler.BoxUnboxing.*;
+import static me.tomassetti.turin.compiler.BoxUnboxing.box;
 
 public class CompilationOfPush {
     private final Compilation compilation;
@@ -119,11 +118,11 @@ public class CompilationOfPush {
             if (!mathOperation.getRight().calcType(compilation.getResolver()).equals(PrimitiveTypeUsage.INT)) {
                 throw new UnsupportedOperationException();
             }
-
+            JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType(compilation.getResolver()).jvmType(compilation.getResolver()).typeCategory();
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(mathOperation.getLeft()),
                     pushExpression(mathOperation.getRight()),
-                    new MathOperationBS(mathOperation.getLeft().calcType(compilation.getResolver()).jvmType(compilation.getResolver()).typeCategory(), mathOperation.getOperator())));
+                    BytecodeUtils.createMathOperation(leftTypeCategory, mathOperation.getOperator())));
         } else if (expr instanceof BooleanLiteral) {
             return new PushBoolean(((BooleanLiteral) expr).getValue());
         } else if (expr instanceof LogicOperation) {
@@ -152,7 +151,7 @@ public class CompilationOfPush {
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(relationalOperation.getLeft()),
                     pushExpression(relationalOperation.getRight()),
-                    new RelationalOperationBS(relationalOperation.getOperator())
+                    BytecodeUtils.createRelationOperation(relationalOperation.getOperator())
             ));
         } else if (expr instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall) expr;

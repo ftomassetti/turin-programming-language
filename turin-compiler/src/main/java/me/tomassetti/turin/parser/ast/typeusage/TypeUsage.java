@@ -1,19 +1,65 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmType;
+import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A TypeUsage is the concrete usage of a type int the code.
  * For example it can be a type definition with generic type parameter specified.
  */
 public abstract class TypeUsage extends Node {
+
+    public static TypeUsage fromJvmType(JvmType jvmType) {
+        Optional<PrimitiveTypeUsage> primitive = PrimitiveTypeUsage.findByJvmType(jvmType);
+        if (primitive.isPresent()) {
+            return primitive.get();
+        }
+        String signature = jvmType.getSignature();
+        if (signature.startsWith("[")) {
+            JvmType componentType = new JvmType(signature.substring(1));
+            return new ArrayTypeUsage(fromJvmType(componentType));
+        } else if (signature.startsWith("L") && signature.endsWith(";")) {
+            String typeName = signature.substring(1, signature.length() - 1);
+            typeName = typeName.replaceAll("/", ".");
+            return new ReferenceTypeUsage(typeName, true);
+        } else {
+            throw new UnsupportedOperationException(signature);
+        }
+    }
+
+    public JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
+        String signature = this.jvmType(resolver).getSignature();
+        if (signature.startsWith("L")){
+            return JvmTypeCategory.REFERENCE;
+        }
+        if (signature.startsWith("[")){
+            return JvmTypeCategory.ARRAY;
+        }
+
+        switch (signature) {
+            case "Z":
+            case "B":
+            case "S":
+            case "C":
+            case "I":
+                return JvmTypeCategory.INT;
+            case"J":
+                return JvmTypeCategory.LONG;
+            case "F":
+                return JvmTypeCategory.FLOAT;
+            case "D":
+                return JvmTypeCategory.DOUBLE;
+            default:
+                throw new UnsupportedOperationException(signature);
+        }
+    }
 
     private boolean overloaded;
 

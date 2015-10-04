@@ -1,11 +1,14 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.bytecode.*;
-import me.tomassetti.turin.compiler.bytecode.returnop.ReturnVoidBS;
+import me.tomassetti.bytecode_generation.*;
+import me.tomassetti.jvm.JvmConstructorDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmType;
+import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.turin.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;

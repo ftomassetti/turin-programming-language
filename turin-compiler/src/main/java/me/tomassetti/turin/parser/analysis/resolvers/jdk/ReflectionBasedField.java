@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
-import me.tomassetti.turin.jvm.JvmFieldDefinition;
+import me.tomassetti.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;

@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.analysis;
 
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 

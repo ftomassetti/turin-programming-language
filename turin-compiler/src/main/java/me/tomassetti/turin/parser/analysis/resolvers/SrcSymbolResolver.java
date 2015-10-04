@@ -1,9 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
-import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;

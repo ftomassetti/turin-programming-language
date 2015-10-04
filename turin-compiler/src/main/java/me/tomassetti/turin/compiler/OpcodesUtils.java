@@ -1,6 +1,6 @@
 package me.tomassetti.turin.compiler;
 
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmType;
 
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Opcodes.ALOAD;

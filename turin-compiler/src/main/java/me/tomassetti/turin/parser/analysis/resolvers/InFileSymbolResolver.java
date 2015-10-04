@@ -1,10 +1,9 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
 import me.tomassetti.turin.compiler.SemanticErrorException;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmNameUtils;
-import me.tomassetti.turin.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -15,7 +14,6 @@ import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

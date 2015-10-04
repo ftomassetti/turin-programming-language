@@ -1,7 +1,7 @@
 package me.tomassetti.turin;
 
 import me.tomassetti.turin.compiler.ClassFileDefinition;
-import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmNameUtils;
 
 /**
  * ClassLoader used to load classes compiled from Turin.

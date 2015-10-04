@@ -5,7 +5,7 @@ import javassist.CtConstructor;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import me.tomassetti.turin.compiler.AmbiguousCallException;
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -115,7 +115,7 @@ public class JavassistBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = argsTypes.get(i).toTypeUsage();
+                    TypeUsage actualType = TypeUsage.fromJvmType(argsTypes.get(i));
                     TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;

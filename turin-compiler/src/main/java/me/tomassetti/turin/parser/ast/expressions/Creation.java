@@ -2,8 +2,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.parser.analysis.UnsolvedTypeException;
+import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;

@@ -1,6 +1,6 @@
 package me.tomassetti.turin.jvm;
 
-import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmNameUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

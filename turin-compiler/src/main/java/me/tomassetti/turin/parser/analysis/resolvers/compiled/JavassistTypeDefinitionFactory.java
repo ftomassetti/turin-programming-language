@@ -4,9 +4,9 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
 import javassist.NotFoundException;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmConstructorDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 

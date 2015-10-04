@@ -1,10 +1,9 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
 import me.tomassetti.turin.compiler.SemanticErrorException;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmNameUtils;
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmConstructorDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;

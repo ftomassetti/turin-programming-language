@@ -1,11 +1,11 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.compiler.bytecode.*;
-import me.tomassetti.turin.compiler.bytecode.returnop.ReturnValueBS;
-import me.tomassetti.turin.compiler.bytecode.returnop.ReturnVoidBS;
-import me.tomassetti.turin.jvm.JvmNameUtils;
-import me.tomassetti.turin.jvm.JvmTypeCategory;
+import me.tomassetti.bytecode_generation.*;
+import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
+import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
+import me.tomassetti.jvm.JvmNameUtils;
+import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.statements.*;
 import org.objectweb.asm.Label;
@@ -27,7 +27,10 @@ public class CompilationOfStatements {
         if (statement instanceof VariableDeclaration) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
             int pos = compilation.getLocalVarsSymbolTable().add(variableDeclaration.getName(), variableDeclaration);
-            return new ComposedBytecodeSequence(ImmutableList.of(compilation.getPushUtils().pushExpression(variableDeclaration.getValue()), new LocalVarAssignmentBS(pos, JvmTypeCategory.from(variableDeclaration.varType(compilation.getResolver()), compilation.getResolver()))));
+            JvmTypeCategory typeCategory = variableDeclaration.varType(compilation.getResolver()).toJvmTypeCategory(compilation.getResolver());
+            return new ComposedBytecodeSequence(ImmutableList.of(
+                    compilation.getPushUtils().pushExpression(variableDeclaration.getValue()),
+                    new LocalVarAssignmentBS(pos, typeCategory)));
         } else if (statement instanceof ExpressionStatement) {
             Expression expression = ((ExpressionStatement) statement).getExpression();
             return new CompilationOfPush(compilation).pushExpression(expression);

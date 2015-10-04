@@ -2,10 +2,11 @@ package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import javassist.*;
 import javassist.bytecode.*;
+import javassist.bytecode.analysis.Type;
 import me.tomassetti.turin.compiler.SemanticErrorException;
-import me.tomassetti.turin.jvm.JvmConstructorDefinition;
-import me.tomassetti.turin.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.jvm.JvmType;
+import me.tomassetti.jvm.JvmConstructorDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
@@ -14,7 +15,6 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import turin.compilation.DefaultParam;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
@@ -139,7 +139,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             throw new RuntimeException(e);
         }
         for (DefaultParamData defaultParamData : defaultParamDatas) {
-            TypeUsage paramType = new JvmType(defaultParamData.signature).toTypeUsage();
+            TypeUsage paramType = TypeUsage.fromJvmType(new JvmType(defaultParamData.signature));
             formalParameters.add(FormalParameter.createWithDefaultValuePlaceholder(paramType, defaultParamData.name));
         }
         return formalParameters;
@@ -334,7 +334,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     private static TypeUsage toTypeUsage(SignatureAttribute.Type type) {
-        return new JvmType(type.jvmTypeName()).toTypeUsage();
+        return TypeUsage.fromJvmType(new JvmType(type.jvmTypeName()));
     }
 
     @Override
