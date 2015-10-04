@@ -9,7 +9,6 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -33,24 +32,20 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class Compilation {
 
-    private static final int JAVA_8_CLASS_VERSION = 52;
     public static final int LOCALVAR_INDEX_FOR_THIS_IN_METHOD = 0;
     static final int LOCALVAR_INDEX_FOR_PARAM_0 = 1;
-
     static final String OBJECT_INTERNAL_NAME = JvmNameUtils.canonicalToInternal(Object.class.getCanonicalName());
-    static final String OBJECT_DESCRIPTOR = "L" + OBJECT_INTERNAL_NAME + ";";
+    static final String OBJECT_DESCRIPTOR = JvmNameUtils.canonicalToDescriptor(Object.class.getCanonicalName());
+    private static final int JAVA_8_CLASS_VERSION = 52;
     private final CompilationOfPush pushUtils = new CompilationOfPush(this);
     private final CompilationOfStatements compilationOfStatements = new CompilationOfStatements(this);
+    private final static String METHOD_NAME_OF_FUNCTION = "invoke";
 
     private ClassWriter cw;
     private SymbolResolver resolver;
     private LocalVarsSymbolTable localVarsSymbolTable;
     private String internalClassName;
     private ErrorCollector errorCollector;
-
-    public void setLocalVarsSymbolTable(LocalVarsSymbolTable localVarsSymbolTable) {
-        this.localVarsSymbolTable = localVarsSymbolTable;
-    }
 
     public Compilation(SymbolResolver resolver, ErrorCollector errorCollector) {
         this.resolver = resolver;
@@ -64,7 +59,7 @@ public class Compilation {
             return Collections.emptyList();
         }
 
-         List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
+        List<ClassFileDefinition> classFileDefinitions = new ArrayList<>();
 
         for (Node node : turinFile.getChildren()) {
             if (node instanceof TurinTypeDefinition) {
@@ -91,7 +86,7 @@ public class Compilation {
             cw.visitAnnotation(annotation.getDescriptor(resolver), true);
         }
 
-        generateInvokable(functionDefinition, "invoke", true);
+        generateInvokable(functionDefinition, METHOD_NAME_OF_FUNCTION, true);
 
         return ImmutableList.of(endClass(canonicalClassName));
     }
@@ -137,7 +132,7 @@ public class Compilation {
 
             int remaining = typeDefinition.getAllProperties(resolver).size();
             for (Property property : typeDefinition.getAllProperties(resolver)) {
-                appendToStringBuilder(new StringLiteral(property.getName()+"="), elements);
+                appendToStringBuilder(new StringLiteral(property.getName() + "="), elements);
                 ValueReference valueReference = new ValueReference(property.getName());
                 // in this way the field can be solved
                 valueReference.setParent(typeDefinition);
@@ -165,11 +160,14 @@ public class Compilation {
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-        // TODO consider generic signature, superclass and interfaces
+        // TODO consider generic signature
+        // TODO consider visibility
+        // calculate superclass
         String superClassInternalName = OBJECT_INTERNAL_NAME;
         if (typeDefinition.getBaseType().isPresent()) {
             superClassInternalName = JvmNameUtils.canonicalToInternal(typeDefinition.getBaseType().get().asReferenceTypeUsage().getQualifiedName(resolver));
         }
+        // calculate interfaces
         String[] interfaces = typeDefinition.getInterfaces().stream()
                 .map((i)->JvmNameUtils.canonicalToInternal(i.asReferenceTypeUsage().getQualifiedName(resolver)))
                 .collect(Collectors.toList()).toArray(new String[]{});
@@ -179,6 +177,7 @@ public class Compilation {
             cw.visitAnnotation(annotation.getDescriptor(resolver), true);
         }
 
+        // TODO consider if the property is readable and writable
         for (Property property : typeDefinition.getDirectProperties(resolver)){
             generateField(property);
             generateGetter(property, internalClassName);
@@ -196,12 +195,12 @@ public class Compilation {
             generateToStringMethod(typeDefinition);
         }
 
-        typeDefinition.getDirectMethods().forEach((m)->generateMethod(m));
+        typeDefinition.getDirectMethods().forEach((m)-> generateTurinTypeMethod(m));
 
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }
 
-    private void generateMethod(MethodDefinition methodDefinition) {
+    private void generateTurinTypeMethod(TurinTypeMethodDefinition methodDefinition) {
         generateInvokable(methodDefinition, methodDefinition.getName(), false);
     }
 
@@ -241,6 +240,7 @@ public class Compilation {
 
         mv.visitCode();
 
+        // Add local variables: they are necessary for supporting named parameters and useful for debugging
         Label start = new Label();
         Label end = new Label();
         mv.visitLabel(start);
@@ -281,13 +281,14 @@ public class Compilation {
         // TODO consider exceptions
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, "main", "([Ljava/lang/String;)V", null, null);
 
-        localVarsSymbolTable.add("args", new FormalParameter(new ArrayTypeUsage(ReferenceTypeUsage.STRING), "args"));
+        localVarsSymbolTable.add(program.getFormalParameter());
 
         mv.visitCode();
 
         compilationOfStatements.compile(program.getStatement()).operate(mv);
 
         // Implicit return
+        // TODO remove if already present or not needed (for example if there is an exception)
         mv.visitInsn(RETURN);
 
         // calculated for us
@@ -306,8 +307,8 @@ public class Compilation {
         } else if (pieceType.isReference()) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(BasicTypeUsage.UINT) || (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt())) {
-            elements.add(pushUtils.pushExpression(piece));
+        } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt()) {
+            elements.add(pushUtils.convertAndPush(piece, JvmType.INT));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.equals(PrimitiveTypeUsage.BOOLEAN)) {
             elements.add(pushUtils.pushExpression(piece));
@@ -329,10 +330,6 @@ public class Compilation {
         }
     }
 
-    int loadTypeForTypeUsage(TypeUsage type) {
-        return loadTypeFor(type.jvmType(resolver));
-    }
-
     SymbolResolver getResolver() {
         return resolver;
     }
@@ -343,6 +340,10 @@ public class Compilation {
 
     LocalVarsSymbolTable getLocalVarsSymbolTable() {
         return localVarsSymbolTable;
+    }
+
+    public void setLocalVarsSymbolTable(LocalVarsSymbolTable localVarsSymbolTable) {
+        this.localVarsSymbolTable = localVarsSymbolTable;
     }
 
     public CompilationOfPush getPushUtils() {

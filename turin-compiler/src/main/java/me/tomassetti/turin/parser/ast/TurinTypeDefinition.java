@@ -427,11 +427,11 @@ public class TurinTypeDefinition extends TypeDefinition {
         return properties;
     }
 
-    public List<me.tomassetti.turin.parser.ast.MethodDefinition> getDirectMethods() {
-        List<me.tomassetti.turin.parser.ast.MethodDefinition> methods = new ArrayList<>();
+    public List<TurinTypeMethodDefinition> getDirectMethods() {
+        List<TurinTypeMethodDefinition> methods = new ArrayList<>();
         for (Node member : members) {
-            if (member instanceof me.tomassetti.turin.parser.ast.MethodDefinition) {
-                methods.add((me.tomassetti.turin.parser.ast.MethodDefinition)member);
+            if (member instanceof TurinTypeMethodDefinition) {
+                methods.add((TurinTypeMethodDefinition)member);
             }
         }
         return methods;
@@ -453,7 +453,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver);
     }
 
-    public void add(me.tomassetti.turin.parser.ast.MethodDefinition methodDefinition) {
+    public void add(TurinTypeMethodDefinition methodDefinition) {
         members.add(methodDefinition);
         methodDefinition.parent = this;
     }

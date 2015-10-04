@@ -163,8 +163,8 @@ class ParseTreeToAst {
                 typeDefinition.add((PropertyReference)memberNode);
             } else if (memberNode instanceof PropertyDefinition) {
                 typeDefinition.add((PropertyDefinition) memberNode);
-            } else if (memberNode instanceof MethodDefinition) {
-                typeDefinition.add((MethodDefinition) memberNode);
+            } else if (memberNode instanceof TurinTypeMethodDefinition) {
+                typeDefinition.add((TurinTypeMethodDefinition) memberNode);
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -194,7 +194,7 @@ class ParseTreeToAst {
 
     private Node toAst(TurinParser.MethodDefinitionContext ctx) {
         List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        MethodDefinition methodDefinition = new MethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        TurinTypeMethodDefinition methodDefinition = new TurinTypeMethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(methodDefinition, ctx);
         return methodDefinition;
     }

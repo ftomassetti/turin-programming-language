@@ -172,7 +172,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
     }
 
     public boolean isStoredInInt() {
-        return (this == BYTE || this == SHORT || this == INT);
+        return jvmType.isStoredInInt();
     }
 
     public boolean isInt() {

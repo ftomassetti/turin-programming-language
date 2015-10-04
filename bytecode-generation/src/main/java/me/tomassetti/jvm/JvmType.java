@@ -14,6 +14,10 @@ public class JvmType {
     public static final JvmType LONG = new JvmType("J");
     public static final JvmType VOID = new JvmType("V");
 
+    public boolean isStoredInInt() {
+        return this.equals(BYTE) || this.equals(SHORT) || this.equals(INT);
+    }
+
     private String signature;
 
     public String getSignature() {

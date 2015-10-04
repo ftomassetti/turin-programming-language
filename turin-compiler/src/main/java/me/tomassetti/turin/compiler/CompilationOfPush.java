@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.tomassetti.turin.compiler.BoxUnboxing.box;
+import static me.tomassetti.turin.compiler.OpcodesUtils.loadTypeFor;
 
 public class CompilationOfPush {
     private final Compilation compilation;
@@ -103,7 +104,7 @@ public class CompilationOfPush {
             Optional<Integer> index = compilation.getLocalVarsSymbolTable().findIndex(valueReference.getName());
             if (index.isPresent()) {
                 TypeUsage type = compilation.getLocalVarsSymbolTable().findDeclaration(valueReference.getName()).get().calcType(compilation.getResolver());
-                return new PushLocalVar(compilation.loadTypeForTypeUsage(type), index.get());
+                return new PushLocalVar(loadTypeForTypeUsage(type), index.get());
             } else if (compilation.getLocalVarsSymbolTable().hasAlias(valueReference.getName())) {
                 return compilation.getLocalVarsSymbolTable().getAlias(valueReference.getName());
             } else {
@@ -228,8 +229,20 @@ public class CompilationOfPush {
         }
     }
 
-    private BytecodeSequence convertAndPush(Expression value, JvmType formalType) {
+    public BytecodeSequence convertAndPush(Expression value, JvmType formalType) {
         JvmType actualType = value.calcType(compilation.getResolver()).jvmType(compilation.getResolver());
+        if (actualType.equals(formalType)) {
+            return pushExpression(value);
+        }
+        if (!actualType.isPrimitive()) {
+            throw new IllegalArgumentException();
+        }
+        if (!formalType.isPrimitive()) {
+            throw new IllegalArgumentException();
+        }
+        if (actualType.isStoredInInt() && formalType.equals(JvmType.INT)) {
+            return pushExpression(value);
+        }
         if (actualType.equals(JvmType.INT) && formalType.equals(JvmType.LONG)) {
             return new ComposedBytecodeSequence(
                     pushExpression(value),
@@ -238,6 +251,10 @@ public class CompilationOfPush {
         } else {
             throw new UnsupportedOperationException("actual: " + actualType + ", formal: " + formalType);
         }
+    }
+
+    int loadTypeForTypeUsage(TypeUsage type) {
+        return loadTypeFor(type.jvmType(compilation.getResolver()));
     }
 
 }

@@ -1,6 +1,7 @@
 package me.tomassetti.turin.compiler;
 
 import me.tomassetti.bytecode_generation.BytecodeSequence;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.*;
@@ -33,6 +34,10 @@ public class LocalVarsSymbolTable {
             throw new IllegalArgumentException();
         }
         return aliases.get(name);
+    }
+
+    public void add(FormalParameter formalParameter) {
+        add(formalParameter.getName(), formalParameter);
     }
 
     // Each instance is equals just to itself, by design.

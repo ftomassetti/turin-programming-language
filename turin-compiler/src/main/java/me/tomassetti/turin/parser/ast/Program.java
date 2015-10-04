@@ -13,6 +13,16 @@ public class Program extends Node implements Named {
     private String name;
     private Statement statement;
     private FormalParameter formalParameter;
+    private String paramName;
+
+    public FormalParameter getFormalParameter() {
+        return formalParameter;
+    }
+
+    public String getParamName() {
+
+        return paramName;
+    }
 
     public Program(String name, Statement statement, String paramName) {
         this.name = name;
@@ -20,6 +30,7 @@ public class Program extends Node implements Named {
         this.statement.setParent(this);
         this.formalParameter = new FormalParameter(new ArrayTypeUsage(ReferenceTypeUsage.STRING), paramName);
         this.formalParameter.parent = this;
+        this.paramName = paramName;
     }
 
     public String getName() {
