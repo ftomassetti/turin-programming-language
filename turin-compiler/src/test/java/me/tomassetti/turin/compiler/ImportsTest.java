@@ -92,4 +92,14 @@ public class ImportsTest extends AbstractCompilerTest {
         verify(errorCollector);
     }
 
+    @Test
+    public void importOfUnexistingField() throws NoSuchMethodException, IOException, InvocationTargetException, IllegalAccessException {
+        errorCollector = createMock(ErrorCollector.class);
+        errorCollector.recordSemanticError(Position.create(3, 0, 3, 28), "Import not resolved: java.lang.System.baz");
+        replay(errorCollector);
+        attemptToCompile("importOfUnexistingField", Collections.emptyList());
+        verify(errorCollector);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.imports;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
@@ -41,14 +42,36 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
         }
     }
 
+    private Node importedValueCache = null;
+
+    private void findImportedValue(SymbolResolver resolver) {
+        if (importedValueCache != null) {
+            return;
+        }
+        String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
+
+        if (typeDefinition.hasField(fieldsPath.qualifiedName(), true)) {
+            importedValueCache = typeDefinition.getField(fieldsPath, resolver);
+        }
+    }
+
+    @Override
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
+        findImportedValue(resolver);
+        if (importedValueCache == null) {
+            errorCollector.recordSemanticError(getPosition(), "Import not resolved: " + packagePart.qualifiedName()
+                    + "." + typeName + "." + fieldsPath.qualifiedName());
+            return false;
+        }
+        return super.specificValidate(resolver, errorCollector);
+    }
+
     @Override
     public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
         if (exposedName().equals(name)) {
-            String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-            TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
-
-            Node importedValue = typeDefinition.getField(fieldsPath, resolver);
-            return Optional.of(importedValue);
+            findImportedValue(resolver);
+            return Optional.of(importedValueCache);
         } else {
             return Optional.empty();
         }
