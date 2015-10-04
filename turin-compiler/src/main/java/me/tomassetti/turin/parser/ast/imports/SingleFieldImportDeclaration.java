@@ -51,7 +51,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
         String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
         TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
 
-        if (typeDefinition.hasField(fieldsPath.qualifiedName(), true)) {
+        if (typeDefinition.hasField(fieldsPath, true, resolver)) {
             importedValueCache = typeDefinition.getField(fieldsPath, resolver);
         }
     }
@@ -71,6 +71,9 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
     public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
         if (exposedName().equals(name)) {
             findImportedValue(resolver);
+            if (importedValueCache == null) {
+                return Optional.empty();
+            }
             return Optional.of(importedValueCache);
         } else {
             return Optional.empty();

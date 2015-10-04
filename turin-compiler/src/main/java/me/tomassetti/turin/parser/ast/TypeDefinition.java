@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -59,4 +60,23 @@ public abstract class TypeDefinition extends Node implements Named {
     public abstract boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
     public abstract boolean hasField(String name, boolean staticContext);
+
+    public final boolean hasField(QualifiedName fieldName, boolean staticContext, SymbolResolver resolver) {
+        if (!fieldName.isSimpleName()) {
+            String firstName = fieldName.firstSegment();
+            if (!hasField(firstName, staticContext)) {
+                return false;
+            }
+            Node field = getField(firstName, resolver);
+            TypeUsage typeUsage = field.calcType(resolver);
+            if (typeUsage.isReferenceTypeUsage()) {
+                TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
+                return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
+            } else {
+                return false;
+            }
+        }
+        return hasField(fieldName.getName(), staticContext);
+    }
+
 }
