@@ -114,8 +114,8 @@ public class TurinFile extends Node {
         program.parent = this;
     }
 
-    public List<TypeDefinition> getTopLevelTypeDefinitions() {
-        return topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition)).map((n) -> (TypeDefinition)n).collect(Collectors.toList());
+    public List<TurinTypeDefinition> getTopLevelTypeDefinitions() {
+        return topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition)).map((n) -> (TurinTypeDefinition)n).collect(Collectors.toList());
     }
 
     public List<FunctionDefinition> getTopLevelFunctionDefinitions() {

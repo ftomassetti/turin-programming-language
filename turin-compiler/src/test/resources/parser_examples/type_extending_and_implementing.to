@@ -1,0 +1,4 @@
+namespace foo.bar
+
+type A extends Object implements Serializable, Cloneable {
+}

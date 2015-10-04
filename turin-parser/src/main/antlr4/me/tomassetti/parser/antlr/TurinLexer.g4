@@ -54,6 +54,8 @@ TRUE_KW             : 'true';
 IF_KW               : 'if';
 ELIF_KW             : 'elif';
 ELSE_KW             : 'else';
+IMPLEMENTS_KW       : 'implements';
+EXTENDS_KW          : 'extends';
 
 THROW_KW            : 'throw';
 TRY_KW              : 'try';

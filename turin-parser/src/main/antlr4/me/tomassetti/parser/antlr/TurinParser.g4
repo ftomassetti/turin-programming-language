@@ -116,7 +116,10 @@ typeMember:
 
 typeDeclaration:
     (annotations+=annotationUsage nls)*
-    TYPE_KW name=TYPE_ID LBRACKET nls
+    TYPE_KW name=TYPE_ID
+        (EXTENDS_KW baseType=typeUsage)?
+        (IMPLEMENTS_KW interfaze+=typeUsage (commaNl interfaze+=typeUsage)*)?
+        LBRACKET nls
     (typeMembers += typeMember)*
     RBRACKET nls;
 

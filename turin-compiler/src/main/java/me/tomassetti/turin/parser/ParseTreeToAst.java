@@ -173,6 +173,10 @@ class ParseTreeToAst {
             AnnotationUsage annotationUsage = toAst(anCtx);
             typeDefinition.addAnnotation(annotationUsage);
         });
+        if (ctx.baseType != null) {
+            typeDefinition.setBaseType(toAst(ctx.baseType));
+        }
+        ctx.interfaze.forEach((iCtx)->typeDefinition.addInterface(toAst(iCtx)));
         return typeDefinition;
     }
 

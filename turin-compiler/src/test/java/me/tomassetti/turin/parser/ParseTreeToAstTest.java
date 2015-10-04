@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ParseTreeToAstTest {
 
@@ -96,6 +97,17 @@ public class ParseTreeToAstTest {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("manga.to");
         TurinParser.TurinFileContext root = new InternalParser().produceParseTree(inputStream);
         assertEquals(mangaAst(), new ParseTreeToAst().toAst(root));
+    }
+
+    @Test
+    public void typeExtendingAndImplementin() throws IOException {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("parser_examples/type_extending_and_implementing.to");
+        TurinParser.TurinFileContext root = new InternalParser().produceParseTree(inputStream);
+        TurinFile turinFile = new ParseTreeToAst().toAst(root);
+        assertEquals(1, turinFile.getTopLevelTypeDefinitions().size());
+        TurinTypeDefinition typeDefinition = turinFile.getTopLevelTypeDefinitions().get(0);
+        assertTrue(typeDefinition.getBaseType().isPresent());
+        assertEquals(2, typeDefinition.getInterfaces().size());
     }
 
 }

@@ -23,8 +23,20 @@ import java.util.stream.Collectors;
  */
 public class TurinTypeDefinition extends TypeDefinition {
     private List<Node> members = new ArrayList<>();
+    private List<TypeUsage> interfaces = new ArrayList<>();
+    private Optional<TypeUsage> baseType = Optional.empty();
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
+
+    public void setBaseType(TypeUsage baseType) {
+        baseType.setParent(this);
+        this.baseType = Optional.of(baseType);
+    }
+
+    public void addInterface(TypeUsage interfaze) {
+        interfaze.setParent(this);
+        interfaces.add(interfaze);
+    }
 
     public void addAnnotation(AnnotationUsage annotation) {
         annotation.setParent(this);
@@ -362,10 +374,14 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.<Node>builder()
-                .addAll(members)
-                .addAll(annotations)
-                .build();
+        List<Node> children = new LinkedList<>();
+        children.addAll(members);
+        children.addAll(annotations);
+        if (baseType.isPresent()) {
+            children.add(baseType.get());
+        }
+        children.addAll(interfaces);
+        return children;
     }
 
     public List<Property> getDirectProperties(SymbolResolver resolver) {
@@ -388,6 +404,14 @@ public class TurinTypeDefinition extends TypeDefinition {
             }
         }
         return methods;
+    }
+
+    public List<TypeUsage> getInterfaces() {
+        return interfaces;
+    }
+
+    public Optional<TypeUsage> getBaseType() {
+        return baseType;
     }
 
     /**
