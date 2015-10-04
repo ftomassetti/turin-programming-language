@@ -1,0 +1,7 @@
+namespace foo.bar
+
+type B {
+}
+
+type A extends B {
+}

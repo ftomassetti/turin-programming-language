@@ -60,7 +60,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     public boolean isClass(SymbolResolver resolver) {
-        throw new UnsupportedOperationException();
+        return getTypeDefinition(resolver).isClass();
     }
 
     public boolean isEnum(SymbolResolver resolver) {

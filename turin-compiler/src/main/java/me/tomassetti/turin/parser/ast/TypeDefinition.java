@@ -40,6 +40,7 @@ public abstract class TypeDefinition extends Node implements Named {
     public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
     public abstract boolean isInterface();
+    public abstract boolean isClass();
 
     public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());

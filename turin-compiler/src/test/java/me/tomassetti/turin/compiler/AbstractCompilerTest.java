@@ -102,7 +102,7 @@ public abstract class AbstractCompilerTest {
         return new MyErrorCollector();
     }
 
-    public Method compileFunction(String exampleName, Class[] paramTypes, List<String> classPathElements) throws NoSuchMethodException, IOException {
+    public Class compileType(String exampleName, List<String> classPathElements) throws NoSuchMethodException, IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/" + exampleName + ".to"));
 
         // generate bytecode
@@ -114,8 +114,13 @@ public abstract class AbstractCompilerTest {
         assertEquals(1, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
-        Class functionClass = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
+        Class clazz = turinClassLoader.addClass(classFileDefinitions.get(0).getName(),
                 classFileDefinitions.get(0).getBytecode());
+        return clazz;
+    }
+
+    public Method compileFunction(String exampleName, Class[] paramTypes, List<String> classPathElements) throws NoSuchMethodException, IOException {
+        Class functionClass = compileType(exampleName, classPathElements);
         assertEquals(0, functionClass.getConstructors().length);
 
         Method invoke = functionClass.getMethod("invoke", paramTypes);

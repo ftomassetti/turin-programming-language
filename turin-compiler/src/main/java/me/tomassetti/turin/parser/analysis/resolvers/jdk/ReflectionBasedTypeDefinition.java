@@ -214,6 +214,11 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return clazz.isInterface();
     }
 
+    @Override
+    public boolean isClass() {
+        return !clazz.isInterface() && !clazz.isEnum() && !clazz.isAnnotation() && !clazz.isArray() && !clazz.isPrimitive();
+    }
+
     private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
         TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
         ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);

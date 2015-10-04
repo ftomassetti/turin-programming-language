@@ -1,0 +1,6 @@
+namespace foo.bar
+
+import java.io.Serializable
+
+type A implements Serializable, Cloneable {
+}

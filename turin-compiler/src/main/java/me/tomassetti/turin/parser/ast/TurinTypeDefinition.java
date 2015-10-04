@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.ParamUtils;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.jvm.JvmConstructorDefinition;
@@ -27,6 +28,25 @@ public class TurinTypeDefinition extends TypeDefinition {
     private Optional<TypeUsage> baseType = Optional.empty();
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
+
+    @Override
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
+        if (baseType.isPresent()) {
+            if (!baseType.get().isReferenceTypeUsage() || !baseType.get().asReferenceTypeUsage().isClass(resolver)) {
+                errorCollector.recordSemanticError(baseType.get().getPosition(), "Only classes can be extended");
+                return false;
+            }
+        }
+
+        for (TypeUsage typeUsage : interfaces) {
+            if (!typeUsage.isReferenceTypeUsage() || !typeUsage.asReferenceTypeUsage().isInterface(resolver)) {
+                errorCollector.recordSemanticError(typeUsage.getPosition(), "Only interfaces can be implemented");
+                return false;
+            }
+        }
+
+        return super.specificValidate(resolver, errorCollector);
+    }
 
     public void setBaseType(TypeUsage baseType) {
         baseType.setParent(this);
@@ -212,7 +232,12 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     @Override
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
-        // TODO consider superclasses
+        if (getBaseType().isPresent()) {
+            List<ReferenceTypeUsage> res = new ArrayList<>();
+            res.add(getBaseType().get().asReferenceTypeUsage());
+            res.addAll(getBaseType().get().asReferenceTypeUsage().getAllAncestors(resolver));
+            return res;
+        }
         return ImmutableList.of(ReferenceTypeUsage.OBJECT);
     }
 
@@ -220,6 +245,12 @@ public class TurinTypeDefinition extends TypeDefinition {
     public boolean isInterface() {
         // TODO when it will be possible to declare interface fix this
         return false;
+    }
+
+    @Override
+    public boolean isClass() {
+        // TODO when it will be possible to declare interface fix this
+        return true;
     }
 
     @Override

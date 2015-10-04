@@ -162,7 +162,14 @@ public class Compilation {
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         // TODO consider generic signature, superclass and interfaces
-        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
+        String superClassInternalName = OBJECT_INTERNAL_NAME;
+        if (typeDefinition.getBaseType().isPresent()) {
+            superClassInternalName = JvmNameUtils.canonicalToInternal(typeDefinition.getBaseType().get().asReferenceTypeUsage().getQualifiedName(resolver));
+        }
+        String[] interfaces = typeDefinition.getInterfaces().stream()
+                .map((i)->JvmNameUtils.canonicalToInternal(i.asReferenceTypeUsage().getQualifiedName(resolver)))
+                .collect(Collectors.toList()).toArray(new String[]{});
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, superClassInternalName, interfaces);
 
         for (AnnotationUsage annotation : typeDefinition.getAnnotations()) {
             cw.visitAnnotation(annotation.getDescriptor(resolver), true);
