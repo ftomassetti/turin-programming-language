@@ -29,18 +29,6 @@ public abstract class JvmInvokableDefinition {
         return descriptor;
     }
 
-    public boolean isParamPrimitive(int i) {
-        MethodTypeSignature methodTypeSignature = SignatureParser.make().parseMethodSig(descriptor);
-        TypeSignature typeSignature = methodTypeSignature.getParameterTypes()[i];
-        if (typeSignature instanceof ClassTypeSignature) {
-            return false;
-        } else if (typeSignature instanceof BaseType) {
-            return true;
-        } else {
-            throw new UnsupportedOperationException(typeSignature.getClass().getCanonicalName());
-        }
-    }
-
     public JvmType getParamType(int i) {
         MethodTypeSignature methodTypeSignature = SignatureParser.make().parseMethodSig(descriptor);
         TypeSignature typeSignature = methodTypeSignature.getParameterTypes()[i];
