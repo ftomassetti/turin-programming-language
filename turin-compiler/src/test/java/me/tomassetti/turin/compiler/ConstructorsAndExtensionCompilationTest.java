@@ -1,6 +1,5 @@
 package me.tomassetti.turin.compiler;
 
-import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.classloading.TurinClassLoader;
 import me.tomassetti.turin.parser.Parser;
@@ -28,7 +27,9 @@ public class ConstructorsAndExtensionCompilationTest extends AbstractCompilerTes
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class pointClass = turinClassLoader.addClass(classFileDefinitions.get(0));
+        saveClassFile(classFileDefinitions.get(0), "const");
         Class labelledPointClass = turinClassLoader.addClass(classFileDefinitions.get(1));
+        saveClassFile(classFileDefinitions.get(1), "const");
 
         assertEquals(1, labelledPointClass.getConstructors().length);
         Constructor constructor = labelledPointClass.getConstructors()[0];
