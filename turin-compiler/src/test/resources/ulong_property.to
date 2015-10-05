@@ -4,6 +4,6 @@ type A {
     ulong a
 }
 
-A foo1() = A(-1)
-A foo2() = A(0)
-A foo3() = A(1)
+A foo1() = A(-1L)
+A foo2() = A(0L)
+A foo3() = A(1L)

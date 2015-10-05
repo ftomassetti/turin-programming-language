@@ -6,15 +6,16 @@ import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
-import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
-import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
-import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.imports.*;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -407,8 +408,18 @@ class ParseTreeToAst {
             return toAst(exprCtx.valueReference());
         } else if (exprCtx.interpolatedStringLiteral() != null) {
             return toAst(exprCtx.interpolatedStringLiteral());
+        } else if (exprCtx.byteLiteral() != null) {
+            return toAst(exprCtx.byteLiteral());
+        } else if (exprCtx.shortLiteral() != null) {
+            return toAst(exprCtx.shortLiteral());
         } else if (exprCtx.intLiteral() != null) {
             return toAst(exprCtx.intLiteral());
+        } else if (exprCtx.longLiteral() != null) {
+            return toAst(exprCtx.longLiteral());
+        } else if (exprCtx.floatLiteral() != null) {
+            return toAst(exprCtx.floatLiteral());
+        } else if (exprCtx.doubleLiteral() != null) {
+            return toAst(exprCtx.doubleLiteral());
         } else if (exprCtx.parenExpression() != null) {
             return toAst(exprCtx.parenExpression().internal);
         } else if (exprCtx.stringLiteral() != null) {
@@ -554,8 +565,104 @@ class ParseTreeToAst {
         return new FunctionCall(function, functionCallContext.actualParam().stream().map((apCtx)->toAst(apCtx)).collect(Collectors.toList()));
     }
 
-    private IntLiteral toAst(TurinParser.IntLiteralContext intLiteralContext) {
-        return new IntLiteral(Integer.parseInt(intLiteralContext.getText()));
+    private Expression toAst(TurinParser.ByteLiteralContext ctx) {
+        try {
+            // ignore last character
+            String text = ctx.getText().substring(0, ctx.getText().length() - 1);
+            BigInteger bigInteger = new BigInteger(text);
+            if (bigInteger.compareTo(new BigInteger(Byte.toString(Byte.MAX_VALUE))) == 1
+                || bigInteger.compareTo(new BigInteger(Byte.toString(Byte.MIN_VALUE))) == -1) {
+                return new SemanticError("Value cannot be contained in the given type", getPosition(ctx));
+            }
+            ByteLiteral literal = new ByteLiteral(Byte.parseByte(text));
+            getPositionFrom(literal, ctx);
+            return literal;
+        } catch (NumberFormatException e){
+            return new SemanticError("Invalid number literal", getPosition(ctx));
+        }
+    }
+
+    private Expression toAst(TurinParser.ShortLiteralContext ctx) {
+        try {
+            // ignore last character
+            String text = ctx.getText().substring(0, ctx.getText().length() - 1);
+            BigInteger bigInteger = new BigInteger(text);
+            if (bigInteger.compareTo(new BigInteger(Short.toString(Short.MAX_VALUE))) == 1
+                    || bigInteger.compareTo(new BigInteger(Short.toString(Short.MIN_VALUE))) == -1) {
+                return new SemanticError("Value cannot be contained in the given type", getPosition(ctx));
+            }
+            ShortLiteral literal = new ShortLiteral(Short.parseShort(text));
+            getPositionFrom(literal, ctx);
+            return literal;
+        } catch (NumberFormatException e){
+            return new SemanticError("Invalid number literal", getPosition(ctx));
+        }
+    }
+
+    private Expression toAst(TurinParser.IntLiteralContext ctx) {
+        try {
+            BigInteger bigInteger = new BigInteger(ctx.getText());
+            if (bigInteger.compareTo(new BigInteger(Integer.toString(Integer.MAX_VALUE))) == 1
+                    || bigInteger.compareTo(new BigInteger(Integer.toString(Integer.MIN_VALUE))) == -1) {
+                return new SemanticError("Value cannot be contained in the given type", getPosition(ctx));
+            }
+            IntLiteral intLiteral = new IntLiteral(Integer.parseInt(ctx.getText()));
+            getPositionFrom(intLiteral, ctx);
+            return intLiteral;
+        } catch (NumberFormatException e){
+            return new SemanticError("Invalid number literal", getPosition(ctx));
+        }
+    }
+
+    private Expression toAst(TurinParser.LongLiteralContext ctx) {
+        try {
+            // ignore last character
+            String text = ctx.getText().substring(0, ctx.getText().length() - 1);
+            BigInteger bigInteger = new BigInteger(text);
+            if (bigInteger.compareTo(new BigInteger(Long.toString(Long.MAX_VALUE))) == 1
+                    || bigInteger.compareTo(new BigInteger(Long.toString(Long.MIN_VALUE))) == -1) {
+                return new SemanticError("Value cannot be contained in the given type", getPosition(ctx));
+            }
+            LongLiteral literal = new LongLiteral(Long.parseLong(text));
+            getPositionFrom(literal, ctx);
+            return literal;
+        } catch (NumberFormatException e){
+            return new SemanticError("Invalid number literal", getPosition(ctx));
+        }
+    }
+
+    private Expression toAst(TurinParser.FloatLiteralContext ctx) {
+        try {
+            // ignore last character
+            String text = ctx.getText().substring(0, ctx.getText().length() - 1);
+            BigDecimal bigDecimal = new BigDecimal(text);
+            if (bigDecimal.compareTo(new BigDecimal(Float.toString(Float.MAX_VALUE))) == 1) {
+                return new SemanticError("Value cannot be contained in the given type: it is too big", getPosition(ctx));
+            }
+            if (bigDecimal.compareTo(new BigDecimal(Float.toString(Float.MIN_VALUE))) == -1) {
+                return new SemanticError("Value cannot be contained in the given type: it is too small", getPosition(ctx));
+            }
+            FloatLiteral literal = new FloatLiteral(Float.parseFloat(text));
+            getPositionFrom(literal, ctx);
+            return literal;
+        } catch (NumberFormatException e){
+            return new SemanticError("Invalid number literal", getPosition(ctx));
+        }
+    }
+
+    private Expression toAst(TurinParser.DoubleLiteralContext ctx) {
+        try {
+            BigDecimal bigDecimal = new BigDecimal(ctx.getText());
+            if (bigDecimal.compareTo(new BigDecimal(Double.toString(Double.MAX_VALUE))) == 1
+                    || bigDecimal.compareTo(new BigDecimal(Double.toString(Double.MIN_VALUE))) == -1) {
+                return new SemanticError("Value cannot be contained in the given type", getPosition(ctx));
+            }
+            DoubleLiteral literal = new DoubleLiteral(Double.parseDouble(ctx.getText()));
+            getPositionFrom(literal, ctx);
+            return literal;
+        } catch (NumberFormatException e){
+            return new SemanticError("Invalid number literal", getPosition(ctx));
+        }
     }
 
     private StringLiteral toAst(TurinParser.StringLiteralContext stringLiteralContext) {

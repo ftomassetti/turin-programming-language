@@ -102,7 +102,12 @@ BASIC_TYPE          : F_BASIC_TYPE;
 VALUE_ID            : F_VALUE_ID | F_ESCAPED_VALUE_ID;
 // Only for types
 TYPE_ID             : F_TYPE_ID | F_ESCAPED_TYPE_ID;
+BYTE                : F_BYTE;
+SHORT               : F_SHORT;
 INT                 : F_INT;
+LONG                : F_LONG;
+FLOAT               : F_FLOAT;
+DOUBLE              : F_DOUBLE;
 
 STRING_START        : '"' -> pushMode(IN_STRING);
 
@@ -142,7 +147,12 @@ I_NAME_PLACEHOLDER  : F_NAME_PLACEHOLDER -> type(NAME_PLACEHOLDER);
 I_PLACEHOLDER       : F_PLACEHOLDER -> type(PLACEHOLDER);
 I_VALUE_ID          : (F_VALUE_ID | F_ESCAPED_VALUE_ID) -> type(VALUE_ID);
 I_TYPE_ID           : (F_TYPE_ID  | F_ESCAPED_TYPE_ID)  -> type(TYPE_ID);
+I_BYTE              : F_BYTE -> type(BYTE);
+I_SHORT             : F_SHORT -> type(SHORT);
 I_INT               : F_INT -> type(INT);
+I_LONG              : F_LONG -> type(LONG);
+I_FLOAT             : F_FLOAT -> type(FLOAT);
+I_DOUBLE            : F_DOUBLE -> type(DOUBLE);
 I_COMMA             : ',' -> type(COMMA);
 I_LPAREN            : '(' -> type(LPAREN);
 I_RPAREN            : ')' -> type(RPAREN);
@@ -176,7 +186,12 @@ fragment F_ESCAPED_VALUE_ID  : 'v#'('_')*('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..
 fragment F_TYPE_ID           : ('_')*'A'..'Z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_ESCAPED_TYPE_ID   : 'T#'('_')*('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_ANNOTATION_ID     : '@'('_')*('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
+fragment F_BYTE              : ('-')?('0'|(('1'..'9')('0'..'9')*))'B';
+fragment F_SHORT             : ('-')?('0'|(('1'..'9')('0'..'9')*))'S';
 fragment F_INT               : ('-')?('0'|(('1'..'9')('0'..'9')*));
+fragment F_LONG              : ('-')?('0'|(('1'..'9')('0'..'9')*))'L';
+fragment F_FLOAT             : ('-')?('0'|(('1'..'9')('0'..'9')*))'.'('0'..'9')+'F';
+fragment F_DOUBLE            : ('-')?('0'|(('1'..'9')('0'..'9')*))'.'('0'..'9')+;
 fragment F_PRIMITIVE_TYPE    : 'byte'|'int'|'long'|'boolean'|'char'|'float'|'double'|'short';
 fragment F_BASIC_TYPE        : 'uint'|'ulong'|'ufloat'|'udouble'|'ushort'|'ubyte';
 

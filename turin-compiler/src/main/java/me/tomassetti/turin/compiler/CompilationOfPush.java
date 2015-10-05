@@ -15,9 +15,7 @@ import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Placeholder;
 import me.tomassetti.turin.parser.ast.expressions.*;
-import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
-import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
-import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -80,8 +78,18 @@ public class CompilationOfPush {
     }
 
     BytecodeSequence pushExpression(Expression expr) {
-        if (expr instanceof IntLiteral) {
+        if (expr instanceof ByteLiteral) {
+            return new PushIntConst(((ByteLiteral) expr).getValue());
+        } else if (expr instanceof ShortLiteral) {
+            return new PushIntConst(((ShortLiteral) expr).getValue());
+        } else if (expr instanceof IntLiteral) {
             return new PushIntConst(((IntLiteral) expr).getValue());
+        } else if (expr instanceof LongLiteral) {
+            return new PushLongConst(((LongLiteral) expr).getValue());
+        } else if (expr instanceof FloatLiteral) {
+            return new PushFloatConst(((FloatLiteral) expr).getValue());
+        } else if (expr instanceof DoubleLiteral) {
+            return new PushDoubleConst(((DoubleLiteral) expr).getValue());
         } else if (expr instanceof StringLiteral) {
             return new PushStringConst(((StringLiteral) expr).getValue());
         } else if (expr instanceof StaticFieldAccess) {

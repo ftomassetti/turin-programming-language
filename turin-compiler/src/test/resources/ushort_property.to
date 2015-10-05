@@ -4,6 +4,6 @@ type A {
     ushort a
 }
 
-A foo1() = A(-1)
-A foo2() = A(0)
-A foo3() = A(1)
+A foo1() = A(-1S)
+A foo2() = A(0S)
+A foo3() = A(1S)

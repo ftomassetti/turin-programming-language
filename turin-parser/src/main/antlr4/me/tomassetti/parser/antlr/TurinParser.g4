@@ -138,7 +138,9 @@ placeholderNameUsage:
     NAME_PLACEHOLDER;
 
 basicExpression:
-    booleanLiteral | stringLiteral | intLiteral | interpolatedStringLiteral
+    booleanLiteral | stringLiteral | interpolatedStringLiteral
+    | byteLiteral | shortLiteral | intLiteral | longLiteral
+    | floatLiteral | doubleLiteral
     | valueReference | parenExpression | staticFieldReference
     | placeholderUsage | placeholderNameUsage;
 
@@ -186,8 +188,23 @@ stringElement:
 stringInterpolationElement:
    INTERPOLATION_START value=expression INTERPOLATION_END;
 
+byteLiteral:
+    BYTE;
+
+shortLiteral:
+    SHORT;
+
 intLiteral:
     INT;
+
+longLiteral:
+    LONG;
+
+floatLiteral:
+    FLOAT;
+
+doubleLiteral:
+    DOUBLE;
 
 creation:
     ref=typeUsage LPAREN (params+=actualParam (commaNl params+=actualParam)*)?  RPAREN ;

@@ -1,24 +1,23 @@
 package me.tomassetti.turin.parser.ast.expressions.literals;
 
+import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.util.Collections;
+public class DoubleLiteral extends Expression {
 
-public class FloatLiteral extends Expression {
+    private double value;
 
-    private float value;
-
-    public float getValue() {
-        return value;
+    public DoubleLiteral(double value) {
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        return "FloatLiteral{" +
+        return "DoubleLiteral{" +
                 "value=" + value +
                 '}';
     }
@@ -26,31 +25,31 @@ public class FloatLiteral extends Expression {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FloatLiteral)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        FloatLiteral that = (FloatLiteral) o;
+        DoubleLiteral that = (DoubleLiteral) o;
 
-        if (Float.compare(that.value, value) != 0) return false;
+        if (value != that.value) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return (value != +0.0f ? Float.floatToIntBits(value) : 0);
-    }
-
-    public FloatLiteral(float value) {
-        this.value = value;
-    }
-
-    @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsage.FLOAT;
+        return Double.hashCode(value);
     }
 
     @Override
     public Iterable<Node> getChildren() {
-        return Collections.emptyList();
+        return ImmutableList.of();
+    }
+
+    @Override
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return PrimitiveTypeUsage.DOUBLE;
+    }
+
+    public double getValue() {
+        return value;
     }
 }
