@@ -1,0 +1,9 @@
+namespace basictypes
+
+type A {
+    udouble a
+}
+
+A foo1() = A(-1.0)
+A foo2() = A(0.0)
+A foo3() = A(1.0)

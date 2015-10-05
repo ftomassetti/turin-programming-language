@@ -99,14 +99,5 @@ public class FieldConstraintsCompilationTest extends AbstractCompilerTest {
         assertEquals(false, exc6.isPresent());
     }
 
-    private Optional<Throwable> getException(Method functionMethod) throws IllegalAccessException {
-        try {
-            functionMethod.invoke(null);
-            return Optional.empty();
-        } catch (InvocationTargetException e) {
-            return Optional.of(e.getTargetException());
-        }
-    }
-
 }
 

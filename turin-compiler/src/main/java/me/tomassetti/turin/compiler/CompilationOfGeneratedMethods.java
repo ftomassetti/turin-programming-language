@@ -3,10 +3,7 @@ package me.tomassetti.turin.compiler;
 import me.tomassetti.bytecode_generation.*;
 import me.tomassetti.bytecode_generation.logicalop.CastBS;
 import me.tomassetti.bytecode_generation.logicalop.LogicalNotBS;
-import me.tomassetti.bytecode_generation.pushop.PushInstanceField;
-import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
-import me.tomassetti.bytecode_generation.pushop.PushStringConst;
-import me.tomassetti.bytecode_generation.pushop.PushThis;
+import me.tomassetti.bytecode_generation.pushop.*;
 import me.tomassetti.bytecode_generation.returnop.ReturnFalseBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnTrueBS;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
@@ -39,9 +36,58 @@ public class CompilationOfGeneratedMethods {
     }
 
     private void enforceConstraint(Property property, MethodVisitor mv, BytecodeSequence getValue) {
-        if (property.getTypeUsage().equals(BasicTypeUsage.UINT)) {
+        if (property.getTypeUsage().equals(BasicTypeUsage.UINT)
+                || property.getTypeUsage().equals(BasicTypeUsage.UBYTE)
+                || property.getTypeUsage().equals(BasicTypeUsage.USHORT)) {
             getValue.operate(mv);
             Label label = new Label();
+
+            // if the value is >= 0 we jump and skip the throw exception
+            mv.visitJumpInsn(Opcodes.IFGE, label);
+            JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " should be positive"));
+            new ThrowBS(instantiateException).operate(mv);
+
+            mv.visitLabel(label);
+        } else if (property.getTypeUsage().equals(BasicTypeUsage.ULONG)) {
+                getValue.operate(mv);
+                Label label = new Label();
+
+                // the value is already pushed: push also the value to be compared
+                new PushLongConst(0).operate(mv);
+                mv.visitInsn(Opcodes.LCMP);
+
+                // if the value is >= 0 we jump and skip the throw exception
+                mv.visitJumpInsn(Opcodes.IFGE, label);
+                JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+                BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " should be positive"));
+                new ThrowBS(instantiateException).operate(mv);
+
+                mv.visitLabel(label);
+        } else if (property.getTypeUsage().equals(BasicTypeUsage.UFLOAT)) {
+            getValue.operate(mv);
+            Label label = new Label();
+
+            // the value is already pushed: push also the value to be compared
+            new PushFloatConst(0).operate(mv);
+            // NaN does not cause an error here
+            mv.visitInsn(Opcodes.FCMPG);
+
+            // if the value is >= 0 we jump and skip the throw exception
+            mv.visitJumpInsn(Opcodes.IFGE, label);
+            JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " should be positive"));
+            new ThrowBS(instantiateException).operate(mv);
+
+            mv.visitLabel(label);
+        } else if (property.getTypeUsage().equals(BasicTypeUsage.UDOUBLE)) {
+            getValue.operate(mv);
+            Label label = new Label();
+
+            // the value is already pushed: push also the value to be compared
+            new PushDoubleConst(0).operate(mv);
+            // NaN does not cause an error here
+            mv.visitInsn(Opcodes.DCMPG);
 
             // if the value is >= 0 we jump and skip the throw exception
             mv.visitJumpInsn(Opcodes.IFGE, label);

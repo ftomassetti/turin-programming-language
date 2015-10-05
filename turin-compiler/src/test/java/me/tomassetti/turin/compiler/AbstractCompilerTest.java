@@ -16,10 +16,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -142,4 +144,12 @@ public abstract class AbstractCompilerTest {
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, getErrorCollector());
     }
 
+    protected Optional<Throwable> getException(Method functionMethod) throws IllegalAccessException {
+        try {
+            functionMethod.invoke(null);
+            return Optional.empty();
+        } catch (InvocationTargetException e) {
+            return Optional.of(e.getTargetException());
+        }
+    }
 }

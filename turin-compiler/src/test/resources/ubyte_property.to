@@ -1,0 +1,9 @@
+namespace basictypes
+
+type A {
+    ubyte a
+}
+
+A foo1() = A(-1)
+A foo2() = A(0)
+A foo3() = A(1)

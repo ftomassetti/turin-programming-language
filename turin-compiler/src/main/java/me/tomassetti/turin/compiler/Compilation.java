@@ -316,13 +316,13 @@ public class Compilation {
         } else if (pieceType.equals(PrimitiveTypeUsage.CHAR)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsage.LONG)) {
+        } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isLong()) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(J)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsage.FLOAT)) {
+        } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isFloat()) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(F)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsage.DOUBLE)) {
+        } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isDouble()) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(D)Ljava/lang/StringBuilder;", false, false)));
         } else {
