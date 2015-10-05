@@ -1,4 +1,4 @@
-package me.tomassetti.turin;
+package me.tomassetti.turin.util;
 
 import me.tomassetti.turin.util.Either;
 import org.junit.Test;

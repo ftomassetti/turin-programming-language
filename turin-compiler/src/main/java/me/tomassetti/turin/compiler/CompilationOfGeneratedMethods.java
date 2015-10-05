@@ -50,20 +50,20 @@ public class CompilationOfGeneratedMethods {
 
             mv.visitLabel(label);
         } else if (property.getTypeUsage().equals(BasicTypeUsage.ULONG)) {
-                getValue.operate(mv);
-                Label label = new Label();
+            getValue.operate(mv);
+            Label label = new Label();
 
-                // the value is already pushed: push also the value to be compared
-                new PushLongConst(0).operate(mv);
-                mv.visitInsn(Opcodes.LCMP);
+            // the value is already pushed: push also the value to be compared
+            new PushLongConst(0).operate(mv);
+            mv.visitInsn(Opcodes.LCMP);
 
-                // if the value is >= 0 we jump and skip the throw exception
-                mv.visitJumpInsn(Opcodes.IFGE, label);
-                JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
-                BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " should be positive"));
-                new ThrowBS(instantiateException).operate(mv);
+            // if the value is >= 0 we jump and skip the throw exception
+            mv.visitJumpInsn(Opcodes.IFGE, label);
+            JvmConstructorDefinition constructor = new JvmConstructorDefinition("java/lang/IllegalArgumentException", "(Ljava/lang/String;)V");
+            BytecodeSequence instantiateException = new NewInvocationBS(constructor, new PushStringConst(property.getName() + " should be positive"));
+            new ThrowBS(instantiateException).operate(mv);
 
-                mv.visitLabel(label);
+            mv.visitLabel(label);
         } else if (property.getTypeUsage().equals(BasicTypeUsage.UFLOAT)) {
             getValue.operate(mv);
             Label label = new Label();
@@ -96,7 +96,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().isReferenceTypeUsage() && property.getTypeUsage().asReferenceTypeUsage().getQualifiedName(compilation.getResolver()).equals(String.class.getCanonicalName())) {
+        } else if (property.getTypeUsage().isReferenceTypeUsage()) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -127,12 +127,30 @@ public class CompilationOfGeneratedMethods {
         });
     }
 
+    private void addLocalVarForFormalParameter(FormalParameter formalParameter, Label start, Label end, MethodVisitor mv) {
+       if (!formalParameter.hasDefaultValue()) {
+            int index = compilation.getLocalVarsSymbolTable().add(formalParameter.getName(), formalParameter);
+            mv.visitLocalVariable(formalParameter.getName(),
+                    formalParameter.getType().jvmType(compilation.getResolver()).getDescriptor(),
+                    formalParameter.getType().jvmType(compilation.getResolver()).getSignature(),
+                    start,
+                    end,
+                    index);
+       }
+    }
+
     void generateSetter(Property property, String internalClassName) {
         compilation.setLocalVarsSymbolTable(LocalVarsSymbolTable.forInstanceMethod());
 
         String setterName = property.setterName();
         JvmType jvmType = property.getTypeUsage().jvmType(compilation.getResolver());
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, setterName, "(" + jvmType.getDescriptor() + ")V", "(" + jvmType.getSignature() + ")V", null);
+
+        Label start = new Label();
+        Label end = new Label();
+        mv.visitLabel(start);
+        addLocalVarForFormalParameter(new FormalParameter(property.getTypeUsage(), property.getName()), start, end, mv);
+
         mv.visitCode();
 
         compilation.getLocalVarsSymbolTable().add(property.getName(), new FormalParameter(property.getTypeUsage(), property.getName()));
@@ -146,11 +164,11 @@ public class CompilationOfGeneratedMethods {
         mv.visitVarInsn(OpcodesUtils.loadTypeFor(jvmType), 1);
         mv.visitFieldInsn(Opcodes.PUTFIELD, internalClassName, property.getName(), jvmType.getDescriptor());
         mv.visitInsn(Opcodes.RETURN);
+        mv.visitLabel(end);
         // calculated for us
         mv.visitMaxs(0, 0);
         mv.visitEnd();
     }
-
 
     void generateConstructor(TurinTypeDefinition typeDefinition, String className) {
         // TODO consider also inherited properties
@@ -189,7 +207,6 @@ public class CompilationOfGeneratedMethods {
                         index);
             }
         }
-
 
         //
         // Invoke super constructor
