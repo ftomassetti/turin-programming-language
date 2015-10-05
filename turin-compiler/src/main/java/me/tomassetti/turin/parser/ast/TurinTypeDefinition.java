@@ -119,17 +119,37 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     private void initializeConstructors(SymbolResolver resolver) {
         constructors = new ArrayList<>();
-        List<FormalParameter> params = this.assignableProperties(resolver).stream()
+        List<FormalParameter> inheritedParams = Collections.emptyList();
+        if (getBaseType().isPresent()) {
+            List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors();
+            if (constructors.size() != 1) {
+                throw new UnsupportedOperationException();
+            }
+            inheritedParams = constructors.get(0).getFormalParameters();
+        }
+
+        List<FormalParameter> newParams = this.assignableProperties(resolver).stream()
                 .map((p)->new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
-        List<String> paramSignatures = propertiesAppearingInConstructor(resolver).stream()
-                .map((p) -> p.getTypeUsage().jvmType(resolver).getSignature())
+        List<FormalParameter> allParams = new LinkedList<>();
+        allParams.addAll(inheritedParams);
+        allParams.addAll(newParams);
+        allParams.sort(new Comparator<FormalParameter>() {
+            @Override
+            public int compare(FormalParameter o1, FormalParameter o2) {
+                return Boolean.compare(o1.hasDefaultValue(), o2.hasDefaultValue());
+            }
+        });
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<String> paramSignatures = paramsWithoutDefaultValues.stream()
+                .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
-        if (hasDefaultProperties(resolver)) {
+        boolean hasDefaultParameters = allParams.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
+        if (hasDefaultParameters) {
             paramSignatures.add("Ljava/util/Map;");
         }
         JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
-        constructors.add(new InternalConstructorDefinition(params, constructorDefinition));
+        constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
     }
 
     private void ensureIsInitialized(SymbolResolver resolver) {

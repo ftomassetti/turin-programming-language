@@ -24,7 +24,7 @@ public class ConstructorsAndExtensionCompilationTest extends AbstractCompilerTes
         // generate bytecode
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(7, classFileDefinitions.size());
+        assertEquals(6, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class pointClass = turinClassLoader.addClass(classFileDefinitions.get(0));
@@ -46,7 +46,7 @@ public class ConstructorsAndExtensionCompilationTest extends AbstractCompilerTes
         // generate bytecode
         Compiler instance = new Compiler(getResolverFor(turinFile), new Compiler.Options());
         List<ClassFileDefinition> classFileDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(7, classFileDefinitions.size());
+        assertEquals(6, classFileDefinitions.size());
 
         TurinClassLoader turinClassLoader = new TurinClassLoader();
         Class pointClass = turinClassLoader.addClass(classFileDefinitions.get(0));
@@ -55,7 +55,6 @@ public class ConstructorsAndExtensionCompilationTest extends AbstractCompilerTes
         Class foo2Class = turinClassLoader.addClass(classFileDefinitions.get(3));
         Class foo3Class = turinClassLoader.addClass(classFileDefinitions.get(4));
         Class foo4Class = turinClassLoader.addClass(classFileDefinitions.get(5));
-        Class foo5Class = turinClassLoader.addClass(classFileDefinitions.get(6));
 
         Object res1 = foo1Class.getMethod("invoke", new Class[]{}).invoke(null);
         assertEquals(1, res1.getClass().getMethod("getX").invoke(res1));
@@ -78,14 +77,8 @@ public class ConstructorsAndExtensionCompilationTest extends AbstractCompilerTes
         Object res4 = foo4Class.getMethod("invoke", new Class[]{}).invoke(null);
         assertEquals(1, res4.getClass().getMethod("getX").invoke(res4));
         assertEquals(2, res4.getClass().getMethod("getY").invoke(res4));
-        assertEquals(3, res4.getClass().getMethod("getZ").invoke(res4));
+        assertEquals(0, res4.getClass().getMethod("getZ").invoke(res4));
         assertEquals("hi", res4.getClass().getMethod("getLabel").invoke(res4));
-
-        Object res5 = foo5Class.getMethod("invoke", new Class[]{}).invoke(null);
-        assertEquals(1, res5.getClass().getMethod("getX").invoke(res5));
-        assertEquals(2, res5.getClass().getMethod("getY").invoke(res5));
-        assertEquals(0, res5.getClass().getMethod("getZ").invoke(res5));
-        assertEquals("hi", res5.getClass().getMethod("getLabel").invoke(res5));
     }
 
 

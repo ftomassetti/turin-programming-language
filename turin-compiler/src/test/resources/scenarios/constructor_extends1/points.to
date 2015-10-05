@@ -13,6 +13,5 @@ type LabelledPoint extends Point {
 
 LabelledPoint foo1() = LabelledPoint(1, 2, "hi")
 LabelledPoint foo2() = LabelledPoint(1, 2, "hi", 3)
-LabelledPoint foo3() = LabelledPoint(y=2, x=1, "hi", 3)
-LabelledPoint foo4() = LabelledPoint(y=2, z=3, x=1, label="hi")
-LabelledPoint foo5() = LabelledPoint(y=2, x=1, label="hi")
+LabelledPoint foo3() = LabelledPoint(y=2, z=3, x=1, label="hi")
+LabelledPoint foo4() = LabelledPoint(y=2, x=1, label="hi")

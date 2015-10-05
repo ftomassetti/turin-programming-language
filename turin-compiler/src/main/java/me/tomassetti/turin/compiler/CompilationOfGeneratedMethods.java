@@ -6,11 +6,8 @@ import me.tomassetti.bytecode_generation.logicalop.LogicalNotBS;
 import me.tomassetti.bytecode_generation.pushop.*;
 import me.tomassetti.bytecode_generation.returnop.ReturnFalseBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnTrueBS;
+import me.tomassetti.jvm.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.jvm.JvmConstructorDefinition;
-import me.tomassetti.jvm.JvmFieldDefinition;
-import me.tomassetti.jvm.JvmMethodDefinition;
-import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
@@ -24,6 +21,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -173,7 +171,7 @@ public class CompilationOfGeneratedMethods {
     }
 
     void generateConstructor(TurinTypeDefinition typeDefinition, String className) {
-        InternalConstructorDefinition constructorDefinition = null;
+        InternalConstructorDefinition superConstructor = null;
         if (typeDefinition.getBaseType().isPresent()) {
             TypeUsage baseType = typeDefinition.getBaseType().get();
             if (!baseType.isReferenceTypeUsage()) {
@@ -183,19 +181,21 @@ public class CompilationOfGeneratedMethods {
             if (baseTypeDefinition.hasManyConstructors()) {
                 throw new IllegalStateException();
             }
-            constructorDefinition = baseTypeDefinition.getConstructors().get(0);
+            superConstructor = baseTypeDefinition.getConstructors().get(0);
         }
 
         // TODO consider also inherited properties
         SymbolResolver resolver = compilation.getResolver();
-        List<Property> directProperties = typeDefinition.getDirectProperties(resolver);
 
         //
         // Define the constructor prototype
         //
-        List<Property> directPropertiesAsParameters = typeDefinition.propertiesAppearingInConstructor(resolver);
-        String paramsDescriptor = String.join("", directPropertiesAsParameters.stream().map((dp) -> dp.getTypeUsage().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
-        String paramsSignature = String.join("", directPropertiesAsParameters.stream().map((dp) -> dp.getTypeUsage().jvmType(resolver).getSignature()).collect(Collectors.toList()));
+
+        List<FormalParameter> params = typeDefinition.getOnlyConstructor(resolver).getFormalParameters();
+        List<FormalParameter> formalParametersWithoutDefaults = params.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+
+        String paramsDescriptor = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
         if (typeDefinition.hasDefaultProperties(resolver)) {
             paramsDescriptor += "Ljava/util/Map;";
             paramsSignature  += "Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;";
@@ -228,12 +228,37 @@ public class CompilationOfGeneratedMethods {
         //
 
         PushThis.getInstance().operate(mv);
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, Compilation.OBJECT_INTERNAL_NAME, "<init>", "()V", false);
+        if (superConstructor == null) {
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, Compilation.OBJECT_INTERNAL_NAME, "<init>", "()V", false);
+        } else {
+            // push all explicitly passed parameters
+            int index = 1;
+            for (FormalParameter formalParameter : superConstructor.getFormalParameters()){
+                if (!formalParameter.hasDefaultValue()) {
+                    JvmType jvmType = formalParameter.getType().jvmType(resolver);
+                    new PushLocalVar(OpcodesUtils.loadTypeFor(jvmType), index).operate(mv);
+                    index++;
+                }
+            }
+            // push the map if it has default values
+            if (superConstructor.hasDefaultParams()) {
+                // push the map which is in the parameters after all the formal parameters
+                index = formalParametersWithoutDefaults.size() + 1;
+                new PushLocalVar(Opcodes.ALOAD, index).operate(mv);
+            }
+
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, Compilation.OBJECT_INTERNAL_NAME, "<init>",
+                    superConstructor.getJvmConstructorDefinition().getDescriptor(), false);
+        }
 
         //
         // Assign the properties passed explicitly
         //
 
+        List<Property> directProperties = typeDefinition.getDirectProperties(resolver);
+        List<Property> directPropertiesAsParameters = directProperties.stream()
+                .filter((p)->!p.hasDefaultValue() && !p.hasInitialValue())
+                .collect(Collectors.toList());
         assignPropertiesPassedExplicitely(typeDefinition, className, resolver, directPropertiesAsParameters, mv);
 
         //
