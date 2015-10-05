@@ -1,6 +1,17 @@
 Why should someone use Turin instead of Java? In our opinion Turin is in general cleaner and benefit from the experience
 of using Java for 20 years to find improvements. In this section we list a few specific points.
 
+No overloaded methods
+~~~~~~~~~~~~~~~~~~~~~
+
+We think that overloaded methods can be confusing and they make method resolution much more obscure that it should be:
+primitive conversion, auto-boxing/unboxing and type hierarchies make possible for a method call to match several methods
+with the same name. For example Assert.assertEquals have several variants including one which takes two Objects and one
+which takes two longs. Which one is invoked when passing to ints? Which one when passing two Integers?
+
+We think a language should not introduce unnecessary complications so in Turin you cannot introduce overloaded methods,
+however you can seamlessly invoke overloaded methods from Java classes.
+
 Named parameters
 ~~~~~~~~~~~~~~~~
 
@@ -31,19 +42,28 @@ usually present in compiled code. If they are available while compiling code we 
 Default parameters
 ~~~~~~~~~~~~~~~~~~
 
-TBW
+Having named parameters we can also support easily default parameters: parameters which can be optionally specified,
+otherwise they assume a sensible default value. They are a good alternative to overloaded methods (which are not supported
+in Turin).
+
+Parameters explosion
+~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    myMethod(*=anObject)
 
 Functions
 ~~~~~~~~~
+
+When Java was introduced it was promoting Object-Oriented Programming in an extremist way: no functions, just methods.
+In practice people started immediately to create Utils classes with no constructor and a bunch of static methods.
+We think that Utils classes are cluttered and useless: it makes more sense to just support function, which in fact can
+be defined in Turin:
 
 TBW
 
 Type inference
 ~~~~~~~~~~~~~~
-
-TBW
-
-No overloaded methods
-~~~~~~~~~~~~~~~~~~~~~
 
 TBW

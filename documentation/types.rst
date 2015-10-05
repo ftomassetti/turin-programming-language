@@ -23,5 +23,15 @@ All Java types can be referred in Turin.
 Define new Types
 ----------------
 
+Generated methods
+~~~~~~~~~~~~~~~~~
+
+* constructor
+* getters
+* setters
+* hashCode
+* equals
+* toString
+
 
 
