@@ -1,9 +1,11 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
@@ -44,6 +46,18 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
         // TODO consider inherited fields and methods
         return false;
+    }
+
+    @Override
+    public List<InternalConstructorDefinition> getConstructors() {
+        return Arrays.stream(clazz.getConstructors())
+                .map((c) -> toInternalConstructorDefinition(c))
+                .collect(Collectors.toList());
+    }
+
+    private InternalConstructorDefinition toInternalConstructorDefinition(Constructor<?> constructor) {
+        JvmConstructorDefinition jvmConstructorDefinition = ReflectionTypeDefinitionFactory.toConstructorDefinition(constructor);
+        return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
     }
 
     @Override

@@ -3,11 +3,13 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 
 /**
@@ -79,4 +81,5 @@ public abstract class TypeDefinition extends Node implements Named {
         return hasField(fieldName.getName(), staticContext);
     }
 
+    public abstract List<InternalConstructorDefinition> getConstructors();
 }

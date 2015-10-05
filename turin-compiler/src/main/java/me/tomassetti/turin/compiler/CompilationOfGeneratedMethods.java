@@ -11,11 +11,13 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmFieldDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -171,6 +173,19 @@ public class CompilationOfGeneratedMethods {
     }
 
     void generateConstructor(TurinTypeDefinition typeDefinition, String className) {
+        InternalConstructorDefinition constructorDefinition = null;
+        if (typeDefinition.getBaseType().isPresent()) {
+            TypeUsage baseType = typeDefinition.getBaseType().get();
+            if (!baseType.isReferenceTypeUsage()) {
+                throw new IllegalStateException();
+            }
+            TypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition(compilation.getResolver());
+            if (baseTypeDefinition.hasManyConstructors()) {
+                throw new IllegalStateException();
+            }
+            constructorDefinition = baseTypeDefinition.getConstructors().get(0);
+        }
+
         // TODO consider also inherited properties
         SymbolResolver resolver = compilation.getResolver();
         List<Property> directProperties = typeDefinition.getDirectProperties(resolver);

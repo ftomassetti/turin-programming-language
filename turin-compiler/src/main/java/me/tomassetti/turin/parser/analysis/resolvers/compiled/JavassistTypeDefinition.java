@@ -6,7 +6,9 @@ import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -14,6 +16,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import turin.compilation.DefaultParam;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
@@ -38,6 +41,22 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public boolean hasField(String name, boolean staticContext) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<InternalConstructorDefinition> getConstructors() {
+        return Arrays.stream(ctClass.getConstructors())
+                .map((c) -> toInternalConstructorDefinition(c))
+                .collect(Collectors.toList());
+    }
+
+    private InternalConstructorDefinition toInternalConstructorDefinition(CtConstructor constructor) {
+        try {
+            JvmConstructorDefinition jvmConstructorDefinition = JavassistTypeDefinitionFactory.toConstructorDefinition(constructor);
+            return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
