@@ -635,13 +635,6 @@ class ParseTreeToAst {
         try {
             // ignore last character
             String text = ctx.getText().substring(0, ctx.getText().length() - 1);
-            BigDecimal bigDecimal = new BigDecimal(text);
-            if (bigDecimal.compareTo(new BigDecimal(Float.toString(Float.MAX_VALUE))) == 1) {
-                return new SemanticError("Value cannot be contained in the given type: it is too big", getPosition(ctx));
-            }
-            if (bigDecimal.compareTo(new BigDecimal(Float.toString(Float.MIN_VALUE))) == -1) {
-                return new SemanticError("Value cannot be contained in the given type: it is too small", getPosition(ctx));
-            }
             FloatLiteral literal = new FloatLiteral(Float.parseFloat(text));
             getPositionFrom(literal, ctx);
             return literal;
@@ -652,11 +645,6 @@ class ParseTreeToAst {
 
     private Expression toAst(TurinParser.DoubleLiteralContext ctx) {
         try {
-            BigDecimal bigDecimal = new BigDecimal(ctx.getText());
-            if (bigDecimal.compareTo(new BigDecimal(Double.toString(Double.MAX_VALUE))) == 1
-                    || bigDecimal.compareTo(new BigDecimal(Double.toString(Double.MIN_VALUE))) == -1) {
-                return new SemanticError("Value cannot be contained in the given type", getPosition(ctx));
-            }
             DoubleLiteral literal = new DoubleLiteral(Double.parseDouble(ctx.getText()));
             getPositionFrom(literal, ctx);
             return literal;
