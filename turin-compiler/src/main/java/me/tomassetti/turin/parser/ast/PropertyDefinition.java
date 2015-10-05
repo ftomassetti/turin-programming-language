@@ -32,7 +32,13 @@ public class PropertyDefinition extends Node {
         this.name = name;
         this.type = type;
         this.initialValue = initialValue;
+        if (initialValue.isPresent()) {
+            initialValue.get().setParent(this);
+        }
         this.defaultValue = defaultValue;
+        if (defaultValue.isPresent()) {
+            defaultValue.get().setParent(this);
+        }
         this.constraints = constraints;
         this.constraints.forEach((c)->c.setParent(PropertyDefinition.this));
     }

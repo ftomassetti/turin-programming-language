@@ -4,7 +4,7 @@ type Point {
     int x
     int y
     int z default 0
-    double distanceFromOrigin = Math.sqrt(x*x + y*y + z*z)
+    int area = x*x + y*y + z*z
 }
 
 type LabelledPoint extends Point {
