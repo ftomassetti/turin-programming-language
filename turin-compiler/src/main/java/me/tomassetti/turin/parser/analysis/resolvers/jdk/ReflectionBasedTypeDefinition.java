@@ -55,6 +55,11 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        return true;
+    }
+
     private InternalConstructorDefinition toInternalConstructorDefinition(Constructor<?> constructor) {
         JvmConstructorDefinition jvmConstructorDefinition = ReflectionTypeDefinitionFactory.toConstructorDefinition(constructor);
         return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
@@ -156,7 +161,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {

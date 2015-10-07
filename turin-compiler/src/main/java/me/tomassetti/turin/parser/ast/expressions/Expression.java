@@ -26,4 +26,11 @@ public abstract class Expression extends Node {
         return false;
     }
 
+    public boolean canBeAssigned(SymbolResolver resolver) {
+        return false;
+    }
+
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 }

@@ -151,12 +151,16 @@ placeholderUsage:
 placeholderNameUsage:
     NAME_PLACEHOLDER;
 
+thisReference:
+    THIS_KW;
+
 basicExpression:
     booleanLiteral | stringLiteral | interpolatedStringLiteral
     | byteLiteral | shortLiteral | intLiteral | longLiteral
     | floatLiteral | doubleLiteral
     | valueReference | parenExpression | staticFieldReference
-    | placeholderUsage | placeholderNameUsage;
+    | placeholderUsage | placeholderNameUsage
+    | thisReference;
 
 booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
@@ -175,6 +179,7 @@ expression:
     | left=expression relOp=RELOP           right=expression
     | left=expression logicOperator=AND_KW  right=expression
     | left=expression logicOperator=OR_KW   right=expression
+    | left=expression isAssignment=ASSIGNMENT right=expression
     | not=NOT_KW value=expression
     ;
 
@@ -251,6 +256,9 @@ tryCatchStmt:
     (body+=statement)*
     (RBRACKET catches+=catchClause)+
     RBRACKET nls;
+
+assignment:
+    target=expression ASSIGNMENT value=expression;
 
 statement:
     varDecl | expressionStmt | returnStmt | ifStmt | throwStmt | tryCatchStmt;

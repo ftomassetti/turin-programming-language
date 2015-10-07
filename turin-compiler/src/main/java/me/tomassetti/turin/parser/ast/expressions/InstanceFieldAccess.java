@@ -23,7 +23,7 @@ public class InstanceFieldAccess extends Expression {
 
     @Override
     public String toString() {
-        return "StaticFieldAccess{" +
+        return "InstanceFieldAccess{" +
                 "subject=" + subject +
                 ", field='" + field + '\'' +
                 '}';
@@ -64,6 +64,11 @@ public class InstanceFieldAccess extends Expression {
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
         return subject.getField(field, resolver).calcType(resolver);
+    }
+
+    @Override
+    public boolean canBeAssigned(SymbolResolver resolver) {
+        return subject.canFieldBeAssigned(field, resolver);
     }
 
     @Override

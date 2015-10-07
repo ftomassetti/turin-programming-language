@@ -36,7 +36,7 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
-    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext);
+    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
 
     public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
@@ -82,4 +82,6 @@ public abstract class TypeDefinition extends Node implements Named {
     }
 
     public abstract List<InternalConstructorDefinition> getConstructors();
+
+    public abstract boolean canFieldBeAssigned(String field, SymbolResolver resolver);
 }

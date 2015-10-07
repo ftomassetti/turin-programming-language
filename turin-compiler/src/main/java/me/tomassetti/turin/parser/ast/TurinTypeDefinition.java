@@ -29,7 +29,7 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
 
-    private List<TurinTypeContructorDefinition> getExplicitConstructors() {
+    public List<TurinTypeContructorDefinition> getExplicitConstructors() {
         return members.stream()
                 .filter((m) -> m instanceof TurinTypeContructorDefinition)
                 .map((m) -> (TurinTypeContructorDefinition) m)
@@ -153,6 +153,22 @@ public class TurinTypeDefinition extends TypeDefinition {
                 return Boolean.compare(o1.hasDefaultValue(), o2.hasDefaultValue());
             }
         });
+        addConstructorWithParams(allParams, resolver);
+    }
+
+    private void initializeConstructors(SymbolResolver resolver) {
+        constructors = new ArrayList<>();
+        if (getExplicitConstructors().isEmpty()) {
+            initializeImplicitConstructor(resolver);
+        } else {
+            if (getExplicitConstructors().size() > 1) {
+                throw new IllegalStateException();
+            }
+            getExplicitConstructors().forEach((c)->initializeExplicitConstructor(c, resolver));
+        }
+    }
+
+    private void addConstructorWithParams(List<FormalParameter> allParams, SymbolResolver resolver) {
         List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
                 .map((p) -> p.getType().jvmType(resolver).getSignature())
@@ -165,13 +181,18 @@ public class TurinTypeDefinition extends TypeDefinition {
         constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
     }
 
-    private void initializeConstructors(SymbolResolver resolver) {
-        constructors = new ArrayList<>();
-        if (getExplicitConstructors().isEmpty()) {
-            initializeImplicitConstructor(resolver);
-        } else {
-            throw new UnsupportedOperationException();
+    private void initializeExplicitConstructor(TurinTypeContructorDefinition constructor, SymbolResolver resolver) {
+        List<FormalParameter> allParams = constructor.getParameters();
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<String> paramSignatures = paramsWithoutDefaultValues.stream()
+                .map((p) -> p.getType().jvmType(resolver).getSignature())
+                .collect(Collectors.toList());
+        boolean hasDefaultParameters = allParams.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
+        if (hasDefaultParameters) {
+            paramSignatures.add("Ljava/util/Map;");
         }
+        JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
+        constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
     }
 
     private void ensureIsInitialized(SymbolResolver resolver) {
@@ -267,9 +288,13 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
-        // TODO to be implemented
-        throw new UnsupportedOperationException();
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+        for (Property property : getAllProperties(resolver)) {
+            if (property.getName().equals(fieldName)) {
+                return property.getTypeUsage();
+            }
+        }
+        throw new IllegalArgumentException(fieldName);
     }
 
     @Override
@@ -503,5 +528,14 @@ public class TurinTypeDefinition extends TypeDefinition {
     public void add(TurinTypeContructorDefinition contructorDefinition) {
         members.add(contructorDefinition);
         contructorDefinition.parent = this;
+    }
+
+    @Override
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        return true;
+    }
+
+    public boolean defineExplicitConstructor(SymbolResolver resolver) {
+        return !getExplicitConstructors().isEmpty();
     }
 }

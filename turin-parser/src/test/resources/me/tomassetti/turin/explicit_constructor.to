@@ -1,0 +1,11 @@
+namespace explicit_constructors
+
+type A {
+
+    String a
+
+    init(int a) {
+        this.a = Integer.toString(a)
+    }
+
+}

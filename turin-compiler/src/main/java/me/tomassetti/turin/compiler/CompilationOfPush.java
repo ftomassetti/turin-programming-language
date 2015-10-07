@@ -14,10 +14,13 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOve
 import me.tomassetti.turin.parser.ast.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Placeholder;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -208,9 +211,40 @@ public class CompilationOfPush {
                     .add(new MethodInvocationBS(methodDefinition)).build());
         } else if (expr instanceof Placeholder) {
             return compilation.getLocalVarsSymbolTable().getAlias("placeholder");
+        } else if (expr instanceof ThisExpression) {
+            return PushThis.getInstance();
+        } else if (expr instanceof AssignmentExpression) {
+            return pushAssignment((AssignmentExpression)expr);
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
+    }
+
+    private BytecodeSequence pushAssignment(AssignmentExpression assignmentStatement) {
+        if (assignmentStatement.getTarget() instanceof InstanceFieldAccess) {
+            InstanceFieldAccess instanceFieldAccess = (InstanceFieldAccess)assignmentStatement.getTarget();
+            BytecodeSequence pushInstance = compilation.getPushUtils().pushExpression(instanceFieldAccess.getSubject());
+            BytecodeSequence pushValue = compilation.getPushUtils().pushExpression(assignmentStatement.getValue());
+            BytecodeSequence putField = new BytecodeSequence() {
+                @Override
+                public void operate(MethodVisitor mv) {
+                    TypeDefinition typeDefinition = instanceFieldAccess.getSubject().calcType(compilation.getResolver())
+                            .asReferenceTypeUsage()
+                            .getTypeDefinition(compilation.getResolver());
+                    String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
+                    String descriptor = typeDefinition.getFieldType(instanceFieldAccess.getField(), false, compilation.getResolver())
+                            .jvmType(compilation.getResolver())
+                            .getDescriptor();
+                    mv.visitFieldInsn(Opcodes.PUTFIELD, internalClassName, instanceFieldAccess.getField(), descriptor);
+                }
+            };
+            return new ComposedBytecodeSequence(
+                    pushInstance,
+                    pushValue,
+                    putField
+            );
+        }
+        throw new UnsupportedOperationException(assignmentStatement.getTarget().getClass().getCanonicalName());
     }
 
     private BytecodeSequence adaptAndPushAllParameters(List<Expression> actualValues, JvmInvokableDefinition invokableDefinition) {

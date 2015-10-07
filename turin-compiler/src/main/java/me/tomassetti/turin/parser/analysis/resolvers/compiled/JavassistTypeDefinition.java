@@ -264,7 +264,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (CtField field : ctClass.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
@@ -427,5 +427,10 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        return true;
     }
 }
