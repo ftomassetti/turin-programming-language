@@ -21,7 +21,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -358,7 +357,7 @@ public class CompilationOfGeneratedMethods {
         }
 
         propIndex = startIndex;
-        for (Property property : typeDefinition.propertiesAppearingInConstructor(resolver)) {
+        for (Property property : typeDefinition.propertiesAppearingInDefaultConstructor(resolver)) {
             JvmType jvmType = property.getTypeUsage().jvmType(resolver);
             mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
             mv.visitVarInsn(OpcodesUtils.loadTypeFor(jvmType), propIndex + 1);

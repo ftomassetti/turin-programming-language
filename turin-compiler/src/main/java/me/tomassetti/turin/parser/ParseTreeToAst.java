@@ -13,9 +13,7 @@ import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -166,6 +164,8 @@ class ParseTreeToAst {
                 typeDefinition.add((PropertyDefinition) memberNode);
             } else if (memberNode instanceof TurinTypeMethodDefinition) {
                 typeDefinition.add((TurinTypeMethodDefinition) memberNode);
+            } else if (memberNode instanceof TurinTypeContructorDefinition) {
+                typeDefinition.add((TurinTypeContructorDefinition) memberNode);
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -188,6 +188,8 @@ class ParseTreeToAst {
             return toAst(ctx.propertyReference());
         } else if (ctx.methodDefinition() != null) {
             return toAst(ctx.methodDefinition());
+        } else if (ctx.constructorDefinition() != null) {
+            return toAst(ctx.constructorDefinition());
         } else {
             throw new UnsupportedOperationException(ctx.getClass().getCanonicalName());
         }
@@ -198,6 +200,16 @@ class ParseTreeToAst {
         TurinTypeMethodDefinition methodDefinition = new TurinTypeMethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(methodDefinition, ctx);
         return methodDefinition;
+    }
+
+    private Node toAst(TurinParser.ConstructorDefinitionContext ctx) {
+        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<ActualParam> superParams = ctx.superParams.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<Statement> bodyStatements = ctx.statements.stream().map((s) -> toAst(s)).collect(Collectors.toList());
+        Statement body = new BlockStatement(bodyStatements);
+        TurinTypeContructorDefinition constructorDefinition = new TurinTypeContructorDefinition(params, superParams, body);
+        getPositionFrom(constructorDefinition, ctx);
+        return constructorDefinition;
     }
 
     private Statement toAst(TurinParser.MethodBodyContext methodBodyContext) {

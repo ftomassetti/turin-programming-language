@@ -99,7 +99,7 @@ methodBody:
 
 constructorDefinition:
     INIT_KW LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN (nls)?
-    (SUPER_KW LPAREN (asterisk=ASTERISK | (superParams+=expression (commaNl superParams+=expression)*) )RPAREN)?
+    (SUPER_KW LPAREN (asterisk=ASTERISK | (superParams+=actualParam (commaNl superParams+=actualParam)*) )RPAREN)?
     LBRACKET nls (statements += statement)* RBRACKET nls;
 
 //

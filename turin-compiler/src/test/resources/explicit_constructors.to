@@ -1,0 +1,11 @@
+namespace explicit_constructors
+
+type A {
+
+    init(String a) {
+    }
+
+    init(int a) {
+    }
+
+}

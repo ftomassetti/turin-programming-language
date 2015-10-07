@@ -29,6 +29,13 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
 
+    private List<TurinTypeContructorDefinition> getExplicitConstructors() {
+        return members.stream()
+                .filter((m) -> m instanceof TurinTypeContructorDefinition)
+                .map((m) -> (TurinTypeContructorDefinition) m)
+                .collect(Collectors.toList());
+    }
+
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         if (baseType.isPresent()) {
@@ -43,6 +50,13 @@ public class TurinTypeDefinition extends TypeDefinition {
                 errorCollector.recordSemanticError(typeUsage.getPosition(), "Only interfaces can be implemented");
                 return false;
             }
+        }
+
+        if (getExplicitConstructors().size() > 1) {
+            for (TurinTypeContructorDefinition contructorDefinition : getExplicitConstructors()) {
+                errorCollector.recordSemanticError(contructorDefinition.getPosition(), "At most one explicit constructor can be defined");
+            }
+            return false;
         }
 
         return super.specificValidate(resolver, errorCollector);
@@ -117,8 +131,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return constructors.get(0);
     }
 
-    private void initializeConstructors(SymbolResolver resolver) {
-        constructors = new ArrayList<>();
+    private void initializeImplicitConstructor(SymbolResolver resolver) {
         List<FormalParameter> inheritedParams = Collections.emptyList();
         if (getBaseType().isPresent()) {
             List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors();
@@ -150,6 +163,15 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
         JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
         constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
+    }
+
+    private void initializeConstructors(SymbolResolver resolver) {
+        constructors = new ArrayList<>();
+        if (getExplicitConstructors().isEmpty()) {
+            initializeImplicitConstructor(resolver);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private void ensureIsInitialized(SymbolResolver resolver) {
@@ -215,7 +237,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue()).collect(Collectors.toList());
     }
 
-    public List<Property> propertiesAppearingInConstructor(SymbolResolver resolver) {
+    public List<Property> propertiesAppearingInDefaultConstructor(SymbolResolver resolver) {
         return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue() && !p.hasDefaultValue()).collect(Collectors.toList());
     }
 
@@ -476,5 +498,10 @@ public class TurinTypeDefinition extends TypeDefinition {
     public void add(TurinTypeMethodDefinition methodDefinition) {
         members.add(methodDefinition);
         methodDefinition.parent = this;
+    }
+
+    public void add(TurinTypeContructorDefinition contructorDefinition) {
+        members.add(contructorDefinition);
+        contructorDefinition.parent = this;
     }
 }
