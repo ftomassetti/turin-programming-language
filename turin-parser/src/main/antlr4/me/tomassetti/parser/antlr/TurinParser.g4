@@ -80,7 +80,9 @@ typeUsage:
 commaNl:
     COMMA NL?;
 
+//
 // method definition
+//
 
 methodDefinition:
     type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
@@ -90,6 +92,15 @@ returnType:
 
 methodBody:
     ASSIGNMENT value=expression nls | LBRACKET nls (statements += statement)* RBRACKET nls;
+
+//
+// contructor definition
+//
+
+constructorDefinition:
+    INIT_KW LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN (nls)?
+    (SUPER_KW LPAREN (asterisk=ASTERISK | (superParams+=expression (commaNl superParams+=expression)*) )RPAREN)?
+    LBRACKET nls (statements += statement)* RBRACKET nls;
 
 //
 
@@ -112,7 +123,10 @@ propertyReference:
     HAS_KW name=VALUE_ID nls;
 
 typeMember:
-    inTypePropertyDeclaration | propertyReference | methodDefinition;
+    inTypePropertyDeclaration
+    | propertyReference
+    | methodDefinition
+    | constructorDefinition;
 
 typeDeclaration:
     (annotations+=annotationUsage nls)*

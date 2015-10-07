@@ -49,17 +49,22 @@ IMPORT_KW           : 'import';
 AS_KW               : 'as';
 VOID_KW             : 'void';
 RETURN_KW           : 'return';
+
 FALSE_KW            : 'false';
 TRUE_KW             : 'true';
 IF_KW               : 'if';
 ELIF_KW             : 'elif';
 ELSE_KW             : 'else';
+
 IMPLEMENTS_KW       : 'implements';
 EXTENDS_KW          : 'extends';
 
 THROW_KW            : 'throw';
 TRY_KW              : 'try';
 CATCH_KW            : 'catch';
+
+INIT_KW             : 'init';
+SUPER_KW            : 'super';
 
 // For definitions reused in mode in-interpolation we define and refer to fragments
 AND_KW              : F_AND;
