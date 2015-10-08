@@ -115,4 +115,24 @@ public class TurinParserTest {
         assertNotNull(expressionStmt.expression().isAssignment);
     }
 
+    @Test
+    public void parseLocalVar() throws IOException {
+        TurinParser.TurinFileContext root = parse("local_var");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.ProgramContext program = root.members.get(0).program();
+        assertEquals(1, program.statements.size());
+        TurinParser.StatementContext stmt = program.statement().get(0);
+        assertNotNull(stmt.varDecl());
+        TurinParser.VarDeclContext varDecl = stmt.varDecl();
+        assertNotNull(varDecl.value);
+        assertNotNull(varDecl.value.creation());
+        TurinParser.CreationContext creation = varDecl.value.creation();
+        assertEquals(1, creation.actualParam().size());
+        TurinParser.ActualParamContext actualParam = creation.actualParam().get(0);
+        assertNotNull(actualParam.name);
+        assertEquals("newLinesAfterLBracket", actualParam.name.getText());
+        assertNotNull(actualParam.expression().basicExpression());
+        assertNotNull(actualParam.expression().basicExpression().booleanLiteral());
+    }
+
 }

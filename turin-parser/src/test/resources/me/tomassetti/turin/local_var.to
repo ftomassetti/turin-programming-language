@@ -1,0 +1,5 @@
+namespace localvar
+
+program JavaFormatter(String[] args) {
+	val options = Options(newLinesAfterLBracket=true)
+}
