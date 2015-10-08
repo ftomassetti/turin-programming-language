@@ -2,14 +2,16 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.InternalMethodDefinition;
+import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,44 +25,78 @@ public abstract class TypeDefinition extends Node implements Named {
         this.name = name;
     }
 
-    public abstract String getQualifiedName();
+    //
+    // Naming
+    //
 
     public String getName() {
         return name;
     }
 
+    public abstract String getQualifiedName();
+
+    //
+    // Typing
+    //
+
     public JvmType jvmType() {
-        return new JvmType("L" + getQualifiedName().replaceAll("\\.", "/") + ";");
+        return new JvmType(JvmNameUtils.canonicalToDescriptor(getQualifiedName()));
     }
 
-    public abstract JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
+    //
+    // Constructors
+    //
 
     public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
+    public abstract boolean hasManyConstructors();
+
+    public abstract List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver);
+
+    public abstract Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
+
+    public abstract List<InternalConstructorDefinition> getConstructors();
+
+    //
+    // Methods
+    //
+
+    public abstract JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
+
+    public abstract boolean isMethodOverloaded(String methodName, SymbolResolver resolver);
+
+    public abstract Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
+
+    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
+    }
+
+    public final List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        return getMethod(methodName, actualParams, resolver, staticContext).getFormalParameters();
+    }
+
+    public final boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        return findMethod(methodName, actualParams, resolver, staticContext).isPresent();
+    }
+
+    public final InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        Optional<InternalMethodDefinition> method = findMethod(methodName, actualParams, resolver, staticContext);
+        if (method.isPresent()) {
+            return method.get();
+        } else {
+            throw new UnsolvedMethodException(getQualifiedName(), methodName, actualParams);
+        }
+    }
+
+    //
+    // Fields
+    //
+
     public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
-
-    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
-
-    public abstract boolean isInterface();
-    public abstract boolean isClass();
 
     public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
-
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
-
-    public abstract boolean hasManyConstructors();
-
-    public abstract boolean isMethodOverloaded(String methodName, SymbolResolver resolver);
-
-    public abstract List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver);
-
-    public abstract List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
-
-    public abstract boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
     public abstract boolean hasField(String name, boolean staticContext);
 
@@ -82,11 +118,18 @@ public abstract class TypeDefinition extends Node implements Named {
         return hasField(fieldName.getName(), staticContext);
     }
 
-    public abstract List<InternalConstructorDefinition> getConstructors();
-
     public abstract boolean canFieldBeAssigned(String field, SymbolResolver resolver);
+
+    //
+    // Hierarchy
+    //
+
+    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
+
+    public abstract boolean isInterface();
+
+    public abstract boolean isClass();
 
     public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
 
-    public abstract Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
 }

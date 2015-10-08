@@ -23,6 +23,10 @@ public class JavassistTypeDefinitionFactory {
         return INSTANCE;
     }
 
+    public static JvmMethodDefinition toMethodDefinition(CtMethod method) throws NotFoundException {
+        return toMethodDefinition(method, method.getDeclaringClass().isInterface());
+    }
+
     public static JvmMethodDefinition toMethodDefinition(CtMethod method, boolean onInterface) throws NotFoundException {
         return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()), onInterface);
     }

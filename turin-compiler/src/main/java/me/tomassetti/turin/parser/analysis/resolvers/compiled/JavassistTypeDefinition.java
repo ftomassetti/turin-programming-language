@@ -7,6 +7,7 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.InternalMethodDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.FormalParameter;
@@ -54,24 +55,6 @@ public class JavassistTypeDefinition extends TypeDefinition {
         try {
             JvmConstructorDefinition jvmConstructorDefinition = JavassistTypeDefinitionFactory.toConstructorDefinition(constructor);
             return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
-        } catch (NotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        List<JvmType> argsTypes = new ArrayList<>();
-        for (ActualParam actualParam : actualParams) {
-            if (actualParam.isNamed()) {
-                throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
-            } else {
-                argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
-            }
-        }
-        CtMethod method = JavassistBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
-        try {
-            return JavassistTypeDefinitionFactory.toTypeUsage(method.getReturnType());
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -176,21 +159,23 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
                 actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
         if (method.isPresent()) {
-            return formalParameters(method.get());
+            return Optional.of(toInternalMethodDefinition(method.get()));
         } else {
-            throw new RuntimeException("unresolved method " + name + " for " + actualParams);
+            return Optional.empty();
         }
     }
 
-    @Override
-    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
-                actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
-        return method.isPresent();
+    private InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod) {
+        try {
+            return new InternalMethodDefinition(ctMethod.getName(), formalParameters(ctMethod),
+                    toTypeUsage(ctMethod.getReturnType()), JavassistTypeDefinitionFactory.toMethodDefinition(ctMethod));
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private List<FormalParameter> formalParameters(CtConstructor constructor) {
@@ -341,6 +326,8 @@ public class JavassistTypeDefinition extends TypeDefinition {
         try {
             if (pt.isArray()) {
                 return new ArrayTypeUsage(toTypeUsage(pt.getComponentType()));
+            } else if (pt.getName().equals(void.class.getCanonicalName())) {
+                return new VoidTypeUsage();
             } else if (pt.isPrimitive()) {
                 return PrimitiveTypeUsage.getByName(pt.getSimpleName());
             } else {

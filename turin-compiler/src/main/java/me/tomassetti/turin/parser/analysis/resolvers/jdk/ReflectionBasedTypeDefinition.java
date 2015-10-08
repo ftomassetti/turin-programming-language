@@ -1,11 +1,11 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
-import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.InternalMethodDefinition;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
@@ -119,20 +119,6 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        List<JvmType> argsTypes = new ArrayList<>();
-        for (ActualParam actualParam : actualParams) {
-            if (actualParam.isNamed()) {
-                throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
-            } else {
-                argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
-            }
-        }
-        Method method = ReflectionBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
-        return toTypeUsage(method.getReturnType());
-    }
-
-    @Override
     public boolean hasManyConstructors() {
         return clazz.getConstructors().length > 1;
     }
@@ -150,18 +136,18 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         Optional<Method> res = ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
         if (res.isPresent()) {
-            return formalParameters(res.get());
+            return Optional.of(toInternalMethodDefinition(res.get()));
         } else {
-            throw new RuntimeException("unresolved method " + name + " for " + actualParams);
+            return Optional.empty();
         }
     }
 
-    @Override
-    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this).isPresent();
+    private InternalMethodDefinition toInternalMethodDefinition(Method method) {
+        return new InternalMethodDefinition(method.getName(), formalParameters(method), toTypeUsage(method.getReturnType()),
+                ReflectionTypeDefinitionFactory.toMethodDefinition(method));
     }
 
     private List<FormalParameter> formalParameters(Constructor constructor) {

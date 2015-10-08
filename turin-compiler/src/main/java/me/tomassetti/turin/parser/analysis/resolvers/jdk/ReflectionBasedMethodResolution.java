@@ -71,6 +71,9 @@ class ReflectionBasedMethodResolution {
     public static TypeUsage toTypeUsage(Type type) {
         if (type instanceof Class) {
             Class clazz = (Class)type;
+            if (clazz.getCanonicalName().equals(void.class.getCanonicalName())) {
+                return new VoidTypeUsage();
+            }
             if (clazz.isPrimitive()) {
                 return PrimitiveTypeUsage.getByName(clazz.getName());
             }

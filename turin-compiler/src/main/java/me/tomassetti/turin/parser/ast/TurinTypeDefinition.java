@@ -222,23 +222,6 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
     }
 
-    @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        ensureIsInitialized(resolver);
-        List<InternalMethodDefinition> methods = methodsByName.get(methodName);
-        if (methods.size() == 0) {
-            throw new IllegalArgumentException("No method found with name " + methodName);
-        } else if (methods.size() == 1) {
-            if (methods.get(0).match(resolver, actualParams)) {
-                return methods.get(0).getReturnType();
-            } else {
-                throw new IllegalArgumentException("No method found with name " + methodName + " which matches " + actualParams);
-            }
-        } else {
-            throw new IllegalStateException("No overloaded methods should be present in Turin types");
-        }
-    }
-
     private String getInternalName() {
         return JvmNameUtils.canonicalToInternal(getQualifiedName());
     }
@@ -350,7 +333,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         // all named parameters should be after the named ones
         if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
@@ -358,35 +341,10 @@ public class TurinTypeDefinition extends TypeDefinition {
 
         ensureIsInitialized(resolver);
         if (!methodsByName.containsKey(methodName)) {
-            throw new UnsolvedMethodException(getQualifiedName(), methodName, actualParams);
+            return Optional.empty();
         }
         Optional<InternalMethodDefinition> method = methodsByName.get(methodName).stream().filter((m)->m.match(resolver, actualParams)).findFirst();
-
-        if (!method.isPresent()){
-            throw new UnsolvedMethodException(getQualifiedName(), methodName, actualParams);
-        }
-
-        return method.get().getFormalParameters();
-    }
-
-    @Override
-    public boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        // all named parameters should be after the named ones
-        if (!ParamUtils.verifyOrder(actualParams)) {
-            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
-        }
-
-        ensureIsInitialized(resolver);
-        if (!methodsByName.containsKey(methodName)) {
-            return false;
-        }
-        Optional<InternalMethodDefinition> method = methodsByName.get(methodName).stream().filter((m)->m.match(resolver, actualParams)).findFirst();
-
-        if (!method.isPresent()){
-            return false;
-        }
-
-        return true;
+        return method;
     }
 
     @Override
