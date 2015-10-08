@@ -6,7 +6,9 @@ import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -14,6 +16,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import turin.compilation.DefaultParam;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
@@ -38,6 +41,22 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public boolean hasField(String name, boolean staticContext) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<InternalConstructorDefinition> getConstructors() {
+        return Arrays.stream(ctClass.getConstructors())
+                .map((c) -> toInternalConstructorDefinition(c))
+                .collect(Collectors.toList());
+    }
+
+    private InternalConstructorDefinition toInternalConstructorDefinition(CtConstructor constructor) {
+        try {
+            JvmConstructorDefinition jvmConstructorDefinition = JavassistTypeDefinitionFactory.toConstructorDefinition(constructor);
+            return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -245,7 +264,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (CtField field : ctClass.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
@@ -408,5 +427,27 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        return true;
+    }
+
+    @Override
+    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        // if this is the compiled version of a turin type we have to handle default parameters
+        if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
+            return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0]).getJvmConstructorDefinition());
+        }
+
+        CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
+                actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
+        return Optional.of(toInternalConstructorDefinition(constructor).getJvmConstructorDefinition());
     }
 }

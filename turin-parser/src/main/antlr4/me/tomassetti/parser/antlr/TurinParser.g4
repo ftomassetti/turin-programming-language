@@ -80,7 +80,9 @@ typeUsage:
 commaNl:
     COMMA NL?;
 
+//
 // method definition
+//
 
 methodDefinition:
     type=returnType name=VALUE_ID LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN methodBody;
@@ -90,6 +92,15 @@ returnType:
 
 methodBody:
     ASSIGNMENT value=expression nls | LBRACKET nls (statements += statement)* RBRACKET nls;
+
+//
+// contructor definition
+//
+
+constructorDefinition:
+    INIT_KW LPAREN (params+=formalParam (commaNl  params+=formalParam)*)? RPAREN (nls)?
+    (SUPER_KW LPAREN (asterisk=ASTERISK | (superParams+=actualParam (commaNl superParams+=actualParam)*) )RPAREN)?
+    LBRACKET nls (statements += statement)* RBRACKET nls;
 
 //
 
@@ -112,7 +123,10 @@ propertyReference:
     HAS_KW name=VALUE_ID nls;
 
 typeMember:
-    inTypePropertyDeclaration | propertyReference | methodDefinition;
+    inTypePropertyDeclaration
+    | propertyReference
+    | methodDefinition
+    | constructorDefinition;
 
 typeDeclaration:
     (annotations+=annotationUsage nls)*
@@ -137,12 +151,16 @@ placeholderUsage:
 placeholderNameUsage:
     NAME_PLACEHOLDER;
 
+thisReference:
+    THIS_KW;
+
 basicExpression:
     booleanLiteral | stringLiteral | interpolatedStringLiteral
     | byteLiteral | shortLiteral | intLiteral | longLiteral
     | floatLiteral | doubleLiteral
     | valueReference | parenExpression | staticFieldReference
-    | placeholderUsage | placeholderNameUsage;
+    | placeholderUsage | placeholderNameUsage
+    | thisReference;
 
 booleanLiteral:
     negative=FALSE_KW | positive=TRUE_KW;
@@ -161,6 +179,7 @@ expression:
     | left=expression relOp=RELOP           right=expression
     | left=expression logicOperator=AND_KW  right=expression
     | left=expression logicOperator=OR_KW   right=expression
+    | left=expression isAssignment=ASSIGNMENT right=expression
     | not=NOT_KW value=expression
     ;
 
@@ -237,6 +256,9 @@ tryCatchStmt:
     (body+=statement)*
     (RBRACKET catches+=catchClause)+
     RBRACKET nls;
+
+assignment:
+    target=expression ASSIGNMENT value=expression;
 
 statement:
     varDecl | expressionStmt | returnStmt | ifStmt | throwStmt | tryCatchStmt;

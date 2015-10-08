@@ -1,9 +1,11 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
@@ -44,6 +46,35 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
         // TODO consider inherited fields and methods
         return false;
+    }
+
+    @Override
+    public List<InternalConstructorDefinition> getConstructors() {
+        return Arrays.stream(clazz.getConstructors())
+                .map((c) -> toInternalConstructorDefinition(c))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        return true;
+    }
+
+    @Override
+    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
+                actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
+        return Optional.of(toInternalConstructorDefinition(constructor).getJvmConstructorDefinition());
+    }
+
+    private InternalConstructorDefinition toInternalConstructorDefinition(Constructor<?> constructor) {
+        JvmConstructorDefinition jvmConstructorDefinition = ReflectionTypeDefinitionFactory.toConstructorDefinition(constructor);
+        return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
     }
 
     @Override
@@ -142,7 +173,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {

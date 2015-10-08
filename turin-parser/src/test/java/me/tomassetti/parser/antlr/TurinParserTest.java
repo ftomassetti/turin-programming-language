@@ -97,4 +97,22 @@ public class TurinParserTest {
         TurinParser.ExpressionContext msg = prop.constraintDeclaration().get(0).message;
     }
 
+    @Test
+    public void parseExplicitConstructor() throws IOException {
+        TurinParser.TurinFileContext root = parse("explicit_constructor");
+        assertEquals(1, root.fileMember().size());
+        TurinParser.TypeDeclarationContext type = root.members.get(0).typeDeclaration();
+        assertEquals(2, type.typeMembers.size());
+        TurinParser.TypeMemberContext propMember = type.typeMembers.get(0);
+        assertNotNull(propMember.inTypePropertyDeclaration());
+        TurinParser.InTypePropertyDeclarationContext prop = propMember.inTypePropertyDeclaration();
+        assertEquals(0, prop.constraintDeclaration().size());
+        TurinParser.ConstructorDefinitionContext constructorDefinition = type.typeMembers.get(1).constructorDefinition();
+        assertNotNull(constructorDefinition);
+        assertEquals(1, constructorDefinition.statement().size());
+        assertNotNull(constructorDefinition.statement().get(0).expressionStmt());
+        TurinParser.ExpressionStmtContext expressionStmt = constructorDefinition.statement().get(0).expressionStmt();
+        assertNotNull(expressionStmt.expression().isAssignment);
+    }
+
 }

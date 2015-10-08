@@ -24,7 +24,7 @@ public abstract class Node {
 
     public Position getPosition() {
         if (position == null) {
-            throw new IllegalStateException(this.toString());
+            throw new IllegalStateException(this.toString()+ " has no position assigned");
         }
         return position;
     }
@@ -146,5 +146,15 @@ public abstract class Node {
 
     public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    public <N extends Node> N getParentOfType(Class<N> parentClazz) {
+        if (getParent() == null) {
+            throw new IllegalStateException("It was expected to be contained in a " + parentClazz.getName());
+        }
+        if (parentClazz.isInstance(getParent())) {
+            return parentClazz.cast(getParent());
+        }
+        return getParent().getParentOfType(parentClazz);
     }
 }

@@ -1,9 +1,11 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
+import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -110,4 +112,5 @@ public class SrcSymbolResolver implements SymbolResolver {
     public boolean existPackage(String packageName) {
         return packages.contains(packageName);
     }
+
 }

@@ -13,9 +13,7 @@ import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -166,6 +164,8 @@ class ParseTreeToAst {
                 typeDefinition.add((PropertyDefinition) memberNode);
             } else if (memberNode instanceof TurinTypeMethodDefinition) {
                 typeDefinition.add((TurinTypeMethodDefinition) memberNode);
+            } else if (memberNode instanceof TurinTypeContructorDefinition) {
+                typeDefinition.add((TurinTypeContructorDefinition) memberNode);
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -188,6 +188,8 @@ class ParseTreeToAst {
             return toAst(ctx.propertyReference());
         } else if (ctx.methodDefinition() != null) {
             return toAst(ctx.methodDefinition());
+        } else if (ctx.constructorDefinition() != null) {
+            return toAst(ctx.constructorDefinition());
         } else {
             throw new UnsupportedOperationException(ctx.getClass().getCanonicalName());
         }
@@ -198,6 +200,17 @@ class ParseTreeToAst {
         TurinTypeMethodDefinition methodDefinition = new TurinTypeMethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(methodDefinition, ctx);
         return methodDefinition;
+    }
+
+    private Node toAst(TurinParser.ConstructorDefinitionContext ctx) {
+        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<ActualParam> superParams = ctx.superParams.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<Statement> bodyStatements = ctx.statements.stream().map((s) -> toAst(s)).collect(Collectors.toList());
+        bodyStatements.add(new ExpressionStatement(new SuperInvokation(superParams)));
+        BlockStatement body = new BlockStatement(bodyStatements);
+        TurinTypeContructorDefinition constructorDefinition = new TurinTypeContructorDefinition(params, body);
+        getPositionFrom(constructorDefinition, ctx);
+        return constructorDefinition;
     }
 
     private Statement toAst(TurinParser.MethodBodyContext methodBodyContext) {
@@ -289,6 +302,12 @@ class ParseTreeToAst {
         }
     }
 
+    private Expression toAst(TurinParser.AssignmentContext ctx) {
+        AssignmentExpression node = new AssignmentExpression(toAst(ctx.target), toAst(ctx.value));
+        getPositionFrom(node, ctx);
+        return node;
+    }
+
     private TryCatchStatement toAst(TurinParser.TryCatchStmtContext ctx) {
         BlockStatement body = new BlockStatement(ctx.body.stream().map((s)->toAst(s)).collect(Collectors.toList()));
         List<CatchClause> catches = ctx.catches.stream().map((cc) -> toAst(cc)).collect(Collectors.toList());
@@ -364,6 +383,10 @@ class ParseTreeToAst {
             return toInstanceFieldAccessAst(exprCtx);
         } else if (exprCtx.methodName != null) {
             return toInstanceMethodAccessAst(exprCtx);
+        } else if (exprCtx.isAssignment !=null) {
+            AssignmentExpression assignmentStatement = new AssignmentExpression(toAst(exprCtx.left), toAst(exprCtx.right));
+            getPositionFrom(assignmentStatement, exprCtx);
+            return assignmentStatement;
         } else {
             throw new UnsupportedOperationException("Enable to produce ast for " + exprCtx.getText());
         }
@@ -377,7 +400,9 @@ class ParseTreeToAst {
     }
 
     private InstanceFieldAccess toInstanceFieldAccessAst(TurinParser.ExpressionContext ctx) {
-        return new InstanceFieldAccess(toAst(ctx.container), idText(ctx.fieldName));
+        InstanceFieldAccess instanceFieldAccess = new InstanceFieldAccess(toAst(ctx.container), idText(ctx.fieldName));
+        getPositionFrom(instanceFieldAccess, ctx);
+        return instanceFieldAccess;
     }
 
     private Expression mathOperationToAst(String operatorStr, TurinParser.ExpressionContext left, TurinParser.ExpressionContext right) {
@@ -432,6 +457,10 @@ class ParseTreeToAst {
             return toAst(exprCtx.placeholderUsage());
         } else if (exprCtx.placeholderNameUsage() != null) {
             return toAst(exprCtx.placeholderNameUsage());
+        } else if (exprCtx.thisReference() != null) {
+            ThisExpression thisExpression = new ThisExpression();
+            getPositionFrom(thisExpression, exprCtx.thisReference());
+            return thisExpression;
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }
@@ -476,7 +505,9 @@ class ParseTreeToAst {
     }
 
     private Expression toAst(TurinParser.StaticFieldReferenceContext ctx) {
-        return new StaticFieldAccess(toAst(ctx.typeReference()), idText(ctx.name));
+        StaticFieldAccess staticFieldAccess = new StaticFieldAccess(toAst(ctx.typeReference()), idText(ctx.name));
+        getPositionFrom(staticFieldAccess, ctx);
+        return staticFieldAccess;
     }
 
     private TypeIdentifier toAst(TurinParser.TypeReferenceContext ctx) {

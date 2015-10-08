@@ -184,7 +184,9 @@ public class Compilation {
             new CompilationOfGeneratedMethods(this, cw).generateSetter(property, internalClassName);
         }
 
-        new CompilationOfGeneratedMethods(this, cw).generateConstructor(typeDefinition, internalClassName);
+        if (!typeDefinition.defineExplicitConstructor(resolver)) {
+            new CompilationOfGeneratedMethods(this, cw).generateConstructor(typeDefinition, internalClassName);
+        }
         if (!typeDefinition.defineMethodEquals(resolver)) {
             new CompilationOfGeneratedMethods(this, cw).generateEqualsMethod(typeDefinition, internalClassName);
         }
@@ -197,11 +199,17 @@ public class Compilation {
 
         typeDefinition.getDirectMethods().forEach((m)-> generateTurinTypeMethod(m));
 
+        typeDefinition.getExplicitConstructors().forEach((c)-> generateTurinTypeConstructor(c));
+
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }
 
     private void generateTurinTypeMethod(TurinTypeMethodDefinition methodDefinition) {
         generateInvokable(methodDefinition, methodDefinition.getName(), false);
+    }
+
+    private void generateTurinTypeConstructor(TurinTypeContructorDefinition methodDefinition) {
+        generateInvokable(methodDefinition, "<init>", false);
     }
 
     void addDefaultParamAnnotations(MethodVisitor mv, List<FormalParameter> formalParameters) {

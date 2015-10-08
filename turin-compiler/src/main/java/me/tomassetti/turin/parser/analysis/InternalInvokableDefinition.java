@@ -122,4 +122,8 @@ public abstract class InternalInvokableDefinition {
         }
         return true;
     }
+
+    public boolean hasDefaultParams() {
+        return getFormalParameters().stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
+    }
 }

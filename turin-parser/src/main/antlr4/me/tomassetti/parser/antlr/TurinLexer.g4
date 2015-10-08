@@ -49,17 +49,24 @@ IMPORT_KW           : 'import';
 AS_KW               : 'as';
 VOID_KW             : 'void';
 RETURN_KW           : 'return';
+
 FALSE_KW            : 'false';
 TRUE_KW             : 'true';
 IF_KW               : 'if';
 ELIF_KW             : 'elif';
 ELSE_KW             : 'else';
+
 IMPLEMENTS_KW       : 'implements';
 EXTENDS_KW          : 'extends';
 
 THROW_KW            : 'throw';
 TRY_KW              : 'try';
 CATCH_KW            : 'catch';
+
+INIT_KW             : 'init';
+SUPER_KW            : 'super';
+
+THIS_KW             : F_THIS;
 
 // For definitions reused in mode in-interpolation we define and refer to fragments
 AND_KW              : F_AND;
@@ -145,6 +152,7 @@ I_IF_KW             : 'if' -> type(IF_KW);
 I_ELSE_KW           : 'else' -> type(ELSE_KW);
 I_NAME_PLACEHOLDER  : F_NAME_PLACEHOLDER -> type(NAME_PLACEHOLDER);
 I_PLACEHOLDER       : F_PLACEHOLDER -> type(PLACEHOLDER);
+I_THIS_KW           : F_THIS -> type(THIS_KW);
 I_VALUE_ID          : (F_VALUE_ID | F_ESCAPED_VALUE_ID) -> type(VALUE_ID);
 I_TYPE_ID           : (F_TYPE_ID  | F_ESCAPED_TYPE_ID)  -> type(TYPE_ID);
 I_BYTE              : F_BYTE -> type(BYTE);
@@ -180,6 +188,7 @@ fragment F_PLACEHOLDER       : '_';
 fragment F_AND               : 'and';
 fragment F_OR                : 'or';
 fragment F_NOT               : 'not';
+fragment F_THIS              : 'this';
 fragment F_VALUE_ID          : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 fragment F_ESCAPED_VALUE_ID  : 'v#'('_')*('A'..'Z' | 'a'..'z') ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
 // Only for types

@@ -3,12 +3,15 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.time.temporal.TemporalAmount;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
@@ -34,7 +37,7 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
-    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext);
+    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
 
     public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
@@ -79,4 +82,11 @@ public abstract class TypeDefinition extends Node implements Named {
         return hasField(fieldName.getName(), staticContext);
     }
 
+    public abstract List<InternalConstructorDefinition> getConstructors();
+
+    public abstract boolean canFieldBeAssigned(String field, SymbolResolver resolver);
+
+    public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
+
+    public abstract Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
 }

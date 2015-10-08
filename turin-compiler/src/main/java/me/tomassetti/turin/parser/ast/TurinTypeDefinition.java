@@ -10,6 +10,7 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -29,6 +30,13 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
 
+    public List<TurinTypeContructorDefinition> getExplicitConstructors() {
+        return members.stream()
+                .filter((m) -> m instanceof TurinTypeContructorDefinition)
+                .map((m) -> (TurinTypeContructorDefinition) m)
+                .collect(Collectors.toList());
+    }
+
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         if (baseType.isPresent()) {
@@ -43,6 +51,13 @@ public class TurinTypeDefinition extends TypeDefinition {
                 errorCollector.recordSemanticError(typeUsage.getPosition(), "Only interfaces can be implemented");
                 return false;
             }
+        }
+
+        if (getExplicitConstructors().size() > 1) {
+            for (TurinTypeContructorDefinition contructorDefinition : getExplicitConstructors()) {
+                errorCollector.recordSemanticError(contructorDefinition.getPosition(), "At most one explicit constructor can be defined");
+            }
+            return false;
         }
 
         return super.specificValidate(resolver, errorCollector);
@@ -117,19 +132,68 @@ public class TurinTypeDefinition extends TypeDefinition {
         return constructors.get(0);
     }
 
-    private void initializeConstructors(SymbolResolver resolver) {
-        constructors = new ArrayList<>();
-        List<FormalParameter> params = this.assignableProperties(resolver).stream()
+    private void initializeImplicitConstructor(SymbolResolver resolver) {
+        List<FormalParameter> inheritedParams = Collections.emptyList();
+        if (getBaseType().isPresent()) {
+            List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors();
+            if (constructors.size() != 1) {
+                throw new UnsupportedOperationException();
+            }
+            inheritedParams = constructors.get(0).getFormalParameters();
+        }
+
+        List<FormalParameter> newParams = this.assignableProperties(resolver).stream()
                 .map((p)->new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
-        List<String> paramSignatures = propertiesAppearingInConstructor(resolver).stream()
-                .map((p) -> p.getTypeUsage().jvmType(resolver).getSignature())
+        List<FormalParameter> allParams = new LinkedList<>();
+        allParams.addAll(inheritedParams);
+        allParams.addAll(newParams);
+        allParams.sort(new Comparator<FormalParameter>() {
+            @Override
+            public int compare(FormalParameter o1, FormalParameter o2) {
+                return Boolean.compare(o1.hasDefaultValue(), o2.hasDefaultValue());
+            }
+        });
+        addConstructorWithParams(allParams, resolver);
+    }
+
+    private void initializeConstructors(SymbolResolver resolver) {
+        constructors = new ArrayList<>();
+        if (getExplicitConstructors().isEmpty()) {
+            initializeImplicitConstructor(resolver);
+        } else {
+            if (getExplicitConstructors().size() > 1) {
+                throw new IllegalStateException();
+            }
+            getExplicitConstructors().forEach((c)->initializeExplicitConstructor(c, resolver));
+        }
+    }
+
+    private void addConstructorWithParams(List<FormalParameter> allParams, SymbolResolver resolver) {
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<String> paramSignatures = paramsWithoutDefaultValues.stream()
+                .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
-        if (hasDefaultProperties(resolver)) {
+        boolean hasDefaultParameters = allParams.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
+        if (hasDefaultParameters) {
             paramSignatures.add("Ljava/util/Map;");
         }
         JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
-        constructors.add(new InternalConstructorDefinition(params, constructorDefinition));
+        constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
+    }
+
+    private void initializeExplicitConstructor(TurinTypeContructorDefinition constructor, SymbolResolver resolver) {
+        List<FormalParameter> allParams = constructor.getParameters();
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<String> paramSignatures = paramsWithoutDefaultValues.stream()
+                .map((p) -> p.getType().jvmType(resolver).getSignature())
+                .collect(Collectors.toList());
+        boolean hasDefaultParameters = allParams.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
+        if (hasDefaultParameters) {
+            paramSignatures.add("Ljava/util/Map;");
+        }
+        JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
+        constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
     }
 
     private void ensureIsInitialized(SymbolResolver resolver) {
@@ -195,7 +259,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue()).collect(Collectors.toList());
     }
 
-    public List<Property> propertiesAppearingInConstructor(SymbolResolver resolver) {
+    public List<Property> propertiesAppearingInDefaultConstructor(SymbolResolver resolver) {
         return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue() && !p.hasDefaultValue()).collect(Collectors.toList());
     }
 
@@ -225,9 +289,13 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
-        // TODO to be implemented
-        throw new UnsupportedOperationException();
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+        for (Property property : getAllProperties(resolver)) {
+            if (property.getName().equals(fieldName)) {
+                return property.getTypeUsage();
+            }
+        }
+        throw new IllegalArgumentException(fieldName);
     }
 
     @Override
@@ -456,5 +524,37 @@ public class TurinTypeDefinition extends TypeDefinition {
     public void add(TurinTypeMethodDefinition methodDefinition) {
         members.add(methodDefinition);
         methodDefinition.parent = this;
+    }
+
+    public void add(TurinTypeContructorDefinition contructorDefinition) {
+        members.add(contructorDefinition);
+        contructorDefinition.parent = this;
+    }
+
+    @Override
+    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+        return true;
+    }
+
+    public boolean defineExplicitConstructor(SymbolResolver resolver) {
+        return !getExplicitConstructors().isEmpty();
+    }
+
+    @Override
+    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+        if (this.baseType.isPresent()) {
+            return this.baseType.get().asReferenceTypeUsage().getTypeDefinition(resolver);
+        }
+        return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+    }
+
+    @Override
+    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        for (InternalConstructorDefinition constructor : constructors) {
+            if (constructor.match(resolver, actualParams)) {
+                return Optional.of(constructor.getJvmConstructorDefinition());
+            }
+        }
+        return Optional.empty();
     }
 }
