@@ -3,11 +3,11 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
 import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
+import me.tomassetti.bytecode_generation.pushop.PushThis;
 import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
-import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.jvm.JvmType;
-import me.tomassetti.jvm.JvmTypeCategory;
+import me.tomassetti.jvm.*;
+import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -21,6 +21,7 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CompilationOfStatements {
@@ -70,34 +71,9 @@ public class CompilationOfStatements {
         } else if (statement instanceof TryCatchStatement) {
             TryCatchStatement tryCatchStatement = (TryCatchStatement) statement;
             return compile(tryCatchStatement);
-        } else if (statement instanceof SuperInvokation) {
-            SuperInvokation superInvokation = (SuperInvokation) statement;
-            return compile(superInvokation);
         } else {
             throw new UnsupportedOperationException(statement.toString());
         }
-    }
-
-    BytecodeSequence compile(SuperInvokation superInvokation) {
-        // push all explicitly passed parameters
-        int index = 1;
-        for (ActualParam actualParam : superInvokation.getParams()){
-            if (!formalParameter.hasDefaultValue()) {
-                JvmType jvmType = formalParameter.getType().jvmType(resolver);
-                new PushLocalVar(OpcodesUtils.loadTypeFor(jvmType), index).operate(mv);
-                index++;
-            }
-        }
-        // push the map if it has default values
-        if (superConstructor.hasDefaultParams()) {
-            // push the map which is in the parameters after all the formal parameters
-            index = formalParametersWithoutDefaults.size() + 1;
-            new PushLocalVar(Opcodes.ALOAD, index).operate(mv);
-        }
-
-
-        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, superConstructor.getJvmConstructorDefinition().getOwnerInternalName(), "<init>",
-                superConstructor.getJvmConstructorDefinition().getDescriptor(), false);
     }
 
     BytecodeSequence compile(TryCatchStatement tryCatchStatement) {

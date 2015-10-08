@@ -17,6 +17,7 @@ import me.tomassetti.turin.parser.ast.Placeholder;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
+import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
@@ -215,9 +216,36 @@ public class CompilationOfPush {
             return PushThis.getInstance();
         } else if (expr instanceof AssignmentExpression) {
             return pushAssignment((AssignmentExpression)expr);
+        } else if (expr instanceof SuperInvokation) {
+            SuperInvokation superInvokation = (SuperInvokation) expr;
+            return compile(superInvokation);
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
+    }
+
+    BytecodeSequence compile(SuperInvokation superInvokation) {
+        superInvokation.desugarize(compilation.getResolver());
+        BytecodeSequence instancePush = PushThis.getInstance();
+        Optional<JvmConstructorDefinition> constructor = superInvokation.findJvmDefinition(compilation.getResolver());
+        if (!constructor.isPresent()) {
+            throw new UnsolvedMethodException(superInvokation);
+        }
+        BytecodeSequence argumentsPush = compilation.getPushUtils().adaptAndPushAllParameters(
+                superInvokation.getActualParamValuesInOrder(), constructor.get()
+        );
+        BytecodeSequence invokation = new BytecodeSequence() {
+            @Override
+            public void operate(MethodVisitor mv) {
+                mv.visitMethodInsn(Opcodes.INVOKESPECIAL, constructor.get().getOwnerInternalName(), "<init>",
+                        constructor.get().getDescriptor(), false);
+            }
+        };
+        return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
+                .add(instancePush)
+                .add(argumentsPush)
+                .add(invokation)
+                .build());
     }
 
     private BytecodeSequence pushAssignment(AssignmentExpression assignmentStatement) {
@@ -247,7 +275,7 @@ public class CompilationOfPush {
         throw new UnsupportedOperationException(assignmentStatement.getTarget().getClass().getCanonicalName());
     }
 
-    private BytecodeSequence adaptAndPushAllParameters(List<Expression> actualValues, JvmInvokableDefinition invokableDefinition) {
+    BytecodeSequence adaptAndPushAllParameters(List<Expression> actualValues, JvmInvokableDefinition invokableDefinition) {
         List<BytecodeSequence> elements = new LinkedList<>();
         for (int i=0; i<actualValues.size(); i++) {
             Expression value = actualValues.get(i);

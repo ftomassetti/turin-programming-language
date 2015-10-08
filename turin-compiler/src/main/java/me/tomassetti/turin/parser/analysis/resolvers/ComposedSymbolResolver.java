@@ -1,9 +1,12 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
+import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import org.omg.CORBA.UnknownUserException;
 
 import java.util.ArrayList;
 import java.util.List;

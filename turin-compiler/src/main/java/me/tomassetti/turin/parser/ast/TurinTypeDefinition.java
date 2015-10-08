@@ -10,6 +10,7 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -537,5 +538,23 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     public boolean defineExplicitConstructor(SymbolResolver resolver) {
         return !getExplicitConstructors().isEmpty();
+    }
+
+    @Override
+    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+        if (this.baseType.isPresent()) {
+            return this.baseType.get().asReferenceTypeUsage().getTypeDefinition(resolver);
+        }
+        return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+    }
+
+    @Override
+    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        for (InternalConstructorDefinition constructor : constructors) {
+            if (constructor.match(resolver, actualParams)) {
+                return Optional.of(constructor.getJvmConstructorDefinition());
+            }
+        }
+        return Optional.empty();
     }
 }

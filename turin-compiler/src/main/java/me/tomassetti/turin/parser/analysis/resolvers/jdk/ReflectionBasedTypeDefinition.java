@@ -60,6 +60,18 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return true;
     }
 
+    @Override
+    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
+                actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
+        return Optional.of(toInternalConstructorDefinition(constructor).getJvmConstructorDefinition());
+    }
+
     private InternalConstructorDefinition toInternalConstructorDefinition(Constructor<?> constructor) {
         JvmConstructorDefinition jvmConstructorDefinition = ReflectionTypeDefinitionFactory.toConstructorDefinition(constructor);
         return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);

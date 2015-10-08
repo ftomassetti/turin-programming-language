@@ -433,4 +433,21 @@ public class JavassistTypeDefinition extends TypeDefinition {
     public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
         return true;
     }
+
+    @Override
+    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        // if this is the compiled version of a turin type we have to handle default parameters
+        if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
+            return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0]).getJvmConstructorDefinition());
+        }
+
+        CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
+                actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
+        return Optional.of(toInternalConstructorDefinition(constructor).getJvmConstructorDefinition());
+    }
 }

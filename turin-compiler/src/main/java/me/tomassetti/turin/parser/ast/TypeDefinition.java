@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.time.temporal.TemporalAmount;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
@@ -84,4 +85,8 @@ public abstract class TypeDefinition extends Node implements Named {
     public abstract List<InternalConstructorDefinition> getConstructors();
 
     public abstract boolean canFieldBeAssigned(String field, SymbolResolver resolver);
+
+    public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
+
+    public abstract Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
 }

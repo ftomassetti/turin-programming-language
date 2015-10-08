@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
+import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
@@ -10,6 +11,7 @@ import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.StaticFieldAccess;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
+import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;

@@ -206,7 +206,7 @@ class ParseTreeToAst {
         List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         List<ActualParam> superParams = ctx.superParams.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         List<Statement> bodyStatements = ctx.statements.stream().map((s) -> toAst(s)).collect(Collectors.toList());
-        bodyStatements.add(new SuperInvokation(superParams));
+        bodyStatements.add(new ExpressionStatement(new SuperInvokation(superParams)));
         BlockStatement body = new BlockStatement(bodyStatements);
         TurinTypeContructorDefinition constructorDefinition = new TurinTypeContructorDefinition(params, body);
         getPositionFrom(constructorDefinition, ctx);
