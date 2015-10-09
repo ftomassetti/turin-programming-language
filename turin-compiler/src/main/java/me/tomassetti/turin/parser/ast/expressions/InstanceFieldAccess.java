@@ -80,8 +80,4 @@ public class InstanceFieldAccess extends Expression {
     public Iterable<Node> getChildren() {
         return ImmutableList.of(subject);
     }
-
-    public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
 }

@@ -22,6 +22,10 @@ public abstract class Node {
     private Position position;
     private Boolean valid;
 
+    ///
+    /// Position
+    ///
+
     public Position getPosition() {
         if (position == null) {
             throw new IllegalStateException(this.toString()+ " has no position assigned");
@@ -32,6 +36,10 @@ public abstract class Node {
     public void setPosition(Position position) {
         this.position = position;
     }
+
+    ///
+    /// Tree
+    ///
 
     public Node getParent() {
         return parent;
@@ -46,6 +54,31 @@ public abstract class Node {
         this.parent = parent;
     }
 
+    public <T extends Node> List<T> findAll(Class<T> desiredClass) {
+        List<T> results = new LinkedList<>();
+        if (desiredClass.isInstance(this)) {
+            results.add(desiredClass.cast(this));
+        }
+        for (Node child : getChildren()) {
+            results.addAll(child.findAll(desiredClass));
+        }
+        return results;
+    }
+
+    public <N extends Node> N getParentOfType(Class<N> parentClazz) {
+        if (getParent() == null) {
+            throw new IllegalStateException("It was expected to be contained in a " + parentClazz.getName());
+        }
+        if (parentClazz.isInstance(getParent())) {
+            return parentClazz.cast(getParent());
+        }
+        return getParent().getParentOfType(parentClazz);
+    }
+
+    ///
+    /// Naming
+    ///
+
     public String contextName() {
         if (parent == null) {
             return "";
@@ -57,9 +90,17 @@ public abstract class Node {
         return parent.contextName();
     }
 
+    ///
+    /// Typing
+    ///
+
     public TypeUsage calcType(SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
+
+    ///
+    /// Symbol resolution
+    ///
 
     public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
         if (parent == null) {
@@ -92,8 +133,8 @@ public abstract class Node {
         }
     }
 
-    public String describe() {
-        return this.toString();
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     /**
@@ -103,16 +144,9 @@ public abstract class Node {
         return calcType(resolver).getFieldOnInstance(fieldName, this, resolver);
     }
 
-    public <T extends Node> List<T> findAll(Class<T> desiredClass) {
-        List<T> results = new LinkedList<>();
-        if (desiredClass.isInstance(this)) {
-            results.add(desiredClass.cast(this));
-        }
-        for (Node child : getChildren()) {
-            results.addAll(child.findAll(desiredClass));
-        }
-        return results;
-    }
+    ///
+    /// Validation
+    ///
 
     public final boolean validate(SymbolResolver resolver, ErrorCollector errorCollector) {
         boolean res = specificValidate(resolver, errorCollector);
@@ -144,17 +178,12 @@ public abstract class Node {
         return true;
     }
 
-    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    ///
+    /// Support
+    ///
+
+    public String describe() {
+        return this.toString();
     }
 
-    public <N extends Node> N getParentOfType(Class<N> parentClazz) {
-        if (getParent() == null) {
-            throw new IllegalStateException("It was expected to be contained in a " + parentClazz.getName());
-        }
-        if (parentClazz.isInstance(getParent())) {
-            return parentClazz.cast(getParent());
-        }
-        return getParent().getParentOfType(parentClazz);
-    }
 }
