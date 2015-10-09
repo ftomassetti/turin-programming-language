@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.parser.analysis.exceptions;
 
 public abstract class UnsolvedException extends RuntimeException {
 

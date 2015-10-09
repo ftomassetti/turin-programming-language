@@ -1,7 +1,6 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.parser.analysis.exceptions;
 
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
 

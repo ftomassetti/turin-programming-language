@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.parser.analysis.UnsolvedInvokableException;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedInvokableException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 

@@ -4,13 +4,15 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.*;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -146,7 +148,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
 
         List<FormalParameter> newParams = this.assignableProperties(resolver).stream()
-                .map((p)->new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
+                .map((p) -> new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
         List<FormalParameter> allParams = new LinkedList<>();
         allParams.addAll(inheritedParams);
@@ -246,11 +248,11 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     public List<Property> propertiesAppearingInDefaultConstructor(SymbolResolver resolver) {
-        return getDirectProperties(resolver).stream().filter((p)->!p.hasInitialValue() && !p.hasDefaultValue()).collect(Collectors.toList());
+        return getDirectProperties(resolver).stream().filter((p) -> !p.hasInitialValue() && !p.hasDefaultValue()).collect(Collectors.toList());
     }
 
     public List<Property> defaultPropeties(SymbolResolver resolver) {
-        return getDirectProperties(resolver).stream().filter((p)->p.hasDefaultValue()).collect(Collectors.toList());
+        return getDirectProperties(resolver).stream().filter((p) -> p.hasDefaultValue()).collect(Collectors.toList());
     }
 
     public boolean hasDefaultProperties(SymbolResolver resolver) {

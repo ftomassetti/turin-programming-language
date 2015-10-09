@@ -2,18 +2,10 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
-import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
-import me.tomassetti.bytecode_generation.pushop.PushThis;
 import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.jvm.*;
-import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
-import me.tomassetti.turin.parser.ast.FormalParameter;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.expressions.AssignmentExpression;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.expressions.InstanceFieldAccess;
 import me.tomassetti.turin.parser.ast.statements.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -21,7 +13,6 @@ import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CompilationOfStatements {

@@ -8,7 +8,7 @@ import me.tomassetti.bytecode_generation.logicalop.LogicalOrBS;
 import me.tomassetti.bytecode_generation.pushop.*;
 import me.tomassetti.jvm.*;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.FunctionDefinition;

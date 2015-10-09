@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.jvm.JvmNameUtils;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.PropertyConstraint;

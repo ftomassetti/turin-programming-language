@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.analysis;
+package me.tomassetti.turin.parser.analysis.exceptions;
 
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 

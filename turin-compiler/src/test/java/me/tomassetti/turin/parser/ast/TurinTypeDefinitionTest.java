@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;

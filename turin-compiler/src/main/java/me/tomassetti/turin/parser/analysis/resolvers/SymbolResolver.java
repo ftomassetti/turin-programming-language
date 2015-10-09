@@ -1,11 +1,12 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
-import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
-import me.tomassetti.turin.parser.analysis.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
+import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.PropertyReference;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
-import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Optional;
@@ -15,7 +16,12 @@ import java.util.Optional;
  */
 public interface SymbolResolver {
 
+    ///
+    /// Hierarchy navigation
+    ///
+
     public SymbolResolver getParent();
+
     public void setParent(SymbolResolver parent);
 
     public default SymbolResolver getRoot() {

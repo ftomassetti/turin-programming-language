@@ -22,6 +22,5 @@ public class ClassFileDefinition {
         }
         this.name = name;
         this.bytecode = bytecode;
-
     }
 }
