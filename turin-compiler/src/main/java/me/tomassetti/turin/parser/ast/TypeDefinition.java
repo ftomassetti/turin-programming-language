@@ -6,6 +6,7 @@ import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.InternalMethodDefinition;
+import me.tomassetti.turin.parser.analysis.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -49,13 +50,35 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
-    public abstract boolean hasManyConstructors();
+    public final boolean hasManyConstructors(SymbolResolver resolver) {
+        return getConstructors(resolver).size() > 1;
+    }
 
-    public abstract List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver);
+    public final List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+        return getConstructor(actualParams, resolver).getFormalParameters();
+    }
 
-    public abstract Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
+    public final Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams, SymbolResolver resolver) {
+        Optional<InternalConstructorDefinition> res = findConstructor(actualParams, resolver);
+        if (res.isPresent()) {
+            return Optional.of(res.get().getJvmConstructorDefinition());
+        } else {
+            return Optional.empty();
+        }
+    }
 
-    public abstract List<InternalConstructorDefinition> getConstructors();
+    public abstract Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
+
+    public final InternalConstructorDefinition getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+        Optional<InternalConstructorDefinition> constructor = findConstructor(actualParams, resolver);
+        if (constructor.isPresent()) {
+            return constructor.get();
+        } else {
+            throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
+        }
+    }
+
+    public abstract List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver);
 
     //
     // Methods

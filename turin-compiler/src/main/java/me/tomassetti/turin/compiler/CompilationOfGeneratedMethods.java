@@ -177,10 +177,10 @@ public class CompilationOfGeneratedMethods {
                 throw new IllegalStateException();
             }
             TypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition(compilation.getResolver());
-            if (baseTypeDefinition.hasManyConstructors()) {
+            if (baseTypeDefinition.hasManyConstructors(compilation.getResolver())) {
                 throw new IllegalStateException();
             }
-            superConstructor = baseTypeDefinition.getConstructors().get(0);
+            superConstructor = baseTypeDefinition.getConstructors(compilation.getResolver()).get(0);
         }
 
         // TODO consider also inherited properties

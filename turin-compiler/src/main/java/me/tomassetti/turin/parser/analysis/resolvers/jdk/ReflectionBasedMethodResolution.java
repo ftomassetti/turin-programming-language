@@ -52,7 +52,7 @@ class ReflectionBasedMethodResolution {
         List<FormalParameter> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : constructor.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+            formalParameters.add(new FormalParameter(toTypeUsage(type), constructor.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;
@@ -62,7 +62,7 @@ class ReflectionBasedMethodResolution {
         List<FormalParameter> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : method.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+            formalParameters.add(new FormalParameter(toTypeUsage(type), method.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;

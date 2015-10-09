@@ -45,7 +45,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<InternalConstructorDefinition> getConstructors() {
+    public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
         return Arrays.stream(ctClass.getConstructors())
                 .map((c) -> toInternalConstructorDefinition(c))
                 .collect(Collectors.toList());
@@ -58,11 +58,6 @@ public class JavassistTypeDefinition extends TypeDefinition {
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public boolean hasManyConstructors() {
-        return ctClass.getConstructors().length > 1;
     }
 
     @Override
@@ -147,18 +142,6 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
-        // if this is the compiled version of a turin type we have to handle default parameters
-        if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
-            return getFormalParametersConsideringDefaultParams(ctClass.getConstructors()[0]);
-        }
-
-        CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
-                actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
-        return formalParameters(constructor);
-    }
-
-    @Override
     public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
                 actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
@@ -179,11 +162,17 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     private List<FormalParameter> formalParameters(CtConstructor constructor) {
+        if (hasDefaultParamAnnotation(constructor)) {
+            return getFormalParametersConsideringDefaultParams(ctClass.getConstructors()[0]);
+        }
         try {
             List<FormalParameter> formalParameters = new ArrayList<>();
+            MethodInfo methodInfo = constructor.getMethodInfo();
+            CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+            LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             int i=0;
             for (CtClass type : constructor.getParameterTypes()) {
-                formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+                formalParameters.add(new FormalParameter(toTypeUsage(type), attr.variableName(i)));
                 i++;
             }
             return formalParameters;
@@ -195,9 +184,12 @@ public class JavassistTypeDefinition extends TypeDefinition {
     private List<FormalParameter> formalParameters(CtMethod method) {
         try {
             List<FormalParameter> formalParameters = new ArrayList<>();
+            MethodInfo methodInfo = method.getMethodInfo();
+            CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+            LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             int i=0;
             for (CtClass type : method.getParameterTypes()) {
-                formalParameters.add(new FormalParameter(toTypeUsage(type), "param"+i));
+                formalParameters.add(new FormalParameter(toTypeUsage(type),  attr.variableName(i)));
                 i++;
             }
             return formalParameters;
@@ -427,14 +419,14 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         // if this is the compiled version of a turin type we have to handle default parameters
         if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
-            return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0]).getJvmConstructorDefinition());
+            return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0]));
         }
 
         CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
                 actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
-        return Optional.of(toInternalConstructorDefinition(constructor).getJvmConstructorDefinition());
+        return Optional.of(toInternalConstructorDefinition(constructor));
     }
 }

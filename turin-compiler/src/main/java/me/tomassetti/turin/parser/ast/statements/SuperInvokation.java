@@ -6,7 +6,6 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -33,7 +32,7 @@ public class SuperInvokation extends Invokable {
 
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
-        return getTurinTypeDefinition().hasManyConstructors();
+        return getTurinTypeDefinition().hasManyConstructors(resolver);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class SuperInvokation extends Invokable {
     }
 
     public Optional<JvmConstructorDefinition> findJvmDefinition(SymbolResolver resolver) {
-        return getTurinTypeDefinition().getSuperclass(resolver).getConstructor(actualParams, resolver);
+        return getTurinTypeDefinition().getSuperclass(resolver).findConstructorDefinition(actualParams, resolver);
     }
 }
 
