@@ -51,7 +51,7 @@ public class Creation extends Invokable {
 
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).hasManyConstructors();
+        return getTypeDefinition(resolver).hasManyConstructors(resolver);
     }
 
     private TypeDefinition getTypeDefinition(SymbolResolver resolver) {

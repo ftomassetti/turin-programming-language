@@ -49,7 +49,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<InternalConstructorDefinition> getConstructors() {
+    public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
         return Arrays.stream(clazz.getConstructors())
                 .map((c) -> toInternalConstructorDefinition(c))
                 .collect(Collectors.toList());
@@ -66,10 +66,10 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
                 actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
-        return Optional.of(toInternalConstructorDefinition(constructor).getJvmConstructorDefinition());
+        return Optional.of(toInternalConstructorDefinition(constructor));
     }
 
     private InternalConstructorDefinition toInternalConstructorDefinition(Constructor<?> constructor) {
@@ -119,20 +119,8 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public boolean hasManyConstructors() {
-        return clazz.getConstructors().length > 1;
-    }
-
-    @Override
     public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
         return Arrays.stream(clazz.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
-    }
-
-    @Override
-    public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
-        Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
-                actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
-        return formalParameters(constructor);
     }
 
     @Override

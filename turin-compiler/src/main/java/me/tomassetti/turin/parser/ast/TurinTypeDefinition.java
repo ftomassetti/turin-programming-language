@@ -118,7 +118,10 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
     }
 
-    public List<InternalConstructorDefinition> getConstructors() {
+    public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
+        if (constructors == null) {
+            initializeConstructors(resolver);
+        }
         return constructors;
     }
 
@@ -135,7 +138,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     private void initializeImplicitConstructor(SymbolResolver resolver) {
         List<FormalParameter> inheritedParams = Collections.emptyList();
         if (getBaseType().isPresent()) {
-            List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors();
+            List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors(resolver);
             if (constructors.size() != 1) {
                 throw new UnsupportedOperationException();
             }
@@ -305,31 +308,9 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public boolean hasManyConstructors() {
-        return false;
-    }
-
-    @Override
     public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
         ensureIsInitialized(resolver);
         return methodsByName.get(methodName).size() > 1;
-    }
-
-    @Override
-    public List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
-        // all named parameters should be after the named ones
-        if (!ParamUtils.verifyOrder(actualParams)) {
-            throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
-        }
-
-        ensureIsInitialized(resolver);
-        Optional<InternalConstructorDefinition> constructor = constructors.stream().filter((c)->c.match(resolver, actualParams)).findFirst();
-
-        if (!constructor.isPresent()){
-            throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
-        }
-
-        return constructor.get().getFormalParameters();
     }
 
     @Override
@@ -507,10 +488,10 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<JvmConstructorDefinition> getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         for (InternalConstructorDefinition constructor : constructors) {
             if (constructor.match(resolver, actualParams)) {
-                return Optional.of(constructor.getJvmConstructorDefinition());
+                return Optional.of(constructor);
             }
         }
         return Optional.empty();
