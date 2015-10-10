@@ -1,0 +1,13 @@
+namespace relations
+
+import java.util.List
+
+relation Ast {
+    Node? parent
+    List[Node] children
+}
+
+type Method extends Node {
+   List[FormalArgument] params = subset of AST{parent=this}:children
+   TypeUsage returnType = subset of AST{parent=this}:children
+}

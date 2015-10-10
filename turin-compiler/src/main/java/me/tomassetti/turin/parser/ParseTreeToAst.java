@@ -8,6 +8,8 @@ import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.imports.*;
+import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
+import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -52,6 +54,8 @@ class ParseTreeToAst {
                 turinFile.add((Program) memberNode);
             } else if (memberNode instanceof FunctionDefinition) {
                 turinFile.add((FunctionDefinition)memberNode);
+            } else if (memberNode instanceof RelationDefinition) {
+                turinFile.add((RelationDefinition)memberNode);
             } else {
                 throw new UnsupportedOperationException(memberNode.getClass().getCanonicalName());
             }
@@ -121,9 +125,24 @@ class ParseTreeToAst {
             return toAst(ctx.program());
         } else if (ctx.topLevelFunctionDeclaration() != null) {
             return toAst(ctx.topLevelFunctionDeclaration());
+        } else if (ctx.relation() != null) {
+            return toAst(ctx.relation());
         } else {
-            throw new UnsupportedOperationException(ctx.toString());
+            throw new UnsupportedOperationException(ctx.getClass().getCanonicalName());
         }
+    }
+
+    private RelationDefinition toAst(TurinParser.RelationContext ctx) {
+        List<RelationFieldDefinition> fields = ctx.relationField().stream().map((fCtx)->toAst(fCtx)).collect(Collectors.toList());
+        RelationDefinition relationDefinition = new RelationDefinition(ctx.name.getText(), fields);
+        getPositionFrom(relationDefinition, ctx);
+        return relationDefinition;
+    }
+
+    private RelationFieldDefinition toAst(TurinParser.RelationFieldContext ctx) {
+        RelationFieldDefinition relationFieldDefinition = new RelationFieldDefinition(ctx.name.getText(), toAst(ctx.type));
+        getPositionFrom(relationFieldDefinition, ctx);
+        return relationFieldDefinition;
     }
 
     private FunctionDefinition toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {

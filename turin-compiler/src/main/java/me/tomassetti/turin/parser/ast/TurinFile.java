@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
+import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -167,4 +168,8 @@ public class TurinFile extends Node {
         functionDefinition.parent = this;
     }
 
+    public void add(RelationDefinition relationDefinition) {
+        topNodes.add(relationDefinition);
+        relationDefinition.parent = this;
+    }
 }
