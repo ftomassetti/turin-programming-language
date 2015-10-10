@@ -6,6 +6,7 @@
         <module>turin-parser</module>
         <module>turin-compiler</module>
         <module>turin-standard-library</module>
+        <module>java-symbol-solver</module>
     </modules>
 
     <parent>

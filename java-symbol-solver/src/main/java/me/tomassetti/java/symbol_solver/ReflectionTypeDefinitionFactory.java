@@ -1,0 +1,107 @@
+package me.tomassetti.java.symbol_solver;
+
+import me.tomassetti.java.symbol_solver.type_usage.ArrayTypeUsage;
+import me.tomassetti.java.symbol_solver.type_usage.JavaTypeUsage;
+import me.tomassetti.java.symbol_solver.type_usage.PrimitiveTypeUsage;
+import me.tomassetti.java.symbol_solver.type_usage.ReferenceTypeUsage;
+import me.tomassetti.jvm.JvmConstructorDefinition;
+import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.jvm.JvmNameUtils;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class ReflectionTypeDefinitionFactory {
+
+    private static final ReflectionTypeDefinitionFactory INSTANCE = new ReflectionTypeDefinitionFactory();
+
+    public static ReflectionTypeDefinitionFactory getInstance() {
+        return INSTANCE;
+    }
+
+    public static JvmMethodDefinition toMethodDefinition(Method method){
+        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getCanonicalName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()), method.getDeclaringClass().isInterface());
+    }
+
+    public static String calcSignature(Class<?> clazz) {
+        if (clazz.isPrimitive()) {
+            switch (clazz.getName()) {
+                case "boolean":
+                    return "Z";
+                case "byte":
+                    return "B";
+                case "char":
+                    return "C";
+                case "short":
+                    return "S";
+                case "int":
+                    return "I";
+                case "long":
+                    return "J";
+                case "float":
+                    return "F";
+                case "double":
+                    return "D";
+                case "void":
+                    return "V";
+                default:
+                    throw new UnsupportedOperationException(clazz.getCanonicalName());
+            }
+        } else if (clazz.isArray()){
+            return "[" + calcSignature(clazz.getComponentType());
+        } else {
+            return "L" + clazz.getCanonicalName().replaceAll("\\.", "/") + ";";
+        }
+    }
+
+    public static String calcSignature(Method method) {
+        List<String> paramTypesSignatures = Arrays.stream(method.getParameterTypes()).map((t) -> calcSignature(t)).collect(Collectors.toList());
+        return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
+    }
+
+    public static JavaTypeUsage toTypeUsage(Class<?> type) {
+        if (type.isArray()) {
+            return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+        } else if (type.isPrimitive()) {
+            return PrimitiveTypeUsage.getByName(type.getName());
+        } else {
+            return new ReferenceTypeUsage(type.getCanonicalName());
+        }
+    }
+
+    public JavaTypeDefinition getTypeDefinition(Class<?> clazz) {
+        if (clazz.isArray()) {
+            throw new IllegalArgumentException();
+        }
+        if (clazz.isPrimitive()) {
+            throw new IllegalArgumentException();
+        }
+        return new ReflectionBasedTypeDefinition(clazz);
+    }
+
+    public Optional<JavaTypeDefinition> findTypeDefinition(String typeName) {
+        if (!typeName.startsWith("java.") && !typeName.startsWith("javax.")) {
+            return Optional.empty();
+        }
+        try {
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(typeName);
+            return Optional.of(getTypeDefinition(clazz));
+        } catch (ClassNotFoundException e) {
+           return Optional.empty();
+        }
+    }
+
+    public static JvmConstructorDefinition toConstructorDefinition(Constructor constructor) {
+        return new JvmConstructorDefinition(JvmNameUtils.canonicalToInternal(constructor.getDeclaringClass().getCanonicalName()), calcSignature(constructor));
+    }
+
+    private static String calcSignature(Constructor constructor) {
+        List<String> paramTypesSignatures = Arrays.stream(constructor.getParameterTypes()).map((t) -> calcSignature(t)).collect(Collectors.toList());
+        return "(" + String.join("", paramTypesSignatures) + ")V";
+    }
+}
