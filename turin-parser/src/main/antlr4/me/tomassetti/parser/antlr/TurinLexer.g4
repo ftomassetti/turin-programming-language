@@ -39,8 +39,12 @@ tokens { NAME_PLACEHOLDER, PLACEHOLDER, VALUE_ID, TYPE_ID, INT, LPAREN, RPAREN, 
 NAMESPACE_KW        : 'namespace';
 PROGRAM_KW          : 'program';
 PROPERTY_KW         : 'property';
-DEFAULT_KW          : 'default';
 TYPE_KW             : 'type';
+RELATION_KW         : 'relation';
+
+SUBSET_KW           : F_SUBSET;
+OF_KW               : F_OF;
+DEFAULT_KW          : 'default';
 VAL_KW              : 'val';
 HAS_KW              : 'has';
 ABSTRACT_KW         : 'abstract';
@@ -72,6 +76,8 @@ THIS_KW             : F_THIS;
 AND_KW              : F_AND;
 OR_KW               : F_OR;
 NOT_KW              : F_NOT;
+
+QUESTION_MARK       : F_QUESTION_MARK;
 
 LPAREN              : '(';
 RPAREN              : ')';
@@ -150,6 +156,8 @@ I_OR_KW             : F_OR -> type(OR_KW);
 I_NOT_KW            : F_NOT -> type(NOT_KW);
 I_IF_KW             : 'if' -> type(IF_KW);
 I_ELSE_KW           : 'else' -> type(ELSE_KW);
+I_SUBSET_KW         : F_SUBSET -> type(SUBSET_KW);
+I_OF_KW             : F_OF -> type(OF_KW);
 I_NAME_PLACEHOLDER  : F_NAME_PLACEHOLDER -> type(NAME_PLACEHOLDER);
 I_PLACEHOLDER       : F_PLACEHOLDER -> type(PLACEHOLDER);
 I_THIS_KW           : F_THIS -> type(THIS_KW);
@@ -172,6 +180,8 @@ I_SLASH             : '/' -> type(SLASH);
 I_PLUS              : '+' -> type(PLUS);
 I_MINUS             : '-' -> type(MINUS);
 
+I_QUESTION_MARK     : F_QUESTION_MARK -> type(QUESTION_MARK);
+
 I_POINT             : '.' -> type(POINT);
 I_EQUAL             : '==' -> type(RELOP);
 I_DIFFERENT         : '!=' -> type(RELOP);
@@ -187,6 +197,8 @@ fragment F_NAME_PLACEHOLDER  : '_name';
 fragment F_PLACEHOLDER       : '_';
 fragment F_AND               : 'and';
 fragment F_OR                : 'or';
+fragment F_SUBSET            : 'subset';
+fragment F_OF                : 'of';
 fragment F_NOT               : 'not';
 fragment F_THIS              : 'this';
 fragment F_VALUE_ID          : ('_')*'a'..'z' ('A'..'Z' | 'a'..'z' | '0'..'9' | '_')*;
@@ -203,6 +215,8 @@ fragment F_FLOAT             : ('-')?('0'|(('1'..'9')('0'..'9')*))'.'('0'..'9')+
 fragment F_DOUBLE            : ('-')?('0'|(('1'..'9')('0'..'9')*))'.'('0'..'9')+;
 fragment F_PRIMITIVE_TYPE    : 'byte'|'int'|'long'|'boolean'|'char'|'float'|'double'|'short';
 fragment F_BASIC_TYPE        : 'uint'|'ulong'|'ufloat'|'udouble'|'ushort'|'ubyte';
+
+fragment F_QUESTION_MARK     : '?';
 
 fragment F_ESCAPE_SEQUENCE   : '\\r'|'\\n'|'\\t'|'\\f'|'\\b'|'\\"'|'\\\\';
 fragment F_SHARP             : '#'{ _input.LA(1)!='{' }?;

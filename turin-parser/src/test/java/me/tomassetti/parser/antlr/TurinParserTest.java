@@ -135,4 +135,14 @@ public class TurinParserTest {
         assertNotNull(actualParam.expression().basicExpression().booleanLiteral());
     }
 
+    @Test
+    public void parseRelationWithoutErrors() throws IOException {
+        TurinParser.TurinFileContext root = parse("simple_relation");
+    }
+
+    @Test
+    public void parseRelationSubsetWithoutErrors() throws IOException {
+        TurinParser.TurinFileContext root = parse("relation_subset");
+    }
+
 }

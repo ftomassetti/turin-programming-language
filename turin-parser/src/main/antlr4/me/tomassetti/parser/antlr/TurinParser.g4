@@ -16,6 +16,13 @@ turinFile:
     (members+=fileMember)*
     EOF;
 
+fileMember:
+    topLevelPropertyDeclaration
+    | topLevelFunctionDeclaration
+    | typeDeclaration
+    | relation
+    | program;
+
 //
 // Base
 //
@@ -71,8 +78,8 @@ annotationUsage:
 //
 
 typeUsage:
-    ref=typeReference (LSQUARE typeParams+=typeUsage (COMMA typeParams+=typeUsage)* RSQUARE)?
-    | arrayBase=typeUsage LSQUARE RSQUARE
+    ref=typeReference (LSQUARE typeParams+=typeUsage (COMMA typeParams+=typeUsage)* RSQUARE)? (nullable=QUESTION_MARK)?
+    | arrayBase=typeUsage LSQUARE RSQUARE (nullable=QUESTION_MARK)?
     | primitiveType = PRIMITIVE_TYPE
     | basicType = BASIC_TYPE;
 
@@ -180,6 +187,7 @@ expression:
     | left=expression logicOperator=AND_KW  right=expression
     | left=expression logicOperator=OR_KW   right=expression
     | left=expression isAssignment=ASSIGNMENT right=expression
+    | relationSubset
     | not=NOT_KW value=expression
     ;
 
@@ -274,7 +282,18 @@ program:
     RBRACKET nls;
 
 //
+// Relation
+//
 
-fileMember:
-    topLevelPropertyDeclaration | topLevelFunctionDeclaration | typeDeclaration | program;
+relation:
+    RELATION_KW name=TYPE_ID LBRACKET nls
+    (relationField)+
+    RBRACKET nls;
+
+relationField:
+    type=typeUsage name=VALUE_ID nls;
+
+relationSubset:
+    // e.g., subset of AST{parent=this}:children
+    SUBSET_KW OF_KW relationName=TYPE_ID LBRACKET (params+=actualParam) (commaNl params+=actualParam)* RBRACKET COLON field=VALUE_ID;
 
