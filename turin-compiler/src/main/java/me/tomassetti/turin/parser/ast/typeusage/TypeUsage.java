@@ -35,30 +35,7 @@ public abstract class TypeUsage extends Node {
     }
 
     public JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
-        String signature = this.jvmType(resolver).getSignature();
-        if (signature.startsWith("L")){
-            return JvmTypeCategory.REFERENCE;
-        }
-        if (signature.startsWith("[")){
-            return JvmTypeCategory.ARRAY;
-        }
-
-        switch (signature) {
-            case "Z":
-            case "B":
-            case "S":
-            case "C":
-            case "I":
-                return JvmTypeCategory.INT;
-            case"J":
-                return JvmTypeCategory.LONG;
-            case "F":
-                return JvmTypeCategory.FLOAT;
-            case "D":
-                return JvmTypeCategory.DOUBLE;
-            default:
-                throw new UnsupportedOperationException(signature);
-        }
+        return this.jvmType(resolver).typeCategory();
     }
 
     private boolean overloaded;
