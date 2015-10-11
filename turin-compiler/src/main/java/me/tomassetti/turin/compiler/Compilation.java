@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.InvokableDefinition;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
@@ -68,10 +69,23 @@ public class Compilation {
                 classFileDefinitions.addAll(compile((Program) node));
             } else if (node instanceof FunctionDefinition) {
                 classFileDefinitions.addAll(compile((FunctionDefinition) node, turinFile.getNamespaceDefinition()));
+            } else if (node instanceof RelationDefinition) {
+                classFileDefinitions.addAll(compile((RelationDefinition) node, turinFile.getNamespaceDefinition()));
             }
         }
 
         return classFileDefinitions;
+    }
+
+    private List<ClassFileDefinition> compile(RelationDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
+        String canonicalClassName = namespaceDefinition.getName() + "." + RelationDefinition.CLASS_PREFIX + functionDefinition.getName();
+        String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
+
+        // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
+
+        return ImmutableList.of(endClass(canonicalClassName));
     }
 
     private List<ClassFileDefinition> compile(FunctionDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {

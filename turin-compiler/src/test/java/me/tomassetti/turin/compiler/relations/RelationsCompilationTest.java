@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class RelationsCompilationTest extends AbstractCompilerTest {
 
     @Test
-    public void compileSimpleRelation() throws IOException {
+    public void aClassWithTheCorrectNameIsGeneratedForARelation() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/simple_relation.to"));
 
         // generate bytecode
@@ -23,6 +23,7 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         Compiler instance = new Compiler(getResolverFor(turinFile), options);
         List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(1, classDefinitions.size());
+        assertEquals("relations.Relation_Ast", classDefinitions.get(0).getName());
     }
 
 }

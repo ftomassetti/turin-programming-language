@@ -7,8 +7,18 @@ import java.util.List;
 
 public class RelationDefinition extends Node {
 
+    public static final String CLASS_PREFIX = "Relation_";
+
     private String name;
     private List<RelationFieldDefinition> fields;
+
+    public String getName() {
+        return name;
+    }
+
+    public List<RelationFieldDefinition> getFields() {
+        return fields;
+    }
 
     public RelationDefinition(String name, List<RelationFieldDefinition> fields) {
         this.name = name;
