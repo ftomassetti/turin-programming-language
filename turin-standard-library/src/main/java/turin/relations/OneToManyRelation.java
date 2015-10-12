@@ -10,6 +10,16 @@ public class OneToManyRelation<A, B> implements Relation<A,B> {
 
     private Map<A, List<B>> byEndpointA = new HashMap<>();
     private Map<B, A> byEndpointB = new HashMap<>();
+    private Map<B, Subset> bSubsets = new HashMap<>();
+
+    public Subset newBSubset() {
+        return new Subset();
+    }
+
+    public void link(A endpointA, B endpointB, Subset bSubset) {
+        link(endpointA, endpointB);
+        bSubsets.put(endpointB, bSubset);
+    }
 
     @Override
     public void link(A endpointA, B endpointB) {
@@ -27,9 +37,10 @@ public class OneToManyRelation<A, B> implements Relation<A,B> {
     }
 
     @Override
-    public void unlink(Object professor, Object course) {
-        byEndpointA.get(professor).remove(course);
-        byEndpointB.remove(course);
+    public void unlink(Object endpointA, Object endpointB) {
+        byEndpointA.get(endpointA).remove(endpointB);
+        byEndpointB.remove(endpointB);
+        bSubsets.remove(endpointB);
     }
 
     @Override
@@ -45,8 +56,16 @@ public class OneToManyRelation<A, B> implements Relation<A,B> {
         return new ReferenceSingleEndpoint(b, byEndpointB, this);
     }
 
+    public ReferenceSingleEndpoint getReferenceForSubsetB(B b) {
+        return new ReferenceSingleEndpoint(b, byEndpointB, this);
+    }
+
     public ReferenceMultipleEndpoint getReferenceForA(A a) {
         return new ReferenceMultipleEndpoint(a, byEndpointA, this);
+    }
+
+    public ReferenceMultipleEndpoint getReferenceForA(A a, Subset subset) {
+        return new ReferenceMultipleEndpoint(a, byEndpointA, this, bSubsets, subset);
     }
 
 }

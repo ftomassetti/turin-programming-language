@@ -11,4 +11,8 @@ public class Teaching {
     public static Relation.ReferenceMultipleEndpoint coursesTaughtBy(Professor professor) {
         return RELATION.getReferenceForA(professor);
     }
+
+    public static Relation.ReferenceMultipleEndpoint subsetOfCoursesTaughtBy(Professor professor, Subset subset) {
+        return RELATION.getReferenceForA(professor, subset);
+    }
 }

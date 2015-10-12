@@ -1,9 +1,14 @@
 package turin.relations;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public interface Relation<A, B> {
     public void link(A endpointA, B endpointB);
+
+    public default void link(A endpointA, B endpointB, Subset bSubset) {
+        throw new UnsupportedOperationException();
+    }
 
     public void unlink(Object endpointA, Object endpointB);
 
@@ -39,6 +44,8 @@ public interface Relation<A, B> {
         private A a;
         private Relation<A, B> relation;
         private Map<A, List<B>> byEndpointA;
+        private Map<B, Subset> bSubsets;
+        private Subset subset;
 
         public ReferenceMultipleEndpoint(A a, Map<A, List<B>> byEndpointA, Relation<A, B> relation) {
             this.a = a;
@@ -46,10 +53,27 @@ public interface Relation<A, B> {
             this.relation = relation;
         }
 
+        public ReferenceMultipleEndpoint(A a, Map<A, List<B>> byEndpointA, Relation<A, B> relation,
+                                         Map<B, Subset> bSubsets,
+                                         Subset subset) {
+            this.a = a;
+            this.byEndpointA = byEndpointA;
+            this.relation = relation;
+            this.bSubsets = bSubsets;
+            this.subset = subset;
+        }
+
+
         @Override
         public int size() {
             if (byEndpointA.containsKey(a)) {
-                return byEndpointA.get(a).size();
+                if (subset == null) {
+                    return byEndpointA.get(a).size();
+                } else {
+                    return (int) byEndpointA.get(a).stream()
+                            .filter((b) -> bSubsets.get(b) == subset)
+                            .count();
+                }
             } else {
                 return 0;
             }
@@ -58,7 +82,13 @@ public interface Relation<A, B> {
         @Override
         public boolean isEmpty() {
             if (byEndpointA.containsKey(a)) {
-                return byEndpointA.get(a).isEmpty();
+                if (subset == null) {
+                    return byEndpointA.get(a).isEmpty();
+                } else {
+                    return byEndpointA.get(a).stream()
+                            .filter((b) -> bSubsets.get(b) == subset)
+                            .findFirst().isPresent();
+                }
             } else {
                 return true;
             }
@@ -67,7 +97,13 @@ public interface Relation<A, B> {
         @Override
         public boolean contains(Object o) {
             if (byEndpointA.containsKey(a)) {
-                return byEndpointA.get(a).contains(o);
+                if (subset == null) {
+                    return byEndpointA.get(a).contains(o);
+                } else {
+                    return byEndpointA.get(a).stream()
+                            .filter((b) -> bSubsets.get(b) == subset && b.equals(o))
+                            .findFirst().isPresent();
+                }
             } else {
                 return false;
             }
@@ -76,7 +112,13 @@ public interface Relation<A, B> {
         @Override
         public Iterator<B> iterator() {
             if (byEndpointA.containsKey(a)) {
-                return byEndpointA.get(a).iterator();
+                if (subset == null) {
+                    return byEndpointA.get(a).iterator();
+                } else {
+                    return byEndpointA.get(a).stream()
+                            .filter((b) -> bSubsets.get(b) == subset)
+                            .iterator();
+                }
             } else {
                 return Collections.emptyIterator();
             }
@@ -85,7 +127,13 @@ public interface Relation<A, B> {
         @Override
         public Object[] toArray() {
             if (byEndpointA.containsKey(a)) {
-                return byEndpointA.get(a).toArray();
+                if (subset == null) {
+                    return byEndpointA.get(a).toArray();
+                } else {
+                    return byEndpointA.get(a).stream()
+                            .filter((b) -> bSubsets.get(b) == subset)
+                            .collect(Collectors.toList()).toArray();
+                }
             } else {
                 return new Object[]{};
             }
@@ -94,7 +142,13 @@ public interface Relation<A, B> {
         @Override
         public <T> T[] toArray(T[] a) {
             if (byEndpointA.containsKey(a)) {
-                return byEndpointA.get(a).toArray(a);
+                if (subset == null) {
+                    return byEndpointA.get(a).toArray(a);
+                } else {
+                    return byEndpointA.get(a).stream()
+                            .filter((b) -> bSubsets.get(b) == subset)
+                            .collect(Collectors.toList()).toArray(a);
+                }
             } else {
                 return Arrays.copyOf(a, 0);
             }
@@ -103,16 +157,21 @@ public interface Relation<A, B> {
         @Override
         public boolean add(B b) {
             if (relation.areLinked(a, b)) {
-                return false;
+                if (bSubsets.get(b) == subset) {
+                    return false;
+                } else {
+                    bSubsets.put(b, subset);
+                    return true;
+                }
             } else {
-                relation.link(a, b);
+                relation.link(a, b, subset);
                 return true;
             }
         }
 
         @Override
         public boolean remove(Object o) {
-            if (relation.areLinked(a, o)) {
+            if (relation.areLinked(a, o) && (subset==null || bSubsets.get(o) == subset)) {
                 relation.unlink(a, o);
                 return true;
             } else {
@@ -144,7 +203,7 @@ public interface Relation<A, B> {
         public boolean addAll(int index, Collection<? extends B> c) {
             boolean changed = false;
             for (B o : c) {
-                boolean partial = !relation.areLinked(a, o);
+                boolean partial = !contains(o);
                 if (partial) {
                     add(index, o);
                     changed = true;
@@ -187,7 +246,13 @@ public interface Relation<A, B> {
 
         @Override
         public B get(int index) {
-            return byEndpointA.get(a).get(index);
+            if (subset == null) {
+                return byEndpointA.get(a).get(index);
+            } else {
+                return byEndpointA.get(a).stream()
+                        .filter((b) -> bSubsets.get(b) == subset)
+                        .collect(Collectors.toList()).get(index);
+            }
         }
 
         @Override
