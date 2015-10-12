@@ -4,7 +4,7 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>turin-standard-library</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1-20150928-SNAPSHOT</version>
+    <version>0.0.2-20151012-SNAPSHOT</version>
     <name>turin-standard-library</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 
