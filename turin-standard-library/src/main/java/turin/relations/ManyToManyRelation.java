@@ -10,6 +10,16 @@ public class ManyToManyRelation<A, B> implements Relation<A,B> {
 
     private Map<A, List<B>> byEndpointA = new HashMap<>();
     private Map<B, List<A>> byEndpointB = new HashMap<>();
+    private Map<A, Subset> aSubsets = new HashMap<>();
+    private Map<B, Subset> bSubsets = new HashMap<>();
+
+    public Subset newASubset() {
+        return new Subset();
+    }
+    public Subset newBSubset() {
+        return new Subset();
+    }
+
 
     @Override
     public void link(A endpointA, B endpointB) {
@@ -49,4 +59,11 @@ public class ManyToManyRelation<A, B> implements Relation<A,B> {
         return new ReferenceMultipleEndpoint(a, byEndpointA, this);
     }
 
+    public ReferenceMultipleEndpoint getReferenceForA(A a, Subset subset) {
+        return new ReferenceMultipleEndpoint(a, byEndpointA, this, bSubsets, subset);
+    }
+
+    public ReferenceMultipleEndpoint getReferenceForB(B b, Subset subset) {
+        return new ReferenceMultipleEndpoint(b, byEndpointB, this, aSubsets, subset);
+    }
 }
