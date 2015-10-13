@@ -11,7 +11,7 @@ import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
-import me.tomassetti.turin.parser.ast.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Placeholder;
 import me.tomassetti.turin.parser.ast.TypeDefinition;

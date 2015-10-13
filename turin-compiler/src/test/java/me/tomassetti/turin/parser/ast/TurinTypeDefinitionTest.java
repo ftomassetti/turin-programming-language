@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.literals.BooleanLiteral;
 import me.tomassetti.turin.parser.ast.expressions.literals.FloatLiteral;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import org.junit.Test;
 

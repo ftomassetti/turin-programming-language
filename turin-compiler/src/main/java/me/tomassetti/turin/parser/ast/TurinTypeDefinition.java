@@ -15,6 +15,10 @@ import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstruct
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinition;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;

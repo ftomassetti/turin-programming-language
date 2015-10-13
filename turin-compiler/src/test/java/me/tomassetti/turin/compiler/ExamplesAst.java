@@ -2,6 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
 import java.util.Collections;

@@ -9,7 +9,7 @@ import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
-import me.tomassetti.turin.parser.ast.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 

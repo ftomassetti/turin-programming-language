@@ -1,5 +1,6 @@
-package me.tomassetti.turin.parser.ast;
+package me.tomassetti.turin.parser.ast.properties;
 
+import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 

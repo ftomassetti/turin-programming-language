@@ -8,6 +8,8 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.TurinFile;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Test;
 

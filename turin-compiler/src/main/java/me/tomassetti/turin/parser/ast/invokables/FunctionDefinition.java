@@ -1,9 +1,12 @@
-package me.tomassetti.turin.parser.ast;
+package me.tomassetti.turin.parser.ast.invokables;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.Named;
+import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;

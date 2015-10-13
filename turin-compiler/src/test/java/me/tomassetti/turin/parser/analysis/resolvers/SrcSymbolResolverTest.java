@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.ast.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 
 import java.io.File;
 import java.io.IOException;

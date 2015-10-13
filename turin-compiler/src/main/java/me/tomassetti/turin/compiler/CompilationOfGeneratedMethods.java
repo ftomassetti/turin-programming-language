@@ -12,7 +12,7 @@ import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstruct
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
-import me.tomassetti.turin.parser.ast.PropertyConstraint;
+import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;

@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.FormalParameter;
-import me.tomassetti.turin.parser.ast.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 

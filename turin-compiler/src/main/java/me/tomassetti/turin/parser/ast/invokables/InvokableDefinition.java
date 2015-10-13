@@ -1,7 +1,9 @@
-package me.tomassetti.turin.parser.ast;
+package me.tomassetti.turin.parser.ast.invokables;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -19,12 +21,12 @@ public abstract class InvokableDefinition extends Node {
 
     public InvokableDefinition(List<FormalParameter> parameters, Statement body, String name, TypeUsage returnType) {
         this.parameters = parameters;
-        this.parameters.forEach((p) -> p.parent = InvokableDefinition.this );
+        this.parameters.forEach((p) -> p.setParent(InvokableDefinition.this) );
         this.body = body;
-        this.body.parent = this;
+        this.body.setParent(this);
         this.name = name;
         this.returnType = returnType;
-        this.returnType.parent = this;
+        this.returnType.setParent(this);
     }
 
     public TypeUsage getReturnType() {

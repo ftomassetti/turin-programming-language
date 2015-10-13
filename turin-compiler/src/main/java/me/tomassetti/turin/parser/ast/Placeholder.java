@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.Collections;
