@@ -1,0 +1,48 @@
+namespace relations
+
+import java.util.List
+
+type Node {
+    String name
+}
+
+relation Ast {
+    one Node parent
+    many Node children
+}
+
+boolean foo1() {
+    val a = Node("A")
+    val b = Node("B")
+    val c = Node("C")
+    a.parent.set(b)
+    a.parent.set(c)
+    return a.parent.isPresent()
+}
+
+Node foo2() {
+    val a = Node("A")
+    val b = Node("B")
+    val c = Node("C")
+    a.parent.set(b)
+    a.parent.set(c)
+    return a.parent.get()
+}
+
+Node foo3() {
+    val a = Node("A")
+    val b = Node("B")
+    val c = Node("C")
+    a.parent.set(b)
+    a.parent.set(c)
+    return b.children
+}
+
+Node foo4() {
+    val a = Node("A")
+    val b = Node("B")
+    val c = Node("C")
+    a.parent.set(b)
+    a.parent.set(c)
+    return c.children
+}

@@ -219,6 +219,8 @@ public class CompilationOfPush {
         } else if (expr instanceof SuperInvokation) {
             SuperInvokation superInvokation = (SuperInvokation) expr;
             return compile(superInvokation);
+        } else if (expr instanceof RelationSubset) {
+            throw new UnsupportedOperationException();
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }

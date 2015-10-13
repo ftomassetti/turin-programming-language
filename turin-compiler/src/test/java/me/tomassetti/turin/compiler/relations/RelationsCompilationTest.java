@@ -1,5 +1,6 @@
 package me.tomassetti.turin.compiler.relations;
 
+import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.classloading.TurinClassLoader;
 import me.tomassetti.turin.compiler.AbstractCompilerTest;
@@ -11,8 +12,10 @@ import turin.relations.OneToManyRelation;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -82,5 +85,40 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         assertEquals(5, classDefinitions.size());
         assertEquals("relations.Relation_Ast", classDefinitions.get(2).getName());
     }
+
+    @Test
+    public void relationUsage() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/relation_usage.to"));
+
+        // generate bytecode
+        me.tomassetti.turin.compiler.Compiler.Options options = new Compiler.Options();
+        Compiler instance = new Compiler(getResolverFor(turinFile), options);
+        List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        assertEquals(6, classDefinitions.size());
+
+        TurinClassLoader classLoader = new TurinClassLoader();
+        Class nodeClass = classLoader.addClass(classDefinitions.get(0));
+        classLoader.addClass(classDefinitions.get(1));
+        Class foo1 = classLoader.addClass(classDefinitions.get(2));
+        Class foo2 = classLoader.addClass(classDefinitions.get(3));
+        Class foo3 = classLoader.addClass(classDefinitions.get(4));
+        Class foo4 = classLoader.addClass(classDefinitions.get(5));
+
+        // foo1 should gives true
+        Object res1 = foo1.getMethod("invoke", new Class[]{}).invoke(null);
+        assertEquals(true, res1);
+        // foo2 should gives Node("C")
+        Object res2 = foo2.getMethod("invoke", new Class[]{}).invoke(null);
+        Object nodeC = nodeClass.getConstructor(String.class).newInstance("C");
+        assertEquals(nodeC, res2);
+        // foo3 should gives []
+        Object res3 = foo3.getMethod("invoke", new Class[]{}).invoke(null);
+        assertEquals(Collections.emptyList(), res3);
+        // foo4 should gives [Node("A")]
+        Object nodeA = nodeClass.getConstructor(String.class).newInstance("A");
+        Object res4 = foo4.getMethod("invoke", new Class[]{}).invoke(null);
+        assertEquals(ImmutableList.of(nodeA), res4);
+    }
+
 
 }
