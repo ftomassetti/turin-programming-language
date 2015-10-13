@@ -22,8 +22,20 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         me.tomassetti.turin.compiler.Compiler.Options options = new Compiler.Options();
         Compiler instance = new Compiler(getResolverFor(turinFile), options);
         List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
-        assertEquals(1, classDefinitions.size());
-        assertEquals("relations.Relation_Ast", classDefinitions.get(0).getName());
+        assertEquals(3, classDefinitions.size());
+        assertEquals("relations.Relation_Ast", classDefinitions.get(2).getName());
+    }
+
+    @Test
+    public void aRelationSubsetIsGeneratedCorrectly() throws IOException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/relation_subset.to"));
+
+        // generate bytecode
+        me.tomassetti.turin.compiler.Compiler.Options options = new Compiler.Options();
+        Compiler instance = new Compiler(getResolverFor(turinFile), options);
+        List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        assertEquals(5, classDefinitions.size());
+        assertEquals("relations.Relation_Ast", classDefinitions.get(2).getName());
     }
 
 }

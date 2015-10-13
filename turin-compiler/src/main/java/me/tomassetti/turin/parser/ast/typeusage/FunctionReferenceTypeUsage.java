@@ -21,6 +21,11 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
                 '}';
     }
 
+    @Override
+    public TypeUsage copy() {
+        throw new UnsupportedOperationException();
+    }
+
     public List<TypeUsage> getParameterTypes() {
         return parameterTypes;
     }

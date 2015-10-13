@@ -13,6 +13,11 @@ public class VoidTypeUsage extends TypeUsage {
     }
 
     @Override
+    public TypeUsage copy() {
+        return this;
+    }
+
+    @Override
     public JvmType jvmType(SymbolResolver resolver) {
         return new JvmType("V");
     }

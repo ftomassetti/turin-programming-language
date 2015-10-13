@@ -12,6 +12,7 @@ public class RelationFieldDefinition extends Node {
     public RelationFieldDefinition(String name, TypeUsage type) {
         this.name = name;
         this.type = type;
+        this.type.setParent(this);
     }
 
     @Override

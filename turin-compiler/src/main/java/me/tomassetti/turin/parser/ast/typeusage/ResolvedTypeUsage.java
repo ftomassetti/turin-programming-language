@@ -32,4 +32,9 @@ public class ResolvedTypeUsage extends TypeUsage {
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
     }
+
+    @Override
+    public TypeUsage copy() {
+        return this;
+    }
 }

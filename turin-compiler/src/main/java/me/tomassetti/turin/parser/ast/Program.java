@@ -20,7 +20,6 @@ public class Program extends Node implements Named {
     }
 
     public String getParamName() {
-
         return paramName;
     }
 

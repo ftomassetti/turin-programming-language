@@ -8,6 +8,11 @@ import java.util.List;
 
 public class TypeVariableTypeUsage extends TypeUsage {
 
+    @Override
+    public TypeUsage copy() {
+        throw new UnsupportedOperationException();
+    }
+
     public static class GenericDeclaration {
 
         private String className;

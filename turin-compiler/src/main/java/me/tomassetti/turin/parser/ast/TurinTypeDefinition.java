@@ -113,7 +113,8 @@ public class TurinTypeDefinition extends TypeDefinition {
             {
                 String descriptor = "(" + property.getTypeUsage().jvmType(resolver).getDescriptor() + ")V";
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.setterName(), descriptor, false, false);
-                FormalParameter param = new FormalParameter(property.getTypeUsage(), property.getName());
+                FormalParameter param = new FormalParameter(property.getTypeUsage().copy(), property.getName());
+                param.setParent(this);
                 InternalMethodDefinition setter = new InternalMethodDefinition(property.setterName(), ImmutableList.of(param), new VoidTypeUsage(), jvmMethodDefinition);
                 registerMethod(setter);
             }
@@ -148,7 +149,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
 
         List<FormalParameter> newParams = this.assignableProperties(resolver).stream()
-                .map((p) -> new FormalParameter(p.getTypeUsage(), p.getName(), p.getDefaultValue()))
+                .map((p) -> new FormalParameter(p.getTypeUsage().copy(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
         List<FormalParameter> allParams = new LinkedList<>();
         allParams.addAll(inheritedParams);
@@ -159,6 +160,10 @@ public class TurinTypeDefinition extends TypeDefinition {
                 return Boolean.compare(o1.hasDefaultValue(), o2.hasDefaultValue());
             }
         });
+        for (FormalParameter p : allParams) {
+            // needed to solve symbols
+            p.setParent(this);
+        }
         addConstructorWithParams(allParams, resolver);
     }
 
@@ -232,6 +237,9 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     public void add(PropertyDefinition propertyDefinition){
+        if (propertyDefinition.getType().getParent() != propertyDefinition && propertyDefinition.getType().getParent().getParent() == null) {
+            throw new IllegalArgumentException();
+        }
         members.add(propertyDefinition);
         propertyDefinition.parent = this;
     }

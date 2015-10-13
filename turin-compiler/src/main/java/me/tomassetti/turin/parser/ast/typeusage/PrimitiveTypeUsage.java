@@ -159,6 +159,13 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return false;
     }
 
+    @Override
+    public TypeUsage copy() {
+        PrimitiveTypeUsage copy = new PrimitiveTypeUsage(this.name, this.jvmType, this.boxType, promotionsTypes);
+        copy.parent = this.parent;
+        return copy;
+    }
+
     public boolean isLong() {
         return this == PrimitiveTypeUsage.LONG;
     }

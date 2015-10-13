@@ -148,11 +148,14 @@ public class CompilationOfGeneratedMethods {
         Label start = new Label();
         Label end = new Label();
         mv.visitLabel(start);
-        addLocalVarForFormalParameter(new FormalParameter(property.getTypeUsage(), property.getName()), start, end, mv);
+        TypeUsage typeUsageCopy = property.getTypeUsage().copy();
+        FormalParameter formalParameter = new FormalParameter(typeUsageCopy, property.getName());
+        formalParameter.setParent(property.getParent());
+        addLocalVarForFormalParameter(formalParameter, start, end, mv);
 
         mv.visitCode();
 
-        compilation.getLocalVarsSymbolTable().add(property.getName(), new FormalParameter(property.getTypeUsage(), property.getName()));
+        compilation.getLocalVarsSymbolTable().add(property.getName(), new FormalParameter(property.getTypeUsage().copy(), property.getName()));
 
         compilation.getLocalVarsSymbolTable().recordAlias("placeholder",
                 new PushLocalVar(OpcodesUtils.loadTypeFor(jvmType), 1));

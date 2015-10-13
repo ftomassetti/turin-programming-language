@@ -105,4 +105,6 @@ public abstract class TypeUsage extends Node {
     public boolean isVoid() {
         return false;
     }
+
+    public abstract TypeUsage copy();
 }

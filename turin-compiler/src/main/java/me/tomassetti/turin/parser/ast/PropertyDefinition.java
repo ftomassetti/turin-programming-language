@@ -31,6 +31,7 @@ public class PropertyDefinition extends Node {
                               List<PropertyConstraint> constraints) {
         this.name = name;
         this.type = type;
+        this.type.setParent(this);
         this.initialValue = initialValue;
         if (initialValue.isPresent()) {
             initialValue.get().setParent(this);

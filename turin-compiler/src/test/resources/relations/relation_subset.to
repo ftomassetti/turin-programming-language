@@ -2,6 +2,15 @@ namespace relations
 
 import java.util.List
 
+type Node {
+}
+
+type FormalArgument extends Node {
+}
+
+type TypeUsage extends Node {
+}
+
 relation Ast {
     Node? parent
     List[Node] children

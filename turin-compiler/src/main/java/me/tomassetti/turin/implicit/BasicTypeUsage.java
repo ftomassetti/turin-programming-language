@@ -34,6 +34,11 @@ public class BasicTypeUsage extends TypeUsage {
     }
 
     @Override
+    public TypeUsage copy() {
+        return this;
+    }
+
+    @Override
     public boolean isPrimitive() {
         return true;
     }

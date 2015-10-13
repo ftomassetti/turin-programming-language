@@ -59,6 +59,13 @@ public class ArrayTypeUsage extends TypeUsage {
     }
 
     @Override
+    public TypeUsage copy() {
+        ArrayTypeUsage copy = new ArrayTypeUsage(this.componentType);
+        copy.parent = this.parent;
+        return copy;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -3,10 +3,7 @@ package me.tomassetti.turin.parser.analysis;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.PropertyConstraint;
-import me.tomassetti.turin.parser.ast.PropertyDefinition;
-import me.tomassetti.turin.parser.ast.PropertyReference;
+import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
@@ -51,9 +48,11 @@ public class Property extends Node {
     }
 
     public static Property fromDefinition(PropertyDefinition propertyDefinition) {
-        return new Property(propertyDefinition.getName(), propertyDefinition.getType(),
+        Property property = new Property(propertyDefinition.getName(), propertyDefinition.getType(),
                 propertyDefinition.getInitialValue(), propertyDefinition.getDefaultValue(),
                 propertyDefinition.getConstraints());
+        property.setParent(propertyDefinition.getParent());
+        return property;
     }
 
     public static Property fromReference(PropertyReference propertyReference, SymbolResolver resolver) {
@@ -61,9 +60,11 @@ public class Property extends Node {
         if (!propertyDefinition.isPresent()) {
             throw new UnsolvedSymbolException(propertyReference);
         }
-        return new Property(propertyReference.getName(), propertyDefinition.get().getType(),
+        Property property = new Property(propertyReference.getName(), propertyDefinition.get().getType(),
                 propertyDefinition.get().getInitialValue(), propertyDefinition.get().getDefaultValue(),
                 propertyDefinition.get().getConstraints());
+        property.setParent(propertyReference.getParent());
+        return property;
     }
 
     public String getName() {

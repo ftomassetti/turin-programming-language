@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.compiler.ParamUtils;
+import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
@@ -36,7 +39,6 @@ public class ReferenceTypeUsage extends TypeUsage {
     public ReferenceTypeUsage(String name) {
         this(name, false);
     }
-
 
     public ReferenceTypeUsage(String name, boolean fullyQualifiedName) {
         if (JvmNameUtils.isPrimitiveTypeName(name)) {
@@ -113,8 +115,7 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     @Override
     public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        TypeDefinition typeDefinition = getTypeDefinition(resolver);
-        return typeDefinition.findMethodFor(methodName, argsTypes, resolver, staticContext);
+        return getTypeDefinition(resolver).findMethodFor(methodName, argsTypes, resolver, staticContext);
     }
 
     @Override
@@ -124,16 +125,14 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     @Override
     public JvmType jvmType(SymbolResolver resolver) {
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
-        return typeDefinition.jvmType();
+        return getTypeDefinition(resolver).jvmType();
     }
 
     public String getQualifiedName(SymbolResolver resolver) {
         if (fullyQualifiedName) {
             return name;
         }
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(name, this, resolver);
-        return typeDefinition.getQualifiedName();
+        return getTypeDefinition(resolver).getQualifiedName();
     }
 
     @Override
@@ -173,6 +172,50 @@ public class ReferenceTypeUsage extends TypeUsage {
         return getTypeDefinition(resolver).getFieldOnInstance(fieldName, instance, resolver);
     }
 
+    @Override
+    protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
+        try {
+            getTypeDefinition(resolver);
+        } catch (UnsolvedSymbolException e) {
+            errorCollector.recordSemanticError(getPosition(), e.getMessage());
+            return false;
+        }
+        return super.specificValidate(resolver, errorCollector);
+    }
+
+    @Override
+    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        if (invokable instanceof FunctionCall) {
+            FunctionCall functionCall = (FunctionCall)invokable;
+            TypeDefinition typeDefinition = getTypeDefinition(resolver);
+            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic(resolver)));
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        TypeDefinition typeDefinition = getTypeDefinition(resolver);
+        return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+    }
+
+    @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
+    }
+
+    @Override
+    public TypeUsage copy() {
+        ReferenceTypeUsage copy = new ReferenceTypeUsage(name);
+        copy.parent = this.parent;
+        copy.cachedTypeDefinition = this.cachedTypeDefinition;
+        copy.fullyQualifiedName = this.fullyQualifiedName;
+        copy.typeParams = this.typeParams;
+        copy.typeParameterValues = this.typeParameterValues;
+        return copy;
+    }
+
     public class TypeParameterValues {
         private List<TypeUsage> usages = new ArrayList<>();
         private List<String> names = new ArrayList<>();
@@ -198,27 +241,5 @@ public class ReferenceTypeUsage extends TypeUsage {
             }
             throw new IllegalArgumentException(name);
         }
-    }
-
-    @Override
-    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        if (invokable instanceof FunctionCall) {
-            FunctionCall functionCall = (FunctionCall)invokable;
-            TypeDefinition typeDefinition = getTypeDefinition(resolver);
-            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic(resolver)));
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        TypeDefinition typeDefinition = getTypeDefinition(resolver);
-        return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
-    }
-
-    @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
     }
 }
