@@ -85,6 +85,9 @@ public class Compilation {
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, OBJECT_INTERNAL_NAME, null);
 
+        // Add the relation field, example:
+        // public static final OneToManyRelation<Professor, Course> RELATION = new OneToManyRelation<Professor, Course>();
+
         return ImmutableList.of(endClass(canonicalClassName));
     }
 

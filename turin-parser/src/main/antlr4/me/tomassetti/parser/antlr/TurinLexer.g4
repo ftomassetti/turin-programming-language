@@ -41,6 +41,8 @@ PROGRAM_KW          : 'program';
 PROPERTY_KW         : 'property';
 TYPE_KW             : 'type';
 RELATION_KW         : 'relation';
+ONE_KW              : 'one';
+MANY_KW             : 'many';
 
 SUBSET_KW           : F_SUBSET;
 OF_KW               : F_OF;

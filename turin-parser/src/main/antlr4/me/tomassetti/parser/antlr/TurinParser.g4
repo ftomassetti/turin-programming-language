@@ -291,7 +291,7 @@ relation:
     RBRACKET nls;
 
 relationField:
-    type=typeUsage name=VALUE_ID nls;
+    (one=ONE_KW | many=MANY_KW) type=typeUsage name=VALUE_ID nls;
 
 relationSubset:
     // e.g., subset of AST{parent=this}:children

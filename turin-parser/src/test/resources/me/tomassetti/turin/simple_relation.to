@@ -3,6 +3,6 @@ namespace relations
 import java.util.List
 
 relation Ast {
-    Node? parent
-    List[Node] children
+    one Node parent
+    many Node children
 }

@@ -59,12 +59,12 @@
         <dependency>
             <groupId>me.tomassetti</groupId>
             <artifactId>turin-parser</artifactId>
-            <version>0.0.1-20150924-SNAPSHOT</version>
+            <version>0.0.2-20151013-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>me.tomassetti</groupId>
             <artifactId>turin-standard-library</artifactId>
-            <version>0.0.1-20150928-SNAPSHOT</version>
+            <version>0.0.2-20151012-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>me.tomassetti</groupId>
