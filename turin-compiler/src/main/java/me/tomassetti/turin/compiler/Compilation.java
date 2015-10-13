@@ -17,6 +17,7 @@ import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
+import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
@@ -138,7 +139,46 @@ public class Compilation {
         mv.visitEnd();
         mv.visitEnd();
 
+        // generate methods to access the endpoints
+        // e.g.,    public static Relation.ReferenceSingleEndpoint<Node, Node> parentForChildrenElement(Node childrenElement){
+        //              return RELATION.getReferenceForB(childrenElement);
+        //          }
+        //
+        //          public static Relation.ReferenceMultipleEndpoint<Node, Node> childrenForParent(Node parent) {
+        //              return RELATION.getReferenceForA(parent);
+        //          }
+        switch (relationDefinition.getRelationType()) {
+            case MANY_TO_MANY:
+                generateMethodForRelationMultipleEndpoint(relationDefinition.firstField(), relationDefinition.secondField());
+                generateMethodForRelationMultipleEndpoint(relationDefinition.secondField(), relationDefinition.firstField());
+                break;
+            case ONE_TO_MANY:
+                generateMethodForRelationSingleEndpoint(relationDefinition.singleField(), relationDefinition.manyField());
+                generateMethodForRelationMultipleEndpoint(relationDefinition.manyField(), relationDefinition.singleField());
+                break;
+            case ONE_TO_ONE:
+                generateMethodForRelationSingleEndpoint(relationDefinition.firstField(), relationDefinition.secondField());
+                generateMethodForRelationSingleEndpoint(relationDefinition.secondField(), relationDefinition.firstField());
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+
         return ImmutableList.of(endClass(canonicalClassName));
+    }
+
+    // e.g.,    public static Relation.ReferenceMultipleEndpoint<Node, Node> childrenForParent(Node parent) {
+    //              return RELATION.getReferenceForA(parent);
+    //          }
+    private void generateMethodForRelationMultipleEndpoint(RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField) {
+
+    }
+
+    // e.g.,    public static Relation.ReferenceSingleEndpoint<Node, Node> parentForChildrenElement(Node childrenElement){
+    //              return RELATION.getReferenceForB(childrenElement);
+    //          }
+    private void generateMethodForRelationSingleEndpoint(RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField) {
+
     }
 
     private List<ClassFileDefinition> compile(FunctionDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
