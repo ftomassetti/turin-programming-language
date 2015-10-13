@@ -140,7 +140,15 @@ class ParseTreeToAst {
     }
 
     private RelationFieldDefinition toAst(TurinParser.RelationFieldContext ctx) {
-        RelationFieldDefinition relationFieldDefinition = new RelationFieldDefinition(ctx.name.getText(), toAst(ctx.type));
+        RelationFieldDefinition.Cardinality cardinality = null;
+        if (ctx.one != null) {
+            cardinality = RelationFieldDefinition.Cardinality.SINGLE;
+        } else if (ctx.many != null) {
+            cardinality = RelationFieldDefinition.Cardinality.MANY;
+        } else {
+            throw new UnsupportedOperationException();
+        }
+        RelationFieldDefinition relationFieldDefinition = new RelationFieldDefinition(cardinality, ctx.name.getText(), toAst(ctx.type));
         getPositionFrom(relationFieldDefinition, ctx);
         return relationFieldDefinition;
     }

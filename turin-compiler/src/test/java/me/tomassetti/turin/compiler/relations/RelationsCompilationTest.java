@@ -7,6 +7,7 @@ import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Test;
+import turin.relations.OneToManyRelation;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -15,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class RelationsCompilationTest extends AbstractCompilerTest {
@@ -48,7 +50,7 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
      */
 
     @Test
-    public void theGeneratedRelationClassHasStaticFieldNeeded() throws IOException {
+    public void theGeneratedRelationClassHasStaticFieldNeeded() throws IOException, IllegalAccessException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/simple_relation.to"));
 
         // generate bytecode
@@ -62,6 +64,9 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         assertEquals("RELATION", field.getName());
         assertTrue(Modifier.isStatic(field.getModifiers()));
         assertTrue(Modifier.isFinal(field.getModifiers()));
+        Object value = field.get(null);
+        assertNotNull(value);
+        assertEquals(OneToManyRelation.class.getCanonicalName(), value.getClass().getCanonicalName());
     }
 
     @Test

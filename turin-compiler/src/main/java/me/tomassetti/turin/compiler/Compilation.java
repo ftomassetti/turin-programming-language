@@ -20,6 +20,9 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
+import turin.relations.ManyToManyRelation;
+import turin.relations.OneToManyRelation;
+import turin.relations.OneToOneRelation;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,8 +80,8 @@ public class Compilation {
         return classFileDefinitions;
     }
 
-    private List<ClassFileDefinition> compile(RelationDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
-        String canonicalClassName = namespaceDefinition.getName() + "." + RelationDefinition.CLASS_PREFIX + functionDefinition.getName();
+    private List<ClassFileDefinition> compile(RelationDefinition relationDefinition, NamespaceDefinition namespaceDefinition) {
+        String canonicalClassName = namespaceDefinition.getName() + "." + RelationDefinition.CLASS_PREFIX + relationDefinition.getName();
         String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
@@ -87,6 +90,53 @@ public class Compilation {
 
         // Add the relation field, example:
         // public static final OneToManyRelation<Professor, Course> RELATION = new OneToManyRelation<Professor, Course>();
+        String fieldDescriptor = null;
+        String fieldSignature = null;
+        String fieldTypeInternalName = null;
+        switch (relationDefinition.getRelationType()) {
+            case MANY_TO_MANY:
+                fieldDescriptor = JvmNameUtils.canonicalToDescriptor(ManyToManyRelation.class.getCanonicalName());
+                fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
+                fieldSignature += "<";
+                fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
+                fieldSignature += relationDefinition.secondField().getType().jvmType(resolver).getSignature();
+                fieldSignature += ">;";
+                fieldTypeInternalName = JvmNameUtils.canonicalToInternal(ManyToManyRelation.class.getCanonicalName());
+                break;
+            case ONE_TO_MANY:
+                fieldDescriptor = JvmNameUtils.canonicalToDescriptor(OneToManyRelation.class.getCanonicalName());
+                fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
+                fieldSignature += "<";
+                fieldSignature += relationDefinition.singleField().getType().jvmType(resolver).getSignature();
+                fieldSignature += relationDefinition.manyField().getType().jvmType(resolver).getSignature();
+                fieldSignature += ">;";
+                fieldTypeInternalName = JvmNameUtils.canonicalToInternal(OneToManyRelation.class.getCanonicalName());
+                break;
+            case ONE_TO_ONE:
+                fieldDescriptor = JvmNameUtils.canonicalToDescriptor(OneToOneRelation.class.getCanonicalName());
+                fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
+                fieldSignature += "<";
+                fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
+                fieldSignature += relationDefinition.secondField().getType().jvmType(resolver).getSignature();
+                fieldTypeInternalName = JvmNameUtils.canonicalToInternal(OneToOneRelation.class.getCanonicalName());
+                fieldSignature += ">;";
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+        final String fieldName = "RELATION";
+        cw.visitField(ACC_PUBLIC + ACC_STATIC + ACC_FINAL, fieldName, fieldDescriptor, fieldSignature, null);
+
+        // initialize the field in a static initializer
+        MethodVisitor mv = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+        mv.visitTypeInsn(NEW, fieldTypeInternalName);
+        mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESPECIAL, fieldTypeInternalName, "<init>", "()V");
+        mv.visitFieldInsn(PUTSTATIC, internalClassName, fieldName, fieldDescriptor);
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+        mv.visitEnd();
 
         return ImmutableList.of(endClass(canonicalClassName));
     }

@@ -9,7 +9,27 @@ public class RelationFieldDefinition extends Node {
     private String name;
     private TypeUsage type;
 
-    public RelationFieldDefinition(String name, TypeUsage type) {
+    public enum Cardinality {
+        SINGLE,
+        MANY
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public TypeUsage getType() {
+        return type;
+    }
+
+    public Cardinality getCardinality() {
+        return cardinality;
+    }
+
+    private Cardinality cardinality;
+
+    public RelationFieldDefinition(Cardinality cardinality, String name, TypeUsage type) {
+        this.cardinality = cardinality;
         this.name = name;
         this.type = type;
         this.type.setParent(this);

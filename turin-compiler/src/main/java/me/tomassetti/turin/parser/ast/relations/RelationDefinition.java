@@ -24,6 +24,36 @@ public class RelationDefinition extends Node {
         return name;
     }
 
+    public RelationFieldDefinition firstField() {
+        return fields.get(0);
+    }
+
+    public RelationFieldDefinition secondField() {
+        return fields.get(1);
+    }
+
+    public RelationFieldDefinition singleField() {
+        if (getRelationType() != Type.ONE_TO_MANY) {
+            throw new IllegalStateException();
+        }
+        if (fields.get(0).getCardinality() == RelationFieldDefinition.Cardinality.SINGLE) {
+            return fields.get(0);
+        } else {
+            return fields.get(1);
+        }
+    }
+
+    public RelationFieldDefinition manyField() {
+        if (getRelationType() != Type.ONE_TO_MANY) {
+            throw new IllegalStateException();
+        }
+        if (fields.get(0).getCardinality() == RelationFieldDefinition.Cardinality.MANY) {
+            return fields.get(0);
+        } else {
+            return fields.get(1);
+        }
+    }
+
     public List<RelationFieldDefinition> getFields() {
         return fields;
     }
@@ -44,7 +74,26 @@ public class RelationDefinition extends Node {
     }
 
     public Type getRelationType() {
-        throw new UnsupportedOperationException();
+        int nMany = 0;
+        int nSingle = 0;
+        for (RelationFieldDefinition field : fields) {
+            if (field.getCardinality() == RelationFieldDefinition.Cardinality.SINGLE) {
+                nSingle++;
+            } else if (field.getCardinality() == RelationFieldDefinition.Cardinality.MANY) {
+                nMany++;
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        }
+        if (nMany == 2 && nSingle == 0) {
+            return Type.MANY_TO_MANY;
+        } else if (nMany == 0 && nSingle == 2) {
+            return Type.ONE_TO_ONE;
+        } else if (nMany == 1 && nSingle == 1) {
+            return Type.ONE_TO_MANY;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
