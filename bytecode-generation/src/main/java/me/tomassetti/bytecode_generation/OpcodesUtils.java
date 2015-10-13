@@ -1,4 +1,4 @@
-package me.tomassetti.turin.compiler;
+package me.tomassetti.bytecode_generation;
 
 import me.tomassetti.jvm.JvmType;
 

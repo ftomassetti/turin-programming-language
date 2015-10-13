@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static me.tomassetti.turin.compiler.BoxUnboxing.box;
-import static me.tomassetti.turin.compiler.OpcodesUtils.loadTypeFor;
+import static me.tomassetti.bytecode_generation.OpcodesUtils.loadTypeFor;
 
 public class CompilationOfPush {
     private final Compilation compilation;

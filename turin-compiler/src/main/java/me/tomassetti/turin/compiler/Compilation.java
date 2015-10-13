@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
 import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
 import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
-import me.tomassetti.jvm.JvmConstructorDefinition;
-import me.tomassetti.jvm.JvmMethodDefinition;
-import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.jvm.JvmType;
+import me.tomassetti.jvm.*;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
@@ -32,7 +29,7 @@ import turin.relations.Relation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static me.tomassetti.turin.compiler.OpcodesUtils.*;
+import static me.tomassetti.bytecode_generation.OpcodesUtils.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
