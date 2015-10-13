@@ -5,9 +5,6 @@ import java.util.List
 type Node {
 }
 
-type FormalArgument extends Node {
-}
-
 relation Ast {
     one Node parent
     many Node children

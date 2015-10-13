@@ -127,4 +127,22 @@ public final class JvmNameUtils {
     public static String canonicalToDescriptor(String canonicalName) {
         return "L" + canonicalToInternal(canonicalName) + ";";
     }
+
+    public static String descriptor(Class<?> clazz) {
+        if (clazz.isMemberClass()) {
+            String container = descriptor(clazz.getDeclaringClass());
+            return container.substring(0, container.length() - 1) + "$" + clazz.getSimpleName() + ";";
+        } else {
+            return canonicalToDescriptor(clazz.getCanonicalName());
+        }
+    }
+
+    public static String internalName(Class<?> clazz) {
+        if (clazz.isMemberClass()) {
+            String container = descriptor(clazz.getDeclaringClass());
+            return container + "$" + clazz.getSimpleName();
+        } else {
+            return canonicalToInternal(clazz.getCanonicalName());
+        }
+    }
 }

@@ -2,6 +2,8 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
+import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
+import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
@@ -19,11 +21,13 @@ import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.util.StringUtils;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
 import turin.relations.ManyToManyRelation;
 import turin.relations.OneToManyRelation;
 import turin.relations.OneToOneRelation;
+import turin.relations.Relation;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,30 +100,30 @@ public class Compilation {
         String fieldTypeInternalName = null;
         switch (relationDefinition.getRelationType()) {
             case MANY_TO_MANY:
-                fieldDescriptor = JvmNameUtils.canonicalToDescriptor(ManyToManyRelation.class.getCanonicalName());
+                fieldDescriptor = JvmNameUtils.descriptor(ManyToManyRelation.class);
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
                 fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
                 fieldSignature += relationDefinition.secondField().getType().jvmType(resolver).getSignature();
                 fieldSignature += ">;";
-                fieldTypeInternalName = JvmNameUtils.canonicalToInternal(ManyToManyRelation.class.getCanonicalName());
+                fieldTypeInternalName = JvmNameUtils.internalName(ManyToManyRelation.class);
                 break;
             case ONE_TO_MANY:
-                fieldDescriptor = JvmNameUtils.canonicalToDescriptor(OneToManyRelation.class.getCanonicalName());
+                fieldDescriptor = JvmNameUtils.descriptor(OneToManyRelation.class);
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
                 fieldSignature += relationDefinition.singleField().getType().jvmType(resolver).getSignature();
                 fieldSignature += relationDefinition.manyField().getType().jvmType(resolver).getSignature();
                 fieldSignature += ">;";
-                fieldTypeInternalName = JvmNameUtils.canonicalToInternal(OneToManyRelation.class.getCanonicalName());
+                fieldTypeInternalName = JvmNameUtils.internalName(OneToManyRelation.class);
                 break;
             case ONE_TO_ONE:
-                fieldDescriptor = JvmNameUtils.canonicalToDescriptor(OneToOneRelation.class.getCanonicalName());
+                fieldDescriptor = JvmNameUtils.descriptor(OneToOneRelation.class);
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
                 fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
                 fieldSignature += relationDefinition.secondField().getType().jvmType(resolver).getSignature();
-                fieldTypeInternalName = JvmNameUtils.canonicalToInternal(OneToOneRelation.class.getCanonicalName());
+                fieldTypeInternalName = JvmNameUtils.internalName(OneToOneRelation.class);
                 fieldSignature += ">;";
                 break;
             default:
@@ -137,7 +141,6 @@ public class Compilation {
         mv.visitInsn(RETURN);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
-        mv.visitEnd();
 
         // generate methods to access the endpoints
         // e.g.,    public static Relation.ReferenceSingleEndpoint<Node, Node> parentForChildrenElement(Node childrenElement){
@@ -149,16 +152,34 @@ public class Compilation {
         //          }
         switch (relationDefinition.getRelationType()) {
             case MANY_TO_MANY:
-                generateMethodForRelationMultipleEndpoint(relationDefinition.firstField(), relationDefinition.secondField());
-                generateMethodForRelationMultipleEndpoint(relationDefinition.secondField(), relationDefinition.firstField());
+                generateMethodForRelationMultipleEndpoint(cw, relationDefinition.firstField(), relationDefinition.secondField(),
+                        relationDefinition.firstField().getType(),
+                        relationDefinition.secondField().getType(),
+                        true);
+                generateMethodForRelationMultipleEndpoint(cw, relationDefinition.secondField(), relationDefinition.firstField(),
+                        relationDefinition.firstField().getType(),
+                        relationDefinition.secondField().getType(),
+                        false);
                 break;
             case ONE_TO_MANY:
-                generateMethodForRelationSingleEndpoint(relationDefinition.singleField(), relationDefinition.manyField());
-                generateMethodForRelationMultipleEndpoint(relationDefinition.manyField(), relationDefinition.singleField());
+                generateMethodForRelationSingleEndpoint(cw, relationDefinition.singleField(), relationDefinition.manyField(),
+                        relationDefinition.singleField().getType(),
+                        relationDefinition.manyField().getType(),
+                        true);
+                generateMethodForRelationMultipleEndpoint(cw, relationDefinition.manyField(), relationDefinition.singleField(),
+                        relationDefinition.singleField().getType(),
+                        relationDefinition.manyField().getType(),
+                        false);
                 break;
             case ONE_TO_ONE:
-                generateMethodForRelationSingleEndpoint(relationDefinition.firstField(), relationDefinition.secondField());
-                generateMethodForRelationSingleEndpoint(relationDefinition.secondField(), relationDefinition.firstField());
+                generateMethodForRelationSingleEndpoint(cw, relationDefinition.firstField(), relationDefinition.secondField(),
+                        relationDefinition.firstField().getType(),
+                        relationDefinition.secondField().getType(),
+                        true);
+                generateMethodForRelationSingleEndpoint(cw, relationDefinition.secondField(), relationDefinition.firstField(),
+                        relationDefinition.firstField().getType(),
+                        relationDefinition.secondField().getType(),
+                        false);
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -170,15 +191,55 @@ public class Compilation {
     // e.g.,    public static Relation.ReferenceMultipleEndpoint<Node, Node> childrenForParent(Node parent) {
     //              return RELATION.getReferenceForA(parent);
     //          }
-    private void generateMethodForRelationMultipleEndpoint(RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField) {
-
+    private void generateMethodForRelationMultipleEndpoint(ClassWriter cw, RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField,
+                    TypeUsage firstParamType, TypeUsage secondParamType, boolean accessingFirstField) {
+        String methodName = fieldAccessed.getName() + "For" + StringUtils.capitalize(otherField.getName());
+        String descriptor = "(" + otherField.getType().jvmType(resolver).getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class);
+        String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
+                + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class)
+                + "<"
+                + firstParamType.jvmType(resolver).getSignature()
+                + secondParamType.jvmType(resolver).getSignature()
+                + ">";
+        // TODO record parameter name
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, methodName, descriptor, signature, null);
+        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
+        String invokedMethodName = accessingFirstField ? "getReferenceForA" : "getReferenceForB";
+        JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
+                JvmNameUtils.canonicalToInternal(Relation.class.getCanonicalName()),
+                invokedMethodName,
+                "(" + JvmNameUtils.descriptor(Object.class) + ")" + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class),
+                true, false);
+        new ReturnValueBS(Opcodes.ARETURN, new MethodInvocationBS(methodDefinition)).operate(mv);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     // e.g.,    public static Relation.ReferenceSingleEndpoint<Node, Node> parentForChildrenElement(Node childrenElement){
     //              return RELATION.getReferenceForB(childrenElement);
     //          }
-    private void generateMethodForRelationSingleEndpoint(RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField) {
-
+    private void generateMethodForRelationSingleEndpoint(ClassWriter cw, RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField,
+                                                         TypeUsage firstParamType, TypeUsage secondParamType, boolean accessingFirstField) {
+        String methodName = fieldAccessed.getName() + "For" + StringUtils.capitalize(otherField.getName()) + "Element";
+        String descriptor = "(" + otherField.getType().jvmType(resolver).getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class);
+        String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
+                + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class)
+                + "<"
+                + firstParamType.jvmType(resolver).getSignature()
+                + secondParamType.jvmType(resolver).getSignature()
+                + ">";
+        // TODO record parameter name
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, methodName, descriptor, signature, null);
+        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
+        String invokedMethodName = accessingFirstField ? "getReferenceForA" : "getReferenceForB";
+        JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
+                JvmNameUtils.canonicalToInternal(Relation.class.getCanonicalName()),
+                invokedMethodName,
+                "(" + JvmNameUtils.descriptor(Object.class) + ")" + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class),
+                true, false);
+        new ReturnValueBS(Opcodes.ARETURN, new MethodInvocationBS(methodDefinition)).operate(mv);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     private List<ClassFileDefinition> compile(FunctionDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
