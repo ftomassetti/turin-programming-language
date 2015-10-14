@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -20,6 +21,11 @@ public class PrimitiveTypeUsage extends TypeUsage {
     private String name;
     private JvmType jvmType;
     private List<PrimitiveTypeUsage> promotionsTypes;
+
+    @Override
+    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+        return this;
+    }
 
     public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),
             new ReferenceTypeUsage(Boolean.class.getCanonicalName()));

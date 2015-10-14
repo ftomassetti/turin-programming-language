@@ -101,7 +101,9 @@ class ReflectionBasedMethodResolution {
             if (typeVariables.containsKey(typeVariable.getName())) {
                 return typeVariables.get(typeVariable.getName());
             } else {
-                throw new UnsolvedSymbolException("Cannot solve type variable " + typeVariable.getName());
+                Class c = (Class)typeVariable.getGenericDeclaration();
+                //throw new UnsolvedSymbolException("Cannot solve type variable " + typeVariable.getName());
+                return new TypeVariableTypeUsage(TypeVariableTypeUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
             }
         } else if (typeVariable.getGenericDeclaration() instanceof Method) {
             Method method = (Method)typeVariable.getGenericDeclaration();

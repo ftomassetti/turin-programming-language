@@ -19,6 +19,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -186,4 +187,5 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
 
+    public abstract Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams);
 }

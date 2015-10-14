@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -107,4 +108,8 @@ public abstract class TypeUsage extends Node {
     }
 
     public abstract TypeUsage copy();
+
+    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 }

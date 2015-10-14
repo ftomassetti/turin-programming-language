@@ -35,6 +35,10 @@ public abstract class JvmInvokableDefinition {
         return toJvmType(typeSignature);
     }
 
+    public String getReturnTypeDescriptor() {
+        return descriptor.substring(descriptor.indexOf(')') + 1);
+    }
+
     private JvmType toJvmType(TypeSignature typeSignature) {
         if (typeSignature instanceof LongSignature) {
             return JvmType.LONG;

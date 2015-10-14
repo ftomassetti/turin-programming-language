@@ -108,6 +108,23 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams) {
+        if (typeParams.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        if (clazz.getTypeParameters().length != typeParams.size()) {
+            throw new IllegalStateException("It should have " + clazz.getTypeParameters().length + " and it has " + typeParams.size());
+        }
+        Map<String, TypeUsage> map = new HashMap<>();
+        int i=0;
+        for (TypeVariable tv : clazz.getTypeParameters()) {
+            map.put(tv.getName(), typeParams.get(i));
+            i++;
+        }
+        return map;
+    }
+
+    @Override
     public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
                 actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
@@ -169,7 +186,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     private InternalMethodDefinition toInternalMethodDefinition(Method method) {
-        return new InternalMethodDefinition(method.getName(), formalParameters(method), toTypeUsage(method.getReturnType()),
+        return new InternalMethodDefinition(method.getName(), formalParameters(method), toTypeUsage(method.getGenericReturnType()),
                 ReflectionTypeDefinitionFactory.toMethodDefinition(method));
     }
 
@@ -181,6 +198,8 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return ReflectionBasedMethodResolution.formalParameters(method, getTypeVariables());
     }
 
+    // Type parameters should be part of the usage
+    @Deprecated
     private Map<String, TypeUsage> getTypeVariables() {
         Map<String, TypeUsage> map = new HashMap<>();
         if (clazz.getTypeParameters().length != typeParameters.size()) {

@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * It could represent also a reference to a Type Variable.
@@ -197,12 +198,32 @@ public class ReferenceTypeUsage extends TypeUsage {
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
-        return typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+        TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+        return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
+    }
+
+    @Override
+    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+        if (this.typeParams.size() == 0) {
+            return this;
+        }
+        List<TypeUsage> replacedParams = this.typeParams.stream().map((tp)->tp.replaceTypeVariables(typeParams)).collect(Collectors.toList());
+        if (!replacedParams.equals(this.typeParams)) {
+            ReferenceTypeUsage copy = (ReferenceTypeUsage) this.copy();
+            copy.typeParams = replacedParams;
+            return copy;
+        } else {
+            return this;
+        }
     }
 
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
         return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
+    }
+
+    public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
+        return getTypeDefinition(resolver).associatedTypeParametersToName(resolver, typeParams);
     }
 
     @Override

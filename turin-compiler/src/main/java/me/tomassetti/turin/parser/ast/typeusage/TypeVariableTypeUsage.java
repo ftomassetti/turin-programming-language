@@ -5,12 +5,22 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.List;
+import java.util.Map;
 
 public class TypeVariableTypeUsage extends TypeUsage {
 
     @Override
     public TypeUsage copy() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+        if (typeParams.containsKey(name)) {
+            return typeParams.get(name).copy();
+        } else {
+            return this;
+        }
     }
 
     public static class GenericDeclaration {

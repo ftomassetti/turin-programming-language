@@ -502,6 +502,11 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
+    public Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams) {
+        return Collections.emptyMap();
+    }
+
+    @Override
     public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         for (InternalConstructorDefinition constructor : constructors) {
             if (constructor.match(resolver, actualParams)) {

@@ -2,6 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
+import me.tomassetti.bytecode_generation.logicalop.CastBS;
 import me.tomassetti.bytecode_generation.logicalop.LogicalAndBS;
 import me.tomassetti.bytecode_generation.logicalop.LogicalNotBS;
 import me.tomassetti.bytecode_generation.logicalop.LogicalOrBS;
@@ -224,13 +225,24 @@ public class CompilationOfPush {
             }
         } else if (expr instanceof InstanceMethodInvokation) {
             InstanceMethodInvokation instanceMethodInvokation = (InstanceMethodInvokation) expr;
+
+            // TODO cast result when it involves generics
+
             instanceMethodInvokation.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
-            return new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
+            TypeUsage returnType = instanceMethodInvokation.calcType(compilation.getResolver());
+            String typeReturnedFromMethod = methodDefinition.getReturnTypeDescriptor();
+            // This could happen because of generics: in this case a cast is needed
+            BytecodeSequence invokationBS = new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
                     .add(instancePush)
                     .add(adaptAndPushAllParameters(instanceMethodInvokation.getActualParamValuesInOrder(), methodDefinition))
                     .add(new MethodInvocationBS(methodDefinition)).build());
+            if (!returnType.jvmType(compilation.getResolver()).getDescriptor().equals(typeReturnedFromMethod)){
+                return new ComposedBytecodeSequence(invokationBS, new CastBS(returnType.jvmType(compilation.getResolver()).getInternalName()));
+            } else {
+                return invokationBS;
+            }
         } else if (expr instanceof Placeholder) {
             return compilation.getLocalVarsSymbolTable().getAlias("placeholder");
         } else if (expr instanceof ThisExpression) {

@@ -19,6 +19,7 @@ import turin.compilation.DefaultParam;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -414,6 +415,30 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public TypeDefinition getSuperclass(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams) {
+        if (typeParams.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        String genericSignature = ctClass.getGenericSignature();
+        try {
+            SignatureAttribute.ClassSignature classSignature =SignatureAttribute.toClassSignature(genericSignature);
+            SignatureAttribute.TypeParameter[] typeParameters = classSignature.getParameters();
+            if (typeParameters.length != typeParams.size()) {
+                throw new IllegalStateException("It should have " + typeParameters.length + " and it has " + typeParams.size());
+            }
+            Map<String, TypeUsage> map = new HashMap<>();
+            int i=0;
+            for (SignatureAttribute.TypeParameter tv : typeParameters) {
+                map.put(tv.getName(), typeParams.get(i));
+                i++;
+            }
+            return map;
+        } catch (BadBytecode badBytecode) {
+            throw new RuntimeException(badBytecode);
+        }
     }
 
     @Override

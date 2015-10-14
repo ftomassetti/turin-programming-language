@@ -1,0 +1,1095 @@
+Classfile /home/federico/repos/turin-programming-language/turin-standard-library/target/test-classes/turin/relations/OneToManyRelationTest.class
+  Last modified 14-Oct-2015; size 5724 bytes
+  MD5 checksum 2b5b1be417a8b9574ce770ff5803431c
+  Compiled from "OneToManyRelationTest.java"
+public class turin.relations.OneToManyRelationTest
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+    #1 = Methodref          #31.#82       // java/lang/Object."<init>":()V
+    #2 = Class              #83           // turin/relations/Course
+    #3 = String             #84           // Math I
+    #4 = Methodref          #2.#85        // turin/relations/Course."<init>":(ILjava/lang/String;)V
+    #5 = String             #86           // Math II
+    #6 = String             #87           // Economics I
+    #7 = Class              #88           // turin/relations/Professor
+    #8 = String             #89           // Abraham
+    #9 = Methodref          #7.#90        // turin/relations/Professor."<init>":(Ljava/lang/String;)V
+   #10 = String             #91           // James
+   #11 = Fieldref           #92.#93       // turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+   #12 = Methodref          #94.#95       // turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+   #13 = Methodref          #92.#96       // turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+   #14 = Methodref          #97.#98       // java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+   #15 = Methodref          #48.#99       // turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+   #16 = Methodref          #100.#101     // org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+   #17 = Methodref          #48.#102      // turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+   #18 = Methodref          #7.#103       // turin/relations/Professor.getName:()Ljava/lang/String;
+   #19 = Methodref          #92.#104      // turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+   #20 = Long               2l
+   #22 = Methodref          #60.#105      // turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+   #23 = Methodref          #100.#106     // org/junit/Assert.assertEquals:(JJ)V
+   #24 = Methodref          #60.#107      // turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+   #25 = String             #108          // Info I
+   #26 = String             #109          // Info II
+   #27 = Methodref          #94.#110      // turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+   #28 = Methodref          #94.#111      // turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+   #29 = Methodref          #92.#112      // turin/relations/Teaching.subsetOfCoursesTaughtBy:(Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+   #30 = Class              #113          // turin/relations/OneToManyRelationTest
+   #31 = Class              #114          // java/lang/Object
+   #32 = Utf8               <init>
+   #33 = Utf8               ()V
+   #34 = Utf8               Code
+   #35 = Utf8               LineNumberTable
+   #36 = Utf8               LocalVariableTable
+   #37 = Utf8               this
+   #38 = Utf8               Lturin/relations/OneToManyRelationTest;
+   #39 = Utf8               settingALinkTheTeacherIsSet
+   #40 = Utf8               math1
+   #41 = Utf8               Lturin/relations/Course;
+   #42 = Utf8               math2
+   #43 = Utf8               eco1
+   #44 = Utf8               prof1
+   #45 = Utf8               Lturin/relations/Professor;
+   #46 = Utf8               prof2
+   #47 = Utf8               teacherOfMath1
+   #48 = Class              #116          // turin/relations/Relation$ReferenceSingleEndpoint
+   #49 = Utf8               ReferenceSingleEndpoint
+   #50 = Utf8               InnerClasses
+   #51 = Utf8               Lturin/relations/Relation$ReferenceSingleEndpoint;
+   #52 = Utf8               teacherOfMath2
+   #53 = Utf8               teacherOfEco1
+   #54 = Utf8               LocalVariableTypeTable
+   #55 = Utf8               Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+   #56 = Utf8               RuntimeVisibleAnnotations
+   #57 = Utf8               Lorg/junit/Test;
+   #58 = Utf8               settingALinkTheCoursesAreSet
+   #59 = Utf8               coursesTaughtByAbraham
+   #60 = Class              #117          // turin/relations/Relation$ReferenceMultipleEndpoint
+   #61 = Utf8               ReferenceMultipleEndpoint
+   #62 = Utf8               Lturin/relations/Relation$ReferenceMultipleEndpoint;
+   #63 = Utf8               coursesTaughtByJames
+   #64 = Utf8               aLinkCanReplaceThePreviousProfessor
+   #65 = Utf8               usingSubsetsDoNotMessUpReferencesEndpoints
+   #66 = Utf8               info1
+   #67 = Utf8               info2
+   #68 = Utf8               abrahamTeach1stSemester
+   #69 = Utf8               Lturin/relations/Subset;
+   #70 = Utf8               abrahamTeach2ndSemester
+   #71 = Utf8               jamesTeach1stSemester
+   #72 = Utf8               jamesTeach2ndSemester
+   #73 = Utf8               teacherOfInfo1
+   #74 = Utf8               teacherOfInfo2
+   #75 = Utf8               subsetsAreDistinct
+   #76 = Utf8               coursesTaughtByAbraham1stSemester
+   #77 = Utf8               coursesTaughtByAbraham2ndSemester
+   #78 = Utf8               coursesTaughtByJames1stSemester
+   #79 = Utf8               coursesTaughtByJames2ndSemester
+   #80 = Utf8               SourceFile
+   #81 = Utf8               OneToManyRelationTest.java
+   #82 = NameAndType        #32:#33       // "<init>":()V
+   #83 = Utf8               turin/relations/Course
+   #84 = Utf8               Math I
+   #85 = NameAndType        #32:#118      // "<init>":(ILjava/lang/String;)V
+   #86 = Utf8               Math II
+   #87 = Utf8               Economics I
+   #88 = Utf8               turin/relations/Professor
+   #89 = Utf8               Abraham
+   #90 = NameAndType        #32:#119      // "<init>":(Ljava/lang/String;)V
+   #91 = Utf8               James
+   #92 = Class              #120          // turin/relations/Teaching
+   #93 = NameAndType        #121:#122     // RELATION:Lturin/relations/OneToManyRelation;
+   #94 = Class              #123          // turin/relations/OneToManyRelation
+   #95 = NameAndType        #124:#125     // link:(Ljava/lang/Object;Ljava/lang/Object;)V
+   #96 = NameAndType        #126:#127     // getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+   #97 = Class              #128          // java/lang/Boolean
+   #98 = NameAndType        #129:#130     // valueOf:(Z)Ljava/lang/Boolean;
+   #99 = NameAndType        #131:#132     // isPresent:()Z
+  #100 = Class              #133          // org/junit/Assert
+  #101 = NameAndType        #134:#125     // assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+  #102 = NameAndType        #135:#136     // get:()Ljava/lang/Object;
+  #103 = NameAndType        #137:#138     // getName:()Ljava/lang/String;
+  #104 = NameAndType        #139:#140     // coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+  #105 = NameAndType        #141:#142     // size:()I
+  #106 = NameAndType        #134:#143     // assertEquals:(JJ)V
+  #107 = NameAndType        #144:#145     // contains:(Ljava/lang/Object;)Z
+  #108 = Utf8               Info I
+  #109 = Utf8               Info II
+  #110 = NameAndType        #146:#147     // newBSubset:()Lturin/relations/Subset;
+  #111 = NameAndType        #124:#148     // link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+  #112 = NameAndType        #149:#150     // subsetOfCoursesTaughtBy:(Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+  #113 = Utf8               turin/relations/OneToManyRelationTest
+  #114 = Utf8               java/lang/Object
+  #115 = Class              #151          // turin/relations/Relation
+  #116 = Utf8               turin/relations/Relation$ReferenceSingleEndpoint
+  #117 = Utf8               turin/relations/Relation$ReferenceMultipleEndpoint
+  #118 = Utf8               (ILjava/lang/String;)V
+  #119 = Utf8               (Ljava/lang/String;)V
+  #120 = Utf8               turin/relations/Teaching
+  #121 = Utf8               RELATION
+  #122 = Utf8               Lturin/relations/OneToManyRelation;
+  #123 = Utf8               turin/relations/OneToManyRelation
+  #124 = Utf8               link
+  #125 = Utf8               (Ljava/lang/Object;Ljava/lang/Object;)V
+  #126 = Utf8               getTeacherOf
+  #127 = Utf8               (Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+  #128 = Utf8               java/lang/Boolean
+  #129 = Utf8               valueOf
+  #130 = Utf8               (Z)Ljava/lang/Boolean;
+  #131 = Utf8               isPresent
+  #132 = Utf8               ()Z
+  #133 = Utf8               org/junit/Assert
+  #134 = Utf8               assertEquals
+  #135 = Utf8               get
+  #136 = Utf8               ()Ljava/lang/Object;
+  #137 = Utf8               getName
+  #138 = Utf8               ()Ljava/lang/String;
+  #139 = Utf8               coursesTaughtBy
+  #140 = Utf8               (Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+  #141 = Utf8               size
+  #142 = Utf8               ()I
+  #143 = Utf8               (JJ)V
+  #144 = Utf8               contains
+  #145 = Utf8               (Ljava/lang/Object;)Z
+  #146 = Utf8               newBSubset
+  #147 = Utf8               ()Lturin/relations/Subset;
+  #148 = Utf8               (Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+  #149 = Utf8               subsetOfCoursesTaughtBy
+  #150 = Utf8               (Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+  #151 = Utf8               turin/relations/Relation
+{
+  public turin.relations.OneToManyRelationTest();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 7: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lturin/relations/OneToManyRelationTest;
+
+  public void settingALinkTheTeacherIsSet();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=4, locals=9, args_size=1
+         0: new           #2                  // class turin/relations/Course
+         3: dup
+         4: bipush        100
+         6: ldc           #3                  // String Math I
+         8: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        11: astore_1
+        12: new           #2                  // class turin/relations/Course
+        15: dup
+        16: bipush        101
+        18: ldc           #5                  // String Math II
+        20: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        23: astore_2
+        24: new           #2                  // class turin/relations/Course
+        27: dup
+        28: sipush        200
+        31: ldc           #6                  // String Economics I
+        33: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        36: astore_3
+        37: new           #7                  // class turin/relations/Professor
+        40: dup
+        41: ldc           #8                  // String Abraham
+        43: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        46: astore        4
+        48: new           #7                  // class turin/relations/Professor
+        51: dup
+        52: ldc           #10                 // String James
+        54: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        57: astore        5
+        59: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        62: aload         4
+        64: aload_1
+        65: invokevirtual #12                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+        68: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        71: aload         4
+        73: aload_2
+        74: invokevirtual #12                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+        77: aload_1
+        78: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+        81: astore        6
+        83: aload_2
+        84: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+        87: astore        7
+        89: aload_3
+        90: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+        93: astore        8
+        95: iconst_1
+        96: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+        99: aload         6
+       101: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       104: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       107: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       110: ldc           #8                  // String Abraham
+       112: aload         6
+       114: invokevirtual #17                 // Method turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+       117: checkcast     #7                  // class turin/relations/Professor
+       120: invokevirtual #18                 // Method turin/relations/Professor.getName:()Ljava/lang/String;
+       123: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       126: iconst_1
+       127: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       130: aload         7
+       132: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       135: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       138: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       141: ldc           #8                  // String Abraham
+       143: aload         7
+       145: invokevirtual #17                 // Method turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+       148: checkcast     #7                  // class turin/relations/Professor
+       151: invokevirtual #18                 // Method turin/relations/Professor.getName:()Ljava/lang/String;
+       154: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       157: iconst_0
+       158: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       161: aload         8
+       163: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       166: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       169: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       172: return
+      LineNumberTable:
+        line 11: 0
+        line 12: 12
+        line 13: 24
+        line 15: 37
+        line 16: 48
+        line 18: 59
+        line 19: 68
+        line 21: 77
+        line 22: 83
+        line 23: 89
+        line 25: 95
+        line 26: 110
+        line 28: 126
+        line 29: 141
+        line 31: 157
+        line 32: 172
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0     173     0  this   Lturin/relations/OneToManyRelationTest;
+           12     161     1 math1   Lturin/relations/Course;
+           24     149     2 math2   Lturin/relations/Course;
+           37     136     3  eco1   Lturin/relations/Course;
+           48     125     4 prof1   Lturin/relations/Professor;
+           59     114     5 prof2   Lturin/relations/Professor;
+           83      90     6 teacherOfMath1   Lturin/relations/Relation$ReferenceSingleEndpoint;
+           89      84     7 teacherOfMath2   Lturin/relations/Relation$ReferenceSingleEndpoint;
+           95      78     8 teacherOfEco1   Lturin/relations/Relation$ReferenceSingleEndpoint;
+      LocalVariableTypeTable:
+        Start  Length  Slot  Name   Signature
+           83      90     6 teacherOfMath1   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+           89      84     7 teacherOfMath2   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+           95      78     8 teacherOfEco1   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+    RuntimeVisibleAnnotations:
+      0: #57()
+
+  public void settingALinkTheCoursesAreSet();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=4, locals=8, args_size=1
+         0: new           #2                  // class turin/relations/Course
+         3: dup
+         4: bipush        100
+         6: ldc           #3                  // String Math I
+         8: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        11: astore_1
+        12: new           #2                  // class turin/relations/Course
+        15: dup
+        16: bipush        101
+        18: ldc           #5                  // String Math II
+        20: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        23: astore_2
+        24: new           #2                  // class turin/relations/Course
+        27: dup
+        28: sipush        200
+        31: ldc           #6                  // String Economics I
+        33: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        36: astore_3
+        37: new           #7                  // class turin/relations/Professor
+        40: dup
+        41: ldc           #8                  // String Abraham
+        43: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        46: astore        4
+        48: new           #7                  // class turin/relations/Professor
+        51: dup
+        52: ldc           #10                 // String James
+        54: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        57: astore        5
+        59: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        62: aload         4
+        64: aload_1
+        65: invokevirtual #12                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+        68: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        71: aload         4
+        73: aload_2
+        74: invokevirtual #12                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+        77: aload         4
+        79: invokestatic  #19                 // Method turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+        82: astore        6
+        84: aload         5
+        86: invokestatic  #19                 // Method turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+        89: astore        7
+        91: ldc2_w        #20                 // long 2l
+        94: aload         6
+        96: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+        99: i2l
+       100: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       103: iconst_1
+       104: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       107: aload         6
+       109: aload_1
+       110: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       113: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       116: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       119: iconst_1
+       120: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       123: aload         6
+       125: aload_2
+       126: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       129: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       132: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       135: iconst_0
+       136: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       139: aload         6
+       141: aload_3
+       142: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       145: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       148: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       151: lconst_0
+       152: aload         7
+       154: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       157: i2l
+       158: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       161: iconst_0
+       162: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       165: aload         7
+       167: aload_1
+       168: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       171: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       174: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       177: iconst_0
+       178: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       181: aload         7
+       183: aload_2
+       184: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       187: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       190: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       193: iconst_0
+       194: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       197: aload         7
+       199: aload_3
+       200: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       203: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       206: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       209: return
+      LineNumberTable:
+        line 36: 0
+        line 37: 12
+        line 38: 24
+        line 40: 37
+        line 41: 48
+        line 43: 59
+        line 44: 68
+        line 46: 77
+        line 47: 84
+        line 49: 91
+        line 50: 103
+        line 51: 119
+        line 52: 135
+        line 54: 151
+        line 55: 161
+        line 56: 177
+        line 57: 193
+        line 58: 209
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0     210     0  this   Lturin/relations/OneToManyRelationTest;
+           12     198     1 math1   Lturin/relations/Course;
+           24     186     2 math2   Lturin/relations/Course;
+           37     173     3  eco1   Lturin/relations/Course;
+           48     162     4 prof1   Lturin/relations/Professor;
+           59     151     5 prof2   Lturin/relations/Professor;
+           84     126     6 coursesTaughtByAbraham   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+           91     119     7 coursesTaughtByJames   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+    RuntimeVisibleAnnotations:
+      0: #57()
+
+  public void aLinkCanReplaceThePreviousProfessor();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=4, locals=9, args_size=1
+         0: new           #2                  // class turin/relations/Course
+         3: dup
+         4: bipush        100
+         6: ldc           #3                  // String Math I
+         8: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        11: astore_1
+        12: new           #2                  // class turin/relations/Course
+        15: dup
+        16: bipush        101
+        18: ldc           #5                  // String Math II
+        20: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        23: astore_2
+        24: new           #2                  // class turin/relations/Course
+        27: dup
+        28: sipush        200
+        31: ldc           #6                  // String Economics I
+        33: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        36: astore_3
+        37: new           #7                  // class turin/relations/Professor
+        40: dup
+        41: ldc           #8                  // String Abraham
+        43: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        46: astore        4
+        48: new           #7                  // class turin/relations/Professor
+        51: dup
+        52: ldc           #10                 // String James
+        54: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        57: astore        5
+        59: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        62: aload         4
+        64: aload_1
+        65: invokevirtual #12                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+        68: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        71: aload         5
+        73: aload_1
+        74: invokevirtual #12                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;)V
+        77: aload         4
+        79: invokestatic  #19                 // Method turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+        82: astore        6
+        84: aload         5
+        86: invokestatic  #19                 // Method turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+        89: astore        7
+        91: lconst_0
+        92: aload         6
+        94: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+        97: i2l
+        98: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       101: iconst_0
+       102: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       105: aload         6
+       107: aload_1
+       108: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       111: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       114: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       117: iconst_0
+       118: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       121: aload         6
+       123: aload_2
+       124: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       127: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       130: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       133: iconst_0
+       134: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       137: aload         6
+       139: aload_3
+       140: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       143: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       146: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       149: lconst_1
+       150: aload         7
+       152: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       155: i2l
+       156: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       159: iconst_1
+       160: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       163: aload         7
+       165: aload_1
+       166: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       169: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       172: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       175: iconst_0
+       176: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       179: aload         7
+       181: aload_2
+       182: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       185: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       188: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       191: iconst_0
+       192: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       195: aload         7
+       197: aload_3
+       198: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       201: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       204: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       207: aload_1
+       208: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+       211: astore        8
+       213: iconst_1
+       214: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       217: aload         8
+       219: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       222: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       225: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       228: ldc           #10                 // String James
+       230: aload         8
+       232: invokevirtual #17                 // Method turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+       235: checkcast     #7                  // class turin/relations/Professor
+       238: invokevirtual #18                 // Method turin/relations/Professor.getName:()Ljava/lang/String;
+       241: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       244: return
+      LineNumberTable:
+        line 62: 0
+        line 63: 12
+        line 64: 24
+        line 66: 37
+        line 67: 48
+        line 69: 59
+        line 70: 68
+        line 72: 77
+        line 73: 84
+        line 75: 91
+        line 76: 101
+        line 77: 117
+        line 78: 133
+        line 80: 149
+        line 81: 159
+        line 82: 175
+        line 83: 191
+        line 85: 207
+        line 86: 213
+        line 87: 228
+        line 88: 244
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0     245     0  this   Lturin/relations/OneToManyRelationTest;
+           12     233     1 math1   Lturin/relations/Course;
+           24     221     2 math2   Lturin/relations/Course;
+           37     208     3  eco1   Lturin/relations/Course;
+           48     197     4 prof1   Lturin/relations/Professor;
+           59     186     5 prof2   Lturin/relations/Professor;
+           84     161     6 coursesTaughtByAbraham   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+           91     154     7 coursesTaughtByJames   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+          213      32     8 teacherOfMath1   Lturin/relations/Relation$ReferenceSingleEndpoint;
+      LocalVariableTypeTable:
+        Start  Length  Slot  Name   Signature
+          213      32     8 teacherOfMath1   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+    RuntimeVisibleAnnotations:
+      0: #57()
+
+  public void usingSubsetsDoNotMessUpReferencesEndpoints();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=4, locals=19, args_size=1
+         0: new           #2                  // class turin/relations/Course
+         3: dup
+         4: bipush        100
+         6: ldc           #3                  // String Math I
+         8: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        11: astore_1
+        12: new           #2                  // class turin/relations/Course
+        15: dup
+        16: bipush        101
+        18: ldc           #5                  // String Math II
+        20: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        23: astore_2
+        24: new           #2                  // class turin/relations/Course
+        27: dup
+        28: sipush        200
+        31: ldc           #6                  // String Economics I
+        33: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        36: astore_3
+        37: new           #2                  // class turin/relations/Course
+        40: dup
+        41: sipush        300
+        44: ldc           #25                 // String Info I
+        46: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        49: astore        4
+        51: new           #2                  // class turin/relations/Course
+        54: dup
+        55: sipush        301
+        58: ldc           #26                 // String Info II
+        60: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        63: astore        5
+        65: new           #7                  // class turin/relations/Professor
+        68: dup
+        69: ldc           #8                  // String Abraham
+        71: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        74: astore        6
+        76: new           #7                  // class turin/relations/Professor
+        79: dup
+        80: ldc           #10                 // String James
+        82: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        85: astore        7
+        87: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        90: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+        93: astore        8
+        95: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        98: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+       101: astore        9
+       103: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       106: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+       109: astore        10
+       111: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       114: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+       117: astore        11
+       119: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       122: aload         6
+       124: aload_1
+       125: aload         8
+       127: invokevirtual #28                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+       130: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       133: aload         6
+       135: aload_2
+       136: aload         9
+       138: invokevirtual #28                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+       141: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       144: aload         7
+       146: aload_3
+       147: aload         11
+       149: invokevirtual #28                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+       152: aload         6
+       154: invokestatic  #19                 // Method turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+       157: astore        12
+       159: aload         7
+       161: invokestatic  #19                 // Method turin/relations/Teaching.coursesTaughtBy:(Lturin/relations/Professor;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+       164: astore        13
+       166: ldc2_w        #20                 // long 2l
+       169: aload         12
+       171: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       174: i2l
+       175: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       178: iconst_1
+       179: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       182: aload         12
+       184: aload_1
+       185: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       188: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       191: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       194: iconst_1
+       195: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       198: aload         12
+       200: aload_2
+       201: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       204: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       207: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       210: iconst_0
+       211: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       214: aload         12
+       216: aload_3
+       217: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       220: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       223: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       226: lconst_1
+       227: aload         13
+       229: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       232: i2l
+       233: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       236: iconst_0
+       237: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       240: aload         13
+       242: aload_1
+       243: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       246: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       249: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       252: iconst_0
+       253: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       256: aload         13
+       258: aload_2
+       259: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       262: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       265: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       268: iconst_1
+       269: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       272: aload         13
+       274: aload_3
+       275: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       278: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       281: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       284: aload_1
+       285: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+       288: astore        14
+       290: aload_2
+       291: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+       294: astore        15
+       296: aload_3
+       297: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+       300: astore        16
+       302: aload         4
+       304: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+       307: astore        17
+       309: aload         5
+       311: invokestatic  #13                 // Method turin/relations/Teaching.getTeacherOf:(Lturin/relations/Course;)Lturin/relations/Relation$ReferenceSingleEndpoint;
+       314: astore        18
+       316: iconst_1
+       317: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       320: aload         14
+       322: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       325: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       328: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       331: ldc           #8                  // String Abraham
+       333: aload         14
+       335: invokevirtual #17                 // Method turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+       338: checkcast     #7                  // class turin/relations/Professor
+       341: invokevirtual #18                 // Method turin/relations/Professor.getName:()Ljava/lang/String;
+       344: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       347: iconst_1
+       348: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       351: aload         14
+       353: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       356: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       359: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       362: ldc           #8                  // String Abraham
+       364: aload         14
+       366: invokevirtual #17                 // Method turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+       369: checkcast     #7                  // class turin/relations/Professor
+       372: invokevirtual #18                 // Method turin/relations/Professor.getName:()Ljava/lang/String;
+       375: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       378: iconst_1
+       379: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       382: aload         14
+       384: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       387: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       390: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       393: ldc           #10                 // String James
+       395: aload         16
+       397: invokevirtual #17                 // Method turin/relations/Relation$ReferenceSingleEndpoint.get:()Ljava/lang/Object;
+       400: checkcast     #7                  // class turin/relations/Professor
+       403: invokevirtual #18                 // Method turin/relations/Professor.getName:()Ljava/lang/String;
+       406: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       409: iconst_0
+       410: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       413: aload         17
+       415: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       418: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       421: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       424: iconst_0
+       425: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       428: aload         18
+       430: invokevirtual #15                 // Method turin/relations/Relation$ReferenceSingleEndpoint.isPresent:()Z
+       433: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       436: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       439: return
+      LineNumberTable:
+        line 92: 0
+        line 93: 12
+        line 94: 24
+        line 95: 37
+        line 96: 51
+        line 98: 65
+        line 99: 76
+        line 101: 87
+        line 102: 95
+        line 103: 103
+        line 104: 111
+        line 106: 119
+        line 107: 130
+        line 108: 141
+        line 110: 152
+        line 111: 159
+        line 113: 166
+        line 114: 178
+        line 115: 194
+        line 116: 210
+        line 118: 226
+        line 119: 236
+        line 120: 252
+        line 121: 268
+        line 123: 284
+        line 124: 290
+        line 125: 296
+        line 126: 302
+        line 127: 309
+        line 129: 316
+        line 130: 331
+        line 131: 347
+        line 132: 362
+        line 133: 378
+        line 134: 393
+        line 135: 409
+        line 136: 424
+        line 137: 439
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0     440     0  this   Lturin/relations/OneToManyRelationTest;
+           12     428     1 math1   Lturin/relations/Course;
+           24     416     2 math2   Lturin/relations/Course;
+           37     403     3  eco1   Lturin/relations/Course;
+           51     389     4 info1   Lturin/relations/Course;
+           65     375     5 info2   Lturin/relations/Course;
+           76     364     6 prof1   Lturin/relations/Professor;
+           87     353     7 prof2   Lturin/relations/Professor;
+           95     345     8 abrahamTeach1stSemester   Lturin/relations/Subset;
+          103     337     9 abrahamTeach2ndSemester   Lturin/relations/Subset;
+          111     329    10 jamesTeach1stSemester   Lturin/relations/Subset;
+          119     321    11 jamesTeach2ndSemester   Lturin/relations/Subset;
+          159     281    12 coursesTaughtByAbraham   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+          166     274    13 coursesTaughtByJames   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+          290     150    14 teacherOfMath1   Lturin/relations/Relation$ReferenceSingleEndpoint;
+          296     144    15 teacherOfMath2   Lturin/relations/Relation$ReferenceSingleEndpoint;
+          302     138    16 teacherOfEco1   Lturin/relations/Relation$ReferenceSingleEndpoint;
+          309     131    17 teacherOfInfo1   Lturin/relations/Relation$ReferenceSingleEndpoint;
+          316     124    18 teacherOfInfo2   Lturin/relations/Relation$ReferenceSingleEndpoint;
+      LocalVariableTypeTable:
+        Start  Length  Slot  Name   Signature
+          290     150    14 teacherOfMath1   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+          296     144    15 teacherOfMath2   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+          302     138    16 teacherOfEco1   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+          309     131    17 teacherOfInfo1   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+          316     124    18 teacherOfInfo2   Lturin/relations/Relation$ReferenceSingleEndpoint<Lturin/relations/Professor;Lturin/relations/Course;>;
+    RuntimeVisibleAnnotations:
+      0: #57()
+
+  public void subsetsAreDistinct();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=4, locals=16, args_size=1
+         0: new           #2                  // class turin/relations/Course
+         3: dup
+         4: bipush        100
+         6: ldc           #3                  // String Math I
+         8: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        11: astore_1
+        12: new           #2                  // class turin/relations/Course
+        15: dup
+        16: bipush        101
+        18: ldc           #5                  // String Math II
+        20: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        23: astore_2
+        24: new           #2                  // class turin/relations/Course
+        27: dup
+        28: sipush        200
+        31: ldc           #6                  // String Economics I
+        33: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        36: astore_3
+        37: new           #2                  // class turin/relations/Course
+        40: dup
+        41: sipush        300
+        44: ldc           #25                 // String Info I
+        46: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        49: astore        4
+        51: new           #2                  // class turin/relations/Course
+        54: dup
+        55: sipush        301
+        58: ldc           #26                 // String Info II
+        60: invokespecial #4                  // Method turin/relations/Course."<init>":(ILjava/lang/String;)V
+        63: astore        5
+        65: new           #7                  // class turin/relations/Professor
+        68: dup
+        69: ldc           #8                  // String Abraham
+        71: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        74: astore        6
+        76: new           #7                  // class turin/relations/Professor
+        79: dup
+        80: ldc           #10                 // String James
+        82: invokespecial #9                  // Method turin/relations/Professor."<init>":(Ljava/lang/String;)V
+        85: astore        7
+        87: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        90: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+        93: astore        8
+        95: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+        98: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+       101: astore        9
+       103: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       106: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+       109: astore        10
+       111: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       114: invokevirtual #27                 // Method turin/relations/OneToManyRelation.newBSubset:()Lturin/relations/Subset;
+       117: astore        11
+       119: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       122: aload         6
+       124: aload_1
+       125: aload         8
+       127: invokevirtual #28                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+       130: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       133: aload         6
+       135: aload_2
+       136: aload         9
+       138: invokevirtual #28                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+       141: getstatic     #11                 // Field turin/relations/Teaching.RELATION:Lturin/relations/OneToManyRelation;
+       144: aload         7
+       146: aload_3
+       147: aload         11
+       149: invokevirtual #28                 // Method turin/relations/OneToManyRelation.link:(Ljava/lang/Object;Ljava/lang/Object;Lturin/relations/Subset;)V
+       152: aload         6
+       154: aload         8
+       156: invokestatic  #29                 // Method turin/relations/Teaching.subsetOfCoursesTaughtBy:(Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+       159: astore        12
+       161: aload         6
+       163: aload         9
+       165: invokestatic  #29                 // Method turin/relations/Teaching.subsetOfCoursesTaughtBy:(Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+       168: astore        13
+       170: aload         7
+       172: aload         10
+       174: invokestatic  #29                 // Method turin/relations/Teaching.subsetOfCoursesTaughtBy:(Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+       177: astore        14
+       179: aload         7
+       181: aload         11
+       183: invokestatic  #29                 // Method turin/relations/Teaching.subsetOfCoursesTaughtBy:(Lturin/relations/Professor;Lturin/relations/Subset;)Lturin/relations/Relation$ReferenceMultipleEndpoint;
+       186: astore        15
+       188: lconst_1
+       189: aload         12
+       191: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       194: i2l
+       195: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       198: iconst_1
+       199: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       202: aload         12
+       204: aload_1
+       205: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       208: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       211: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       214: iconst_0
+       215: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       218: aload         12
+       220: aload_2
+       221: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       224: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       227: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       230: iconst_0
+       231: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       234: aload         12
+       236: aload_3
+       237: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       240: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       243: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       246: lconst_1
+       247: aload         13
+       249: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       252: i2l
+       253: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       256: iconst_0
+       257: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       260: aload         13
+       262: aload_1
+       263: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       266: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       269: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       272: iconst_1
+       273: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       276: aload         13
+       278: aload_2
+       279: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       282: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       285: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       288: iconst_0
+       289: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       292: aload         13
+       294: aload_3
+       295: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       298: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       301: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       304: lconst_0
+       305: aload         14
+       307: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       310: i2l
+       311: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       314: iconst_0
+       315: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       318: aload         14
+       320: aload_1
+       321: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       324: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       327: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       330: iconst_0
+       331: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       334: aload         14
+       336: aload_2
+       337: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       340: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       343: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       346: iconst_0
+       347: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       350: aload         14
+       352: aload_3
+       353: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       356: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       359: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       362: lconst_1
+       363: aload         15
+       365: invokevirtual #22                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.size:()I
+       368: i2l
+       369: invokestatic  #23                 // Method org/junit/Assert.assertEquals:(JJ)V
+       372: iconst_0
+       373: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       376: aload         15
+       378: aload_1
+       379: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       382: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       385: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       388: iconst_0
+       389: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       392: aload         15
+       394: aload_2
+       395: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       398: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       401: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       404: iconst_1
+       405: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       408: aload         15
+       410: aload_3
+       411: invokevirtual #24                 // Method turin/relations/Relation$ReferenceMultipleEndpoint.contains:(Ljava/lang/Object;)Z
+       414: invokestatic  #14                 // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+       417: invokestatic  #16                 // Method org/junit/Assert.assertEquals:(Ljava/lang/Object;Ljava/lang/Object;)V
+       420: return
+      LineNumberTable:
+        line 141: 0
+        line 142: 12
+        line 143: 24
+        line 144: 37
+        line 145: 51
+        line 147: 65
+        line 148: 76
+        line 150: 87
+        line 151: 95
+        line 152: 103
+        line 153: 111
+        line 155: 119
+        line 156: 130
+        line 157: 141
+        line 159: 152
+        line 160: 161
+        line 161: 170
+        line 162: 179
+        line 164: 188
+        line 165: 198
+        line 166: 214
+        line 167: 230
+        line 169: 246
+        line 170: 256
+        line 171: 272
+        line 172: 288
+        line 174: 304
+        line 175: 314
+        line 176: 330
+        line 177: 346
+        line 179: 362
+        line 180: 372
+        line 181: 388
+        line 182: 404
+        line 183: 420
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0     421     0  this   Lturin/relations/OneToManyRelationTest;
+           12     409     1 math1   Lturin/relations/Course;
+           24     397     2 math2   Lturin/relations/Course;
+           37     384     3  eco1   Lturin/relations/Course;
+           51     370     4 info1   Lturin/relations/Course;
+           65     356     5 info2   Lturin/relations/Course;
+           76     345     6 prof1   Lturin/relations/Professor;
+           87     334     7 prof2   Lturin/relations/Professor;
+           95     326     8 abrahamTeach1stSemester   Lturin/relations/Subset;
+          103     318     9 abrahamTeach2ndSemester   Lturin/relations/Subset;
+          111     310    10 jamesTeach1stSemester   Lturin/relations/Subset;
+          119     302    11 jamesTeach2ndSemester   Lturin/relations/Subset;
+          161     260    12 coursesTaughtByAbraham1stSemester   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+          170     251    13 coursesTaughtByAbraham2ndSemester   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+          179     242    14 coursesTaughtByJames1stSemester   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+          188     233    15 coursesTaughtByJames2ndSemester   Lturin/relations/Relation$ReferenceMultipleEndpoint;
+    RuntimeVisibleAnnotations:
+      0: #57()
+}
+SourceFile: "OneToManyRelationTest.java"
+InnerClasses:
+     public static #49= #48 of #115; //ReferenceSingleEndpoint=class turin/relations/Relation$ReferenceSingleEndpoint of class turin/relations/Relation
+     public static #61= #60 of #115; //ReferenceMultipleEndpoint=class turin/relations/Relation$ReferenceMultipleEndpoint of class turin/relations/Relation

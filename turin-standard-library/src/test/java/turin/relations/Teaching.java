@@ -8,11 +8,11 @@ public class Teaching {
         return RELATION.getReferenceForB(course);
     }
 
-    public static Relation.ReferenceMultipleEndpoint coursesTaughtBy(Professor professor) {
+    public static Relation.ReferenceMultipleEndpoint<Professor,Course> coursesTaughtBy(Professor professor) {
         return RELATION.getReferenceForA(professor);
     }
 
-    public static Relation.ReferenceMultipleEndpoint subsetOfCoursesTaughtBy(Professor professor, Subset subset) {
+    public static Relation.ReferenceMultipleEndpoint<Professor,Course> subsetOfCoursesTaughtBy(Professor professor, Subset subset) {
         return RELATION.getReferenceForA(professor, subset);
     }
 }

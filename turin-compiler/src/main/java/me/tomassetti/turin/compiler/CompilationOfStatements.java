@@ -7,6 +7,7 @@ import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.jvm.*;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.statements.*;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -40,7 +41,9 @@ public class CompilationOfStatements {
         } else if (statement instanceof ReturnStatement) {
             ReturnStatement returnStatement = (ReturnStatement) statement;
             if (returnStatement.hasValue()) {
-                int returnType = returnStatement.getValue().calcType(compilation.getResolver()).jvmType(compilation.getResolver()).returnOpcode();
+                Expression returnedValue = returnStatement.getValue();
+                TypeUsage returnedValueType = returnedValue.calcType(compilation.getResolver());
+                int returnType = returnedValueType.jvmType(compilation.getResolver()).returnOpcode();
                 return new ReturnValueBS(returnType, compilation.getPushUtils().pushExpression(returnStatement.getValue()));
             } else {
                 return new ReturnVoidBS();

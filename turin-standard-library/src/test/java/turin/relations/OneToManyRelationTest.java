@@ -181,4 +181,5 @@ public class OneToManyRelationTest {
         assertEquals(false, coursesTaughtByJames2ndSemester.contains(math2));
         assertEquals(true, coursesTaughtByJames2ndSemester.contains(eco1));
     }
+
 }
