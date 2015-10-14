@@ -73,6 +73,7 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         Method childrenForParent = astClass.getDeclaredMethod("childrenForParent", new Class[]{nodeClass});
     }
 
+    /*
     @Test
     public void aRelationSubsetIsGeneratedCorrectly() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/relation_subset.to"));
@@ -83,7 +84,7 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(5, classDefinitions.size());
         assertEquals("relations.Relation_Ast", classDefinitions.get(2).getName());
-    }
+    }*/
 
     @Test
     public void relationUsage() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
