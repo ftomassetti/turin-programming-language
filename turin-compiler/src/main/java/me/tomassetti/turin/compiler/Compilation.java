@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
 import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
+import me.tomassetti.bytecode_generation.pushop.PushStaticField;
 import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
 import me.tomassetti.jvm.*;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
@@ -95,12 +96,11 @@ public class Compilation {
 
         // Add the relation field, example:
         // public static final OneToManyRelation<Professor, Course> RELATION = new OneToManyRelation<Professor, Course>();
-        String fieldDescriptor = null;
+        String fieldDescriptor = relationDefinition.staticFieldDescriptor();
         String fieldSignature = null;
         String fieldTypeInternalName = null;
         switch (relationDefinition.getRelationType()) {
             case MANY_TO_MANY:
-                fieldDescriptor = JvmNameUtils.descriptor(ManyToManyRelation.class);
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
                 fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
@@ -109,7 +109,6 @@ public class Compilation {
                 fieldTypeInternalName = JvmNameUtils.internalName(ManyToManyRelation.class);
                 break;
             case ONE_TO_MANY:
-                fieldDescriptor = JvmNameUtils.descriptor(OneToManyRelation.class);
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
                 fieldSignature += relationDefinition.singleField().getType().jvmType(resolver).getSignature();
@@ -118,7 +117,6 @@ public class Compilation {
                 fieldTypeInternalName = JvmNameUtils.internalName(OneToManyRelation.class);
                 break;
             case ONE_TO_ONE:
-                fieldDescriptor = JvmNameUtils.descriptor(OneToOneRelation.class);
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
                 fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
@@ -153,32 +151,32 @@ public class Compilation {
         switch (relationDefinition.getRelationType()) {
             case MANY_TO_MANY:
                 generateMethodForRelationMultipleEndpoint(cw, relationDefinition.firstField(), relationDefinition.secondField(),
-                        relationDefinition.firstField().getType(),
-                        relationDefinition.secondField().getType(),
+                        relationDefinition.firstField().getType().copy(),
+                        relationDefinition.secondField().getType().copy(),
                         true);
                 generateMethodForRelationMultipleEndpoint(cw, relationDefinition.secondField(), relationDefinition.firstField(),
-                        relationDefinition.firstField().getType(),
-                        relationDefinition.secondField().getType(),
+                        relationDefinition.firstField().getType().copy(),
+                        relationDefinition.secondField().getType().copy(),
                         false);
                 break;
             case ONE_TO_MANY:
                 generateMethodForRelationSingleEndpoint(cw, relationDefinition.singleField(), relationDefinition.manyField(),
-                        relationDefinition.singleField().getType(),
-                        relationDefinition.manyField().getType(),
-                        true);
-                generateMethodForRelationMultipleEndpoint(cw, relationDefinition.manyField(), relationDefinition.singleField(),
-                        relationDefinition.singleField().getType(),
-                        relationDefinition.manyField().getType(),
+                        relationDefinition.singleField().getType().copy(),
+                        relationDefinition.manyField().getType().copy(),
                         false);
+                generateMethodForRelationMultipleEndpoint(cw, relationDefinition.manyField(), relationDefinition.singleField(),
+                        relationDefinition.singleField().getType().copy(),
+                        relationDefinition.manyField().getType().copy(),
+                        true);
                 break;
             case ONE_TO_ONE:
                 generateMethodForRelationSingleEndpoint(cw, relationDefinition.firstField(), relationDefinition.secondField(),
-                        relationDefinition.firstField().getType(),
-                        relationDefinition.secondField().getType(),
+                        relationDefinition.firstField().getType().copy(),
+                        relationDefinition.secondField().getType().copy(),
                         true);
                 generateMethodForRelationSingleEndpoint(cw, relationDefinition.secondField(), relationDefinition.firstField(),
-                        relationDefinition.firstField().getType(),
-                        relationDefinition.secondField().getType(),
+                        relationDefinition.firstField().getType().copy(),
+                        relationDefinition.secondField().getType().copy(),
                         false);
                 break;
             default:
@@ -193,8 +191,8 @@ public class Compilation {
     //          }
     private void generateMethodForRelationMultipleEndpoint(ClassWriter cw, RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField,
                     TypeUsage firstParamType, TypeUsage secondParamType, boolean accessingFirstField) {
-        String methodName = fieldAccessed.getName() + "For" + StringUtils.capitalize(otherField.getName());
-        String descriptor = "(" + otherField.getType().jvmType(resolver).getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class);
+        String methodName = fieldAccessed.methodName();
+        String descriptor = fieldAccessed.methodDescriptor(resolver);
         String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
                 + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class)
                 + "<"
@@ -203,13 +201,21 @@ public class Compilation {
                 + ">";
         // TODO record parameter name
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, methodName, descriptor, signature, null);
-        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
         String invokedMethodName = accessingFirstField ? "getReferenceForA" : "getReferenceForB";
+        // the method should be invoked on the instance of the relation (MyRelationClass.INSTANCE)
+        JvmFieldDefinition instanceField = new JvmFieldDefinition(
+                JvmNameUtils.canonicalToInternal(fieldAccessed.getRelationDefinition().getGeneratedClassQualifiedName()),
+                "RELATION",
+                fieldAccessed.getRelationDefinition().staticFieldDescriptor(),
+                true
+        );
+        new PushStaticField(instanceField).operate(mv);
+        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
         JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
-                JvmNameUtils.canonicalToInternal(Relation.class.getCanonicalName()),
+                fieldAccessed.getRelationDefinition().relationClassInternalName(),
                 invokedMethodName,
                 "(" + JvmNameUtils.descriptor(Object.class) + ")" + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class),
-                true, false);
+                false, false);
         new ReturnValueBS(Opcodes.ARETURN, new MethodInvocationBS(methodDefinition)).operate(mv);
         mv.visitMaxs(0, 0);
         mv.visitEnd();
@@ -220,8 +226,8 @@ public class Compilation {
     //          }
     private void generateMethodForRelationSingleEndpoint(ClassWriter cw, RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField,
                                                          TypeUsage firstParamType, TypeUsage secondParamType, boolean accessingFirstField) {
-        String methodName = fieldAccessed.getName() + "For" + StringUtils.capitalize(otherField.getName()) + "Element";
-        String descriptor = "(" + otherField.getType().jvmType(resolver).getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class);
+        String methodName = fieldAccessed.methodName();
+        String descriptor = fieldAccessed.methodDescriptor(resolver);
         String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
                 + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class)
                 + "<"
@@ -230,13 +236,21 @@ public class Compilation {
                 + ">";
         // TODO record parameter name
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, methodName, descriptor, signature, null);
-        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
         String invokedMethodName = accessingFirstField ? "getReferenceForA" : "getReferenceForB";
+        // the method should be invoked on the instance of the relation (MyRelationClass.INSTANCE)
+        JvmFieldDefinition instanceField = new JvmFieldDefinition(
+                JvmNameUtils.canonicalToInternal(fieldAccessed.getRelationDefinition().getGeneratedClassQualifiedName()),
+                "RELATION",
+                fieldAccessed.getRelationDefinition().staticFieldDescriptor(),
+                true
+        );
+        new PushStaticField(instanceField).operate(mv);
+        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
         JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
-                JvmNameUtils.canonicalToInternal(Relation.class.getCanonicalName()),
+                fieldAccessed.getRelationDefinition().relationClassInternalName(),
                 invokedMethodName,
                 "(" + JvmNameUtils.descriptor(Object.class) + ")" + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class),
-                true, false);
+                false, false);
         new ReturnValueBS(Opcodes.ARETURN, new MethodInvocationBS(methodDefinition)).operate(mv);
         mv.visitMaxs(0, 0);
         mv.visitEnd();

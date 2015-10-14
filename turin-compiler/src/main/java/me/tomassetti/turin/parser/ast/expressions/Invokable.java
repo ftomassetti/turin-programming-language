@@ -120,6 +120,7 @@ public abstract class Invokable extends Expression {
         Map<String, ActualParam> paramsAssigned = new HashMap<>();
 
         List<FormalParameter> formalParams = formalParameters(resolver);
+        formalParams.forEach((fp)->fp.setParent(this));
         List<ActualParam> unnamedParams = ParamUtils.unnamedParams(actualParams);
         List<ActualParam> namedParams = ParamUtils.namedParams(actualParams);
 
@@ -129,6 +130,9 @@ public abstract class Invokable extends Expression {
         }
         int i = 0;
         for (ActualParam param : unnamedParams) {
+            if (formalParams.get(i).getParent() == null) {
+                throw new IllegalStateException();
+            }
             TypeUsage actualParamType = param.getValue().calcType(resolver);
             TypeUsage formalParamType = formalParams.get(i).getType();
             if (!actualParamType.canBeAssignedTo(formalParamType, resolver)){

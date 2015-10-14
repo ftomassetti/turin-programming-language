@@ -46,7 +46,6 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
         assertEquals(2, classDefinitions.size());
         Class astClass = new TurinClassLoader().addClass(classDefinitions.get(1));
-        saveClassFile(classDefinitions.get(1), "relations");
         assertEquals(1, astClass.getFields().length);
         Field field = astClass.getFields()[0];
         assertEquals("RELATION", field.getName());
@@ -98,9 +97,12 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
 
         TurinClassLoader classLoader = new TurinClassLoader();
         Class nodeClass = classLoader.addClass(classDefinitions.get(0));
-        classLoader.addClass(classDefinitions.get(1));
+        Class astClass = classLoader.addClass(classDefinitions.get(1));
+        saveClassFile(classDefinitions.get(1), "relations");
         Class foo1 = classLoader.addClass(classDefinitions.get(2));
+        saveClassFile(classDefinitions.get(2), "relations");
         Class foo2 = classLoader.addClass(classDefinitions.get(3));
+        saveClassFile(classDefinitions.get(3), "relations");
         Class foo3 = classLoader.addClass(classDefinitions.get(4));
         Class foo4 = classLoader.addClass(classDefinitions.get(5));
 

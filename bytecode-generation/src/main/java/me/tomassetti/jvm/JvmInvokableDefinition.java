@@ -9,9 +9,9 @@ public abstract class JvmInvokableDefinition {
     protected String descriptor;
 
     protected JvmInvokableDefinition(String ownerInternalName, String name, String descriptor) {
-        if (!JvmNameUtils.isValidInternalName(ownerInternalName)) {
-            throw new IllegalArgumentException(ownerInternalName);
-        }
+        //if (!JvmNameUtils.isValidInternalName(ownerInternalName)) {
+        //    throw new IllegalArgumentException(ownerInternalName);
+        //}
         this.descriptor = descriptor;
         this.name = name;
         this.ownerInternalName = ownerInternalName;

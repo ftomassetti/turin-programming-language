@@ -1,13 +1,62 @@
 package me.tomassetti.turin.parser.ast.relations;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import turin.relations.ManyToManyRelation;
+import turin.relations.OneToManyRelation;
+import turin.relations.OneToOneRelation;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RelationDefinition extends Node {
+
+    public List<RelationFieldDefinition> getFieldsApplicableTo(TypeDefinition typeDefinition, SymbolResolver resolver) {
+        return fields.stream().filter((f)->f.isApplicableTo(typeDefinition, resolver)).collect(Collectors.toList());
+    }
+
+    List<TypeUsage> getTypeParameters() {
+        return ImmutableList.of(
+                firstField().getType().copy(),
+                secondField().getType().copy()
+        );
+    }
+
+    public String getGeneratedClassQualifiedName() {
+        return contextName() + "." + CLASS_PREFIX + getName();
+    }
+
+    public String staticFieldDescriptor() {
+        switch (getRelationType()) {
+            case MANY_TO_MANY:
+                return JvmNameUtils.descriptor(ManyToManyRelation.class);
+            case ONE_TO_MANY:
+                return JvmNameUtils.descriptor(OneToManyRelation.class);
+            case ONE_TO_ONE:
+                return JvmNameUtils.descriptor(OneToOneRelation.class);
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+
+    public String relationClassInternalName() {
+        switch (getRelationType()) {
+            case MANY_TO_MANY:
+                return JvmNameUtils.internalName(ManyToManyRelation.class);
+            case ONE_TO_MANY:
+                return JvmNameUtils.internalName(OneToManyRelation.class);
+            case ONE_TO_ONE:
+                return JvmNameUtils.internalName(OneToOneRelation.class);
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
 
     public enum Type {
         ONE_TO_ONE,

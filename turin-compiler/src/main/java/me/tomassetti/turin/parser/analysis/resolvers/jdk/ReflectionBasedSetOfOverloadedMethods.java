@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
+import com.google.common.collect.ImmutableMap;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
@@ -68,7 +69,8 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
-            return Optional.of(ReflectionBasedMethodResolution.formalParameters(ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods, this).get()));
+            Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods, this);
+            return Optional.of(ReflectionBasedMethodResolution.formalParameters(method.get(), Collections.emptyMap()));
         }
         throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         // return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this));

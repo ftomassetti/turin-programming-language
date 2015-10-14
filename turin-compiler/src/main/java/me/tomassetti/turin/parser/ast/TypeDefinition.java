@@ -4,15 +4,20 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
+import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
+import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,8 +122,34 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
 
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    public Node getFieldOnInstance(String fieldName, Node instance, final SymbolResolver resolver) {
+        for (RelationDefinition relationDefinition : getVisibleRelations(resolver)) {
+            for (RelationFieldDefinition field : relationDefinition.getFieldsApplicableTo(this, resolver)) {
+                if (field.getName().equals(fieldName)) {
+                    return new AccessEndpoint(instance, field);
+                }
+            }
+        }
+        throw new UnsolvedSymbolException(this, fieldName);
+    }
+
+    private List<RelationDefinition> getVisibleRelations(SymbolResolver resolver) {
+        List<RelationDefinition> relations = new LinkedList<>();
+        collectVisibleRelations(this, relations, resolver);
+        return relations;
+
+    }
+
+    private void collectVisibleRelations(Node context, List<RelationDefinition> relations, SymbolResolver resolver) {
+        // TODO consider relations imported
+        for (Node child : context.getChildren()) {
+            if (child instanceof RelationDefinition) {
+                relations.add((RelationDefinition)child);
+            }
+        }
+        if (context.getParent() != null) {
+            collectVisibleRelations(context.getParent(), relations, resolver);
+        }
     }
 
     public abstract boolean hasField(String name, boolean staticContext);

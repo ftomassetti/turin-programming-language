@@ -21,6 +21,48 @@ import java.util.stream.Collectors;
 
 class ReflectionBasedTypeDefinition extends TypeDefinition {
 
+    private Class<?> clazz;
+    private List<TypeUsage> typeParameters = new LinkedList<>();
+
+    public ReflectionBasedTypeDefinition(Class<?> clazz) {
+        super(clazz.getCanonicalName());
+        this.clazz = clazz;
+    }
+
+    public void addTypeParameter(TypeUsage typeUsage) {
+        typeParameters.add(typeUsage);
+    }
+
+    private static TypeUsage typeFor(List<Method> methods, Node parentToAssign) {
+        if (methods.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        methods.forEach((m)-> {
+            if (!Modifier.isStatic(m.getModifiers())) {
+                throw new IllegalArgumentException("Non static method given: " + m);
+            }
+        });
+        if (methods.size() != 1) {
+            throw new UnsupportedOperationException();
+        }
+        return typeFor(methods.get(0), parentToAssign);
+    }
+
+    private static TypeUsage typeFor(Method method, Node parentToAssign) {
+        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
+        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
+        functionReferenceTypeUsage.setParent(parentToAssign);
+        return functionReferenceTypeUsage;
+    }
+
+    private static TypeUsage toTypeUsage(Type type) {
+        return ReflectionBasedMethodResolution.toTypeUsage(type, Collections.emptyMap());
+    }
+
+    private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
+        return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap());
+    }
+
     @Override
     public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return super.findFormalParametersFor(invokable, resolver);
@@ -84,13 +126,6 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
                 '}';
     }
 
-    private Class<?> clazz;
-
-    public ReflectionBasedTypeDefinition(Class<?> clazz) {
-        super(clazz.getCanonicalName());
-        this.clazz = clazz;
-    }
-
     @Override
     public String getQualifiedName() {
         return clazz.getCanonicalName();
@@ -143,7 +178,20 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     private List<FormalParameter> formalParameters(Method method) {
-        return ReflectionBasedMethodResolution.formalParameters(method);
+        return ReflectionBasedMethodResolution.formalParameters(method, getTypeVariables());
+    }
+
+    private Map<String, TypeUsage> getTypeVariables() {
+        Map<String, TypeUsage> map = new HashMap<>();
+        if (clazz.getTypeParameters().length != typeParameters.size()) {
+            throw new IllegalStateException("It should have " + clazz.getTypeParameters().length + " and it has " + typeParameters.size());
+        }
+        int i=0;
+        for (TypeVariable tv : clazz.getTypeParameters()) {
+            map.put(tv.getName(), typeParameters.get(i));
+            i++;
+        }
+        return map;
     }
 
     @Override
@@ -170,28 +218,6 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
         // TODO consider inherited fields and methods
         throw new UnsupportedOperationException(fieldName);
-    }
-
-    private static TypeUsage typeFor(List<Method> methods, Node parentToAssign) {
-        if (methods.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        methods.forEach((m)-> {
-            if (!Modifier.isStatic(m.getModifiers())) {
-                throw new IllegalArgumentException("Non static method given: " + m);
-            }
-        });
-        if (methods.size() != 1) {
-            throw new UnsupportedOperationException();
-        }
-        return typeFor(methods.get(0), parentToAssign);
-    }
-
-    private static TypeUsage typeFor(Method method, Node parentToAssign) {
-        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
-        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
-        functionReferenceTypeUsage.setParent(parentToAssign);
-        return functionReferenceTypeUsage;
     }
 
     @Override
@@ -235,14 +261,6 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             }
         }
         return referenceTypeUsage;
-    }
-
-    private static TypeUsage toTypeUsage(Type type) {
-        return ReflectionBasedMethodResolution.toTypeUsage(type);
-    }
-
-    private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
-        return ReflectionBasedMethodResolution.toTypeUsage(typeVariable);
     }
 
     @Override

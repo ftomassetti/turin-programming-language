@@ -8,11 +8,13 @@ import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import turin.relations.Relation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,7 +28,7 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public static JvmMethodDefinition toMethodDefinition(Method method){
-        return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(method.getDeclaringClass().getCanonicalName()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()), method.getDeclaringClass().isInterface());
+        return new JvmMethodDefinition(JvmNameUtils.internalName(method.getDeclaringClass()), method.getName(), calcSignature(method), Modifier.isStatic(method.getModifiers()), method.getDeclaringClass().isInterface());
     }
 
     public static String calcSignature(Class<?> clazz) {
@@ -76,13 +78,21 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public TypeDefinition getTypeDefinition(Class<?> clazz) {
+        return getTypeDefinition(clazz, Collections.emptyList());
+    }
+
+    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
         if (clazz.isPrimitive()) {
             throw new IllegalArgumentException();
         }
-        return new ReflectionBasedTypeDefinition(clazz);
+        ReflectionBasedTypeDefinition type = new ReflectionBasedTypeDefinition(clazz);
+        for (TypeUsage typeUsage : typeParams) {
+            type.addTypeParameter(typeUsage);
+        }
+        return type;
     }
 
     public Optional<TypeDefinition> findTypeDefinition(String typeName) {
@@ -105,4 +115,5 @@ public class ReflectionTypeDefinitionFactory {
         List<String> paramTypesSignatures = Arrays.stream(constructor.getParameterTypes()).map((t) -> calcSignature(t)).collect(Collectors.toList());
         return "(" + String.join("", paramTypesSignatures) + ")V";
     }
+
 }

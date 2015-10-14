@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
+import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Placeholder;
@@ -76,6 +77,24 @@ public class CompilationOfPush {
             Property property = (Property) node;
             JvmFieldDefinition field = new JvmFieldDefinition(compilation.getInternalClassName(), property.fieldName(), property.getTypeUsage().jvmType(compilation.getResolver()).getDescriptor(), false);
             return new PushInstanceField(field);
+        } else if (node instanceof AccessEndpoint) {
+            AccessEndpoint accessEndpoint = (AccessEndpoint) node;
+            // we should call a static method created in the Relation class passing the instance
+            // as the only parameter
+            String relationClassInternalName = JvmNameUtils.canonicalToInternal(accessEndpoint.getRelationDefinition().getGeneratedClassQualifiedName());
+            String descriptor = accessEndpoint.getRelationField().methodDescriptor(compilation.getResolver());
+            JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
+                    relationClassInternalName,
+                    accessEndpoint.getRelationField().methodName(),
+                    descriptor,
+                    true,
+                    false);
+            return new ComposedBytecodeSequence(
+                    push(accessEndpoint.getInstance()),
+                    new MethodInvocationBS(methodDefinition)
+            );
+        } else if (node instanceof Expression) {
+            return pushExpression((Expression)node);
         } else {
             throw new UnsupportedOperationException(node.getClass().getCanonicalName());
         }
@@ -199,7 +218,9 @@ public class CompilationOfPush {
             if (instanceFieldAccess.isArrayLength(compilation.getResolver())) {
                 return new ComposedBytecodeSequence(pushExpression(instanceFieldAccess.getSubject()), new ArrayLengthBS());
             } else {
-                throw new UnsupportedOperationException(expr.toString());
+                TypeUsage instanceType = instanceFieldAccess.getSubject().calcType(compilation.getResolver());
+                Node value = instanceType.getFieldOnInstance(instanceFieldAccess.getField(), instanceFieldAccess.getSubject(), compilation.getResolver());
+                return push(value);
             }
         } else if (expr instanceof InstanceMethodInvokation) {
             InstanceMethodInvokation instanceMethodInvokation = (InstanceMethodInvokation) expr;

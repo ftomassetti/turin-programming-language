@@ -241,5 +241,13 @@ public class ReferenceTypeUsage extends TypeUsage {
             }
             throw new IllegalArgumentException(name);
         }
+
+        @Override
+        public String toString() {
+            return "TypeParameterValues{" +
+                    "usages=" + usages +
+                    ", names=" + names +
+                    '}';
+        }
     }
 }

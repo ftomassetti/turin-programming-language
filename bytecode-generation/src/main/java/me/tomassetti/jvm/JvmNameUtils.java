@@ -139,7 +139,7 @@ public final class JvmNameUtils {
 
     public static String internalName(Class<?> clazz) {
         if (clazz.isMemberClass()) {
-            String container = descriptor(clazz.getDeclaringClass());
+            String container = internalName(clazz.getDeclaringClass());
             return container + "$" + clazz.getSimpleName();
         } else {
             return canonicalToInternal(clazz.getCanonicalName());
