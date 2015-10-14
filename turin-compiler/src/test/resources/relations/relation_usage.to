@@ -29,7 +29,7 @@ Node foo2() {
     return a.parent.get()
 }
 
-Node foo3() {
+List[Node] foo3() {
     val a = Node("A")
     val b = Node("B")
     val c = Node("C")
@@ -38,7 +38,7 @@ Node foo3() {
     return b.children
 }
 
-Node foo4() {
+List[Node] foo4() {
     val a = Node("A")
     val b = Node("B")
     val c = Node("C")

@@ -104,6 +104,7 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         Class foo2 = classLoader.addClass(classDefinitions.get(3));
         saveClassFile(classDefinitions.get(3), "relations");
         Class foo3 = classLoader.addClass(classDefinitions.get(4));
+        saveClassFile(classDefinitions.get(4), "relations");
         Class foo4 = classLoader.addClass(classDefinitions.get(5));
 
         // foo1 should gives true
