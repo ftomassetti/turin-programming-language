@@ -7,7 +7,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
-public class ArrayTypeUsageNode extends TypeUsageNode {
+public class ArrayTypeUsageNode extends TypeUsageWrapperNode {
 
     private TypeUsageNode componentTypeNode;
     private TypeUsage componentType;
@@ -28,35 +28,10 @@ public class ArrayTypeUsageNode extends TypeUsageNode {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return typeUsage().jvmType(resolver);
-    }
-
-    @Override
-    public me.tomassetti.turin.typesystem.ArrayTypeUsage asArrayTypeUsage() {
-        return this.typeUsage().asArrayTypeUsage();
-    }
-
-    @Override
-    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
-        return typeUsage().canBeAssignedTo(type, resolver);
-    }
-
-    @Override
     public String toString() {
         return "ArrayTypeUsage{" +
                 "componentTypeNode=" + componentTypeNode +
                 '}';
-    }
-
-    @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
-        return typeUsage().getFieldOnInstance(fieldName, instance, resolver);
-    }
-
-    @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return typeUsage().isMethodOverloaded(resolver, methodName);
     }
 
     @Override

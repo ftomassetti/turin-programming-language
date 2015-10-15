@@ -5,6 +5,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.Optional;
  * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
  *       parent.
  */
-public class PrimitiveTypeUsageNode extends TypeUsageNode {
+public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
 
     private String name;
     private JvmType jvmType;
@@ -51,20 +52,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageNode {
             ImmutableList.of(DOUBLE));
     public static List<PrimitiveTypeUsageNode> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
-    @Override
-    public boolean canBeAssignedTo(TypeUsageNode other, SymbolResolver resolver) {
-        if (other.equals(boxType) || other.equals(ReferenceTypeUsage.OBJECT)) {
-            return true;
-        }
-        if (!other.isPrimitive()) {
-            return false;
-        }
-        if (promotionsTypes.contains(other)) {
-            return true;
-        }
-        return jvmType(resolver).equals(other.jvmType(resolver));
-    }
-
     public static Optional<PrimitiveTypeUsageNode> findByJvmType(JvmType jvmType) {
         for (PrimitiveTypeUsageNode primitiveTypeUsage : ALL) {
             if (primitiveTypeUsage.jvmType.equals(jvmType)) {
@@ -91,11 +78,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageNode {
     }
 
     private TypeUsageNode boxType;
-
-    @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return jvmType;
-    }
 
     @Override
     public Iterable<Node> getChildren() {
@@ -164,11 +146,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageNode {
     }
 
     @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return false;
-    }
-
-    @Override
     public TypeUsageNode copy() {
         PrimitiveTypeUsageNode copy = new PrimitiveTypeUsageNode(this.name, this.jvmType, this.boxType, promotionsTypes);
         copy.parent = this.parent;
@@ -214,5 +191,10 @@ public class PrimitiveTypeUsageNode extends TypeUsageNode {
     @Override
     public String describe() {
         return name;
+    }
+
+    @Override
+    public TypeUsage typeUsage() {
+        return this.primitiveTypeUsage;
     }
 }
