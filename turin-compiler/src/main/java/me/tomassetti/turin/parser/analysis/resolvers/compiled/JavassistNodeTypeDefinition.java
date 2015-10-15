@@ -401,16 +401,6 @@ public class JavassistNodeTypeDefinition extends NodeTypeDefinition {
         }
     }
 
-    /*@Override
-    public boolean isInterface() {
-        return ctClass.isInterface();
-    }*/
-
-    @Override
-    public boolean isClass() {
-        return !ctClass.isInterface() && !ctClass.isArray() && !ctClass.isPrimitive() && !ctClass.isAnnotation() && !ctClass.isEnum();
-    }
-
     @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();

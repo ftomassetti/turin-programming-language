@@ -22,6 +22,8 @@ import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
+import me.tomassetti.turin.typesystem.TurinSourceTypeDefinition;
+import me.tomassetti.turin.typesystem.TypeDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,6 +37,12 @@ public class TurinTypeDefinition extends NodeTypeDefinition {
     private Optional<TypeUsage> baseType = Optional.empty();
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
+    private TypeDefinition typeDefinition;
+
+    @Override
+    public TypeDefinition typeDefinition() {
+        return typeDefinition;
+    }
 
     public List<TurinTypeContructorDefinition> getExplicitConstructors() {
         return members.stream()
@@ -250,6 +258,7 @@ public class TurinTypeDefinition extends NodeTypeDefinition {
 
     public TurinTypeDefinition(String name) {
         super(name);
+        this.typeDefinition = new TurinSourceTypeDefinition(this);
     }
 
     /**
@@ -307,18 +316,6 @@ public class TurinTypeDefinition extends NodeTypeDefinition {
             return res;
         }
         return ImmutableList.of(ReferenceTypeUsage.OBJECT);
-    }
-
-    /*@Override
-    public boolean isInterface() {
-        // TODO when it will be possible to declare interface fix this
-        return false;
-    }*/
-
-    @Override
-    public boolean isClass() {
-        // TODO when it will be possible to declare interface fix this
-        return true;
     }
 
     @Override

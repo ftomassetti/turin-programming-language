@@ -269,16 +269,6 @@ class ReflectionBasedNodeTypeDefinition extends NodeTypeDefinition {
         return typeDefinition;
     }
 
-    /*@Override
-    public boolean isInterface() {
-        return clazz.isInterface();
-    }*/
-
-    @Override
-    public boolean isClass() {
-        return !clazz.isInterface() && !clazz.isEnum() && !clazz.isAnnotation() && !clazz.isArray() && !clazz.isPrimitive();
-    }
-
     private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
         NodeTypeDefinition typeDefinition = new ReflectionBasedNodeTypeDefinition(clazz);
         ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);

@@ -33,9 +33,7 @@ public abstract class NodeTypeDefinition extends Node implements Named {
         this.name = name;
     }
 
-    public TypeDefinition typeDefinition() {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
+    public abstract TypeDefinition typeDefinition();
 
     //
     // Naming
@@ -191,7 +189,10 @@ public abstract class NodeTypeDefinition extends Node implements Named {
         return typeDefinition().isInterface();
     }
 
-    public abstract boolean isClass();
+    @Deprecated
+    public final boolean isClass() {
+        return typeDefinition().isClass();
+    }
 
     public abstract NodeTypeDefinition getSuperclass(SymbolResolver resolver);
 
