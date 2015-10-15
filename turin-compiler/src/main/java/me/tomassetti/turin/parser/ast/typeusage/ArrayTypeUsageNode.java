@@ -29,7 +29,7 @@ public class ArrayTypeUsageNode extends TypeUsageNode {
 
     @Override
     public JvmType jvmType(SymbolResolver resolver) {
-        return new JvmType("[" + componentTypeNode.jvmType(resolver).getSignature());
+        return typeUsage().jvmType(resolver);
     }
 
     @Override
@@ -39,11 +39,7 @@ public class ArrayTypeUsageNode extends TypeUsageNode {
 
     @Override
     public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
-        if (type.isArray()) {
-            return this.getComponentTypeNode().equals(type.asArrayTypeUsage().getComponentType());
-        } else {
-            return type.equals(ReferenceTypeUsage.OBJECT);
-        }
+        return typeUsage().canBeAssignedTo(type, resolver);
     }
 
     @Override
@@ -55,15 +51,12 @@ public class ArrayTypeUsageNode extends TypeUsageNode {
 
     @Override
     public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
-        if (fieldName.equals("length")) {
-            return new ArrayLength(instance);
-        }
-        throw new UnsupportedOperationException();
+        return typeUsage().getFieldOnInstance(fieldName, instance, resolver);
     }
 
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return false;
+        return typeUsage().isMethodOverloaded(resolver, methodName);
     }
 
     @Override
