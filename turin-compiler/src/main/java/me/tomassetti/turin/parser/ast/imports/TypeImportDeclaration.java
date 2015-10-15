@@ -6,7 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.NoContext;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ public class TypeImportDeclaration extends ImportDeclaration {
         return super.specificValidate(resolver, errorCollector);
     }
 
-    private Optional<TypeDefinition> typeDefinitionCache;
+    private Optional<NodeTypeDefinition> typeDefinitionCache;
 
     private String canonicalName() {
         return qualifiedName.qualifiedName() + "." + typeName;

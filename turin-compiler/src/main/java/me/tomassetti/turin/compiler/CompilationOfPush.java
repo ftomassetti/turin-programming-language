@@ -16,7 +16,7 @@ import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Placeholder;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
@@ -291,7 +291,7 @@ public class CompilationOfPush {
             BytecodeSequence putField = new BytecodeSequence() {
                 @Override
                 public void operate(MethodVisitor mv) {
-                    TypeDefinition typeDefinition = instanceFieldAccess.getSubject().calcType(compilation.getResolver())
+                    NodeTypeDefinition typeDefinition = instanceFieldAccess.getSubject().calcType(compilation.getResolver())
                             .asReferenceTypeUsage()
                             .getTypeDefinition(compilation.getResolver());
                     String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());

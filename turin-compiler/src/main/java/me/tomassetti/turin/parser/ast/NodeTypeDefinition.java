@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.typesystem.TypeDefinition;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +26,15 @@ import java.util.Optional;
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
  */
-public abstract class TypeDefinition extends Node implements Named {
+public abstract class NodeTypeDefinition extends Node implements Named {
     protected String name;
 
-    public TypeDefinition(String name) {
+    public NodeTypeDefinition(String name) {
         this.name = name;
+    }
+
+    public TypeDefinition typeDefinition() {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     //
@@ -164,7 +169,7 @@ public abstract class TypeDefinition extends Node implements Named {
             Node field = getField(firstName, resolver);
             TypeUsage typeUsage = field.calcType(resolver);
             if (typeUsage.isReferenceTypeUsage()) {
-                TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
+                NodeTypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
                 return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
             } else {
                 return false;
@@ -181,11 +186,14 @@ public abstract class TypeDefinition extends Node implements Named {
 
     public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
-    public abstract boolean isInterface();
+    @Deprecated
+    public final boolean isInterface() {
+        return typeDefinition().isInterface();
+    }
 
     public abstract boolean isClass();
 
-    public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
+    public abstract NodeTypeDefinition getSuperclass(SymbolResolver resolver);
 
     public abstract Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams);
 }

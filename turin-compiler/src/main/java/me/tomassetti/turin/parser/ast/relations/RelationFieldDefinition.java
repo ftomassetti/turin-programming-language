@@ -3,17 +3,15 @@ package me.tomassetti.turin.parser.ast.relations;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.util.StringUtils;
 import turin.relations.Relation;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class RelationFieldDefinition extends Node {
@@ -21,7 +19,7 @@ public class RelationFieldDefinition extends Node {
     private String name;
     private TypeUsage type;
 
-    public boolean isApplicableTo(TypeDefinition typeDefinition, SymbolResolver resolver) {
+    public boolean isApplicableTo(NodeTypeDefinition typeDefinition, SymbolResolver resolver) {
         if ((type.getParent() instanceof FormalParameter) && type.getParent().getParent() == null){
             throw new UnsupportedOperationException();
         }

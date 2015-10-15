@@ -4,9 +4,8 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import turin.relations.ManyToManyRelation;
 import turin.relations.OneToManyRelation;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class RelationDefinition extends Node {
 
-    public List<RelationFieldDefinition> getFieldsApplicableTo(TypeDefinition typeDefinition, SymbolResolver resolver) {
+    public List<RelationFieldDefinition> getFieldsApplicableTo(NodeTypeDefinition typeDefinition, SymbolResolver resolver) {
         return fields.stream().filter((f)->f.isApplicableTo(typeDefinition, resolver)).collect(Collectors.toList());
     }
 

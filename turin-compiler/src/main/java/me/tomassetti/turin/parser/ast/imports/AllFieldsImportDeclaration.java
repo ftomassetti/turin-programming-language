@@ -5,7 +5,7 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.Optional;
 
@@ -42,7 +42,7 @@ public class AllFieldsImportDeclaration extends ImportDeclaration {
         return super.specificValidate(resolver, errorCollector);
     }
 
-    private Optional<TypeDefinition> typeDefinitionCache;
+    private Optional<NodeTypeDefinition> typeDefinitionCache;
 
     @Override
     public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {

@@ -6,7 +6,7 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -54,7 +54,7 @@ public class Creation extends Invokable {
         return getTypeDefinition(resolver).hasManyConstructors(resolver);
     }
 
-    private TypeDefinition getTypeDefinition(SymbolResolver resolver) {
+    private NodeTypeDefinition getTypeDefinition(SymbolResolver resolver) {
         return type.asReferenceTypeUsage().getTypeDefinition(resolver);
     }
 

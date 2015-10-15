@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class ThisExpression extends Expression {
 
     @Override
     public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
-        TypeDefinition typeDefinition = calcType(resolver).getTypeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = calcType(resolver).getTypeDefinition(resolver);
         return typeDefinition.canFieldBeAssigned(field, resolver);
     }
 }

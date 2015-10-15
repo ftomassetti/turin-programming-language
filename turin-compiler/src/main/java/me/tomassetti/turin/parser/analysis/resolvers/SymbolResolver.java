@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -45,8 +45,8 @@ public interface SymbolResolver {
      * @param resolver top level resolver used during compilation. This is needed because this resolver could delegate
      *                 to that one during the resolution process.
      */
-    default TypeDefinition getTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
-        Optional<TypeDefinition> result = findTypeDefinitionIn(typeName, context, resolver.getRoot());
+    default NodeTypeDefinition getTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+        Optional<NodeTypeDefinition> result = findTypeDefinitionIn(typeName, context, resolver.getRoot());
         if (result.isPresent()) {
             return result.get();
         } else {
@@ -60,7 +60,7 @@ public interface SymbolResolver {
      * @param resolver top level resolver used during compilation. This is needed because this resolver could delegate
      *                 to that one during the resolution process.
      */
-    Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver);
+    Optional<NodeTypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver);
 
     /**
      * @param typeName can be a simple name or a canonical name. It is legal to pass a primitive type name.

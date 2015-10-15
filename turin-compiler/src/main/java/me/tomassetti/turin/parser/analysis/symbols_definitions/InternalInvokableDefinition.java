@@ -4,7 +4,7 @@ import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
@@ -36,7 +36,7 @@ public abstract class InternalInvokableDefinition {
             return Optional.of("An asterisk param should be an object");
         }
         List<ActualParam> actualParams = new ArrayList<>();
-        TypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
 
         for (FormalParameter formalParameter : formalParameters) {
             String getterName = ParamUtils.getterName(formalParameter);

@@ -56,14 +56,14 @@ public class ReferenceTypeUsageTest {
 
     @Test
     public void isInterfaceNegativeCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
         ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
         assertEquals(false, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }
 
     @Test
     public void isInterfacePositiveCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
         ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
         assertEquals(true, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }

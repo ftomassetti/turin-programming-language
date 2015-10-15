@@ -3,11 +3,10 @@ package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 
@@ -78,12 +77,12 @@ class ReflectionBasedMethodResolution {
             if (clazz.isArray()) {
                 return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType(), typeVariables));
             }
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
+            NodeTypeDefinition typeDefinition = new ReflectionBasedNodeTypeDefinition((Class) type);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             return referenceTypeUsage;
         } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
+            NodeTypeDefinition typeDefinition = new ReflectionBasedNodeTypeDefinition((Class) parameterizedType.getRawType());
             List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt, typeVariables)).collect(Collectors.toList());
             return new ReferenceTypeUsage(typeDefinition, typeParams);
         } else if (type instanceof TypeVariable) {
@@ -268,8 +267,8 @@ class ReflectionBasedMethodResolution {
             return false;
         }
         // TODO consider generic parameters?
-        ReflectionBasedTypeDefinition firstDef = new ReflectionBasedTypeDefinition(firstType);
-        ReflectionBasedTypeDefinition secondDef = new ReflectionBasedTypeDefinition(secondType);
+        ReflectionBasedNodeTypeDefinition firstDef = new ReflectionBasedNodeTypeDefinition(firstType);
+        ReflectionBasedNodeTypeDefinition secondDef = new ReflectionBasedNodeTypeDefinition(secondType);
         TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
         TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);

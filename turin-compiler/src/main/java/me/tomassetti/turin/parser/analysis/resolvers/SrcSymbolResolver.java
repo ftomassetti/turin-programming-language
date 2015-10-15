@@ -18,7 +18,7 @@ import java.util.*;
 public class SrcSymbolResolver implements SymbolResolver {
 
     private Set<String> packages = new HashSet<>();
-    private Map<String, TypeDefinition> typeDefinitions;
+    private Map<String, NodeTypeDefinition> typeDefinitions;
     private Map<String, PropertyDefinition> propertyDefinitions;
     private Map<String, Program> programsDefinitions;
     private Map<String, FunctionDefinition> functionDefinitions;
@@ -41,7 +41,7 @@ public class SrcSymbolResolver implements SymbolResolver {
         this.programsDefinitions = new HashMap<>();
         this.functionDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
-            for (TypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
+            for (NodeTypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
                 packages.add(typeDefinition.contextName());
                 typeDefinitions.put(typeDefinition.getQualifiedName(), typeDefinition);
             }
@@ -71,7 +71,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<NodeTypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
         if (typeDefinitions.containsKey(typeName)) {
             return Optional.of(typeDefinitions.get(typeName));
         } else {

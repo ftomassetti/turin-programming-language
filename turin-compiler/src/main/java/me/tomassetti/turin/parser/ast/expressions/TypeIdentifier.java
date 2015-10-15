@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedTypeException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -41,8 +41,8 @@ public class TypeIdentifier extends Node {
         return true;
     }
 
-    public TypeDefinition resolve(SymbolResolver resolver) {
-        Optional<TypeDefinition> res = resolver.findTypeDefinitionIn(qualifiedName(), this, resolver);
+    public NodeTypeDefinition resolve(SymbolResolver resolver) {
+        Optional<NodeTypeDefinition> res = resolver.findTypeDefinitionIn(qualifiedName(), this, resolver);
         if (res.isPresent()) {
             return res.get();
         } else {

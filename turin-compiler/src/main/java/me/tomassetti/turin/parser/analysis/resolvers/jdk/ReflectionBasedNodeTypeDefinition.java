@@ -10,23 +10,27 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.ReflectionBasedTypeDefinition;
+import me.tomassetti.turin.typesystem.TypeDefinition;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class ReflectionBasedTypeDefinition extends TypeDefinition {
+@Deprecated
+class ReflectionBasedNodeTypeDefinition extends NodeTypeDefinition {
 
     private Class<?> clazz;
     private List<TypeUsage> typeParameters = new LinkedList<>();
 
-    public ReflectionBasedTypeDefinition(Class<?> clazz) {
+    public ReflectionBasedNodeTypeDefinition(Class<?> clazz) {
         super(clazz.getCanonicalName());
         this.clazz = clazz;
+        this.typeDefinition = new ReflectionBasedTypeDefinition(clazz);
     }
 
     public void addTypeParameter(TypeUsage typeUsage) {
@@ -103,7 +107,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+    public NodeTypeDefinition getSuperclass(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 
@@ -232,7 +236,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return ReflectionBasedTypeDefinition.typeFor(methods, this);
+            return ReflectionBasedNodeTypeDefinition.typeFor(methods, this);
         }
 
         // TODO consider inherited fields and methods
@@ -258,10 +262,17 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return ancestors;
     }
 
+    private ReflectionBasedTypeDefinition typeDefinition;
+
     @Override
+    public TypeDefinition typeDefinition() {
+        return typeDefinition;
+    }
+
+    /*@Override
     public boolean isInterface() {
         return clazz.isInterface();
-    }
+    }*/
 
     @Override
     public boolean isClass() {
@@ -269,7 +280,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
-        TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
+        NodeTypeDefinition typeDefinition = new ReflectionBasedNodeTypeDefinition(clazz);
         ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType)type;

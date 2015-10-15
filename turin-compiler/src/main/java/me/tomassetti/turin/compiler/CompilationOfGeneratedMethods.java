@@ -14,7 +14,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -179,7 +179,7 @@ public class CompilationOfGeneratedMethods {
             if (!baseType.isReferenceTypeUsage()) {
                 throw new IllegalStateException();
             }
-            TypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition(compilation.getResolver());
+            NodeTypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition(compilation.getResolver());
             if (baseTypeDefinition.hasManyConstructors(compilation.getResolver())) {
                 throw new IllegalStateException();
             }

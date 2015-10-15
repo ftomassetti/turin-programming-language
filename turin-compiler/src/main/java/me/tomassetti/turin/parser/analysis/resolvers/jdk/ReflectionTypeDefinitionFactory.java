@@ -8,7 +8,6 @@ import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import turin.relations.Relation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -77,25 +76,25 @@ public class ReflectionTypeDefinitionFactory {
         }
     }
 
-    public TypeDefinition getTypeDefinition(Class<?> clazz) {
+    public NodeTypeDefinition getTypeDefinition(Class<?> clazz) {
         return getTypeDefinition(clazz, Collections.emptyList());
     }
 
-    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
+    public NodeTypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
         if (clazz.isPrimitive()) {
             throw new IllegalArgumentException();
         }
-        ReflectionBasedTypeDefinition type = new ReflectionBasedTypeDefinition(clazz);
+        ReflectionBasedNodeTypeDefinition type = new ReflectionBasedNodeTypeDefinition(clazz);
         for (TypeUsage typeUsage : typeParams) {
             type.addTypeParameter(typeUsage);
         }
         return type;
     }
 
-    public Optional<TypeDefinition> findTypeDefinition(String typeName) {
+    public Optional<NodeTypeDefinition> findTypeDefinition(String typeName) {
         if (!typeName.startsWith("java.") && !typeName.startsWith("javax.")) {
             return Optional.empty();
         }

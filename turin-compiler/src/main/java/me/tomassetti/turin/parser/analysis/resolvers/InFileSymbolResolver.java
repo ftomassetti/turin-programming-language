@@ -65,7 +65,7 @@ public class InFileSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<NodeTypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
         // primitive names are not valid here
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
@@ -89,7 +89,7 @@ public class InFileSymbolResolver implements SymbolResolver {
             return Optional.of(basicType.get());
         }
 
-        Optional<TypeDefinition> typeDefinition = findTypeDefinitionIn(typeName, context, resolver.getRoot());
+        Optional<NodeTypeDefinition> typeDefinition = findTypeDefinitionIn(typeName, context, resolver.getRoot());
         if (typeDefinition.isPresent()) {
             ReferenceTypeUsage ref = new ReferenceTypeUsage(typeDefinition.get());
             ref.setParent(context);
@@ -112,7 +112,7 @@ public class InFileSymbolResolver implements SymbolResolver {
     @Override
     public Optional<Node> findSymbol(String name, Node context) {
         if (context == null) {
-            Optional<TypeDefinition> typeDefinition = typeResolver.resolveAbsoluteTypeName(name);
+            Optional<NodeTypeDefinition> typeDefinition = typeResolver.resolveAbsoluteTypeName(name);
             if (typeDefinition.isPresent()) {
                 return Optional.of(typeDefinition.get());
             }
@@ -131,14 +131,14 @@ public class InFileSymbolResolver implements SymbolResolver {
         return typeResolver.existPackage(packageName);
     }
 
-    private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context,
+    private Optional<NodeTypeDefinition> findTypeDefinitionInHelper(String typeName, Node context,
                                                                 Node previousContext, SymbolResolver resolver) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
         if (context == null) {
             // implicitly look into java.lang package
-            Optional<TypeDefinition> result = typeResolver.resolveAbsoluteTypeName("java.lang." + typeName);
+            Optional<NodeTypeDefinition> result = typeResolver.resolveAbsoluteTypeName("java.lang." + typeName);
             if (result.isPresent()) {
                 return result;
             }
@@ -146,8 +146,8 @@ public class InFileSymbolResolver implements SymbolResolver {
             return typeResolver.resolveAbsoluteTypeName(typeName);
         }
         for (Node child : context.getChildren()) {
-            if (child instanceof TypeDefinition) {
-                TypeDefinition typeDefinition = (TypeDefinition)child;
+            if (child instanceof NodeTypeDefinition) {
+                NodeTypeDefinition typeDefinition = (NodeTypeDefinition)child;
                 if (typeDefinition.getName().equals(typeName)
                         || typeDefinition.getQualifiedName().equals(typeName)) {
                     return Optional.of(typeDefinition);
@@ -158,8 +158,8 @@ public class InFileSymbolResolver implements SymbolResolver {
                     ImportDeclaration importDeclaration = (ImportDeclaration) child;
                     Optional<Node> resolvedNode = importDeclaration.findAmongImported(typeName, resolver);
                     if (resolvedNode.isPresent()) {
-                        if (resolvedNode.get() instanceof TypeDefinition) {
-                            return Optional.of((TypeDefinition) resolvedNode.get());
+                        if (resolvedNode.get() instanceof NodeTypeDefinition) {
+                            return Optional.of((NodeTypeDefinition) resolvedNode.get());
                         } else {
                             throw new SemanticErrorException(context, "" + typeName + " is not a type");
                         }
@@ -169,7 +169,7 @@ public class InFileSymbolResolver implements SymbolResolver {
         }
         if (!context.contextName().isEmpty()) {
             String qName = context.contextName() + "." + typeName;
-            Optional<TypeDefinition>  partial = getRoot().findTypeDefinitionIn(qName, null, getRoot());
+            Optional<NodeTypeDefinition>  partial = getRoot().findTypeDefinitionIn(qName, null, getRoot());
             if (partial.isPresent()) {
                 return partial;
             }

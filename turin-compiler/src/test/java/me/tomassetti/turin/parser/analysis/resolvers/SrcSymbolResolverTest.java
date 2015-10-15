@@ -59,7 +59,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
 
-        Optional<TypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        Optional<NodeTypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
         assertEquals(true, typeDefinition.isPresent());
         assertEquals("manga.MangaCharacter", typeDefinition.get().getQualifiedName());
     }
@@ -71,7 +71,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
 
-        Optional<TypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        Optional<NodeTypeDefinition> typeDefinition = srcSymbolResolver.findTypeDefinitionIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
         assertEquals(false, typeDefinition.isPresent());
     }
 

@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class JdkTypeResolver implements TypeResolver {
     }
 
     @Override
-    public Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
+    public Optional<NodeTypeDefinition> resolveAbsoluteTypeName(String typeName) {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }

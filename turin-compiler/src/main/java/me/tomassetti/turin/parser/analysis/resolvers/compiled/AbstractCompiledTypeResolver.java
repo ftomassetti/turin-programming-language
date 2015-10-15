@@ -10,7 +10,7 @@ import javassist.bytecode.MethodInfo;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.io.File;
@@ -98,11 +98,11 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
     }
 
     @Override
-    public Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
+    public Optional<NodeTypeDefinition> resolveAbsoluteTypeName(String typeName) {
         if (classpathElements.containsKey(typeName)) {
             try {
                 CtClass ctClass = classpathElements.get(typeName).toCtClass();
-                return Optional.of(new JavassistTypeDefinition(ctClass));
+                return Optional.of(new JavassistNodeTypeDefinition(ctClass));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

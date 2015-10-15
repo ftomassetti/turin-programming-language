@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +15,9 @@ public class ComposedTypeResolver implements TypeResolver {
     }
 
     @Override
-    public Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
+    public Optional<NodeTypeDefinition> resolveAbsoluteTypeName(String typeName) {
         for (TypeResolver element : elements) {
-            Optional<TypeDefinition> partial = element.resolveAbsoluteTypeName(typeName);
+            Optional<NodeTypeDefinition> partial = element.resolveAbsoluteTypeName(typeName);
             if (partial.isPresent()) {
                 return partial;
             }

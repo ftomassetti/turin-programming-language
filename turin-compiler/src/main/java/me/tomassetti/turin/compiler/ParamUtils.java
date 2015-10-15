@@ -5,13 +5,12 @@ import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Creation;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.InstanceMethodInvokation;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.util.Either;
 
@@ -55,7 +54,7 @@ public final class ParamUtils {
             return Either.left("An asterisk param should be an object");
         }
         List<ActualParam> actualParams = new ArrayList<>();
-        TypeDefinition typeDefinition = type.asReferenceTypeUsage().getTypeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = type.asReferenceTypeUsage().getTypeDefinition(resolver);
 
         // map with the default params
         Expression mapCreation = new Creation("turin.collections.MapBuilder", Collections.emptyList());

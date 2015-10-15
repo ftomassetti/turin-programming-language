@@ -5,7 +5,7 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.compiled.JarTypeResolver;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import org.junit.Test;
 
 import java.io.File;
@@ -21,7 +21,7 @@ public class JarTypeResolverTest {
     public void canFindExistingClass() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         assertEquals(true, typeDefinition.isPresent());
     }
 
@@ -29,7 +29,7 @@ public class JarTypeResolverTest {
     public void cannotFindUnexistingClass() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.Foo");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.Foo");
         assertEquals(false, typeDefinition.isPresent());
     }
 
@@ -37,7 +37,7 @@ public class JarTypeResolverTest {
     public void classFoundHasProperQualifiedName() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         assertEquals("com.github.javaparser.ast.CompilationUnit", typeDefinition.get().getQualifiedName());
     }
 
@@ -45,7 +45,7 @@ public class JarTypeResolverTest {
     public void classFoundHasProperName() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         assertEquals("CompilationUnit", typeDefinition.get().getName());
     }
 
@@ -53,7 +53,7 @@ public class JarTypeResolverTest {
     public void classFoundHasProperJvmType() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         assertEquals("Lcom/github/javaparser/ast/CompilationUnit;", typeDefinition.get().jvmType().getSignature());
         assertEquals("Lcom/github/javaparser/ast/CompilationUnit;", typeDefinition.get().jvmType().getDescriptor());
         assertEquals("com/github/javaparser/ast/CompilationUnit", typeDefinition.get().jvmType().getInternalName());
@@ -64,7 +64,7 @@ public class JarTypeResolverTest {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
         SymbolResolver resolver = new InFileSymbolResolver(jarTypeResolver);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         JvmMethodDefinition method = typeDefinition.get().findMethodFor("getComments", Collections.emptyList(), resolver, false);
         assertEquals("com/github/javaparser/ast/CompilationUnit", method.getOwnerInternalName());
         assertEquals("()Ljava/util/List;", method.getDescriptor());
@@ -76,7 +76,7 @@ public class JarTypeResolverTest {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
         SymbolResolver resolver = new InFileSymbolResolver(jarTypeResolver);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         JvmConstructorDefinition constructor = typeDefinition.get().resolveConstructorCall(resolver, Collections.emptyList());
         assertEquals("com/github/javaparser/ast/CompilationUnit", constructor.getOwnerInternalName());
         assertEquals("()V", constructor.getDescriptor());
@@ -87,7 +87,7 @@ public class JarTypeResolverTest {
     public void testIsInterfaceNegativeCase() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
         assertEquals(false, typeDefinition.get().isInterface());
     }
 
@@ -95,7 +95,7 @@ public class JarTypeResolverTest {
     public void testIsInterfacePositiveCase() throws IOException {
         File jarFile = new File("src/test/resources/jars/javaparser-core-2.2.1.jar");
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
-        Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.DocumentableNode");
+        Optional<NodeTypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.DocumentableNode");
         assertEquals(true, typeDefinition.get().isInterface());
     }
 

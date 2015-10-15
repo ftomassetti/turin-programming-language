@@ -7,7 +7,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class StaticFieldAccess extends Expression {
 
     @Override
     public TypeUsage calcType(SymbolResolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = typeDefinition(resolver);
 
         TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
         return fieldType;
@@ -62,7 +62,7 @@ public class StaticFieldAccess extends Expression {
 
     @Override
     public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = typeDefinition(resolver);
 
         if (invokable instanceof Creation) {
             return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
@@ -75,14 +75,14 @@ public class StaticFieldAccess extends Expression {
 
     @Override
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = typeDefinition(resolver);
 
         return typeDefinition.findMethodFor(field, argsTypes, resolver, staticContext);
     }
 
-    private TypeDefinition typeDefinitionCache;
+    private NodeTypeDefinition typeDefinitionCache;
 
-    private TypeDefinition typeDefinition(SymbolResolver resolver) {
+    private NodeTypeDefinition typeDefinition(SymbolResolver resolver) {
         if (typeDefinitionCache == null) {
             typeDefinitionCache = resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
         }
@@ -95,7 +95,7 @@ public class StaticFieldAccess extends Expression {
     }
 
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
+        NodeTypeDefinition typeDefinition = typeDefinition(resolver);
         TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
         return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType(resolver).getSignature(), true);
     }

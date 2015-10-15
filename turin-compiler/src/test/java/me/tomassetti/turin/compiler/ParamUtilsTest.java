@@ -1,22 +1,19 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.util.Either;
 import org.easymock.EasyMock;
-import org.easymock.EasyMockSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -133,7 +130,7 @@ public class ParamUtilsTest {
         expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
-        TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinition.class);
+        NodeTypeDefinition typeOfAsteriskParam = PowerMock.createMock(NodeTypeDefinition.class);
         expect(typeUsageOfAsteriskParam.getTypeDefinition(resolver)).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.hasMethodFor("getFn1", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFn2", Collections.emptyList(), resolver, false)).andReturn(true);
@@ -164,7 +161,7 @@ public class ParamUtilsTest {
         expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
-        TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinition.class);
+        NodeTypeDefinition typeOfAsteriskParam = PowerMock.createMock(NodeTypeDefinition.class);
         expect(typeUsageOfAsteriskParam.getTypeDefinition(resolver)).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.hasMethodFor("getFn1", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFn2", Collections.emptyList(), resolver, false)).andReturn(true);
@@ -193,7 +190,7 @@ public class ParamUtilsTest {
         expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
-        TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinition.class);
+        NodeTypeDefinition typeOfAsteriskParam = PowerMock.createMock(NodeTypeDefinition.class);
         expect(typeUsageOfAsteriskParam.getTypeDefinition(resolver)).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.hasMethodFor("getFn1", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFn2", Collections.emptyList(), resolver, false)).andReturn(false);

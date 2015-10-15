@@ -7,7 +7,7 @@ import javassist.NotFoundException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 
 import java.lang.reflect.Modifier;
@@ -87,14 +87,14 @@ public class JavassistTypeDefinitionFactory {
         }
     }
 
-    public TypeDefinition getTypeDefinition(CtClass clazz) {
+    public NodeTypeDefinition getTypeDefinition(CtClass clazz) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
         if (clazz.isPrimitive()) {
             throw new IllegalArgumentException();
         }
-        return new JavassistTypeDefinition(clazz);
+        return new JavassistNodeTypeDefinition(clazz);
     }
 
     public static JvmConstructorDefinition toConstructorDefinition(CtConstructor constructor) throws NotFoundException {

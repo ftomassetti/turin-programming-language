@@ -11,24 +11,33 @@ import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDef
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.JavassistTypeDefinition;
+import me.tomassetti.turin.typesystem.TypeDefinition;
 import turin.compilation.DefaultParam;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class JavassistTypeDefinition extends TypeDefinition {
+@Deprecated
+public class JavassistNodeTypeDefinition extends NodeTypeDefinition {
 
     private CtClass ctClass;
+    private TypeDefinition typeDefinition;
 
-    public JavassistTypeDefinition(CtClass ctClass) {
+    @Override
+    public TypeDefinition typeDefinition() {
+        return typeDefinition;
+    }
+
+    public JavassistNodeTypeDefinition(CtClass ctClass) {
         super(ctClass.getSimpleName());
+        typeDefinition = new JavassistTypeDefinition(ctClass);
         if (ctClass.isPrimitive()) {
             throw new IllegalArgumentException();
         }
@@ -322,7 +331,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             } else if (pt.isPrimitive()) {
                 return PrimitiveTypeUsage.getByName(pt.getSimpleName());
             } else {
-                return new ReferenceTypeUsage(new JavassistTypeDefinition(pt));
+                return new ReferenceTypeUsage(new JavassistNodeTypeDefinition(pt));
             }
         } catch (NotFoundException e){
             throw new RuntimeException(e);
@@ -379,7 +388,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     private ReferenceTypeUsage toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType) {
         try {
             SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(clazz.getGenericSignature());
-            TypeDefinition typeDefinition = new JavassistTypeDefinition(clazz);
+            NodeTypeDefinition typeDefinition = new JavassistNodeTypeDefinition(clazz);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             int i=0;
             for (SignatureAttribute.TypeArgument typeArgument : genericClassType.getTypeArguments()) {
@@ -392,10 +401,10 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    @Override
+    /*@Override
     public boolean isInterface() {
         return ctClass.isInterface();
-    }
+    }*/
 
     @Override
     public boolean isClass() {
@@ -413,7 +422,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+    public NodeTypeDefinition getSuperclass(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

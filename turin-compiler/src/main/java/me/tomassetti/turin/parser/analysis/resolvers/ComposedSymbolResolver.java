@@ -47,9 +47,9 @@ public class ComposedSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<NodeTypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
         for (SymbolResolver element : elements) {
-            Optional<TypeDefinition> definition = element.findTypeDefinitionIn(typeName, context, resolver);
+            Optional<NodeTypeDefinition> definition = element.findTypeDefinitionIn(typeName, context, resolver);
             if (definition.isPresent()) {
                 return definition;
             }

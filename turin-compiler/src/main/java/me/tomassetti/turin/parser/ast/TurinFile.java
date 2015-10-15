@@ -156,7 +156,7 @@ public class TurinFile extends Node {
                 return Optional.of(program);
             }
         }
-        for (TypeDefinition typeDefinition : getTopLevelTypeDefinitions()) {
+        for (NodeTypeDefinition typeDefinition : getTopLevelTypeDefinitions()) {
             if (typeDefinition.getName().equals(name)) {
                 return Optional.of(typeDefinition);
             }

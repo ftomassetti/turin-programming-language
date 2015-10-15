@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.Collections;
 
@@ -12,9 +12,9 @@ import java.util.Collections;
  */
 public class ResolvedTypeUsage extends TypeUsage {
 
-    private TypeDefinition typeDefinition;
+    private NodeTypeDefinition typeDefinition;
 
-    public ResolvedTypeUsage(TypeDefinition typeDefinition) {
+    public ResolvedTypeUsage(NodeTypeDefinition typeDefinition) {
         this.typeDefinition = typeDefinition;
     }
 

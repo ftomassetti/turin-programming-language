@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Type defined in Turin.
  */
-public class TurinTypeDefinition extends TypeDefinition {
+public class TurinTypeDefinition extends NodeTypeDefinition {
     private List<Node> members = new ArrayList<>();
     private List<TypeUsage> interfaces = new ArrayList<>();
     private Optional<TypeUsage> baseType = Optional.empty();
@@ -309,11 +309,11 @@ public class TurinTypeDefinition extends TypeDefinition {
         return ImmutableList.of(ReferenceTypeUsage.OBJECT);
     }
 
-    @Override
+    /*@Override
     public boolean isInterface() {
         // TODO when it will be possible to declare interface fix this
         return false;
-    }
+    }*/
 
     @Override
     public boolean isClass() {
@@ -494,7 +494,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+    public NodeTypeDefinition getSuperclass(SymbolResolver resolver) {
         if (this.baseType.isPresent()) {
             return this.baseType.get().asReferenceTypeUsage().getTypeDefinition(resolver);
         }

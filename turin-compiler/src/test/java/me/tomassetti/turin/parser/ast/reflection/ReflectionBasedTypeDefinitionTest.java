@@ -4,7 +4,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class ReflectionBasedTypeDefinitionTest {
     @Test
     public void getAllAncestorsOfString(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(4, ancestors.size());
         Set<String> names = ancestors.stream().map((a)->a.asReferenceTypeUsage().getQualifiedName(resolver)).collect(Collectors.toSet());
@@ -40,7 +40,7 @@ public class ReflectionBasedTypeDefinitionTest {
     @Test
     public void getAllAncestorsOfObject(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(0, ancestors.size());
     }
@@ -48,20 +48,20 @@ public class ReflectionBasedTypeDefinitionTest {
     @Test
     public void getAllAncestorsOfSerializable(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(0, ancestors.size());
     }
 
     @Test
     public void isInterfaceNegativeCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
         assertEquals(false, typeDefinition.isInterface());
     }
 
     @Test
     public void isInterfacePositiveCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
+        NodeTypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
         assertEquals(true, typeDefinition.isInterface());
     }
 

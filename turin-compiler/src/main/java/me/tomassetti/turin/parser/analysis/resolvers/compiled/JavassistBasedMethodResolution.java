@@ -224,8 +224,8 @@ public class JavassistBasedMethodResolution {
             return false;
         }
         // TODO consider generic parameters?
-        JavassistTypeDefinition firstDef = new JavassistTypeDefinition(firstType);
-        JavassistTypeDefinition secondDef = new JavassistTypeDefinition(secondType);
+        JavassistNodeTypeDefinition firstDef = new JavassistNodeTypeDefinition(firstType);
+        JavassistNodeTypeDefinition secondDef = new JavassistNodeTypeDefinition(secondType);
         TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
         TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);

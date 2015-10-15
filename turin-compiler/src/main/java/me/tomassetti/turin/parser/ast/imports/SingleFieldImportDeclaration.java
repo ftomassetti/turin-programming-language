@@ -5,7 +5,7 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 
 import java.util.Optional;
 
@@ -48,7 +48,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
             return;
         }
         String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
+        NodeTypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
 
         if (typeDefinition.hasField(fieldsPath, true, resolver)) {
             importedValueCache = typeDefinition.getField(fieldsPath, resolver);
