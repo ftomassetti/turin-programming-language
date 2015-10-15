@@ -9,7 +9,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
@@ -18,13 +18,13 @@ import java.util.Optional;
 public class ValueReference extends Expression {
 
     private String name;
-    private TypeUsage precalculatedType;
+    private TypeUsageNode precalculatedType;
 
     public ValueReference(String name) {
         this.name = name;
     }
 
-    public ValueReference(String name, TypeUsage precalculatedType) {
+    public ValueReference(String name, TypeUsageNode precalculatedType) {
         this.name = name;
         this.precalculatedType = precalculatedType; // parent not set on-purpose
     }
@@ -90,7 +90,7 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         if (precalculatedType != null) {
             return precalculatedType;
         }

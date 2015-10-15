@@ -3,18 +3,18 @@ package me.tomassetti.turin.parser.ast.statements;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
 public class VariableDeclaration extends Statement implements Symbol {
-    private TypeUsage type;
+    private TypeUsageNode type;
     private String name;
     private Expression value;
 
-    public TypeUsage getType() {
+    public TypeUsageNode getType() {
         return type;
     }
 
@@ -41,7 +41,7 @@ public class VariableDeclaration extends Statement implements Symbol {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         if (type == null) {
             return value.calcType(resolver);
         } else {
@@ -80,7 +80,7 @@ public class VariableDeclaration extends Statement implements Symbol {
         return result;
     }
 
-    public VariableDeclaration(String name, Expression value, TypeUsage type) {
+    public VariableDeclaration(String name, Expression value, TypeUsageNode type) {
         this.name = name;
         this.type = type;
         this.type.setParent(this);
@@ -97,7 +97,7 @@ public class VariableDeclaration extends Statement implements Symbol {
         }
     }
 
-    public TypeUsage varType(SymbolResolver resolver) {
+    public TypeUsageNode varType(SymbolResolver resolver) {
         if (type != null) {
             return type;
         } else {

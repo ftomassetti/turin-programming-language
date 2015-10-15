@@ -7,7 +7,7 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedInvokableException
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.util.Either;
 
 import java.util.*;
@@ -133,8 +133,8 @@ public abstract class Invokable extends Expression {
             if (formalParams.get(i).getParent() == null) {
                 throw new IllegalStateException();
             }
-            TypeUsage actualParamType = param.getValue().calcType(resolver);
-            TypeUsage formalParamType = formalParams.get(i).getType();
+            TypeUsageNode actualParamType = param.getValue().calcType(resolver);
+            TypeUsageNode formalParamType = formalParams.get(i).getType();
             if (!actualParamType.canBeAssignedTo(formalParamType, resolver)){
                 throw new UnsolvedInvokableException(this);
             }

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
@@ -21,17 +20,17 @@ import java.util.stream.Collectors;
 /**
  * It could represent also a reference to a Type Variable.
  */
-public class ReferenceTypeUsage extends TypeUsage {
+public class ReferenceTypeUsage extends TypeUsageNode {
 
     public static final ReferenceTypeUsage OBJECT = new ReferenceTypeUsage("java.lang.Object");
     public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
-    private List<TypeUsage> typeParams;
+    private List<TypeUsageNode> typeParams;
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
     private boolean fullyQualifiedName;
     private TypeDefinition cachedTypeDefinition;
 
-    public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsage> typeParams) {
+    public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsageNode> typeParams) {
         this(typeDefinition.getQualifiedName(), false);
         this.typeParams = typeParams;
         this.cachedTypeDefinition = typeDefinition;
@@ -147,7 +146,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }
@@ -155,7 +154,7 @@ public class ReferenceTypeUsage extends TypeUsage {
         if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
             return true;
         }
-        for (TypeUsage ancestor : this.getAllAncestors(resolver)) {
+        for (TypeUsageNode ancestor : this.getAllAncestors(resolver)) {
             if (ancestor.canBeAssignedTo(type, resolver)) {
                 return true;
             }
@@ -196,18 +195,18 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
-        TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+        TypeUsageNode typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
     }
 
     @Override
-    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
         if (this.typeParams.size() == 0) {
             return this;
         }
-        List<TypeUsage> replacedParams = this.typeParams.stream().map((tp)->tp.replaceTypeVariables(typeParams)).collect(Collectors.toList());
+        List<TypeUsageNode> replacedParams = this.typeParams.stream().map((tp)->tp.replaceTypeVariables(typeParams)).collect(Collectors.toList());
         if (!replacedParams.equals(this.typeParams)) {
             ReferenceTypeUsage copy = (ReferenceTypeUsage) this.copy();
             copy.typeParams = replacedParams;
@@ -222,12 +221,12 @@ public class ReferenceTypeUsage extends TypeUsage {
         return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
     }
 
-    public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
+    public Map<String, TypeUsageNode> typeParamsMap(SymbolResolver resolver) {
         return getTypeDefinition(resolver).associatedTypeParametersToName(resolver, typeParams);
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         ReferenceTypeUsage copy = new ReferenceTypeUsage(name);
         copy.parent = this.parent;
         copy.cachedTypeDefinition = this.cachedTypeDefinition;
@@ -238,15 +237,15 @@ public class ReferenceTypeUsage extends TypeUsage {
     }
 
     public class TypeParameterValues {
-        private List<TypeUsage> usages = new ArrayList<>();
+        private List<TypeUsageNode> usages = new ArrayList<>();
         private List<String> names = new ArrayList<>();
 
-        public void add(String name, TypeUsage typeUsage) {
+        public void add(String name, TypeUsageNode typeUsage) {
             names.add(name);
             usages.add(typeUsage);
         }
 
-        public List<TypeUsage> getInOrder() {
+        public List<TypeUsageNode> getInOrder() {
             return usages;
         }
 
@@ -254,7 +253,7 @@ public class ReferenceTypeUsage extends TypeUsage {
             return names;
         }
 
-        public TypeUsage getByName(String name) {
+        public TypeUsageNode getByName(String name) {
             for (int i=0; i<names.size(); i++) {
                 if (names.get(i).equals(name)) {
                     return usages.get(i);

@@ -15,7 +15,7 @@ import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.LinkedList;
@@ -97,7 +97,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
 
     public abstract Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
-    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public final TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
     }
 
@@ -122,7 +122,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
     // Fields
     //
 
-    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
+    public abstract TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
 
     public Node getFieldOnInstance(String fieldName, Node instance, final SymbolResolver resolver) {
         for (RelationDefinition relationDefinition : getVisibleRelations(resolver)) {
@@ -163,7 +163,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
                 return false;
             }
             Node field = getField(firstName, resolver);
-            TypeUsage typeUsage = field.calcType(resolver);
+            TypeUsageNode typeUsage = field.calcType(resolver);
             if (typeUsage.isReferenceTypeUsage()) {
                 TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
                 return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
@@ -188,5 +188,5 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
 
     public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
 
-    public abstract Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams);
+    public abstract Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams);
 }

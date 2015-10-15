@@ -10,7 +10,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -115,8 +115,8 @@ public class JavassistBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = TypeUsage.fromJvmType(argsTypes.get(i));
-                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsageNode actualType = TypeUsageNode.fromJvmType(argsTypes.get(i));
+                    TypeUsageNode formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -143,8 +143,8 @@ public class JavassistBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
-                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsageNode actualType = argsTypes.get(i).getValue().calcType(resolver);
+                    TypeUsageNode formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -226,8 +226,8 @@ public class JavassistBasedMethodResolution {
         // TODO consider generic parameters?
         JavassistTypeDefinition firstDef = new JavassistTypeDefinition(firstType);
         JavassistTypeDefinition secondDef = new JavassistTypeDefinition(secondType);
-        TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
-        TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
+        TypeUsageNode firstTypeUsage = new ReferenceTypeUsage(firstDef);
+        TypeUsageNode secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);
     }
 

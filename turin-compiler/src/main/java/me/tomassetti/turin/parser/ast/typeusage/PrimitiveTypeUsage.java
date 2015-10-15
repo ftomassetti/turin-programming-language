@@ -16,14 +16,14 @@ import java.util.Optional;
  * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
  *       parent.
  */
-public class PrimitiveTypeUsage extends TypeUsage {
+public class PrimitiveTypeUsage extends TypeUsageNode {
 
     private String name;
     private JvmType jvmType;
     private List<PrimitiveTypeUsage> promotionsTypes;
 
     @Override
-    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
         return this;
     }
 
@@ -50,7 +50,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsageNode other, SymbolResolver resolver) {
         if (other.equals(boxType) || other.equals(ReferenceTypeUsage.OBJECT)) {
             return true;
         }
@@ -72,22 +72,22 @@ public class PrimitiveTypeUsage extends TypeUsage {
         return Optional.empty();
     }
 
-    public TypeUsage getBoxType() {
+    public TypeUsageNode getBoxType() {
         return boxType;
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType, List<PrimitiveTypeUsage> promotionsTypes) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsageNode boxType, List<PrimitiveTypeUsage> promotionsTypes) {
         this.name = name;
         this.jvmType = jvmType;
         this.boxType = boxType;
         this.promotionsTypes = promotionsTypes;
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsageNode boxType) {
         this(name, jvmType, boxType, Collections.emptyList());
     }
 
-    private TypeUsage boxType;
+    private TypeUsageNode boxType;
 
     @Override
     public JvmType jvmType(SymbolResolver resolver) {
@@ -109,7 +109,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
     /**
      * It accepts both Java name (lower case) or Turin name (capitalized).
      */
-    public static TypeUsage getByName(String name) {
+    public static TypeUsageNode getByName(String name) {
         for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
             if (primitiveTypeUsage.turinName().equals(name) || primitiveTypeUsage.name.equals(name)) {
                 return primitiveTypeUsage;
@@ -166,7 +166,7 @@ public class PrimitiveTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         PrimitiveTypeUsage copy = new PrimitiveTypeUsage(this.name, this.jvmType, this.boxType, promotionsTypes);
         copy.parent = this.parent;
         return copy;

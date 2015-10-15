@@ -10,7 +10,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.TurinFile;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,9 +52,9 @@ public class DirClassTypeResolverTest extends AbstractCompilerTest {
     public void returnTypeOfLoadedFunctionIsCorrect() throws IOException {
         SymbolResolver symbolResolver = new ComposedSymbolResolver(ImmutableList.of());
         DirClassesTypeResolver dirClassesTypeResolver = new DirClassesTypeResolver(tmpDir);
-        TypeUsage returnTypeFatalError = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.fatalError").get().getReturnType();
-        TypeUsage returnTypeFormat = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.format").get().getReturnType();
-        TypeUsage returnTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getReturnType();
+        TypeUsageNode returnTypeFatalError = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.fatalError").get().getReturnType();
+        TypeUsageNode returnTypeFormat = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.format").get().getReturnType();
+        TypeUsageNode returnTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getReturnType();
         assertEquals(true, returnTypeFatalError.isVoid());
         assertEquals(true, returnTypeFormat.isReferenceTypeUsage());
         assertEquals(String.class.getCanonicalName(), returnTypeFormat.asReferenceTypeUsage().getQualifiedName(symbolResolver));

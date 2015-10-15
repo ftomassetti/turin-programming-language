@@ -36,12 +36,12 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {

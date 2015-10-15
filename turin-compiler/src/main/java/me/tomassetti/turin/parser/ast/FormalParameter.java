@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class FormalParameter extends Node implements Symbol {
 
-    private TypeUsage type;
+    private TypeUsageNode type;
     private String name;
     private Optional<Expression> defaultValue;
 
@@ -64,20 +64,20 @@ public class FormalParameter extends Node implements Symbol {
         }
 
         @Override
-        public TypeUsage calcType(SymbolResolver resolver) {
+        public TypeUsageNode calcType(SymbolResolver resolver) {
             throw new UnsupportedOperationException();
         }
     }
 
-    public static FormalParameter createWithDefaultValuePlaceholder(TypeUsage type, String name) {
+    public static FormalParameter createWithDefaultValuePlaceholder(TypeUsageNode type, String name) {
         return new FormalParameter(type, name, Optional.of(new DefaultValuePlaceholder()));
     }
 
-    public FormalParameter(TypeUsage type, String name) {
+    public FormalParameter(TypeUsageNode type, String name) {
         this(type, name, Optional.empty());
     }
 
-    public FormalParameter(TypeUsage type, String name, Optional<Expression> defaultValue) {
+    public FormalParameter(TypeUsageNode type, String name, Optional<Expression> defaultValue) {
         this.type = type;
         this.type.parent = this;
         this.name = name;
@@ -98,11 +98,11 @@ public class FormalParameter extends Node implements Symbol {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         return type;
     }
 
-    public TypeUsage getType() {
+    public TypeUsageNode getType() {
         return type;
     }
 

@@ -20,7 +20,7 @@ import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
 import me.tomassetti.turin.symbols.Symbol;
 
@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
  */
 public class TurinTypeDefinition extends TypeDefinition {
     private List<Node> members = new ArrayList<>();
-    private List<TypeUsage> interfaces = new ArrayList<>();
-    private Optional<TypeUsage> baseType = Optional.empty();
+    private List<TypeUsageNode> interfaces = new ArrayList<>();
+    private Optional<TypeUsageNode> baseType = Optional.empty();
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
 
@@ -53,7 +53,7 @@ public class TurinTypeDefinition extends TypeDefinition {
             }
         }
 
-        for (TypeUsage typeUsage : interfaces) {
+        for (TypeUsageNode typeUsage : interfaces) {
             if (!typeUsage.isReferenceTypeUsage() || !typeUsage.asReferenceTypeUsage().isInterface(resolver)) {
                 errorCollector.recordSemanticError(typeUsage.getPosition(), "Only interfaces can be implemented");
                 return false;
@@ -70,12 +70,12 @@ public class TurinTypeDefinition extends TypeDefinition {
         return super.specificValidate(resolver, errorCollector);
     }
 
-    public void setBaseType(TypeUsage baseType) {
+    public void setBaseType(TypeUsageNode baseType) {
         baseType.setParent(this);
         this.baseType = Optional.of(baseType);
     }
 
-    public void addInterface(TypeUsage interfaze) {
+    public void addInterface(TypeUsageNode interfaze) {
         interfaze.setParent(this);
         interfaces.add(interfaze);
     }
@@ -290,7 +290,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+    public TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (Property property : getAllProperties(resolver)) {
             if (property.getName().equals(fieldName)) {
                 return property.getTypeUsage();
@@ -414,7 +414,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT), resolver);
     }
 
-    private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, SymbolResolver resolver) {
+    private boolean isDefiningMethod(String name, List<TypeUsageNode> paramTypes, SymbolResolver resolver) {
         return getDirectMethods().stream().filter((m)->m.getName().equals(name))
                 .filter((m) -> m.getParameters().stream().map((p) -> p.calcType(resolver).jvmType(resolver)).collect(Collectors.toList())
                         .equals(paramTypes.stream().map((p) -> p.jvmType(resolver)).collect(Collectors.toList())))
@@ -459,11 +459,11 @@ public class TurinTypeDefinition extends TypeDefinition {
         return methods;
     }
 
-    public List<TypeUsage> getInterfaces() {
+    public List<TypeUsageNode> getInterfaces() {
         return interfaces;
     }
 
-    public Optional<TypeUsage> getBaseType() {
+    public Optional<TypeUsageNode> getBaseType() {
         return baseType;
     }
 
@@ -503,7 +503,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams) {
+    public Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams) {
         return Collections.emptyMap();
     }
 

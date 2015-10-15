@@ -10,7 +10,7 @@ import java.util.Collections;
 /**
  * Node generated when analyzing the AST, node never parsed
  */
-public class ResolvedTypeUsage extends TypeUsage {
+public class ResolvedTypeUsage extends TypeUsageNode {
 
     private TypeDefinition typeDefinition;
 
@@ -34,7 +34,7 @@ public class ResolvedTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         return this;
     }
 }

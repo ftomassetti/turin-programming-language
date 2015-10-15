@@ -1,6 +1,5 @@
 package me.tomassetti.turin.parser.analysis.resolvers.jdk;
 
-import com.google.common.collect.ImmutableMap;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
@@ -9,7 +8,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -61,7 +60,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

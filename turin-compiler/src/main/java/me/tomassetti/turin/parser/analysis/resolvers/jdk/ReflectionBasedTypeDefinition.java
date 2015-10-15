@@ -22,18 +22,18 @@ import java.util.stream.Collectors;
 class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     private Class<?> clazz;
-    private List<TypeUsage> typeParameters = new LinkedList<>();
+    private List<TypeUsageNode> typeParameters = new LinkedList<>();
 
     public ReflectionBasedTypeDefinition(Class<?> clazz) {
         super(clazz.getCanonicalName());
         this.clazz = clazz;
     }
 
-    public void addTypeParameter(TypeUsage typeUsage) {
+    public void addTypeParameter(TypeUsageNode typeUsage) {
         typeParameters.add(typeUsage);
     }
 
-    private static TypeUsage typeFor(List<Method> methods, Node parentToAssign) {
+    private static TypeUsageNode typeFor(List<Method> methods, Node parentToAssign) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -48,18 +48,18 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return typeFor(methods.get(0), parentToAssign);
     }
 
-    private static TypeUsage typeFor(Method method, Node parentToAssign) {
-        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
+    private static TypeUsageNode typeFor(Method method, Node parentToAssign) {
+        List<TypeUsageNode> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
         FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
         functionReferenceTypeUsage.setParent(parentToAssign);
         return functionReferenceTypeUsage;
     }
 
-    private static TypeUsage toTypeUsage(Type type) {
+    private static TypeUsageNode toTypeUsage(Type type) {
         return ReflectionBasedMethodResolution.toTypeUsage(type, Collections.emptyMap());
     }
 
-    private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
+    private static TypeUsageNode toTypeUsage(TypeVariable typeVariable) {
         return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap());
     }
 
@@ -108,14 +108,14 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams) {
+    public Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams) {
         if (typeParams.isEmpty()) {
             return Collections.emptyMap();
         }
         if (clazz.getTypeParameters().length != typeParams.size()) {
             throw new IllegalStateException("It should have " + clazz.getTypeParameters().length + " and it has " + typeParams.size());
         }
-        Map<String, TypeUsage> map = new HashMap<>();
+        Map<String, TypeUsageNode> map = new HashMap<>();
         int i=0;
         for (TypeVariable tv : clazz.getTypeParameters()) {
             map.put(tv.getName(), typeParams.get(i));
@@ -200,8 +200,8 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     // Type parameters should be part of the usage
     @Deprecated
-    private Map<String, TypeUsage> getTypeVariables() {
-        Map<String, TypeUsage> map = new HashMap<>();
+    private Map<String, TypeUsageNode> getTypeVariables() {
+        Map<String, TypeUsageNode> map = new HashMap<>();
         if (clazz.getTypeParameters().length != typeParameters.size()) {
             throw new IllegalStateException("It should have " + clazz.getTypeParameters().length + " and it has " + typeParameters.size());
         }
@@ -214,7 +214,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+    public TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {

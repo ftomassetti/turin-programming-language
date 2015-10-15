@@ -6,7 +6,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public class InstanceMethodInvokation extends Invokable {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType(resolver).jvmType(resolver)).collect(Collectors.toList());
         return subject.calcType(resolver).returnTypeWhenInvokedWith(methodName, actualParams, resolver, false);
     }
@@ -62,7 +62,7 @@ public class InstanceMethodInvokation extends Invokable {
 
     @Override
     protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
-        TypeUsage typeUsage = subject.calcType(resolver);
+        TypeUsageNode typeUsage = subject.calcType(resolver);
         if (!typeUsage.isReference()) {
             throw new UnsupportedOperationException();
         }

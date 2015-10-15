@@ -7,8 +7,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-import turin.relations.Relation;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -67,7 +66,7 @@ public class ReflectionTypeDefinitionFactory {
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsage toTypeUsage(Class<?> type) {
+    public static TypeUsageNode toTypeUsage(Class<?> type) {
         if (type.isArray()) {
             return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
         } else if (type.isPrimitive()) {
@@ -81,7 +80,7 @@ public class ReflectionTypeDefinitionFactory {
         return getTypeDefinition(clazz, Collections.emptyList());
     }
 
-    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
+    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsageNode> typeParams) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
@@ -89,7 +88,7 @@ public class ReflectionTypeDefinitionFactory {
             throw new IllegalArgumentException();
         }
         ReflectionBasedTypeDefinition type = new ReflectionBasedTypeDefinition(clazz);
-        for (TypeUsage typeUsage : typeParams) {
+        for (TypeUsageNode typeUsage : typeParams) {
             type.addTypeParameter(typeUsage);
         }
         return type;

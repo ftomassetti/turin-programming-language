@@ -5,22 +5,21 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-public class VoidTypeUsage extends TypeUsage {
+public class VoidTypeUsage extends TypeUsageNode {
     @Override
     public boolean isVoid() {
         return true;
     }
 
     @Override
-    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
         return this;
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         return this;
     }
 

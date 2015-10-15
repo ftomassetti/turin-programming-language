@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.properties;
 
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Optional;
 public class PropertyDefinition extends Node implements Symbol {
 
     private String name;
-    private TypeUsage type;
+    private TypeUsageNode type;
     private Optional<Expression> initialValue;
     private Optional<Expression> defaultValue;
     private List<PropertyConstraint> constraints;
@@ -29,7 +29,7 @@ public class PropertyDefinition extends Node implements Symbol {
         return defaultValue;
     }
 
-    public PropertyDefinition(String name, TypeUsage type, Optional<Expression> initialValue, Optional<Expression> defaultValue,
+    public PropertyDefinition(String name, TypeUsageNode type, Optional<Expression> initialValue, Optional<Expression> defaultValue,
                               List<PropertyConstraint> constraints) {
         this.name = name;
         this.type = type;
@@ -50,7 +50,7 @@ public class PropertyDefinition extends Node implements Symbol {
         return name;
     }
 
-    public TypeUsage getType() {
+    public TypeUsageNode getType() {
         return type;
     }
 

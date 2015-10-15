@@ -5,7 +5,7 @@ import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class LoadedFunctionDefinition extends FunctionDefinition {
 
     private String qualifiedName;
 
-    public LoadedFunctionDefinition(String qualifiedName, TypeUsage returnType, List<FormalParameter> parameters) {
+    public LoadedFunctionDefinition(String qualifiedName, TypeUsageNode returnType, List<FormalParameter> parameters) {
         super(JvmNameUtils.canonicalToSimple(qualifiedName), returnType, parameters, new BlockStatement(ImmutableList.of()));
         this.qualifiedName = qualifiedName;
     }

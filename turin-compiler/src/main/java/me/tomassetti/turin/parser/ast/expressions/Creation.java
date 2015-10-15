@@ -8,16 +8,16 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.*;
 
 
 public class Creation extends Invokable {
 
-    private TypeUsage type;
+    private TypeUsageNode type;
 
-    public TypeUsage getType() {
+    public TypeUsageNode getType() {
         return type;
     }
 
@@ -63,7 +63,7 @@ public class Creation extends Invokable {
         return getTypeDefinition(resolver).getConstructorParams(actualParams, resolver);
     }
 
-    public Creation(TypeUsage type, List<ActualParam> actualParams) {
+    public Creation(TypeUsageNode type, List<ActualParam> actualParams) {
         super(actualParams);
         this.type = type;
         this.type.setParent(this);
@@ -84,7 +84,7 @@ public class Creation extends Invokable {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         return type;
     }
 

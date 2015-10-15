@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.invokables;
 
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class TurinTypeMethodDefinition extends InvokableDefinition {
 
-    public TurinTypeMethodDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
+    public TurinTypeMethodDefinition(String name, TypeUsageNode returnType, List<FormalParameter> parameters, Statement body) {
         super(parameters, body, name, returnType);
         this.returnType.setParent(this);
         this.parameters.forEach((p) -> p.setParent(TurinTypeMethodDefinition.this) );

@@ -6,15 +6,15 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 
-public class ArrayTypeUsage extends TypeUsage {
+public class ArrayTypeUsage extends TypeUsageNode {
 
-    private TypeUsage componentType;
+    private TypeUsageNode componentType;
 
-    public ArrayTypeUsage(TypeUsage componentType) {
+    public ArrayTypeUsage(TypeUsageNode componentType) {
         this.componentType = componentType;
     }
 
-    public TypeUsage getComponentType() {
+    public TypeUsageNode getComponentType() {
         return componentType;
     }
 
@@ -30,7 +30,7 @@ public class ArrayTypeUsage extends TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
         if (type.isArray()) {
             return this.getComponentType().equals(type.asArrayTypeUsage().getComponentType());
         } else {
@@ -59,7 +59,7 @@ public class ArrayTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         ArrayTypeUsage copy = new ArrayTypeUsage(this.componentType);
         copy.parent = this.parent;
         return copy;

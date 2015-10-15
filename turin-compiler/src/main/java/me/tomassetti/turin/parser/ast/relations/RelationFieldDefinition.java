@@ -3,23 +3,21 @@ package me.tomassetti.turin.parser.ast.relations;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.util.StringUtils;
 import turin.relations.Relation;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class RelationFieldDefinition extends Node {
 
     private String name;
-    private TypeUsage type;
+    private TypeUsageNode type;
 
     public boolean isApplicableTo(TypeDefinition typeDefinition, SymbolResolver resolver) {
         if ((type.getParent() instanceof FormalParameter) && type.getParent().getParent() == null){
@@ -49,15 +47,15 @@ public class RelationFieldDefinition extends Node {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         if (cardinality == Cardinality.SINGLE) {
-            List<TypeUsage> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
+            List<TypeUsageNode> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
             ReferenceTypeUsage res = new ReferenceTypeUsage(
                     ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceSingleEndpoint.class, typeParams),
                     typeParams);
             return res;
         } else if (cardinality == Cardinality.MANY) {
-            List<TypeUsage> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
+            List<TypeUsageNode> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
             ReferenceTypeUsage res = new ReferenceTypeUsage(
                     ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceMultipleEndpoint.class, typeParams),
                     typeParams);
@@ -71,7 +69,7 @@ public class RelationFieldDefinition extends Node {
         return name;
     }
 
-    public TypeUsage getType() {
+    public TypeUsageNode getType() {
         return type;
     }
 
@@ -81,7 +79,7 @@ public class RelationFieldDefinition extends Node {
 
     private Cardinality cardinality;
 
-    public RelationFieldDefinition(Cardinality cardinality, String name, TypeUsage type) {
+    public RelationFieldDefinition(Cardinality cardinality, String name, TypeUsageNode type) {
         this.cardinality = cardinality;
         this.name = name;
         this.type = type;

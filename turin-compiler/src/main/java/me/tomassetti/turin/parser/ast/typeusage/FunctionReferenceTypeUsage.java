@@ -8,10 +8,10 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 
 import java.util.List;
 
-public class FunctionReferenceTypeUsage extends TypeUsage {
+public class FunctionReferenceTypeUsage extends TypeUsageNode {
 
-    private List<TypeUsage> parameterTypes;
-    private TypeUsage returnType;
+    private List<TypeUsageNode> parameterTypes;
+    private TypeUsageNode returnType;
 
     @Override
     public String toString() {
@@ -22,20 +22,20 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
     }
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         throw new UnsupportedOperationException();
     }
 
-    public List<TypeUsage> getParameterTypes() {
+    public List<TypeUsageNode> getParameterTypes() {
         return parameterTypes;
     }
 
-    public TypeUsage getReturnType() {
+    public TypeUsageNode getReturnType() {
         return returnType;
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
         return returnType;
     }
 
@@ -44,7 +44,7 @@ public class FunctionReferenceTypeUsage extends TypeUsage {
         return false;
     }
 
-    public FunctionReferenceTypeUsage(List<TypeUsage> parameterTypes, TypeUsage returnType) {
+    public FunctionReferenceTypeUsage(List<TypeUsageNode> parameterTypes, TypeUsageNode returnType) {
         this.parameterTypes = parameterTypes;
         this.parameterTypes.forEach((pt)->pt.setParent(FunctionReferenceTypeUsage.this));
         this.returnType = returnType;

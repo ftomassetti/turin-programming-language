@@ -19,7 +19,6 @@ import turin.compilation.DefaultParam;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -134,7 +133,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             throw new RuntimeException(e);
         }
         for (DefaultParamData defaultParamData : defaultParamDatas) {
-            TypeUsage paramType = TypeUsage.fromJvmType(new JvmType(defaultParamData.signature));
+            TypeUsageNode paramType = TypeUsageNode.fromJvmType(new JvmType(defaultParamData.signature));
             formalParameters.add(FormalParameter.createWithDefaultValuePlaceholder(paramType, defaultParamData.name));
         }
         return formalParameters;
@@ -240,7 +239,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+    public TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (CtField field : ctClass.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
@@ -269,7 +268,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
         throw new UnsupportedOperationException(fieldName);
     }
 
-    private static TypeUsage typeFor(List<CtMethod> methods, Node parentToAssign) {
+    private static TypeUsageNode typeFor(List<CtMethod> methods, Node parentToAssign) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -291,7 +290,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             if (method.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
-                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+                List<TypeUsageNode> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
                 if (parentToAssign != null) {
                     functionReferenceTypeUsage.setParent(parentToAssign);
@@ -299,7 +298,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
                 return functionReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
-                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+                List<TypeUsageNode> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType()));
                 if (parentToAssign != null) {
                     functionReferenceTypeUsage.setParent(parentToAssign);
@@ -313,7 +312,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private static TypeUsage toTypeUsage(CtClass pt) {
+    private static TypeUsageNode toTypeUsage(CtClass pt) {
         try {
             if (pt.isArray()) {
                 return new ArrayTypeUsage(toTypeUsage(pt.getComponentType()));
@@ -329,8 +328,8 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private static TypeUsage toTypeUsage(SignatureAttribute.Type type) {
-        return TypeUsage.fromJvmType(new JvmType(type.jvmTypeName()));
+    private static TypeUsageNode toTypeUsage(SignatureAttribute.Type type) {
+        return TypeUsageNode.fromJvmType(new JvmType(type.jvmTypeName()));
     }
 
     @Override
@@ -418,7 +417,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsage> typeParams) {
+    public Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams) {
         if (typeParams.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -429,7 +428,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             if (typeParameters.length != typeParams.size()) {
                 throw new IllegalStateException("It should have " + typeParameters.length + " and it has " + typeParams.size());
             }
-            Map<String, TypeUsage> map = new HashMap<>();
+            Map<String, TypeUsageNode> map = new HashMap<>();
             int i=0;
             for (SignatureAttribute.TypeParameter tv : typeParameters) {
                 map.put(tv.getName(), typeParams.get(i));

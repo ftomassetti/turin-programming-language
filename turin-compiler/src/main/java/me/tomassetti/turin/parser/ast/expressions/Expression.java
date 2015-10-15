@@ -4,12 +4,12 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 
 public abstract class Expression extends Node {
-    public abstract TypeUsage calcType(SymbolResolver resolver);
+    public abstract TypeUsageNode calcType(SymbolResolver resolver);
 
     /**
      * When the expression corresponds to something invokable this method find which Jvm method corresponds to the call

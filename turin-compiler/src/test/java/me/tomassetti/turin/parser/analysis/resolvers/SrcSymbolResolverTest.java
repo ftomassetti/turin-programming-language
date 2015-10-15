@@ -6,7 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import org.easymock.EasyMock;
 import org.easymock.EasyMockSupport;
 import org.junit.Test;
@@ -82,7 +82,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
 
-        Optional<TypeUsage> typeDefinition = srcSymbolResolver.findTypeUsageIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        Optional<TypeUsageNode> typeDefinition = srcSymbolResolver.findTypeUsageIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
         assertEquals(true, typeDefinition.isPresent());
         assertEquals(true, typeDefinition.get().isReferenceTypeUsage());
         assertEquals("manga.MangaCharacter", typeDefinition.get().asReferenceTypeUsage().getQualifiedName(srcSymbolResolver));
@@ -95,7 +95,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
 
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
 
-        Optional<TypeUsage> typeDefinition = srcSymbolResolver.findTypeUsageIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
+        Optional<TypeUsageNode> typeDefinition = srcSymbolResolver.findTypeUsageIn("not_manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
         assertEquals(false, typeDefinition.isPresent());
     }
 

@@ -15,7 +15,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -148,7 +148,7 @@ public class CompilationOfGeneratedMethods {
         Label start = new Label();
         Label end = new Label();
         mv.visitLabel(start);
-        TypeUsage typeUsageCopy = property.getTypeUsage().copy();
+        TypeUsageNode typeUsageCopy = property.getTypeUsage().copy();
         FormalParameter formalParameter = new FormalParameter(typeUsageCopy, property.getName());
         formalParameter.setParent(property.getParent());
         addLocalVarForFormalParameter(formalParameter, start, end, mv);
@@ -175,7 +175,7 @@ public class CompilationOfGeneratedMethods {
     void generateConstructor(TurinTypeDefinition typeDefinition, String className) {
         InternalConstructorDefinition superConstructor = null;
         if (typeDefinition.getBaseType().isPresent()) {
-            TypeUsage baseType = typeDefinition.getBaseType().get();
+            TypeUsageNode baseType = typeDefinition.getBaseType().get();
             if (!baseType.isReferenceTypeUsage()) {
                 throw new IllegalStateException();
             }
@@ -402,7 +402,7 @@ public class CompilationOfGeneratedMethods {
 
         // if (!this.aField.equals(other.aField)) return false;
         for (Property property : typeDefinition.getAllProperties(compilation.getResolver())) {
-            TypeUsage propertyTypeUsage = property.getTypeUsage();
+            TypeUsageNode propertyTypeUsage = property.getTypeUsage();
             String fieldTypeDescriptor = propertyTypeUsage.jvmType(compilation.getResolver()).getDescriptor();
 
             mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
@@ -457,7 +457,7 @@ public class CompilationOfGeneratedMethods {
 
         for (Property property : typeDefinition.getAllProperties(compilation.getResolver())) {
             // result = 31 * result + this.aField.hashCode();
-            TypeUsage propertyTypeUsage = property.getTypeUsage();
+            TypeUsageNode propertyTypeUsage = property.getTypeUsage();
             String fieldTypeDescriptor = propertyTypeUsage.jvmType(compilation.getResolver()).getDescriptor();
 
             // 31 is just a prime number by which we multiply the current value of result

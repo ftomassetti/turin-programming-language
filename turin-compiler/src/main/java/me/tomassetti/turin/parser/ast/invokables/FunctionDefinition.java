@@ -11,7 +11,7 @@ import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
@@ -45,12 +45,12 @@ public class FunctionDefinition extends InvokableDefinition implements Named, Sy
         return children;
     }
 
-    public FunctionDefinition(String name, TypeUsage returnType, List<FormalParameter> parameters, Statement body) {
+    public FunctionDefinition(String name, TypeUsageNode returnType, List<FormalParameter> parameters, Statement body) {
         super(parameters, body, name, returnType);
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
         functionReferenceTypeUsage.setParent(this);
         return functionReferenceTypeUsage;

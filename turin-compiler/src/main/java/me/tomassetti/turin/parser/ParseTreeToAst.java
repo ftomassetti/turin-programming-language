@@ -263,7 +263,7 @@ class ParseTreeToAst {
         return formalParameter;
     }
 
-    private TypeUsage toAst(TurinParser.ReturnTypeContext type) {
+    private TypeUsageNode toAst(TurinParser.ReturnTypeContext type) {
         if (type.isVoid != null) {
             return new VoidTypeUsage();
         } else if (type.type != null) {
@@ -296,7 +296,7 @@ class ParseTreeToAst {
         return new PropertyReference(idText(propertyReferenceContext.name));
     }
 
-    private TypeUsage toAst(TurinParser.TypeUsageContext type) {
+    private TypeUsageNode toAst(TurinParser.TypeUsageContext type) {
         if (type.ref != null) {
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(type.ref.getText());
             getPositionFrom(referenceTypeUsage, type);

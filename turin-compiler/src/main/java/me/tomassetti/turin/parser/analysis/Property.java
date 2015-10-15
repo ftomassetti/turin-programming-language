@@ -9,7 +9,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +21,7 @@ import java.util.Optional;
 public class Property extends Node {
 
     private String name;
-    private TypeUsage typeUsage;
+    private TypeUsageNode typeUsage;
     private Optional<Expression> initialValue;
     private Optional<Expression> defaultValue;
     private List<PropertyConstraint> constraints;
@@ -38,7 +38,7 @@ public class Property extends Node {
         return defaultValue;
     }
 
-    private Property(String name, TypeUsage typeUsage, Optional<Expression> initialValue,
+    private Property(String name, TypeUsageNode typeUsage, Optional<Expression> initialValue,
                      Optional<Expression> defaultValue, List<PropertyConstraint> constraints) {
         if (!JvmNameUtils.isValidJavaIdentifier(name)) {
             throw new IllegalArgumentException();
@@ -74,16 +74,16 @@ public class Property extends Node {
         return name;
     }
 
-    public TypeUsage getTypeUsage() {
+    public TypeUsageNode getTypeUsage() {
         return typeUsage;
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         return typeUsage;
     }
 
-    public static String getterName(TypeUsage typeUsage, String propertyName) {
+    public static String getterName(TypeUsageNode typeUsage, String propertyName) {
         String prefix = typeUsage.equals(PrimitiveTypeUsage.BOOLEAN) ? "is" : "get";
         String rest = propertyName.length() > 1 ? propertyName.substring(1) : "";
         return prefix + Character.toUpperCase(propertyName.charAt(0)) + rest;

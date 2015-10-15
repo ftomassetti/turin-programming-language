@@ -71,7 +71,7 @@ public class JavassistTypeDefinitionFactory {
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsage toTypeUsage(CtClass type) {
+    public static TypeUsageNode toTypeUsage(CtClass type) {
         if (type.isArray()) {
             try {
                 return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));

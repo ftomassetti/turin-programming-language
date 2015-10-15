@@ -6,7 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public abstract class InternalInvokableDefinition {
     }
 
     private Optional<String> matchAsterisk(SymbolResolver resolver, ActualParam actualParam, List<FormalParameter> formalParameters) {
-        TypeUsage paramType = actualParam.getValue().calcType(resolver);
+        TypeUsageNode paramType = actualParam.getValue().calcType(resolver);
         // it needs to have all the getters for the non-default parameters
         // all the other getters that match default params have to be the right type
 
@@ -41,7 +41,7 @@ public abstract class InternalInvokableDefinition {
         for (FormalParameter formalParameter : formalParameters) {
             String getterName = ParamUtils.getterName(formalParameter);
             if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), resolver, false)) {
-                TypeUsage res = typeDefinition.returnTypeWhenInvokedWith(getterName, Collections.emptyList(), resolver, false);
+                TypeUsageNode res = typeDefinition.returnTypeWhenInvokedWith(getterName, Collections.emptyList(), resolver, false);
                 if (!res.canBeAssignedTo(formalParameter.getType(), resolver)){
                     return Optional.of("the given value has a getter '" + getterName + "' with incompatible type");
                 }

@@ -1,7 +1,6 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
@@ -9,14 +8,12 @@ import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.util.Either;
 import org.easymock.EasyMock;
-import org.easymock.EasyMockSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -109,7 +106,7 @@ public class ParamUtilsTest {
         List<FormalParameter> formalParameters = ImmutableList.of(fn1, fn2, fd2, fd2);
         Expression value = createMock(Expression.class);
         SymbolResolver resolver = createMock(SymbolResolver.class);
-        TypeUsage typeOfAsteriskParam = createMock(TypeUsage.class);
+        TypeUsageNode typeOfAsteriskParam = createMock(TypeUsageNode.class);
         expect(value.calcType(resolver)).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.isReference()).andReturn(false);
         Node parent = new IntLiteral(3); // it does not really matter

@@ -7,15 +7,15 @@ import me.tomassetti.turin.parser.ast.Node;
 import java.util.List;
 import java.util.Map;
 
-public class TypeVariableTypeUsage extends TypeUsage {
+public class TypeVariableTypeUsage extends TypeUsageNode {
 
     @Override
-    public TypeUsage copy() {
+    public TypeUsageNode copy() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TypeUsage replaceTypeVariables(Map<String, TypeUsage> typeParams) {
+    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
         if (typeParams.containsKey(name)) {
             return typeParams.get(name).copy();
         } else {
@@ -61,10 +61,10 @@ public class TypeVariableTypeUsage extends TypeUsage {
     }
 
     private String name;
-    private List<TypeUsage> bounds;
+    private List<TypeUsageNode> bounds;
     private GenericDeclaration genericDeclaration;
 
-    public TypeVariableTypeUsage(GenericDeclaration genericDeclaration, String name, List<TypeUsage> bounds) {
+    public TypeVariableTypeUsage(GenericDeclaration genericDeclaration, String name, List<TypeUsageNode> bounds) {
         this.name = name;
         this.genericDeclaration = genericDeclaration;
         this.bounds = bounds;

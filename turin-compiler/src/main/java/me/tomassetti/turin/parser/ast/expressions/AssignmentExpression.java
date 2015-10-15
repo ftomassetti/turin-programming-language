@@ -4,11 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
-
-import java.util.List;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 public class AssignmentExpression extends Expression {
 
@@ -54,7 +50,7 @@ public class AssignmentExpression extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType(SymbolResolver resolver) {
         return getTarget().calcType(resolver);
     }
 }

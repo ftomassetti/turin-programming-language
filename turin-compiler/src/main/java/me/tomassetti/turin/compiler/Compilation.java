@@ -22,7 +22,6 @@ import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
-import me.tomassetti.turin.util.StringUtils;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
 import turin.relations.ManyToManyRelation;
@@ -190,7 +189,7 @@ public class Compilation {
     //              return RELATION.getReferenceForA(parent);
     //          }
     private void generateMethodForRelationMultipleEndpoint(ClassWriter cw, RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField,
-                    TypeUsage firstParamType, TypeUsage secondParamType, boolean accessingFirstField) {
+                    TypeUsageNode firstParamType, TypeUsageNode secondParamType, boolean accessingFirstField) {
         String methodName = fieldAccessed.methodName();
         String descriptor = fieldAccessed.methodDescriptor(resolver);
         String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
@@ -225,7 +224,7 @@ public class Compilation {
     //              return RELATION.getReferenceForB(childrenElement);
     //          }
     private void generateMethodForRelationSingleEndpoint(ClassWriter cw, RelationFieldDefinition fieldAccessed, RelationFieldDefinition otherField,
-                                                         TypeUsage firstParamType, TypeUsage secondParamType, boolean accessingFirstField) {
+                                                         TypeUsageNode firstParamType, TypeUsageNode secondParamType, boolean accessingFirstField) {
         String methodName = fieldAccessed.methodName();
         String descriptor = fieldAccessed.methodDescriptor(resolver);
         String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
@@ -490,7 +489,7 @@ public class Compilation {
     }
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
-        TypeUsage pieceType = piece.calcType(resolver);
+        TypeUsageNode pieceType = piece.calcType(resolver);
         if (pieceType.equals(ReferenceTypeUsage.STRING)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));

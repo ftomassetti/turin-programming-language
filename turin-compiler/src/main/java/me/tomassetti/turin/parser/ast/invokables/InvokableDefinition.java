@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
@@ -16,11 +16,11 @@ import java.util.Optional;
  */
 public abstract class InvokableDefinition extends Node {
     protected String name;
-    protected TypeUsage returnType;
+    protected TypeUsageNode returnType;
     protected List<FormalParameter> parameters;
     protected Statement body;
 
-    public InvokableDefinition(List<FormalParameter> parameters, Statement body, String name, TypeUsage returnType) {
+    public InvokableDefinition(List<FormalParameter> parameters, Statement body, String name, TypeUsageNode returnType) {
         this.parameters = parameters;
         this.parameters.forEach((p) -> p.setParent(InvokableDefinition.this) );
         this.body = body;
@@ -30,7 +30,7 @@ public abstract class InvokableDefinition extends Node {
         this.returnType.setParent(this);
     }
 
-    public TypeUsage getReturnType() {
+    public TypeUsageNode getReturnType() {
         return returnType;
     }
 

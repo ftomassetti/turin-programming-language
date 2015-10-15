@@ -7,7 +7,7 @@ import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.List;
 
-public abstract class OverloadedFunctionReferenceTypeUsage extends TypeUsage {
+public abstract class OverloadedFunctionReferenceTypeUsage extends TypeUsageNode {
 
     protected List<FunctionReferenceTypeUsage> alternatives;
 

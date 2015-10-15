@@ -4,10 +4,9 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import turin.relations.ManyToManyRelation;
 import turin.relations.OneToManyRelation;
 import turin.relations.OneToOneRelation;
@@ -21,7 +20,7 @@ public class RelationDefinition extends Node {
         return fields.stream().filter((f)->f.isApplicableTo(typeDefinition, resolver)).collect(Collectors.toList());
     }
 
-    List<TypeUsage> getTypeParameters() {
+    List<TypeUsageNode> getTypeParameters() {
         return ImmutableList.of(
                 firstField().getType().copy(),
                 secondField().getType().copy()
