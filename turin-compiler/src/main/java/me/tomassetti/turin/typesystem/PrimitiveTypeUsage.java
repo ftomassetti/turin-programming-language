@@ -56,7 +56,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
-    public boolean canBeAssignedTo(TypeUsageNode other, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
         if (other.equals(boxType) || other.equals(ReferenceTypeUsage.OBJECT)) {
             return true;
         }

@@ -34,7 +34,7 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         return false;
     }
 

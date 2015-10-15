@@ -68,7 +68,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

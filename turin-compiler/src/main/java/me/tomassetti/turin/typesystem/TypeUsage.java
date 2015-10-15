@@ -39,7 +39,7 @@ public interface TypeUsage extends Symbol {
 
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
 
-    boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver);
+    boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver);
 
     default boolean isArray() {
         return false;

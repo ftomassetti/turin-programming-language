@@ -41,7 +41,7 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         if (type.isArray()) {
             return componentType.equals(type.asArrayTypeUsage().getComponentType());
         } else {

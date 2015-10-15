@@ -13,6 +13,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -146,7 +147,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }

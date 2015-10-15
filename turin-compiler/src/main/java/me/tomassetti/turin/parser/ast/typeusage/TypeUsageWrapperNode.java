@@ -21,7 +21,7 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
+    public final boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
         return typeUsage().canBeAssignedTo(type, resolver);
     }
 
