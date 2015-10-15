@@ -6,7 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ValueReference;
-import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -50,7 +50,7 @@ public class ValueReferenceTest {
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeUsageNode type = valueReferences.get(0).calcType(resolver);
-        assertEquals(new ArrayTypeUsage(ReferenceTypeUsage.STRING), type);
+        assertEquals(new ArrayTypeUsageNode(ReferenceTypeUsage.STRING), type);
     }
 
     @Test

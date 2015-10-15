@@ -75,7 +75,7 @@ class ReflectionBasedMethodResolution {
                 return PrimitiveTypeUsage.getByName(clazz.getName());
             }
             if (clazz.isArray()) {
-                return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType(), typeVariables));
+                return new ArrayTypeUsageNode(toTypeUsage(clazz.getComponentType(), typeVariables));
             }
             TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);

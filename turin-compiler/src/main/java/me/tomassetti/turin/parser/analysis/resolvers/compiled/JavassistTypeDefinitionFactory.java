@@ -74,7 +74,7 @@ public class JavassistTypeDefinitionFactory {
     public static TypeUsageNode toTypeUsage(CtClass type) {
         if (type.isArray()) {
             try {
-                return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+                return new ArrayTypeUsageNode(toTypeUsage(type.getComponentType()));
             } catch (NotFoundException e) {
                 throw new RuntimeException(e);
             }

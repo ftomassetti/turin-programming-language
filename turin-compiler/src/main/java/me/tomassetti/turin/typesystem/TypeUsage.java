@@ -5,7 +5,6 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -22,23 +21,37 @@ import java.util.Map;
 public interface TypeUsage extends Symbol {
     JvmType jvmType(SymbolResolver resolver);
 
-    boolean isReferenceTypeUsage();
+    default boolean isReferenceTypeUsage() {
+        return false;
+    }
 
-    ReferenceTypeUsage asReferenceTypeUsage();
+    default ReferenceTypeUsage asReferenceTypeUsage() {
+        throw new UnsupportedOperationException();
+    }
 
-    ArrayTypeUsage asArrayTypeUsage();
+    default ArrayTypeUsage asArrayTypeUsage() {
+        throw new UnsupportedOperationException();
+    }
 
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
 
     boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver);
 
-    boolean isArray();
+    default boolean isArray() {
+        return false;
+    }
 
-    boolean isPrimitive();
+    default boolean isPrimitive() {
+        return false;
+    }
 
-    boolean isReference();
+    default boolean isReference() {
+        return false;
+    }
 
-    PrimitiveTypeUsage asPrimitiveTypeUsage();
+    default PrimitiveTypeUsage asPrimitiveTypeUsage() {
+        throw new UnsupportedOperationException();
+    }
 
     Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
 
@@ -48,9 +61,17 @@ public interface TypeUsage extends Symbol {
 
     boolean isMethodOverloaded(SymbolResolver resolver, String methodName);
 
-    boolean isOverloaded();
+    default boolean isOverloaded() {
+        return false;
+    }
 
-    boolean isVoid();
+    default boolean isVoid() {
+        return false;
+    }
 
     TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams);
+
+    default TypeUsageNode calcType(SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
 }

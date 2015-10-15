@@ -306,7 +306,7 @@ class ParseTreeToAst {
         } else if (type.basicType != null) {
             return BasicTypeUsage.getByName(type.basicType.getText());
         } else if (type.arrayBase != null) {
-            return new ArrayTypeUsage(toAst(type.arrayBase));
+            return new ArrayTypeUsageNode(toAst(type.arrayBase));
         } else {
             throw new UnsupportedOperationException(type.getText());
         }

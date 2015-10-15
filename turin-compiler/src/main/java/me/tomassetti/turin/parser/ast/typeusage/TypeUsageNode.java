@@ -18,6 +18,10 @@ import java.util.Optional;
  */
 public abstract class TypeUsageNode extends Node implements TypeUsage {
 
+    public TypeUsage typeUsage() {
+        return this;
+    }
+
     public static TypeUsageNode fromJvmType(JvmType jvmType) {
         Optional<PrimitiveTypeUsage> primitive = PrimitiveTypeUsage.findByJvmType(jvmType);
         if (primitive.isPresent()) {
@@ -26,7 +30,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         String signature = jvmType.getSignature();
         if (signature.startsWith("[")) {
             JvmType componentType = new JvmType(signature.substring(1));
-            return new ArrayTypeUsage(fromJvmType(componentType));
+            return new ArrayTypeUsageNode(fromJvmType(componentType));
         } else if (signature.startsWith("L") && signature.endsWith(";")) {
             String typeName = signature.substring(1, signature.length() - 1);
             typeName = typeName.replaceAll("/", ".");
@@ -53,7 +57,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     @Override
-    public ArrayTypeUsage asArrayTypeUsage() {
+    public me.tomassetti.turin.typesystem.ArrayTypeUsage asArrayTypeUsage() {
         throw new UnsupportedOperationException();
     }
 
@@ -69,7 +73,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
 
     @Override
     public boolean isArray() {
-        return this instanceof ArrayTypeUsage;
+        return this instanceof ArrayTypeUsageNode;
     }
 
     @Override

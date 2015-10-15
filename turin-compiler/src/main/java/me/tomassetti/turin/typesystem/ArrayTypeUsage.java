@@ -1,25 +1,30 @@
-package me.tomassetti.turin.parser.ast.typeusage;
+package me.tomassetti.turin.typesystem;
 
-import com.google.common.collect.ImmutableList;
+import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 
-public class ArrayTypeUsage extends TypeUsageNode {
+import java.util.List;
+import java.util.Map;
 
-    private TypeUsageNode componentType;
+public class ArrayTypeUsage implements TypeUsage {
 
-    public ArrayTypeUsage(TypeUsageNode componentType) {
+    private TypeUsage componentType;
+
+    public ArrayTypeUsage(TypeUsage componentType) {
         this.componentType = componentType;
     }
 
-    public TypeUsageNode getComponentType() {
+    public TypeUsage getComponentType() {
         return componentType;
     }
 
     @Override
-
     public JvmType jvmType(SymbolResolver resolver) {
         return new JvmType("[" + componentType.jvmType(resolver).getSignature());
     }
@@ -30,9 +35,14 @@ public class ArrayTypeUsage extends TypeUsageNode {
     }
 
     @Override
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean canBeAssignedTo(TypeUsageNode type, SymbolResolver resolver) {
         if (type.isArray()) {
-            return this.getComponentType().equals(type.asArrayTypeUsage().getComponentType());
+            return componentType.equals(type.asArrayTypeUsage().getComponentType());
         } else {
             return type.equals(ReferenceTypeUsage.OBJECT);
         }
@@ -54,15 +64,23 @@ public class ArrayTypeUsage extends TypeUsageNode {
     }
 
     @Override
+    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
         return false;
     }
 
     @Override
-    public TypeUsageNode copy() {
-        ArrayTypeUsage copy = new ArrayTypeUsage(this.componentType);
-        copy.parent = this.parent;
-        return copy;
+    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -82,8 +100,4 @@ public class ArrayTypeUsage extends TypeUsageNode {
         return componentType.hashCode();
     }
 
-    @Override
-    public Iterable<Node> getChildren() {
-        return ImmutableList.of(componentType);
-    }
 }

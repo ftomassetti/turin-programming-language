@@ -35,7 +35,7 @@ public class ArrayAccess extends Expression {
     public TypeUsageNode calcType(SymbolResolver resolver) {
         TypeUsageNode arrayType = array.calcType(resolver);
         if (arrayType.isArray()) {
-            return arrayType.asArrayTypeUsage().getComponentType();
+            return (TypeUsageNode)arrayType.asArrayTypeUsage().getComponentType();
         } else {
             throw new UnsupportedOperationException();
         }

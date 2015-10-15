@@ -315,7 +315,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     private static TypeUsageNode toTypeUsage(CtClass pt) {
         try {
             if (pt.isArray()) {
-                return new ArrayTypeUsage(toTypeUsage(pt.getComponentType()));
+                return new ArrayTypeUsageNode(toTypeUsage(pt.getComponentType()));
             } else if (pt.getName().equals(void.class.getCanonicalName())) {
                 return new VoidTypeUsage();
             } else if (pt.isPrimitive()) {

@@ -4,7 +4,7 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -68,7 +68,7 @@ public class ReflectionTypeDefinitionFactory {
 
     public static TypeUsageNode toTypeUsage(Class<?> type) {
         if (type.isArray()) {
-            return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+            return new ArrayTypeUsageNode(toTypeUsage(type.getComponentType()));
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsage.getByName(type.getName());
         } else {
