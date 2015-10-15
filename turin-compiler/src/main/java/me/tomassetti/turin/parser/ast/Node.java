@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * Note that nodes are initially created by the parser but during compilation additional "virtual" nodes could be
  * created.
  */
-public abstract class Node {
+public abstract class Node implements Symbol {
 
     protected Node parent;
     private Position position;
@@ -102,7 +103,7 @@ public abstract class Node {
     /// Symbol resolution
     ///
 
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         if (parent == null) {
             return Optional.empty();
         } else if (parent instanceof BlockStatement) {
@@ -113,7 +114,7 @@ public abstract class Node {
             BlockStatement blockStatement = (BlockStatement)parent;
             List<Statement> preceedingStatements = blockStatement.findPreeceding((Statement)this);
             for (Statement statement : preceedingStatements) {
-                Optional<Node> result = statement.findSymbol(name, resolver);
+                Optional<Symbol> result = statement.findSymbol(name, resolver);
                 if (result.isPresent()) {
                     return result;
                 }

@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,7 @@ public abstract class InvokableDefinition extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         for (FormalParameter param : parameters) {
             if (param.getName().equals(name)) {
                 return Optional.of(param);

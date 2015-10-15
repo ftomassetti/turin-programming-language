@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
@@ -77,7 +78,7 @@ public interface SymbolResolver {
     /**
      * Find whatever Node is corresponding to the given name in the given context.
      */
-    Optional<Node> findSymbol(String name, Node context);
+    Optional<Symbol> findSymbol(String name, Node context);
 
     boolean existPackage(String packageName);
 }

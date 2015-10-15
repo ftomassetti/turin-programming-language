@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,11 +135,11 @@ public class TurinFile extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         for (ImportDeclaration importDeclaration : imports) {
             Optional<Node> imported = importDeclaration.findAmongImported(name, resolver);
             if (imported.isPresent()) {
-                return imported;
+                return Optional.of(imported.get());
             }
         }
         for (FunctionDefinition functionDefinition : getTopLevelFunctionDefinitions()) {

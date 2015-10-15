@@ -3,12 +3,13 @@ package me.tomassetti.turin.parser.ast.properties;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PropertyDefinition extends Node {
+public class PropertyDefinition extends Node implements Symbol {
 
     private String name;
     private TypeUsage type;

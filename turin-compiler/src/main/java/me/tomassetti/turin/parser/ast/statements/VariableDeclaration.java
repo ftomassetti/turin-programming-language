@@ -5,10 +5,11 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
-public class VariableDeclaration extends Statement {
+public class VariableDeclaration extends Statement implements Symbol {
     private TypeUsage type;
     private String name;
     private Expression value;
@@ -32,7 +33,7 @@ public class VariableDeclaration extends Statement {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         if (name.equals(this.name)) {
             return Optional.of(this);
         }

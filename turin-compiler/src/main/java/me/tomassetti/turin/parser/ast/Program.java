@@ -5,10 +5,11 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
-public class Program extends Node implements Named {
+public class Program extends Node implements Named, Symbol {
 
     private String name;
     private Statement statement;
@@ -77,7 +78,7 @@ public class Program extends Node implements Named {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         if (name.equals(formalParameter.getName())) {
             return Optional.of(formalParameter);
         }

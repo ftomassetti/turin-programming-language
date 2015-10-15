@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
 
@@ -94,7 +95,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Node context) {
+    public Optional<Symbol> findSymbol(String name, Node context) {
         // TODO consider also static fields and methods
         if (typeDefinitions.containsKey(name)) {
             return Optional.of(typeDefinitions.get(name));

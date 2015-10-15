@@ -22,6 +22,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -381,7 +382,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         // TODO support references to methods
         for (Property property : this.getAllProperties(resolver)) {
             if (property.getName().equals(name)) {

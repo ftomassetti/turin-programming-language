@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Optional;
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
  */
-public abstract class TypeDefinition extends Node implements Named {
+public abstract class TypeDefinition extends Node implements Named, Symbol {
     protected String name;
 
     public TypeDefinition(String name) {

@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +81,9 @@ public class ComposedSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, Node context) {
+    public Optional<Symbol> findSymbol(String name, Node context) {
         for (SymbolResolver element : elements) {
-            Optional<Node> res = element.findSymbol(name, context);
+            Optional<Symbol> res = element.findSymbol(name, context);
             if (res.isPresent()) {
                 return res;
             }

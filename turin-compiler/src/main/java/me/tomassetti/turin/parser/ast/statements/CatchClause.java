@@ -6,10 +6,11 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.TypeIdentifier;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
-public class CatchClause extends Node {
+public class CatchClause extends Node implements Symbol {
 
     private TypeIdentifier exceptionType;
     private BlockStatement body;
@@ -46,7 +47,7 @@ public class CatchClause extends Node {
     }
 
     @Override
-    public Optional<Node> findSymbol(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         if (name.equals(variableName)) {
             return Optional.of(this);
         }

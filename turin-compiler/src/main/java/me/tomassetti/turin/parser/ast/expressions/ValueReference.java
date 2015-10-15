@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class ValueReference extends Expression {
 
     @Override
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        Optional<Node> declaration = resolver.findSymbol(name, this);
+        Optional<Symbol> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             if (declaration.get() instanceof Expression) {
                 return ((Expression) declaration.get()).findMethodFor(argsTypes, resolver, staticContext);
@@ -93,7 +94,7 @@ public class ValueReference extends Expression {
         if (precalculatedType != null) {
             return precalculatedType;
         }
-        Optional<Node> declaration = resolver.findSymbol(name, this);
+        Optional<Symbol> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             return declaration.get().calcType(resolver);
         } else {
@@ -123,10 +124,13 @@ public class ValueReference extends Expression {
         if (cache != null) {
             return cache;
         }
-        Optional<Node> declaration = resolver.findSymbol(name, this);
+        Optional<Symbol> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
-            cache = declaration.get();
-            return declaration.get();
+            if (!(declaration.get() instanceof Node)) {
+                throw new UnsupportedOperationException();
+            }
+            cache = (Node)declaration.get();
+            return cache;
         } else {
             throw new UnsolvedSymbolException(this);
         }

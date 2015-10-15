@@ -12,13 +12,14 @@ import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class FunctionDefinition extends InvokableDefinition implements Named {
+public class FunctionDefinition extends InvokableDefinition implements Named, Symbol {
 
     public static final String CLASS_PREFIX = "Function_";
     public static final String INVOKE_METHOD_NAME = "invoke";

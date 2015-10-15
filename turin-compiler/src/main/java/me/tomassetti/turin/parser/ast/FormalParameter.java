@@ -3,13 +3,14 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class FormalParameter extends Node {
+public class FormalParameter extends Node implements Symbol {
 
     private TypeUsage type;
     private String name;
