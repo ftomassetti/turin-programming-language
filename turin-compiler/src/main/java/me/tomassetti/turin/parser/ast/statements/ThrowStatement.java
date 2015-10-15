@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class ThrowStatement extends Statement {
 
@@ -54,7 +55,7 @@ public class ThrowStatement extends Statement {
 
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
-        TypeUsageNode exceptionType = getException().calcType(resolver);
+        TypeUsage exceptionType = getException().calcType(resolver);
         if (!exceptionType.isReference()) {
             errorCollector.recordSemanticError(exception.getPosition(), ERR_MESSAGE);
             return false;

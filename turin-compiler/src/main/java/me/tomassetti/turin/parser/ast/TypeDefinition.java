@@ -17,6 +17,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -163,7 +164,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
                 return false;
             }
             Node field = getField(firstName, resolver);
-            TypeUsageNode typeUsage = field.calcType(resolver);
+            TypeUsage typeUsage = field.calcType(resolver);
             if (typeUsage.isReferenceTypeUsage()) {
                 TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
                 return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);

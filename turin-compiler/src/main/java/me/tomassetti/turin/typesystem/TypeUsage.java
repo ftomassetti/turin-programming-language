@@ -2,9 +2,12 @@ package me.tomassetti.turin.typesystem;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -12,6 +15,7 @@ import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The usage of a type. It can be every sort of type (void, primitive, reference, etc.)
@@ -71,7 +75,17 @@ public interface TypeUsage extends Symbol {
 
     TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams);
 
-    default TypeUsageNode calcType(SymbolResolver resolver) {
+    default TypeUsage calcType(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
+
+    default Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    default String describe() {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver);
 }

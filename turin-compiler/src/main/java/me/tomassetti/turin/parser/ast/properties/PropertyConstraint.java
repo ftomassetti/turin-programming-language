@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class PropertyConstraint extends Node {
     private Expression condition;
@@ -33,12 +34,12 @@ public class PropertyConstraint extends Node {
 
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
-        TypeUsageNode conditionType = condition.calcType(resolver);
+        TypeUsage conditionType = condition.calcType(resolver);
         if (!conditionType.isPrimitive() || !conditionType.asPrimitiveTypeUsage().isBoolean()) {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint condition must have boolean type, instead it has type " + conditionType.describe());
             return false;
         }
-        TypeUsageNode messageType = message.calcType(resolver);
+        TypeUsage messageType = message.calcType(resolver);
         if (!messageType.isReference() ||
                 !messageType.asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint message must have String type, instead it has type " + messageType.describe());

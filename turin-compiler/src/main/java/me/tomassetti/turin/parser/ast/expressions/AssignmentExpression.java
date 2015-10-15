@@ -5,6 +5,7 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class AssignmentExpression extends Expression {
 
@@ -50,7 +51,7 @@ public class AssignmentExpression extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return getTarget().calcType(resolver);
     }
 }

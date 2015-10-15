@@ -22,6 +22,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -135,7 +136,7 @@ public class CompilationOfPush {
             ValueReference valueReference = (ValueReference) expr;
             Optional<Integer> index = compilation.getLocalVarsSymbolTable().findIndex(valueReference.getName());
             if (index.isPresent()) {
-                TypeUsageNode type = compilation.getLocalVarsSymbolTable().findDeclaration(valueReference.getName()).get().calcType(compilation.getResolver());
+                TypeUsage type = compilation.getLocalVarsSymbolTable().findDeclaration(valueReference.getName()).get().calcType(compilation.getResolver());
                 return new PushLocalVar(loadTypeForTypeUsage(type), index.get());
             } else if (compilation.getLocalVarsSymbolTable().hasAlias(valueReference.getName())) {
                 return compilation.getLocalVarsSymbolTable().getAlias(valueReference.getName());
@@ -219,7 +220,7 @@ public class CompilationOfPush {
             if (instanceFieldAccess.isArrayLength(compilation.getResolver())) {
                 return new ComposedBytecodeSequence(pushExpression(instanceFieldAccess.getSubject()), new ArrayLengthBS());
             } else {
-                TypeUsageNode instanceType = instanceFieldAccess.getSubject().calcType(compilation.getResolver());
+                TypeUsage instanceType = instanceFieldAccess.getSubject().calcType(compilation.getResolver());
                 Node value = instanceType.getFieldOnInstance(instanceFieldAccess.getField(), instanceFieldAccess.getSubject(), compilation.getResolver());
                 return push(value);
             }
@@ -358,7 +359,7 @@ public class CompilationOfPush {
         }
     }
 
-    int loadTypeForTypeUsage(TypeUsageNode type) {
+    int loadTypeForTypeUsage(TypeUsage type) {
         return loadTypeFor(type.jvmType(compilation.getResolver()));
     }
 

@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +91,7 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         if (precalculatedType != null) {
             return precalculatedType;
         }

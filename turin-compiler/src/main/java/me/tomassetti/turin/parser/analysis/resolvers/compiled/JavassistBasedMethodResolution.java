@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -143,7 +144,7 @@ public class JavassistBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsageNode actualType = argsTypes.get(i).getValue().calcType(resolver);
+                    TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
                     TypeUsageNode formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;

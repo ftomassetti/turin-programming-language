@@ -2,6 +2,7 @@ package me.tomassetti.turin.typesystem;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -80,6 +81,11 @@ public class ArrayTypeUsage implements TypeUsage {
 
     @Override
     public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

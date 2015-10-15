@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class VariableDeclaration extends Statement implements Symbol {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         if (type == null) {
             return value.calcType(resolver);
         } else {
@@ -97,7 +98,7 @@ public class VariableDeclaration extends Statement implements Symbol {
         }
     }
 
-    public TypeUsageNode varType(SymbolResolver resolver) {
+    public TypeUsage varType(SymbolResolver resolver) {
         if (type != null) {
             return type;
         } else {

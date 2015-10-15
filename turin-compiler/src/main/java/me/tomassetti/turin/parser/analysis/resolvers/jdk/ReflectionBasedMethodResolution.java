@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -189,7 +190,7 @@ class ReflectionBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsageNode actualType = argsTypes.get(i).getValue().calcType(resolver);
+                    TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
                     TypeUsageNode formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;

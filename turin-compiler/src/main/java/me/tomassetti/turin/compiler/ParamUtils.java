@@ -12,6 +12,7 @@ import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.InstanceMethodInvokation;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import me.tomassetti.turin.util.Either;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public final class ParamUtils {
     }
 
     public static Either<String, List<ActualParam>> desugarizeAsteriskParam(List<FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
-        TypeUsageNode type = value.calcType(resolver);
+        TypeUsage type = value.calcType(resolver);
         if (!type.isReference()) {
             return Either.left("An asterisk param should be an object");
         }

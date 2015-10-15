@@ -8,6 +8,7 @@ import me.tomassetti.jvm.*;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -42,7 +43,7 @@ public class CompilationOfStatements {
             ReturnStatement returnStatement = (ReturnStatement) statement;
             if (returnStatement.hasValue()) {
                 Expression returnedValue = returnStatement.getValue();
-                TypeUsageNode returnedValueType = returnedValue.calcType(compilation.getResolver());
+                TypeUsage returnedValueType = returnedValue.calcType(compilation.getResolver());
                 int returnType = returnedValueType.jvmType(compilation.getResolver()).returnOpcode();
                 return new ReturnValueBS(returnType, compilation.getPushUtils().pushExpression(returnStatement.getValue()));
             } else {

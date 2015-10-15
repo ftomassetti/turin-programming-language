@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
 
@@ -28,7 +29,7 @@ public abstract class InternalInvokableDefinition {
     }
 
     private Optional<String> matchAsterisk(SymbolResolver resolver, ActualParam actualParam, List<FormalParameter> formalParameters) {
-        TypeUsageNode paramType = actualParam.getValue().calcType(resolver);
+        TypeUsage paramType = actualParam.getValue().calcType(resolver);
         // it needs to have all the getters for the non-default parameters
         // all the other getters that match default params have to be the right type
 

@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.ast.expressions.Creation;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public final class BoxUnboxing {
 
@@ -16,7 +17,7 @@ public final class BoxUnboxing {
     }
 
     public static Expression box(Expression value, SymbolResolver resolver) {
-        TypeUsageNode type = value.calcType(resolver);
+        TypeUsage type = value.calcType(resolver);
         if (!type.isPrimitive()) {
             throw new IllegalArgumentException("type is not primitive, cannot box this value");
         }
