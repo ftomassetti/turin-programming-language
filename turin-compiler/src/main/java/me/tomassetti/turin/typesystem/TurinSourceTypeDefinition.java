@@ -7,9 +7,13 @@ public class TurinSourceTypeDefinition extends TypeDefinition {
 
     private TurinTypeDefinition turinTypeDefinition;
 
-    public TurinSourceTypeDefinition(TurinTypeDefinition turinTypeDefinition) {
-        super(turinTypeDefinition.getQualifiedName());
+    public TurinSourceTypeDefinition(String qualifiedName, TurinTypeDefinition turinTypeDefinition) {
         this.turinTypeDefinition = turinTypeDefinition;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return turinTypeDefinition.internalGetQualifiedName();
     }
 
     @Override

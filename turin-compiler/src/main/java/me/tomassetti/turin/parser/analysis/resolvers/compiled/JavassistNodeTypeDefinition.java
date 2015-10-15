@@ -207,11 +207,6 @@ public class JavassistNodeTypeDefinition extends NodeTypeDefinition {
     }
 
     @Override
-    public String getQualifiedName() {
-        return ctClass.getName();
-    }
-
-    @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         try {
             return JavassistTypeDefinitionFactory.toMethodDefinition(

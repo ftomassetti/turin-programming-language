@@ -7,8 +7,12 @@ public class ReflectionBasedTypeDefinition extends TypeDefinition {
     private Class<?> clazz;
 
     public ReflectionBasedTypeDefinition(Class<?> clazz) {
-        super(clazz.getCanonicalName());
         this.clazz = clazz;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return clazz.getCanonicalName();
     }
 
     @Override

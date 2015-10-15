@@ -92,7 +92,7 @@ public class TurinTypeDefinition extends NodeTypeDefinition {
         annotations.add(annotation);
     }
 
-    public String getQualifiedName() {
+    public String internalGetQualifiedName() {
         String contextName = contextName();
         if (contextName.isEmpty()) {
             return name;
@@ -258,7 +258,7 @@ public class TurinTypeDefinition extends NodeTypeDefinition {
 
     public TurinTypeDefinition(String name) {
         super(name);
-        this.typeDefinition = new TurinSourceTypeDefinition(this);
+        this.typeDefinition = new TurinSourceTypeDefinition(this.internalGetQualifiedName(), this);
     }
 
     /**

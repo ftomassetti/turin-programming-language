@@ -39,11 +39,13 @@ public abstract class NodeTypeDefinition extends Node implements Named {
     // Naming
     //
 
-    public String getName() {
-        return name;
+    public final String getName() {
+        return typeDefinition().getName();
     }
 
-    public abstract String getQualifiedName();
+    public final String getQualifiedName() {
+        return typeDefinition().getCanonicalName();
+    }
 
     //
     // Typing

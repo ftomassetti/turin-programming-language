@@ -148,11 +148,6 @@ class ReflectionBasedNodeTypeDefinition extends NodeTypeDefinition {
     }
 
     @Override
-    public String getQualifiedName() {
-        return clazz.getCanonicalName();
-    }
-
-    @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this));
     }

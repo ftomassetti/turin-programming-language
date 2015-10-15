@@ -1,5 +1,6 @@
 package me.tomassetti.turin.typesystem;
 
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 
 /**
@@ -8,19 +9,30 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
  */
 public abstract class TypeDefinition {
 
-    private String canonicalName;
-
-    public TypeDefinition(String canonicalName) {
-        this.canonicalName = canonicalName;
+    public TypeDefinition() {
     }
 
-    public String getCanonicalName() {
-        return canonicalName;
+    ///
+    /// Naming
+    ///
+
+    public abstract String getCanonicalName();
+
+    public final String getName() {
+        return JvmNameUtils.canonicalToSimple(getCanonicalName());
     }
+
+    ///
+    /// Classification
+    ///
 
     public abstract boolean isInterface();
 
     public abstract boolean isClass();
+
+    ///
+    /// Hierarchy
+    ///
 
     public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
 }

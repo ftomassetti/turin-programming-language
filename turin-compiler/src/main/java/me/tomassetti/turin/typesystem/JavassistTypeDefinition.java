@@ -8,8 +8,12 @@ public class JavassistTypeDefinition extends TypeDefinition {
     private CtClass clazz;
 
     public JavassistTypeDefinition(CtClass clazz) {
-        super(clazz.getName());
         this.clazz = clazz;
+    }
+
+    @Override
+    public String getCanonicalName() {
+        return clazz.getName();
     }
 
     @Override
