@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 public class ShortLiteral extends Expression {
@@ -46,7 +46,7 @@ public class ShortLiteral extends Expression {
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsage.SHORT;
+        return PrimitiveTypeUsageNode.SHORT;
     }
 
     public short getValue() {

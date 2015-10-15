@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 public class RelationalOperation extends Expression {
@@ -27,7 +27,7 @@ public class RelationalOperation extends Expression {
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsage.BOOLEAN;
+        return PrimitiveTypeUsageNode.BOOLEAN;
     }
 
     public Expression getLeft() {

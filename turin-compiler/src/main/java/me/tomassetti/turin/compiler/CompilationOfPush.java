@@ -20,7 +20,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
@@ -146,10 +146,10 @@ public class CompilationOfPush {
         } else if (expr instanceof MathOperation) {
             MathOperation mathOperation = (MathOperation) expr;
             // TODO do proper conversions
-            if (!mathOperation.getLeft().calcType(compilation.getResolver()).equals(PrimitiveTypeUsage.INT)) {
+            if (!mathOperation.getLeft().calcType(compilation.getResolver()).equals(PrimitiveTypeUsageNode.INT)) {
                 throw new UnsupportedOperationException();
             }
-            if (!mathOperation.getRight().calcType(compilation.getResolver()).equals(PrimitiveTypeUsage.INT)) {
+            if (!mathOperation.getRight().calcType(compilation.getResolver()).equals(PrimitiveTypeUsageNode.INT)) {
                 throw new UnsupportedOperationException();
             }
             JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType(compilation.getResolver()).jvmType(compilation.getResolver()).typeCategory();

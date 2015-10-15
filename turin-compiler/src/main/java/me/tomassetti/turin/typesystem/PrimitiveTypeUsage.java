@@ -1,9 +1,15 @@
-package me.tomassetti.turin.parser.ast.typeusage;
+package me.tomassetti.turin.typesystem;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +22,7 @@ import java.util.Optional;
  * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
  *       parent.
  */
-public class PrimitiveTypeUsage extends TypeUsageNode {
+public class PrimitiveTypeUsage implements TypeUsage {
 
     private String name;
     private JvmType jvmType;
@@ -24,7 +30,7 @@ public class PrimitiveTypeUsage extends TypeUsageNode {
 
     @Override
     public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
-        return this;
+        throw new UnsupportedOperationException();
     }
 
     public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),
@@ -95,8 +101,8 @@ public class PrimitiveTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public Iterable<Node> getChildren() {
-        return Collections.emptyList();
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -109,7 +115,7 @@ public class PrimitiveTypeUsage extends TypeUsageNode {
     /**
      * It accepts both Java name (lower case) or Turin name (capitalized).
      */
-    public static TypeUsageNode getByName(String name) {
+    public static PrimitiveTypeUsage getByName(String name) {
         for (PrimitiveTypeUsage primitiveTypeUsage : ALL) {
             if (primitiveTypeUsage.turinName().equals(name) || primitiveTypeUsage.name.equals(name)) {
                 return primitiveTypeUsage;
@@ -161,15 +167,23 @@ public class PrimitiveTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return false;
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+        return null;
     }
 
     @Override
-    public TypeUsageNode copy() {
-        PrimitiveTypeUsage copy = new PrimitiveTypeUsage(this.name, this.jvmType, this.boxType, promotionsTypes);
-        copy.parent = this.parent;
-        return copy;
+    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+        return null;
+    }
+
+    @Override
+    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        return null;
+    }
+
+    @Override
+    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+        return false;
     }
 
     public boolean isLong() {
@@ -212,4 +226,5 @@ public class PrimitiveTypeUsage extends TypeUsageNode {
     public String describe() {
         return name;
     }
+
 }

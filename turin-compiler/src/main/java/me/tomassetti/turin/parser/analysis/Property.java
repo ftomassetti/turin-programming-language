@@ -8,7 +8,7 @@ import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.Collections;
@@ -84,7 +84,7 @@ public class Property extends Node {
     }
 
     public static String getterName(TypeUsageNode typeUsage, String propertyName) {
-        String prefix = typeUsage.equals(PrimitiveTypeUsage.BOOLEAN) ? "is" : "get";
+        String prefix = typeUsage.equals(PrimitiveTypeUsageNode.BOOLEAN) ? "is" : "get";
         String rest = propertyName.length() > 1 ? propertyName.substring(1) : "";
         return prefix + Character.toUpperCase(propertyName.charAt(0)) + rest;
     }

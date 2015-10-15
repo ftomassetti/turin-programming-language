@@ -4,8 +4,9 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -16,19 +17,19 @@ import java.util.Optional;
  */
 public class BasicTypeUsage extends TypeUsageNode {
 
-    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsage.BYTE);
-    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsage.SHORT);
-    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsage.INT);
-    public static BasicTypeUsage ULONG = new BasicTypeUsage("ulong", PrimitiveTypeUsage.LONG);
-    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsage.FLOAT);
-    public static BasicTypeUsage UDOUBLE = new BasicTypeUsage("udouble", PrimitiveTypeUsage.DOUBLE);
+    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsageNode.BYTE);
+    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsageNode.SHORT);
+    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsageNode.INT);
+    public static BasicTypeUsage ULONG = new BasicTypeUsage("ulong", PrimitiveTypeUsageNode.LONG);
+    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsageNode.FLOAT);
+    public static BasicTypeUsage UDOUBLE = new BasicTypeUsage("udouble", PrimitiveTypeUsageNode.DOUBLE);
 
     private static ImmutableList<BasicTypeUsage> BASIC_TYPES = ImmutableList.of(UBYTE, USHORT, UINT, ULONG, UFLOAT, UDOUBLE);
 
     private String name;
-    private PrimitiveTypeUsage correspondingPrimitiveTypeUsage;
+    private PrimitiveTypeUsageNode correspondingPrimitiveTypeUsage;
 
-    private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage) {
+    private BasicTypeUsage(String name, PrimitiveTypeUsageNode correspondingPrimitiveTypeUsage) {
         this.name = name;
         this.correspondingPrimitiveTypeUsage = correspondingPrimitiveTypeUsage;
     }
@@ -45,7 +46,7 @@ public class BasicTypeUsage extends TypeUsageNode {
 
     @Override
     public PrimitiveTypeUsage asPrimitiveTypeUsage() {
-        return correspondingPrimitiveTypeUsage;
+        return correspondingPrimitiveTypeUsage.asPrimitiveTypeUsage();
     }
 
     @Override

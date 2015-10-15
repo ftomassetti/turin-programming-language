@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.virtual;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 public class ArrayLength extends Node {
@@ -23,6 +23,6 @@ public class ArrayLength extends Node {
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsage.INT;
+        return PrimitiveTypeUsageNode.INT;
     }
 }

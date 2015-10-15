@@ -500,10 +500,10 @@ public class Compilation {
         } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt()) {
             elements.add(pushUtils.convertAndPush(piece, JvmType.INT));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsage.BOOLEAN)) {
+        } else if (pieceType.equals(PrimitiveTypeUsageNode.BOOLEAN)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsage.CHAR)) {
+        } else if (pieceType.equals(PrimitiveTypeUsageNode.CHAR)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isLong()) {

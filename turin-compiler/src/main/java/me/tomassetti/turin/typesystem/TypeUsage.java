@@ -8,7 +8,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
@@ -87,5 +87,7 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver);
+    default JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
+        return jvmType(resolver).typeCategory();
+    }
 }

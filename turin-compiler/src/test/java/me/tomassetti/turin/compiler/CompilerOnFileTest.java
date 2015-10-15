@@ -4,7 +4,7 @@ import me.tomassetti.turin.classloading.TurinClassLoader;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -229,7 +229,7 @@ public class CompilerOnFileTest extends AbstractCompilerTest {
     public void pimitiveTypesHavePrecedence() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/boolean_literals.to"));
 
-        assertEquals(PrimitiveTypeUsage.BOOLEAN, turinFile.getTopTypeDefinition("A").get().getDirectMethods().get(0).getReturnType());
+        assertEquals(PrimitiveTypeUsageNode.BOOLEAN, turinFile.getTopTypeDefinition("A").get().getDirectMethods().get(0).getReturnType());
     }
 
     @Test

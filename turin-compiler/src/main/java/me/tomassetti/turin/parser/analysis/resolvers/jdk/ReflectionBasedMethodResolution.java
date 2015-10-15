@@ -73,7 +73,7 @@ class ReflectionBasedMethodResolution {
                 return new VoidTypeUsage();
             }
             if (clazz.isPrimitive()) {
-                return PrimitiveTypeUsage.getByName(clazz.getName());
+                return PrimitiveTypeUsageNode.getByName(clazz.getName());
             }
             if (clazz.isArray()) {
                 return new ArrayTypeUsageNode(toTypeUsage(clazz.getComponentType(), typeVariables));

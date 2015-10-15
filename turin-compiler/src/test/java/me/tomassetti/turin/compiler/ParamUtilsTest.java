@@ -9,7 +9,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.util.Either;
@@ -39,10 +39,10 @@ public class ParamUtilsTest {
     private ActualParam u1 = new ActualParam(new IntLiteral(3));
     private ActualParam u2 = new ActualParam(new IntLiteral(4));
 
-    private FormalParameter fd1 = new FormalParameter(PrimitiveTypeUsage.INT, "fd1", Optional.of(new IntLiteral(1)));
-    private FormalParameter fd2 = new FormalParameter(PrimitiveTypeUsage.INT, "fd2", Optional.of(new IntLiteral(1)));
-    private FormalParameter fn1 = new FormalParameter(PrimitiveTypeUsage.INT, "fn1");
-    private FormalParameter fn2 = new FormalParameter(PrimitiveTypeUsage.INT, "fn2");
+    private FormalParameter fd1 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fd1", Optional.of(new IntLiteral(1)));
+    private FormalParameter fd2 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fd2", Optional.of(new IntLiteral(1)));
+    private FormalParameter fn1 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fn1");
+    private FormalParameter fn2 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fn2");
 
     @Test
     public void verifyOrderOnlyOneNamedParam() {
@@ -90,8 +90,8 @@ public class ParamUtilsTest {
 
     @Test
     public void testGetterNameBoolean() {
-        assertEquals("isFoo", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsage.BOOLEAN, "foo")));
-        assertEquals("isA", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsage.BOOLEAN, "a")));
+        assertEquals("isFoo", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "foo")));
+        assertEquals("isA", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "a")));
     }
 
     @Test

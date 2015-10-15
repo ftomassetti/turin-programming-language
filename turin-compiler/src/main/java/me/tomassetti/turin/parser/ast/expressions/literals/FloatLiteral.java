@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.expressions.literals;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class FloatLiteral extends Expression {
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsage.FLOAT;
+        return PrimitiveTypeUsageNode.FLOAT;
     }
 
     @Override

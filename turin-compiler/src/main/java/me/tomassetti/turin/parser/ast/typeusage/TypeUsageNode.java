@@ -6,6 +6,7 @@ import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     public static TypeUsageNode fromJvmType(JvmType jvmType) {
-        Optional<PrimitiveTypeUsage> primitive = PrimitiveTypeUsage.findByJvmType(jvmType);
+        Optional<PrimitiveTypeUsageNode> primitive = PrimitiveTypeUsageNode.findByJvmType(jvmType);
         if (primitive.isPresent()) {
             return primitive.get();
         }
@@ -78,7 +79,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
 
     @Override
     public boolean isPrimitive() {
-        return this instanceof PrimitiveTypeUsage;
+        return this instanceof PrimitiveTypeUsageNode;
     }
 
     @Override

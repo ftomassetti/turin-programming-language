@@ -302,7 +302,7 @@ class ParseTreeToAst {
             getPositionFrom(referenceTypeUsage, type);
             return referenceTypeUsage;
         } else if (type.primitiveType != null) {
-            return PrimitiveTypeUsage.getByName(type.primitiveType.getText());
+            return PrimitiveTypeUsageNode.getByName(type.primitiveType.getText());
         } else if (type.basicType != null) {
             return BasicTypeUsage.getByName(type.basicType.getText());
         } else if (type.arrayBase != null) {
