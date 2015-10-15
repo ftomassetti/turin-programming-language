@@ -17,7 +17,7 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>turin-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
 
     <name>turin-parent</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>

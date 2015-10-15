@@ -4,14 +4,14 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>turin-standard-library</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.2-20151012-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>turin-standard-library</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 
     <parent>
         <groupId>me.tomassetti</groupId>
         <artifactId>turin-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <licenses>

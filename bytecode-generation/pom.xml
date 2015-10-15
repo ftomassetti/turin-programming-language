@@ -4,14 +4,14 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>bytecode-generation</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>bytecode-generation</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 
     <parent>
         <groupId>me.tomassetti</groupId>
         <artifactId>turin-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <licenses>

@@ -55,7 +55,7 @@ public abstract class AbstractCompilerTest {
 
     protected SymbolResolver getResolverFor(TurinFile turinFile) {
         try {
-            TypeResolver turinStdLib = new JarTypeResolver(new File("../turin-standard-library/target/turin-standard-library-0.0.1-20150928-SNAPSHOT.jar"));
+            TypeResolver turinStdLib = new JarTypeResolver(new File("../turin-standard-library/target/turin-standard-library-0.0.3-SNAPSHOT.jar"));
             return new ComposedSymbolResolver(ImmutableList.of(
                     new InFileSymbolResolver(new ComposedTypeResolver(ImmutableList.of(
                             JdkTypeResolver.getInstance(),
@@ -76,7 +76,7 @@ public abstract class AbstractCompilerTest {
 
     protected SymbolResolver getResolverFor(List<TurinFile> turinFiles, List<String> jarFiles, List<String> classesDirs) {
         jarFiles = new ArrayList<>(jarFiles);
-        jarFiles.add("../turin-standard-library/target/turin-standard-library-0.0.1-20150928-SNAPSHOT.jar");
+        jarFiles.add("../turin-standard-library/target/turin-standard-library-0.0.3-SNAPSHOT.jar");
         TypeResolver typeResolver = new ComposedTypeResolver(ImmutableList.<TypeResolver>builder()
                 .add(JdkTypeResolver.getInstance())
                 .addAll(jarFiles.stream().map((jf) -> {

@@ -4,14 +4,14 @@
     <groupId>me.tomassetti</groupId>
     <artifactId>turin-compiler</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1-20150929-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>turin-compiler</name>
     <url>https://github.com/ftomassetti/turin-programming-language</url>
 
     <parent>
         <groupId>me.tomassetti</groupId>
         <artifactId>turin-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
 
     <licenses>
@@ -59,17 +59,17 @@
         <dependency>
             <groupId>me.tomassetti</groupId>
             <artifactId>turin-parser</artifactId>
-            <version>0.0.2-20151013-SNAPSHOT</version>
+            <version>0.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>me.tomassetti</groupId>
             <artifactId>turin-standard-library</artifactId>
-            <version>0.0.2-20151012-SNAPSHOT</version>
+            <version>0.0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>me.tomassetti</groupId>
             <artifactId>bytecode-generation</artifactId>
-            <version>0.1.0</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.beust</groupId>
