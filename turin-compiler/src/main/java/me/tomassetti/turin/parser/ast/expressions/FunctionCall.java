@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOve
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class FunctionCall extends Invokable {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return function.calcType(resolver).returnTypeWhenInvokedWith(actualParams, resolver);
     }
 

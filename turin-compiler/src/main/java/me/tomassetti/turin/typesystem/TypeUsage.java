@@ -59,9 +59,9 @@ public interface TypeUsage extends Symbol {
 
     Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
 
-    TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver);
+    TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver);
 
-    TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
+    TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
     boolean isMethodOverloaded(SymbolResolver resolver, String methodName);
 

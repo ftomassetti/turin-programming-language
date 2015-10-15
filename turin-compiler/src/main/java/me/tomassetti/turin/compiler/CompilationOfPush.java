@@ -232,7 +232,7 @@ public class CompilationOfPush {
             instanceMethodInvokation.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
-            TypeUsageNode returnType = instanceMethodInvokation.calcType(compilation.getResolver());
+            TypeUsage returnType = instanceMethodInvokation.calcType(compilation.getResolver());
             String typeReturnedFromMethod = methodDefinition.getReturnTypeDescriptor();
             // This could happen because of generics: in this case a cast is needed
             BytecodeSequence invokationBS = new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
