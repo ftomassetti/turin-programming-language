@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class TurinTypeContructorDefinition extends InvokableDefinition {
     }
 
     public TurinTypeContructorDefinition(List<FormalParameter> parameters, BlockStatement body) {
-        super(parameters, body, "<init>", new VoidTypeUsage());
+        super(parameters, body, "<init>", new VoidTypeUsageNode());
     }
 
     @Override

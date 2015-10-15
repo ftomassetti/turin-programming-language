@@ -70,7 +70,7 @@ class ReflectionBasedMethodResolution {
         if (type instanceof Class) {
             Class clazz = (Class)type;
             if (clazz.getCanonicalName().equals(void.class.getCanonicalName())) {
-                return new VoidTypeUsage();
+                return new VoidTypeUsageNode();
             }
             if (clazz.isPrimitive()) {
                 return PrimitiveTypeUsageNode.getByName(clazz.getName());

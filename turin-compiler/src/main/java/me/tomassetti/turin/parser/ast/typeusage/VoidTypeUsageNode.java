@@ -1,13 +1,13 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.typesystem.VoidTypeUsage;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class VoidTypeUsage extends TypeUsageNode {
+public class VoidTypeUsageNode extends TypeUsageWrapperNode {
     @Override
     public boolean isVoid() {
         return true;
@@ -24,13 +24,8 @@ public class VoidTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return new JvmType("V");
-    }
-
-    @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return false;
+    public TypeUsage typeUsage() {
+        return new VoidTypeUsage();
     }
 
     @Override

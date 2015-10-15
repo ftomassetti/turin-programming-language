@@ -447,7 +447,7 @@ public class Compilation {
         compilationOfStatements.compile(invokableDefinition.getBody()).operate(mv);
 
         // add implicit return when needed
-        if (invokableDefinition.getReturnType() instanceof VoidTypeUsage) {
+        if (invokableDefinition.getReturnType() instanceof VoidTypeUsageNode) {
            // TODO do not add if there is already a return at the end
             new ReturnVoidBS().operate(mv);
         }

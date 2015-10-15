@@ -265,7 +265,7 @@ class ParseTreeToAst {
 
     private TypeUsageNode toAst(TurinParser.ReturnTypeContext type) {
         if (type.isVoid != null) {
-            return new VoidTypeUsage();
+            return new VoidTypeUsageNode();
         } else if (type.type != null) {
             return toAst(type.type);
         } else {

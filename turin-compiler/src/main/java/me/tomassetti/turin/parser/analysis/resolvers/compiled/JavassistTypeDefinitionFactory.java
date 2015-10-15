@@ -79,7 +79,7 @@ public class JavassistTypeDefinitionFactory {
                 throw new RuntimeException(e);
             }
         } else if (type.getName().equals(void.class.getCanonicalName())) {
-            return new VoidTypeUsage();
+            return new VoidTypeUsageNode();
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsageNode.getByName(type.getName());
         } else {

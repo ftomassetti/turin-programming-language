@@ -21,7 +21,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
@@ -120,7 +120,7 @@ public class TurinTypeDefinition extends TypeDefinition {
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.setterName(), descriptor, false, false);
                 FormalParameter param = new FormalParameter(property.getTypeUsage().copy(), property.getName());
                 param.setParent(this);
-                InternalMethodDefinition setter = new InternalMethodDefinition(property.setterName(), ImmutableList.of(param), new VoidTypeUsage(), jvmMethodDefinition);
+                InternalMethodDefinition setter = new InternalMethodDefinition(property.setterName(), ImmutableList.of(param), new VoidTypeUsageNode(), jvmMethodDefinition);
                 registerMethod(setter);
             }
         }

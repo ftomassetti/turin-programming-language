@@ -317,7 +317,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             if (pt.isArray()) {
                 return new ArrayTypeUsageNode(toTypeUsage(pt.getComponentType()));
             } else if (pt.getName().equals(void.class.getCanonicalName())) {
-                return new VoidTypeUsage();
+                return new VoidTypeUsageNode();
             } else if (pt.isPrimitive()) {
                 return PrimitiveTypeUsageNode.getByName(pt.getSimpleName());
             } else {
