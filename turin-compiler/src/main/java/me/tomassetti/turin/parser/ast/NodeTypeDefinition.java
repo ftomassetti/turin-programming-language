@@ -39,10 +39,12 @@ public abstract class NodeTypeDefinition extends Node implements Named {
     // Naming
     //
 
+    @Deprecated
     public final String getName() {
         return typeDefinition().getName();
     }
 
+    @Deprecated
     public final String getQualifiedName() {
         return typeDefinition().getCanonicalName();
     }
@@ -51,8 +53,9 @@ public abstract class NodeTypeDefinition extends Node implements Named {
     // Typing
     //
 
+    @Deprecated
     public JvmType jvmType() {
-        return new JvmType(JvmNameUtils.canonicalToDescriptor(getQualifiedName()));
+        return typeDefinition().jvmType();
     }
 
     //
@@ -169,7 +172,7 @@ public abstract class NodeTypeDefinition extends Node implements Named {
             Node field = getField(firstName, resolver);
             TypeUsage typeUsage = field.calcType(resolver);
             if (typeUsage.isReferenceTypeUsage()) {
-                NodeTypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
+                TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
                 return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
             } else {
                 return false;
@@ -184,7 +187,10 @@ public abstract class NodeTypeDefinition extends Node implements Named {
     // Hierarchy
     //
 
-    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
+    @Deprecated
+    public final List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+        return typeDefinition().getAllAncestors(resolver);
+    }
 
     @Deprecated
     public final boolean isInterface() {

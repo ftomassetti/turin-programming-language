@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsage;
+import me.tomassetti.turin.typesystem.TypeDefinition;
 
 import java.util.*;
 
@@ -36,7 +37,7 @@ public abstract class InternalInvokableDefinition {
             return Optional.of("An asterisk param should be an object");
         }
         List<ActualParam> actualParams = new ArrayList<>();
-        NodeTypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
+        TypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
 
         for (FormalParameter formalParameter : formalParameters) {
             String getterName = ParamUtils.getterName(formalParameter);

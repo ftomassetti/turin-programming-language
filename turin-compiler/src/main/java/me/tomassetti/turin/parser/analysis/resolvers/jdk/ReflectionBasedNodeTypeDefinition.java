@@ -238,44 +238,13 @@ class ReflectionBasedNodeTypeDefinition extends NodeTypeDefinition {
         throw new UnsupportedOperationException(fieldName);
     }
 
-    @Override
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
-        List<ReferenceTypeUsage> ancestors = new ArrayList<>();
-        if (clazz.getSuperclass() != null) {
-            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
-            ancestors.add(superTypeDefinition);
-            ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
-        }
-        int i = 0;
-        for (Class<?> interfaze : clazz.getInterfaces()) {
-            Type genericInterfaze = clazz.getGenericInterfaces()[i];
-            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
-            ancestors.add(superTypeDefinition);
-            ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
-            i++;
-        }
-        return ancestors;
-    }
+
 
     private ReflectionBasedTypeDefinition typeDefinition;
 
     @Override
     public TypeDefinition typeDefinition() {
         return typeDefinition;
-    }
-
-    private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
-        NodeTypeDefinition typeDefinition = new ReflectionBasedNodeTypeDefinition(clazz);
-        ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)type;
-            for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {
-                TypeVariable<? extends Class<?>> typeVariable = clazz.getTypeParameters()[tp];
-                Type parameterType = parameterizedType.getActualTypeArguments()[tp];
-                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), toTypeUsage(parameterType));
-            }
-        }
-        return referenceTypeUsage;
     }
 
     @Override

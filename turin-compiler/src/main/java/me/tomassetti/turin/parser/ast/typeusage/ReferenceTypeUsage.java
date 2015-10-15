@@ -13,6 +13,7 @@ import me.tomassetti.turin.parser.ast.NodeTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.typesystem.TypeDefinition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,12 +29,12 @@ public class ReferenceTypeUsage extends TypeUsage {
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
     private boolean fullyQualifiedName;
-    private NodeTypeDefinition cachedTypeDefinition;
+    private TypeDefinition cachedTypeDefinition;
 
     public ReferenceTypeUsage(NodeTypeDefinition typeDefinition, List<TypeUsage> typeParams) {
         this(typeDefinition.getQualifiedName(), false);
         this.typeParams = typeParams;
-        this.cachedTypeDefinition = typeDefinition;
+        this.cachedTypeDefinition = typeDefinition.typeDefinition();
     }
 
     public ReferenceTypeUsage(String name) {
@@ -54,7 +55,7 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     public ReferenceTypeUsage(NodeTypeDefinition td) {
         this(td.getQualifiedName(), true);
-        this.cachedTypeDefinition = td;
+        this.cachedTypeDefinition = td.typeDefinition();
     }
 
     public boolean isInterface(SymbolResolver resolver) {
@@ -105,12 +106,12 @@ public class ReferenceTypeUsage extends TypeUsage {
                 '}';
     }
 
-    public NodeTypeDefinition getTypeDefinition(SymbolResolver resolver) {
+    public TypeDefinition getTypeDefinition(SymbolResolver resolver) {
         if (cachedTypeDefinition != null) {
             return cachedTypeDefinition;
         }
         NodeTypeDefinition typeDefinition = resolver.getRoot().getTypeDefinitionIn(this.name, this, resolver.getRoot());
-        return typeDefinition;
+        return typeDefinition.typeDefinition();
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ReferenceTypeUsage extends TypeUsage {
         if (fullyQualifiedName) {
             return name;
         }
-        return getTypeDefinition(resolver).getQualifiedName();
+        return getTypeDefinition(resolver).getCanonicalName();
     }
 
     @Override
@@ -187,7 +188,7 @@ public class ReferenceTypeUsage extends TypeUsage {
     public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
-            NodeTypeDefinition typeDefinition = getTypeDefinition(resolver);
+            TypeDefinition typeDefinition = getTypeDefinition(resolver);
             return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic(resolver)));
         } else {
             throw new UnsupportedOperationException();
@@ -196,7 +197,7 @@ public class ReferenceTypeUsage extends TypeUsage {
 
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        NodeTypeDefinition typeDefinition = getTypeDefinition(resolver);
+        TypeDefinition typeDefinition = getTypeDefinition(resolver);
         TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
     }
