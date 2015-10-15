@@ -14,6 +14,11 @@ import me.tomassetti.turin.symbols.Symbol;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The usage of a type. It can be every sort of type (void, primitive, reference, etc.)
+ * used in the AST or in class files. This represents the abstract type while TypeUsageNode
+ * represent a single specific usage of a type in the AST.
+ */
 public interface TypeUsage extends Symbol {
     JvmType jvmType(SymbolResolver resolver);
 

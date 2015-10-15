@@ -7,8 +7,8 @@ import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Optional;
 
@@ -68,7 +68,7 @@ public interface SymbolResolver {
      * @param resolver top level resolver used during compilation. This is needed because this resolver could delegate
      *                 to that one during the resolution process.
      */
-    Optional<TypeUsageNode> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver);
+    Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver);
 
     /**
      * Find the JVM method corresponding to this function call.

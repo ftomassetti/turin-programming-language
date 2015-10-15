@@ -8,8 +8,8 @@ import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
 
@@ -81,7 +81,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     }
 
     @Override
-    public Optional<TypeUsageNode> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
+    public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (typeDefinitions.containsKey(typeName)) {
             return Optional.of(new ReferenceTypeUsage(typeDefinitions.get(typeName)));
         } else {
