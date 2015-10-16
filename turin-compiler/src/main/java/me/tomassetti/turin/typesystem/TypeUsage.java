@@ -23,9 +23,24 @@ import java.util.Optional;
  * represent a single specific usage of a type in the AST.
  */
 public interface TypeUsage extends Symbol {
-    JvmType jvmType(SymbolResolver resolver);
+
+    ///
+    /// Subclassing
+    ///
+
+    default boolean isArray() {
+        return false;
+    }
+
+    default boolean isPrimitive() {
+        return false;
+    }
 
     default boolean isReferenceTypeUsage() {
+        return false;
+    }
+
+    default boolean isVoid() {
         return false;
     }
 
@@ -37,27 +52,35 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException();
     }
 
-    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
-
-    boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver);
-
-    default boolean isArray() {
-        return false;
-    }
-
-    default boolean isPrimitive() {
-        return false;
-    }
-
-    default boolean isReference() {
-        return false;
-    }
-
     default PrimitiveTypeUsage asPrimitiveTypeUsage() {
         throw new UnsupportedOperationException();
     }
 
+
+    ///
+    /// JVM
+    ///
+
+    JvmType jvmType(SymbolResolver resolver);
+
+    default JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
+        return jvmType(resolver).typeCategory();
+    }
+
+    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
+
+    boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver);
+
+    ///
+    /// Fields
+    ///
+
     Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
+
+    ///
+    /// Methods
+    ///
+
 
     TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver);
 
@@ -69,7 +92,15 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    default boolean isVoid() {
+    default Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    ///
+    /// Misc
+    ///
+
+    default boolean isReference() {
         return false;
     }
 
@@ -79,15 +110,8 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException();
     }
 
-    default Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
-
     default String describe() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    default JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
-        return jvmType(resolver).typeCategory();
-    }
 }
