@@ -7,16 +7,16 @@ import me.tomassetti.turin.parser.ast.Node;
 
 import java.util.List;
 
-public abstract class OverloadedFunctionReferenceTypeUsage extends TypeUsageNode {
+public abstract class OverloadedFunctionReferenceTypeUsageNode extends TypeUsageNode {
 
-    protected List<FunctionReferenceTypeUsage> alternatives;
+    protected List<FunctionReferenceTypeUsageNode> alternatives;
 
-    OverloadedFunctionReferenceTypeUsage(List<FunctionReferenceTypeUsage> alternatives) {
+    OverloadedFunctionReferenceTypeUsageNode(List<FunctionReferenceTypeUsageNode> alternatives) {
         if (alternatives.size() < 2) {
             throw new IllegalArgumentException();
         }
         this.alternatives = alternatives;
-        this.alternatives.forEach((a)->a.setParent(OverloadedFunctionReferenceTypeUsage.this));
+        this.alternatives.forEach((a)->a.setParent(OverloadedFunctionReferenceTypeUsageNode.this));
     }
 
     @Override

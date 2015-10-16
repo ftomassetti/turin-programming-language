@@ -52,7 +52,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     private static TypeUsageNode typeFor(Method method, Node parentToAssign) {
         List<TypeUsageNode> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
-        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
+        FunctionReferenceTypeUsageNode functionReferenceTypeUsage = new FunctionReferenceTypeUsageNode(paramTypes, toTypeUsage(method.getGenericReturnType()));
         functionReferenceTypeUsage.setParent(parentToAssign);
         return functionReferenceTypeUsage;
     }

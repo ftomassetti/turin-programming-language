@@ -12,13 +12,13 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage {
+public class JarOverloadedFunctionReferenceTypeUsageNode extends OverloadedFunctionReferenceTypeUsageNode {
 
     private List<CtMethod> ctMethods;
     private String methodName;
     private boolean staticContext;
 
-    public JarOverloadedFunctionReferenceTypeUsage(List<FunctionReferenceTypeUsage> alternatives, List<CtMethod> ctMethods) {
+    public JarOverloadedFunctionReferenceTypeUsageNode(List<FunctionReferenceTypeUsageNode> alternatives, List<CtMethod> ctMethods) {
         super(alternatives);
         if (alternatives.size() != ctMethods.size()) {
             throw new IllegalArgumentException();
@@ -56,7 +56,7 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
                 argsTypes.add(actualParam.getValue().calcType(resolver).jvmType(resolver));
             }
         }
-        CtMethod method = JavassistBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, ctMethods, this);
+        CtMethod method = JavassistBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, ctMethods);
         int index = ctMethods.indexOf(method);
         if (index == -1) {
             throw new RuntimeException();

@@ -9,7 +9,7 @@ import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 
-public class FunctionReferenceTypeUsage extends TypeUsageNode {
+public class FunctionReferenceTypeUsageNode extends TypeUsageNode {
 
     private List<TypeUsageNode> parameterTypes;
     private TypeUsageNode returnType;
@@ -45,9 +45,9 @@ public class FunctionReferenceTypeUsage extends TypeUsageNode {
         return false;
     }
 
-    public FunctionReferenceTypeUsage(List<TypeUsageNode> parameterTypes, TypeUsageNode returnType) {
+    public FunctionReferenceTypeUsageNode(List<TypeUsageNode> parameterTypes, TypeUsageNode returnType) {
         this.parameterTypes = parameterTypes;
-        this.parameterTypes.forEach((pt)->pt.setParent(FunctionReferenceTypeUsage.this));
+        this.parameterTypes.forEach((pt)->pt.setParent(FunctionReferenceTypeUsageNode.this));
         this.returnType = returnType;
         this.returnType.setParent(this);
     }

@@ -14,6 +14,9 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.JarOverloadedFunctionReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.OverloadedFunctionReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import turin.compilation.DefaultParam;
 
@@ -144,7 +147,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         List<CtMethod> candidates = Arrays.asList(ctClass.getMethods());
         Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
-                actualParams, resolver, staticContext, candidates, this);
+                actualParams, resolver, staticContext, candidates);
         if (method.isPresent()) {
             return Optional.of(toInternalMethodDefinition(method.get()));
         } else {
@@ -207,7 +210,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         try {
             return JavassistTypeDefinitionFactory.toMethodDefinition(
-                    JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this),
+                    JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods())),
                     ctClass.isInterface());
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
@@ -241,7 +244,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (CtField field : ctClass.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
@@ -270,7 +273,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
         throw new UnsupportedOperationException(fieldName);
     }
 
-    private static TypeUsageNode typeFor(List<CtMethod> methods, Node parentToAssign) {
+    private static TypeUsage typeFor(List<CtMethod> methods, Node parentToAssign) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -281,7 +284,6 @@ public class JavassistTypeDefinition extends TypeDefinition {
         });
         if (methods.size() != 1) {
             OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, null)).collect(Collectors.toList()), methods);
-            overloadedFunctionReferenceTypeUsage.setParent(parentToAssign);
             return overloadedFunctionReferenceTypeUsage;
         }
         return typeFor(methods.get(0), parentToAssign);
@@ -294,17 +296,11 @@ public class JavassistTypeDefinition extends TypeDefinition {
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
                 List<TypeUsageNode> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
-                if (parentToAssign != null) {
-                    functionReferenceTypeUsage.setParent(parentToAssign);
-                }
                 return functionReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
                 List<TypeUsageNode> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType()));
-                if (parentToAssign != null) {
-                    functionReferenceTypeUsage.setParent(parentToAssign);
-                }
                 return functionReferenceTypeUsage;
             }
         } catch (BadBytecode badBytecode) {

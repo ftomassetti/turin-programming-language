@@ -124,7 +124,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
     // Fields
     //
 
-    public abstract TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
+    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
 
     public Node getFieldOnInstance(String fieldName, Node instance, final SymbolResolver resolver) {
         for (RelationDefinition relationDefinition : getVisibleRelations(resolver)) {

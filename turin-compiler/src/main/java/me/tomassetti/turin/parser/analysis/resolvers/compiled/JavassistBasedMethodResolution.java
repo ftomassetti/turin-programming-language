@@ -53,7 +53,7 @@ public class JavassistBasedMethodResolution {
     public static CtConstructor findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-            MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, "constructor");
+            MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, "constructor");
             if (methodOrConstructor == null) {
                 throw new RuntimeException("unresolved constructor for " + argsTypes);
             }
@@ -66,7 +66,7 @@ public class JavassistBasedMethodResolution {
     public static CtConstructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors, Node context) {
         try {
             List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-            MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, "constructor");
+            MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, "constructor");
             if (methodOrConstructor == null) {
                 throw new RuntimeException("unresolved constructor for " + argsTypes);
             }
@@ -77,13 +77,13 @@ public class JavassistBasedMethodResolution {
     }
 
 
-    public static CtMethod findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
+    public static CtMethod findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods) {
         try {
             List<MethodOrConstructor> methodOrConstructors = methods.stream()
                     .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                     .filter((m) -> m.getName().equals(name))
                     .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-            MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, name);
+            MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, name);
             if (methodOrConstructor == null) {
                 throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
             }
@@ -93,13 +93,13 @@ public class JavassistBasedMethodResolution {
         }
     }
 
-    public static Optional<CtMethod> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods, Node context) {
+    public static Optional<CtMethod> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<CtMethod> methods) {
         try {
             List<MethodOrConstructor> methodOrConstructors = methods.stream()
                     .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                     .filter((m) -> m.getName().equals(name))
                     .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-            MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, name);
+            MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, name);
             if (methodOrConstructor == null) {
                 return Optional.empty();
             } else {
@@ -110,7 +110,7 @@ public class JavassistBasedMethodResolution {
         }
     }
 
-    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) throws NotFoundException {
+    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, String desc) throws NotFoundException {
         List<MethodOrConstructor> suitableMethods = new ArrayList<>();
         for (MethodOrConstructor method : methods) {
             if (method.getParameterCount() == argsTypes.size()) {
@@ -133,11 +133,11 @@ public class JavassistBasedMethodResolution {
         } else if (suitableMethods.size() == 1) {
             return suitableMethods.get(0);
         } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), argsTypes, resolver);
+            return findMostSpecific(suitableMethods, new AmbiguousCallException(null, desc, argsTypes), argsTypes, resolver);
         }
     }
 
-    private static MethodOrConstructor findMethodAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) throws NotFoundException {
+    private static MethodOrConstructor findMethodAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, String desc) throws NotFoundException {
         // TODO reorder params considering name
         List<MethodOrConstructor> suitableMethods = new ArrayList<>();
         for (MethodOrConstructor method : methods) {
@@ -162,7 +162,7 @@ public class JavassistBasedMethodResolution {
             return suitableMethods.get(0);
         } else {
             return findMostSpecific(suitableMethods,
-                    new AmbiguousCallException(context, argsTypes, desc),
+                    new AmbiguousCallException(null, argsTypes, desc),
                     argsTypes.stream().map((ap)->ap.getValue().calcType(resolver).jvmType(resolver)).collect(Collectors.toList()),
                     resolver);
         }

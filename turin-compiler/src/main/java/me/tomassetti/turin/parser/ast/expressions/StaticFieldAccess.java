@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,10 +55,10 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
 
-        TypeUsageNode fieldType = typeDefinition.getFieldType(field, true, resolver);
+        TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
         return fieldType;
     }
 
@@ -97,7 +98,7 @@ public class StaticFieldAccess extends Expression {
 
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
-        TypeUsageNode fieldType = typeDefinition.getFieldType(field, true, resolver);
+        TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
         return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType(resolver).getSignature(), true);
     }
 }

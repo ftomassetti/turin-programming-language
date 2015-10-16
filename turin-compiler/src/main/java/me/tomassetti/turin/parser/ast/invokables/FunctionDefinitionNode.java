@@ -10,7 +10,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
@@ -52,7 +52,7 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
+        FunctionReferenceTypeUsageNode functionReferenceTypeUsage = new FunctionReferenceTypeUsageNode(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
         functionReferenceTypeUsage.setParent(this);
         return functionReferenceTypeUsage;
     }
