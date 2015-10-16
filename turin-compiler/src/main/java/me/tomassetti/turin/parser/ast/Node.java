@@ -24,6 +24,17 @@ public abstract class Node implements Symbol {
     private Position position;
     private Boolean valid;
 
+    @Override
+    public boolean isNode() {
+        return true;
+    }
+
+    @Override
+    public Node asNode() {
+        return this;
+    }
+
+
     ///
     /// Position
     ///
