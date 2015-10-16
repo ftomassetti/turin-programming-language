@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
@@ -69,7 +70,7 @@ public class FunctionCall extends Invokable {
     }
 
     @Override
-    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
+    protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
         return function.findFormalParametersFor(this, resolver).get();
     }
 

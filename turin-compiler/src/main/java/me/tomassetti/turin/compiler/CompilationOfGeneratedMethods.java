@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -192,8 +193,8 @@ public class CompilationOfGeneratedMethods {
         // Define the constructor prototype
         //
 
-        List<FormalParameterNode> params = typeDefinition.getOnlyConstructor(resolver).getFormalParameters();
-        List<FormalParameterNode> formalParametersWithoutDefaults = params.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<? extends FormalParameter> params = typeDefinition.getOnlyConstructor(resolver).getFormalParameters();
+        List<FormalParameter> formalParametersWithoutDefaults = params.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
 
         String paramsDescriptor = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
         String paramsSignature = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
@@ -213,7 +214,7 @@ public class CompilationOfGeneratedMethods {
         Label start = new Label();
         Label end = new Label();
         mv.visitLabel(start);
-        for (FormalParameterNode formalParameter : typeDefinition.getOnlyConstructor(resolver).getFormalParameters()) {
+        for (FormalParameter formalParameter : typeDefinition.getOnlyConstructor(resolver).getFormalParameters()) {
             if (!formalParameter.hasDefaultValue()) {
                 int index = compilation.getLocalVarsSymbolTable().add(formalParameter.getName(), formalParameter);
                 mv.visitLocalVariable(formalParameter.getName(),
@@ -235,7 +236,7 @@ public class CompilationOfGeneratedMethods {
         } else {
             // push all explicitly passed parameters
             int index = 1;
-            for (FormalParameterNode formalParameter : superConstructor.getFormalParameters()){
+            for (FormalParameter formalParameter : superConstructor.getFormalParameters()){
                 if (!formalParameter.hasDefaultValue()) {
                     JvmType jvmType = formalParameter.getType().jvmType(resolver);
                     new PushLocalVar(OpcodesUtils.loadTypeFor(jvmType), index).operate(mv);

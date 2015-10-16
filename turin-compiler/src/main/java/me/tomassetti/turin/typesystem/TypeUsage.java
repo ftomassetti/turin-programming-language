@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
@@ -89,7 +90,7 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    default Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

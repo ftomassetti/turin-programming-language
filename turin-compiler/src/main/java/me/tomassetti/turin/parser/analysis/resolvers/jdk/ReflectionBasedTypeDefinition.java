@@ -14,6 +14,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.*;
@@ -65,7 +66,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return super.findFormalParametersFor(invokable, resolver);
     }
 

@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +74,7 @@ public class FieldAccess extends Expression {
     }
 
     @Override
-    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         if (invokable instanceof Creation) {
             //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
             throw new UnsupportedOperationException();

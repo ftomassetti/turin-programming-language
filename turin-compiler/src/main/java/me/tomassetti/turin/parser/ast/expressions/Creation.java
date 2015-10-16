@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 
 import java.util.*;
 
@@ -59,7 +60,7 @@ public class Creation extends Invokable {
     }
 
     @Override
-    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
+    protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
         return getTypeDefinition(resolver).getConstructorParams(actualParams, resolver);
     }
 

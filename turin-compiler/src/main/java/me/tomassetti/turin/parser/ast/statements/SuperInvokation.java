@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class SuperInvokation extends Invokable {
     }
 
     @Override
-    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
+    protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
         return getTurinTypeDefinition().getSuperclass(resolver).getConstructorParams(actualParams, resolver);
     }
 

@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.analysis.symbols_definitions;
 
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class InternalConstructorDefinition extends InternalInvokableDefinition {
         return jvmConstructorDefinition;
     }
 
-    public InternalConstructorDefinition(List<FormalParameterNode> formalParameters, JvmConstructorDefinition jvmConstructorDefinition) {
+    public InternalConstructorDefinition(List<? extends FormalParameter> formalParameters, JvmConstructorDefinition jvmConstructorDefinition) {
         super(formalParameters);
         this.jvmConstructorDefinition = jvmConstructorDefinition;
     }

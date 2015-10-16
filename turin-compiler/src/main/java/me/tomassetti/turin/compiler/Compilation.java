@@ -13,7 +13,7 @@ import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
-import me.tomassetti.turin.parser.ast.invokables.InvokableDefinition;
+import me.tomassetti.turin.parser.ast.invokables.InvokableDefinitionNode;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
@@ -22,6 +22,7 @@ import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
@@ -394,9 +395,9 @@ public class Compilation {
         generateInvokable(methodDefinition, "<init>", false);
     }
 
-    void addDefaultParamAnnotations(MethodVisitor mv, List<FormalParameterNode> formalParameters) {
+    void addDefaultParamAnnotations(MethodVisitor mv, List<? extends FormalParameter> formalParameters) {
         int defaultParamIndex = 0;
-        for (FormalParameterNode defaultParam : formalParameters.stream()
+        for (FormalParameter defaultParam : formalParameters.stream()
                 .filter((p)->p.hasDefaultValue())
                 .collect(Collectors.toList())) {
             AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmNameUtils.canonicalToDescriptor(DefaultParam.class.getCanonicalName()), true);
@@ -408,7 +409,7 @@ public class Compilation {
         }
     }
 
-    private void generateInvokable(InvokableDefinition invokableDefinition, String invokableName, boolean isStatic) {
+    private void generateInvokable(InvokableDefinitionNode invokableDefinition, String invokableName, boolean isStatic) {
         if (isStatic) {
             localVarsSymbolTable = LocalVarsSymbolTable.forStaticMethod();
         } else {
@@ -434,7 +435,7 @@ public class Compilation {
         Label start = new Label();
         Label end = new Label();
         mv.visitLabel(start);
-        for (FormalParameterNode formalParameter : invokableDefinition.getParameters()) {
+        for (FormalParameter formalParameter : invokableDefinition.getParameters()) {
             int index = localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
             mv.visitLocalVariable(formalParameter.getName(),
                     formalParameter.getType().jvmType(resolver).getDescriptor(),

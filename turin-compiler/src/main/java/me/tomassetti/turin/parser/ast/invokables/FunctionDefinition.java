@@ -12,6 +12,7 @@ import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class FunctionDefinition extends InvokableDefinition implements Named, Symbol {
+public class FunctionDefinition extends InvokableDefinitionNode implements Named, Symbol {
 
     public static final String CLASS_PREFIX = "Function_";
     public static final String INVOKE_METHOD_NAME = "invoke";
@@ -57,7 +58,7 @@ public class FunctionDefinition extends InvokableDefinition implements Named, Sy
     }
 
     @Override
-    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return Optional.of(parameters);
     }
 

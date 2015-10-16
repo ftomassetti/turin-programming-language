@@ -22,6 +22,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -145,7 +146,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     private void initializeImplicitConstructor(SymbolResolver resolver) {
-        List<FormalParameterNode> inheritedParams = Collections.emptyList();
+        List<? extends FormalParameter> inheritedParams = Collections.emptyList();
         if (getBaseType().isPresent()) {
             List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors(resolver);
             if (constructors.size() != 1) {
@@ -157,18 +158,20 @@ public class TurinTypeDefinition extends TypeDefinition {
         List<FormalParameterNode> newParams = this.assignableProperties(resolver).stream()
                 .map((p) -> new FormalParameterNode(p.getTypeUsage().copy(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
-        List<FormalParameterNode> allParams = new LinkedList<>();
+        List<FormalParameter> allParams = new LinkedList<>();
         allParams.addAll(inheritedParams);
         allParams.addAll(newParams);
-        allParams.sort(new Comparator<FormalParameterNode>() {
+        allParams.sort(new Comparator<FormalParameter>() {
             @Override
-            public int compare(FormalParameterNode o1, FormalParameterNode o2) {
+            public int compare(FormalParameter o1, FormalParameter o2) {
                 return Boolean.compare(o1.hasDefaultValue(), o2.hasDefaultValue());
             }
         });
-        for (FormalParameterNode p : allParams) {
+        for (FormalParameter p : allParams) {
             // needed to solve symbols
-            p.setParent(this);
+            if (p.isNode()) {
+                p.asNode().setParent(this);
+            }
         }
         addConstructorWithParams(allParams, resolver);
     }
@@ -185,8 +188,8 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
     }
 
-    private void addConstructorWithParams(List<FormalParameterNode> allParams, SymbolResolver resolver) {
-        List<FormalParameterNode> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+    private void addConstructorWithParams(List<? extends FormalParameter> allParams, SymbolResolver resolver) {
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
                 .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
@@ -199,8 +202,8 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     private void initializeExplicitConstructor(TurinTypeContructorDefinition constructor, SymbolResolver resolver) {
-        List<FormalParameterNode> allParams = constructor.getParameters();
-        List<FormalParameterNode> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<? extends FormalParameter> allParams = constructor.getParameters();
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
                 .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());

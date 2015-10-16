@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Definition of a method in a Turin Type.
  */
-public class TurinTypeContructorDefinition extends InvokableDefinition {
+public class TurinTypeContructorDefinition extends InvokableDefinitionNode {
 
     public Statement getBody() {
         return body;

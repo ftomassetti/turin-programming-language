@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,7 +84,7 @@ public class Property extends Node {
         return typeUsage;
     }
 
-    public static String getterName(TypeUsageNode typeUsage, String propertyName, SymbolResolver resolver) {
+    public static String getterName(TypeUsage typeUsage, String propertyName, SymbolResolver resolver) {
         String prefix = typeUsage.sameType(PrimitiveTypeUsageNode.BOOLEAN, resolver) ? "is" : "get";
         String rest = propertyName.length() > 1 ? propertyName.substring(1) : "";
         return prefix + Character.toUpperCase(propertyName.charAt(0)) + rest;

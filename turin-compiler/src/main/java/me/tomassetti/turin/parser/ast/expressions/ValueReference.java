@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -52,7 +53,7 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return resolve(resolver).findFormalParametersFor(invokable, resolver);
     }
 

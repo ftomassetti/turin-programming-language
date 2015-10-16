@@ -13,6 +13,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
@@ -194,7 +195,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
             TypeDefinition typeDefinition = getTypeDefinition(resolver);

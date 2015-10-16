@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Definition of a method in a Turin Type.
  */
-public class TurinTypeMethodDefinition extends InvokableDefinition {
+public class TurinTypeMethodDefinition extends InvokableDefinitionNode {
 
     public TurinTypeMethodDefinition(String name, TypeUsageNode returnType, List<FormalParameterNode> parameters, Statement body) {
         super(parameters, body, name, returnType);

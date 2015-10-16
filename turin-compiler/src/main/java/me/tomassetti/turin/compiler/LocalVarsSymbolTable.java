@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import me.tomassetti.bytecode_generation.BytecodeSequence;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ import java.util.*;
  */
 public class LocalVarsSymbolTable {
 
-    private List<Node> values = new LinkedList<>();
+    private List<Symbol> values = new LinkedList<>();
     private List<Block> blockOfDeckaration = new LinkedList<>();
     private List<String> orderedNames = new LinkedList<>();
     private int startIndex;
@@ -67,7 +68,7 @@ public class LocalVarsSymbolTable {
     /**
      * Return the index in the symbol table.
      */
-    public int add(String name, Node value) {
+    public int add(String name, Symbol value) {
         values.add(value);
         orderedNames.add(name);
         blockOfDeckaration.add(currentBlock);
@@ -78,7 +79,7 @@ public class LocalVarsSymbolTable {
         return findIndexInBlock(name, currentBlock);
     }
 
-    public Optional<Node> findDeclaration(String name) {
+    public Optional<Symbol> findDeclaration(String name) {
         Optional<Integer> index = findIndex(name);
         if (index.isPresent()) {
             return Optional.of(values.get(index.get() - startIndex));

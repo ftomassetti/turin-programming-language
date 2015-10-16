@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -62,7 +63,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
         return getConstructors(resolver).size() > 1;
     }
 
-    public final List<FormalParameterNode> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public final List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
         return getConstructor(actualParams, resolver).getFormalParameters();
     }
 
@@ -102,7 +103,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
         return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
     }
 
-    public final List<FormalParameterNode> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public final List<? extends FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return getMethod(methodName, actualParams, resolver, staticContext).getFormalParameters();
     }
 

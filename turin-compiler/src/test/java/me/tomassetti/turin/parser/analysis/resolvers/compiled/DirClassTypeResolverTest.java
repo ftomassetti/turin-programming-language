@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,9 +67,9 @@ public class DirClassTypeResolverTest extends AbstractCompilerTest {
     public void formalParametersOfLoadedFunctionHaveCorrectType() throws IOException {
         SymbolResolver symbolResolver = new ComposedSymbolResolver(ImmutableList.of());
         DirClassesTypeResolver dirClassesTypeResolver = new DirClassesTypeResolver(tmpDir);
-        List<FormalParameterNode> paramsTypeFatalError = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.fatalError").get().getParameters();
-        List<FormalParameterNode> paramsTypeFormat = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.format").get().getParameters();
-        List<FormalParameterNode> paramsTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getParameters();
+        List<? extends FormalParameter> paramsTypeFatalError = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.fatalError").get().getParameters();
+        List<? extends FormalParameter> paramsTypeFormat = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.format").get().getParameters();
+        List<? extends FormalParameter> paramsTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getParameters();
 
         assertEquals(1, paramsTypeFatalError.size());
         assertEquals(1, paramsTypeFormat.size());
@@ -85,9 +86,9 @@ public class DirClassTypeResolverTest extends AbstractCompilerTest {
     @Test
     public void formalParametersOfLoadedFunctionHaveCorrectNames() throws IOException {
         DirClassesTypeResolver dirClassesTypeResolver = new DirClassesTypeResolver(tmpDir);
-        List<FormalParameterNode> paramsTypeFatalError = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.fatalError").get().getParameters();
-        List<FormalParameterNode> paramsTypeFormat = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.format").get().getParameters();
-        List<FormalParameterNode> paramsTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getParameters();
+        List<? extends FormalParameter> paramsTypeFatalError = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.fatalError").get().getParameters();
+        List<? extends FormalParameter> paramsTypeFormat = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.format").get().getParameters();
+        List<? extends FormalParameter> paramsTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getParameters();
 
         assertEquals(1, paramsTypeFatalError.size());
         assertEquals(1, paramsTypeFormat.size());

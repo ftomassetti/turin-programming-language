@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.ast.expressions.Creation;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.InstanceMethodInvokation;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import me.tomassetti.turin.util.Either;
 
@@ -44,11 +45,11 @@ public final class ParamUtils {
         return actualParams.stream().filter((p) -> p.isNamed()).collect(Collectors.toList());
     }
 
-    public static boolean hasDefaultParams(List<FormalParameterNode> formalParameters) {
+    public static boolean hasDefaultParams(List<? extends FormalParameter> formalParameters) {
         return formalParameters.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
     }
 
-    public static Either<String, List<ActualParam>> desugarizeAsteriskParam(List<FormalParameterNode> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
+    public static Either<String, List<ActualParam>> desugarizeAsteriskParam(List<? extends FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
         TypeUsage type = value.calcType(resolver);
         if (!type.isReference()) {
             return Either.left("An asterisk param should be an object");
@@ -60,7 +61,7 @@ public final class ParamUtils {
         Expression mapCreation = new Creation("turin.collections.MapBuilder", Collections.emptyList());
         mapCreation.setParent(parent);
 
-        for (FormalParameterNode formalParameter : formalParameters) {
+        for (FormalParameter formalParameter : formalParameters) {
             String getterName = getterName(formalParameter, resolver);
             InstanceMethodInvokation instanceMethodInvokation = new InstanceMethodInvokation(value, getterName, Collections.emptyList());
             if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), resolver, false)) {
@@ -95,7 +96,7 @@ public final class ParamUtils {
     /**
      * Corresponding getter method name
      */
-    public static String getterName(FormalParameterNode formalParameter, SymbolResolver resolver) {
+    public static String getterName(FormalParameter formalParameter, SymbolResolver resolver) {
         return Property.getterName(formalParameter.getType(), formalParameter.getName(), resolver);
     }
 }
