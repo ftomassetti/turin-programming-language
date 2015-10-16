@@ -43,6 +43,18 @@ public abstract class Node implements Symbol {
     /// Tree
     ///
 
+    public Node getRoot() {
+        if (isRoot()) {
+            return this;
+        } else {
+            return getParent().getRoot();
+        }
+    }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
+
     public Node getParent() {
         return parent;
     }
