@@ -203,7 +203,7 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     private void initializeExplicitConstructor(TurinTypeContructorDefinition constructor, SymbolResolver resolver) {
         List<? extends FormalParameter> allParams = constructor.getParameters();
-        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.<FormalParameter>toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
                 .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());

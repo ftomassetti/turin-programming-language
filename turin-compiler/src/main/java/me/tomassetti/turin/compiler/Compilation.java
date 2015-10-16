@@ -399,7 +399,7 @@ public class Compilation {
         int defaultParamIndex = 0;
         for (FormalParameter defaultParam : formalParameters.stream()
                 .filter((p)->p.hasDefaultValue())
-                .collect(Collectors.toList())) {
+                .collect(Collectors.<FormalParameter>toList())) {
             AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmNameUtils.canonicalToDescriptor(DefaultParam.class.getCanonicalName()), true);
             annotationVisitor.visit("name", defaultParam.getName());
             annotationVisitor.visit("typeSignature", defaultParam.getType().jvmType(resolver).getSignature());
