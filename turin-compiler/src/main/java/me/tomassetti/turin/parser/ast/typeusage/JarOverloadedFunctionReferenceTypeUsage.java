@@ -6,6 +6,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.compiled.JavassistBasedMethodResolution;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
             }
         }
         this.ctMethods = ctMethods;
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

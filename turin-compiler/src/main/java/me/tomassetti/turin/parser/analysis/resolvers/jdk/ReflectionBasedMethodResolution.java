@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.typesystem.TypeVariableTypeUsage;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -103,7 +104,7 @@ class ReflectionBasedMethodResolution {
             } else {
                 Class c = (Class)typeVariable.getGenericDeclaration();
                 //throw new UnsolvedSymbolException("Cannot solve type variable " + typeVariable.getName());
-                return new TypeVariableTypeUsage(TypeVariableTypeUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
+                return new TypeVariableTypeUsageNode(TypeVariableTypeUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
             }
         } else if (typeVariable.getGenericDeclaration() instanceof Method) {
             Method method = (Method)typeVariable.getGenericDeclaration();
@@ -111,7 +112,7 @@ class ReflectionBasedMethodResolution {
         } else {
             throw new UnsupportedOperationException(typeVariable.getGenericDeclaration().getClass().getCanonicalName());
         }
-        return new TypeVariableTypeUsage(genericDeclaration, typeVariable.getName(), bounds);
+        return new TypeVariableTypeUsageNode(genericDeclaration, typeVariable.getName(), bounds);
     }
 
     public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {

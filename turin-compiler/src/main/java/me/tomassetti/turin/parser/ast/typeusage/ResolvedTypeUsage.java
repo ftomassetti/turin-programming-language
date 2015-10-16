@@ -4,6 +4,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Collections;
 
@@ -36,5 +37,10 @@ public class ResolvedTypeUsage extends TypeUsageNode {
     @Override
     public TypeUsageNode copy() {
         return this;
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
     }
 }

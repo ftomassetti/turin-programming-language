@@ -5,6 +5,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 
@@ -49,6 +50,11 @@ public class FunctionReferenceTypeUsage extends TypeUsageNode {
         this.parameterTypes.forEach((pt)->pt.setParent(FunctionReferenceTypeUsage.this));
         this.returnType = returnType;
         this.returnType.setParent(this);
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

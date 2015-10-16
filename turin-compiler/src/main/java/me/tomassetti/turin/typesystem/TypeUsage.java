@@ -43,7 +43,7 @@ public interface TypeUsage extends Symbol {
     }
 
     default ReferenceTypeUsage asReferenceTypeUsage() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     default ArrayTypeUsage asArrayTypeUsage() {
@@ -110,5 +110,7 @@ public interface TypeUsage extends Symbol {
     default String describe() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
+
+    boolean sameType(TypeUsage other, SymbolResolver resolver);
 
 }

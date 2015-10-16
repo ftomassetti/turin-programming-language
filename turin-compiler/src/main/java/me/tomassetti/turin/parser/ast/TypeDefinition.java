@@ -98,7 +98,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
 
     public abstract Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
-    public final TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
     }
 

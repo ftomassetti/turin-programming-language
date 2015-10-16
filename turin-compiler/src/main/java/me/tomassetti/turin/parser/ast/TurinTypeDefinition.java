@@ -112,8 +112,8 @@ public class TurinTypeDefinition extends TypeDefinition {
         for (Property property : getDirectProperties(resolver)) {
             {
                 String descriptor = "()" + property.getTypeUsage().jvmType(resolver).getDescriptor();
-                JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.getterName(), descriptor, false, false);
-                InternalMethodDefinition getter = new InternalMethodDefinition(property.getterName(), Collections.emptyList(), property.getTypeUsage(), jvmMethodDefinition);
+                JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.getterName(resolver), descriptor, false, false);
+                InternalMethodDefinition getter = new InternalMethodDefinition(property.getterName(resolver), Collections.emptyList(), property.getTypeUsage(), jvmMethodDefinition);
                 registerMethod(getter);
             }
             {

@@ -62,7 +62,7 @@ public final class ParamUtils {
         mapCreation.setParent(parent);
 
         for (FormalParameter formalParameter : formalParameters) {
-            String getterName = getterName(formalParameter);
+            String getterName = getterName(formalParameter, resolver);
             InstanceMethodInvokation instanceMethodInvokation = new InstanceMethodInvokation(value, getterName, Collections.emptyList());
             if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), resolver, false)) {
                 if (formalParameter.hasDefaultValue()) {
@@ -96,7 +96,7 @@ public final class ParamUtils {
     /**
      * Corresponding getter method name
      */
-    public static String getterName(FormalParameter formalParameter) {
-        return Property.getterName(formalParameter.getType(), formalParameter.getName());
+    public static String getterName(FormalParameter formalParameter, SymbolResolver resolver) {
+        return Property.getterName(formalParameter.getType(), formalParameter.getName(), resolver);
     }
 }

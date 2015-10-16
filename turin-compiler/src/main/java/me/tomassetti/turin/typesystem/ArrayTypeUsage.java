@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 public class ArrayTypeUsage implements TypeUsage {
+    @Override
+    public boolean isArray() {
+        return true;
+    }
 
     private TypeUsage componentType;
 
@@ -82,6 +86,14 @@ public class ArrayTypeUsage implements TypeUsage {
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        if (!other.isArray()) {
+            return false;
+        }
+        return this.getComponentType().sameType(other.asArrayTypeUsage().getComponentType(), resolver);
     }
 
     @Override

@@ -279,8 +279,8 @@ public class Compilation {
         fv.visitEnd();
     }
 
-    private void generateGetter(Property property, String classInternalName) {
-        String getterName = property.getterName();
+    private void generateGetter(Property property, String classInternalName, SymbolResolver resolver) {
+        String getterName = property.getterName(resolver);
         JvmType jvmType = property.getTypeUsage().jvmType(resolver);
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getDescriptor(), "()" + jvmType.getSignature(), null);
         mv.visitCode();
@@ -362,7 +362,7 @@ public class Compilation {
         // TODO consider if the property is readable and writable
         for (Property property : typeDefinition.getDirectProperties(resolver)){
             generateField(property);
-            generateGetter(property, internalClassName);
+            generateGetter(property, internalClassName, resolver);
             new CompilationOfGeneratedMethods(this, cw).generateSetter(property, internalClassName);
         }
 
@@ -491,7 +491,7 @@ public class Compilation {
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
         TypeUsage pieceType = piece.calcType(resolver);
-        if (pieceType.equals(ReferenceTypeUsage.STRING)) {
+        if (pieceType.sameType(ReferenceTypeUsage.STRING, resolver)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isReference()) {

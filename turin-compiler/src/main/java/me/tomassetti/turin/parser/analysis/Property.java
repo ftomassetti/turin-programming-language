@@ -83,14 +83,14 @@ public class Property extends Node {
         return typeUsage;
     }
 
-    public static String getterName(TypeUsageNode typeUsage, String propertyName) {
-        String prefix = typeUsage.equals(PrimitiveTypeUsageNode.BOOLEAN) ? "is" : "get";
+    public static String getterName(TypeUsageNode typeUsage, String propertyName, SymbolResolver resolver) {
+        String prefix = typeUsage.sameType(PrimitiveTypeUsageNode.BOOLEAN, resolver) ? "is" : "get";
         String rest = propertyName.length() > 1 ? propertyName.substring(1) : "";
         return prefix + Character.toUpperCase(propertyName.charAt(0)) + rest;
     }
 
-    public String getterName() {
-        return getterName(getTypeUsage(), getName());
+    public String getterName(SymbolResolver resolver) {
+        return getterName(getTypeUsage(), getName(), resolver);
     }
 
     public String setterName() {

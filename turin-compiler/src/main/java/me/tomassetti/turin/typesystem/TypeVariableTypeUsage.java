@@ -1,28 +1,25 @@
-package me.tomassetti.turin.parser.ast.typeusage;
+package me.tomassetti.turin.typesystem;
 
+import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TypeVariableTypeUsage extends TypeUsageNode {
-
-    @Override
-    public TypeUsageNode copy() {
-        throw new UnsupportedOperationException();
-    }
+public class TypeVariableTypeUsage implements TypeUsage {
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        /*(if (typeParams.containsKey(name)) {
-            return typeParams.get(name).copy();
+        if (typeParams.containsKey(name)) {
+            return typeParams.get(name);
         } else {
             return this;
-        }*/
-        throw new UnsupportedOperationException();
+        }
     }
 
     public static class GenericDeclaration {
@@ -63,13 +60,23 @@ public class TypeVariableTypeUsage extends TypeUsageNode {
     }
 
     private String name;
-    private List<TypeUsageNode> bounds;
+    private List<TypeUsage> bounds;
     private GenericDeclaration genericDeclaration;
 
-    public TypeVariableTypeUsage(GenericDeclaration genericDeclaration, String name, List<TypeUsageNode> bounds) {
+    public TypeVariableTypeUsage(GenericDeclaration genericDeclaration, String name, List<? extends TypeUsage> bounds) {
         this.name = name;
         this.genericDeclaration = genericDeclaration;
-        this.bounds = bounds;
+        this.bounds = new ArrayList<>(bounds);
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        /*if (!other.isTypeVariable()) {
+            return false;
+        }
+
+        return this.getName()*/
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -78,12 +85,33 @@ public class TypeVariableTypeUsage extends TypeUsageNode {
     }
 
     @Override
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
         return false;
     }
 
-    @Override
-    public Iterable<Node> getChildren() {
-        throw new UnsupportedOperationException();
-    }
 }

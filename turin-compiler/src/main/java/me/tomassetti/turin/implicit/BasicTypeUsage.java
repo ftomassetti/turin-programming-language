@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -52,6 +53,11 @@ public class BasicTypeUsage extends TypeUsageNode {
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
         return false;
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        return other == this;
     }
 
     @Override

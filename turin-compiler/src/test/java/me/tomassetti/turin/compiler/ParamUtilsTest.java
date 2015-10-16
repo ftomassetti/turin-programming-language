@@ -1,6 +1,7 @@
 package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.turin.parser.analysis.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
@@ -88,17 +89,19 @@ public class ParamUtilsTest {
         assertEquals(true, hasDefaultParams(ImmutableList.of(fn1, fn2, fd1)));
     }
 
+    private static SymbolResolver DUMMY_RESOLVER = new ComposedSymbolResolver(Collections.emptyList());
+
     @Test
     public void testGetterNameBoolean() {
-        assertEquals("isFoo", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "foo")));
-        assertEquals("isA", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "a")));
+        assertEquals("isFoo", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "foo"), DUMMY_RESOLVER));
+        assertEquals("isA", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "a"), DUMMY_RESOLVER));
     }
 
     @Test
     public void testGetterNameNotBoolean() {
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameter(new ReferenceTypeUsage(Boolean.class.getCanonicalName()), "foo")));
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameter(ReferenceTypeUsage.STRING, "foo")));
-        assertEquals("getA", ParamUtils.getterName(new FormalParameter(ReferenceTypeUsage.STRING, "a")));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameter(new ReferenceTypeUsage(Boolean.class.getCanonicalName()), "foo"), DUMMY_RESOLVER));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameter(ReferenceTypeUsage.STRING, "foo"), DUMMY_RESOLVER));
+        assertEquals("getA", ParamUtils.getterName(new FormalParameter(ReferenceTypeUsage.STRING, "a"), DUMMY_RESOLVER));
     }
 
     @Test

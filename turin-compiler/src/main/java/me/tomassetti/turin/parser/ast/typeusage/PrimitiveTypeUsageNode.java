@@ -23,12 +23,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     private String name;
     private JvmType jvmType;
     private List<PrimitiveTypeUsageNode> promotionsTypes;
-    private PrimitiveTypeUsage primitiveTypeUsage;
-
-    @Override
-    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        return this;
-    }
 
     public static PrimitiveTypeUsageNode BOOLEAN = new PrimitiveTypeUsageNode("boolean", new JvmType("Z"),
             new ReferenceTypeUsage(Boolean.class.getCanonicalName()));
@@ -66,11 +60,11 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     private PrimitiveTypeUsageNode(String name, JvmType jvmType, TypeUsageNode boxType, List<PrimitiveTypeUsageNode> promotionsTypes) {
+        super(PrimitiveTypeUsage.getByName(name));
         this.name = name;
         this.jvmType = jvmType;
         this.boxType = boxType;
         this.promotionsTypes = promotionsTypes;
-        this.primitiveTypeUsage = PrimitiveTypeUsage.getByName(name);
     }
 
     private PrimitiveTypeUsageNode(String name, JvmType jvmType, TypeUsageNode boxType) {
@@ -141,11 +135,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     @Override
-    public PrimitiveTypeUsage asPrimitiveTypeUsage() {
-        return this.primitiveTypeUsage;
-    }
-
-    @Override
     public TypeUsageNode copy() {
         PrimitiveTypeUsageNode copy = new PrimitiveTypeUsageNode(this.name, this.jvmType, this.boxType, promotionsTypes);
         copy.parent = this.parent;
@@ -193,8 +182,4 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
         return name;
     }
 
-    @Override
-    public TypeUsage typeUsage() {
-        return this.primitiveTypeUsage;
-    }
 }

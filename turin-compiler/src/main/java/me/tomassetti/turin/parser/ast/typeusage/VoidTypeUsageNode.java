@@ -8,24 +8,14 @@ import java.util.Collections;
 import java.util.Map;
 
 public class VoidTypeUsageNode extends TypeUsageWrapperNode {
-    @Override
-    public boolean isVoid() {
-        return true;
-    }
 
-    @Override
-    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        return this;
+    public VoidTypeUsageNode() {
+        super(new VoidTypeUsage());
     }
 
     @Override
     public TypeUsageNode copy() {
         return this;
-    }
-
-    @Override
-    public TypeUsage typeUsage() {
-        return new VoidTypeUsage();
     }
 
     @Override

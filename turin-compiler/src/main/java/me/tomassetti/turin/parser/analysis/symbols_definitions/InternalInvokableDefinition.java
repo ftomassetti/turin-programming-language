@@ -40,9 +40,9 @@ public abstract class InternalInvokableDefinition {
         TypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
 
         for (FormalParameter formalParameter : formalParameters) {
-            String getterName = ParamUtils.getterName(formalParameter);
+            String getterName = ParamUtils.getterName(formalParameter, resolver);
             if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), resolver, false)) {
-                TypeUsageNode res = typeDefinition.returnTypeWhenInvokedWith(getterName, Collections.emptyList(), resolver, false);
+                TypeUsage res = typeDefinition.returnTypeWhenInvokedWith(getterName, Collections.emptyList(), resolver, false);
                 if (!res.canBeAssignedTo(formalParameter.getType(), resolver)){
                     return Optional.of("the given value has a getter '" + getterName + "' with incompatible type");
                 }

@@ -74,17 +74,17 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
 
     @Override
     public boolean isArray() {
-        return this instanceof ArrayTypeUsageNode;
+        return false;
     }
 
     @Override
     public boolean isPrimitive() {
-        return this instanceof PrimitiveTypeUsageNode;
+        return false;
     }
 
     @Override
     public boolean isReference() {
-        return this instanceof ReferenceTypeUsage;
+        return false;
     }
 
     @Override
@@ -101,7 +101,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
      * If this is something invokable and can be invoked with the given arguments which type would be return?
      */
     @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

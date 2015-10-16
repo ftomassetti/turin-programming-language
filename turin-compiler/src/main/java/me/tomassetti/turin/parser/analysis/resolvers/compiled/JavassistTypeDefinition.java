@@ -142,8 +142,9 @@ public class JavassistTypeDefinition extends TypeDefinition {
 
     @Override
     public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        List<CtMethod> candidates = Arrays.asList(ctClass.getMethods());
         Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
-                actualParams, resolver, staticContext, Arrays.asList(ctClass.getMethods()), this);
+                actualParams, resolver, staticContext, candidates, this);
         if (method.isPresent()) {
             return Optional.of(toInternalMethodDefinition(method.get()));
         } else {

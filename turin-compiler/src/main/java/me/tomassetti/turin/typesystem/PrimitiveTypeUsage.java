@@ -29,6 +29,11 @@ public class PrimitiveTypeUsage implements TypeUsage {
     private List<PrimitiveTypeUsage> promotionsTypes;
 
     @Override
+    public boolean isPrimitive() {
+        return true;
+    }
+
+    @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         return this;
     }
@@ -57,7 +62,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
 
     @Override
     public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
-        if (other.equals(boxType) || other.equals(ReferenceTypeUsage.OBJECT)) {
+        if (other.sameType(boxType, resolver) || other.sameType(ReferenceTypeUsage.OBJECT, resolver)) {
             return true;
         }
         if (!other.isPrimitive()) {
@@ -222,9 +227,21 @@ public class PrimitiveTypeUsage implements TypeUsage {
         return this == PrimitiveTypeUsage.BOOLEAN;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String describe() {
         return name;
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        if (!other.isPrimitive()) {
+            return false;
+        }
+        return getName().equals(other.asPrimitiveTypeUsage().getName());
     }
 
 }

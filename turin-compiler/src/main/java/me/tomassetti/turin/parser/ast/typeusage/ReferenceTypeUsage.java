@@ -58,6 +58,11 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         this.cachedTypeDefinition = td;
     }
 
+    @Override
+    public boolean isReference() {
+        return true;
+    }
+
     public boolean isInterface(SymbolResolver resolver) {
         return getTypeDefinition(resolver).isInterface();
     }
@@ -81,11 +86,15 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ReferenceTypeUsage)) return false;
 
         ReferenceTypeUsage that = (ReferenceTypeUsage) o;
 
-        if (!name.equals(that.name)) return false;
+        if (fullyQualifiedName != that.fullyQualifiedName) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (typeParameterValues != null ? !typeParameterValues.equals(that.typeParameterValues) : that.typeParameterValues != null)
+            return false;
+        if (typeParams != null ? !typeParams.equals(that.typeParams) : that.typeParams != null) return false;
 
         return true;
     }
@@ -198,7 +207,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
-        TypeUsageNode typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+        TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
     }
 
@@ -220,6 +229,14 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
         return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
+    }
+
+    @Override
+    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        if (!other.isReferenceTypeUsage()) {
+            return false;
+        }
+        return getQualifiedName(resolver).equals(other.asReferenceTypeUsage().getQualifiedName(resolver));
     }
 
     public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {

@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class TypeDefinitionTest {
 
@@ -56,10 +56,10 @@ public class TypeDefinitionTest {
         assertEquals(2, mangaCharacter.getDirectProperties(resolver).size());
 
         assertEquals("name", mangaCharacter.getDirectProperties(resolver).get(0).getName());
-        assertEquals(new ReferenceTypeUsage("String"), mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage());
+        assertTrue(new ReferenceTypeUsage("String").sameType(mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage(), resolver));
 
         assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
-        assertEquals(BasicTypeUsage.UINT, mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage());
+        assertTrue(mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage().sameType(BasicTypeUsage.UINT, resolver));
     }
 
     @Test

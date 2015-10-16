@@ -35,9 +35,9 @@ public class CompilationOfGeneratedMethods {
     }
 
     private void enforceConstraint(Property property, MethodVisitor mv, BytecodeSequence getValue) {
-        if (property.getTypeUsage().equals(BasicTypeUsage.UINT)
-                || property.getTypeUsage().equals(BasicTypeUsage.UBYTE)
-                || property.getTypeUsage().equals(BasicTypeUsage.USHORT)) {
+        if (property.getTypeUsage().sameType(BasicTypeUsage.UINT, compilation.getResolver())
+                || property.getTypeUsage().sameType(BasicTypeUsage.UBYTE, compilation.getResolver())
+                || property.getTypeUsage().sameType(BasicTypeUsage.USHORT, compilation.getResolver())) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -48,7 +48,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().equals(BasicTypeUsage.ULONG)) {
+        } else if (property.getTypeUsage().sameType(BasicTypeUsage.ULONG, compilation.getResolver())) {
             getValue.operate(mv);
             Label label = new Label();
 
