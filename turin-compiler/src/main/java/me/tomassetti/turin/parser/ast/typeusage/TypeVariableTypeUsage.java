@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,13 @@ public class TypeVariableTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
-        if (typeParams.containsKey(name)) {
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
+        /*(if (typeParams.containsKey(name)) {
             return typeParams.get(name).copy();
         } else {
             return this;
-        }
+        }*/
+        throw new UnsupportedOperationException();
     }
 
     public static class GenericDeclaration {

@@ -14,6 +14,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import turin.compilation.DefaultParam;
 
 import java.lang.reflect.InvocationTargetException;
@@ -417,7 +418,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams) {
         if (typeParams.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -428,7 +429,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             if (typeParameters.length != typeParams.size()) {
                 throw new IllegalStateException("It should have " + typeParameters.length + " and it has " + typeParams.size());
             }
-            Map<String, TypeUsageNode> map = new HashMap<>();
+            Map<String, TypeUsage> map = new HashMap<>();
             int i=0;
             for (SignatureAttribute.TypeParameter tv : typeParameters) {
                 map.put(tv.getName(), typeParams.get(i));

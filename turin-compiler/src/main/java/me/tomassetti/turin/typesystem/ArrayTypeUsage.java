@@ -80,7 +80,7 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException();
     }
 

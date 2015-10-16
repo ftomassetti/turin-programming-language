@@ -23,6 +23,7 @@ import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -503,7 +504,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams) {
         return Collections.emptyMap();
     }
 

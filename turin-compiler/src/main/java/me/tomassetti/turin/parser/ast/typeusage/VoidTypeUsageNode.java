@@ -14,7 +14,7 @@ public class VoidTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         return this;
     }
 

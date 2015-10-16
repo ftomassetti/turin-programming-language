@@ -19,8 +19,8 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
-        throw new UnsupportedOperationException();
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
+        return this;
     }
 
     @Override

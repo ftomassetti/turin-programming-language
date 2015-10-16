@@ -26,7 +26,7 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     private PrimitiveTypeUsage primitiveTypeUsage;
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         return this;
     }
 

@@ -29,8 +29,8 @@ public class PrimitiveTypeUsage implements TypeUsage {
     private List<PrimitiveTypeUsage> promotionsTypes;
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
-        throw new UnsupportedOperationException();
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
+        return this;
     }
 
     public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),

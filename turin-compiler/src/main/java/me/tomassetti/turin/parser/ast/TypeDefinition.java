@@ -189,5 +189,5 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
 
     public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
 
-    public abstract Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams);
+    public abstract <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams);
 }

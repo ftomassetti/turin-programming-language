@@ -14,6 +14,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -108,14 +109,14 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Map<String, TypeUsageNode> associatedTypeParametersToName(SymbolResolver resolver, List<TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams) {
         if (typeParams.isEmpty()) {
             return Collections.emptyMap();
         }
         if (clazz.getTypeParameters().length != typeParams.size()) {
             throw new IllegalStateException("It should have " + clazz.getTypeParameters().length + " and it has " + typeParams.size());
         }
-        Map<String, TypeUsageNode> map = new HashMap<>();
+        Map<String, TypeUsage> map = new HashMap<>();
         int i=0;
         for (TypeVariable tv : clazz.getTypeParameters()) {
             map.put(tv.getName(), typeParams.get(i));

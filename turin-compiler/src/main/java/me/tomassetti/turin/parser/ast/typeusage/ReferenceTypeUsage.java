@@ -25,7 +25,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
 
     public static final ReferenceTypeUsage OBJECT = new ReferenceTypeUsage("java.lang.Object");
     public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
-    private List<TypeUsageNode> typeParams;
+    private List<TypeUsage> typeParams;
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
     private boolean fullyQualifiedName;
@@ -33,7 +33,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
 
     public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsageNode> typeParams) {
         this(typeDefinition.getQualifiedName(), false);
-        this.typeParams = typeParams;
+        this.typeParams = new ArrayList<>(typeParams);
         this.cachedTypeDefinition = typeDefinition;
     }
 
@@ -196,18 +196,18 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition(resolver);
         TypeUsageNode typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
     }
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         if (this.typeParams.size() == 0) {
             return this;
         }
-        List<TypeUsageNode> replacedParams = this.typeParams.stream().map((tp)->tp.replaceTypeVariables(typeParams)).collect(Collectors.toList());
+        List<TypeUsage> replacedParams = this.typeParams.stream().map((tp)->tp.replaceTypeVariables(typeParams)).collect(Collectors.toList());
         if (!replacedParams.equals(this.typeParams)) {
             ReferenceTypeUsage copy = (ReferenceTypeUsage) this.copy();
             copy.typeParams = replacedParams;
@@ -222,7 +222,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
     }
 
-    public Map<String, TypeUsageNode> typeParamsMap(SymbolResolver resolver) {
+    public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
         return getTypeDefinition(resolver).associatedTypeParametersToName(resolver, typeParams);
     }
 

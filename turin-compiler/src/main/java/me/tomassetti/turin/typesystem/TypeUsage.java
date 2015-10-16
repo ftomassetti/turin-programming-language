@@ -8,9 +8,7 @@ import me.tomassetti.turin.parser.ast.FormalParameter;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
@@ -55,7 +53,6 @@ public interface TypeUsage extends Symbol {
     default PrimitiveTypeUsage asPrimitiveTypeUsage() {
         throw new UnsupportedOperationException();
     }
-
 
     ///
     /// JVM
@@ -104,7 +101,7 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams);
+    <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams);
 
     default TypeUsage calcType(SymbolResolver resolver) {
         throw new UnsupportedOperationException();

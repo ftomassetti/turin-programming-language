@@ -109,7 +109,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
      * If this has an invokable name with the given methodName and the given arguments which type would be return?
      */
     @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
@@ -126,7 +126,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     public abstract TypeUsageNode copy();
 
     @Override
-    public TypeUsageNode replaceTypeVariables(Map<String, TypeUsageNode> typeParams) {
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 }
