@@ -31,6 +31,7 @@ public class Compiler {
     }
 
     public List<ClassFileDefinition> compile(TurinFile turinFile, ErrorCollector errorCollector) {
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         return new Compilation(resolver, errorCollector).compile(turinFile);
     }
 
