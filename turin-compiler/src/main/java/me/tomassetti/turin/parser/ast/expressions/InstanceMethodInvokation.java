@@ -4,9 +4,8 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
@@ -62,7 +61,7 @@ public class InstanceMethodInvokation extends Invokable {
     }
 
     @Override
-    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
         TypeUsage typeUsage = subject.calcType(resolver);
         if (!typeUsage.isReference()) {
             throw new UnsupportedOperationException();

@@ -8,7 +8,7 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -129,13 +129,13 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
                 LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
 
                 TypeUsageNode returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType());
-                List<FormalParameter> formalParameters = new ArrayList<>();
+                List<FormalParameterNode> formalParameters = new ArrayList<>();
 
                 int i=0;
                 for (CtClass paramType : invokeMethod.getParameterTypes()) {
                     TypeUsageNode type =JavassistTypeDefinitionFactory.toTypeUsage(paramType);
                     String paramName = attr.variableName(i);
-                    formalParameters.add(new FormalParameter(type, paramName));
+                    formalParameters.add(new FormalParameterNode(type, paramName));
                     i++;
                 }
                 FunctionDefinition functionDefinition = new LoadedFunctionDefinition(typeName, returnType, formalParameters);

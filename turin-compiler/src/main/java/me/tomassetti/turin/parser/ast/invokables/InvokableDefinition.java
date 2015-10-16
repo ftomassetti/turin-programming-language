@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser.ast.invokables;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -17,10 +17,10 @@ import java.util.Optional;
 public abstract class InvokableDefinition extends Node {
     protected String name;
     protected TypeUsageNode returnType;
-    protected List<FormalParameter> parameters;
+    protected List<FormalParameterNode> parameters;
     protected Statement body;
 
-    public InvokableDefinition(List<FormalParameter> parameters, Statement body, String name, TypeUsageNode returnType) {
+    public InvokableDefinition(List<FormalParameterNode> parameters, Statement body, String name, TypeUsageNode returnType) {
         this.parameters = parameters;
         this.parameters.forEach((p) -> p.setParent(InvokableDefinition.this) );
         this.body = body;
@@ -34,7 +34,7 @@ public abstract class InvokableDefinition extends Node {
         return returnType;
     }
 
-    public List<FormalParameter> getParameters() {
+    public List<FormalParameterNode> getParameters() {
         return parameters;
     }
 
@@ -44,7 +44,7 @@ public abstract class InvokableDefinition extends Node {
 
     @Override
     public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
-        for (FormalParameter param : parameters) {
+        for (FormalParameterNode param : parameters) {
             if (param.getName().equals(name)) {
                 return Optional.of(param);
             }

@@ -5,7 +5,7 @@ import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedInvokableException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
@@ -75,9 +75,9 @@ public abstract class Invokable extends Expression {
         return values;
     }
 
-    protected abstract List<FormalParameter> formalParameters(SymbolResolver resolver);
+    protected abstract List<FormalParameterNode> formalParameters(SymbolResolver resolver);
 
-    protected final List<FormalParameter> defaultParameters(SymbolResolver resolver) {
+    protected final List<FormalParameterNode> defaultParameters(SymbolResolver resolver) {
         return formalParameters(resolver).stream().filter((p)->p.hasDefaultValue()).collect(Collectors.toList());
     }
 
@@ -109,7 +109,7 @@ public abstract class Invokable extends Expression {
 
         Map<String, ActualParam> paramsAssigned = new HashMap<>();
 
-        List<FormalParameter> formalParams = formalParameters(resolver);
+        List<FormalParameterNode> formalParams = formalParameters(resolver);
         Either<String, List<ActualParam>> res = ParamUtils.desugarizeAsteriskParam(formalParams, asteriskParam.getValue(), resolver, this);
         if (res.isLeft()) {
             throw new IllegalArgumentException(res.getLeft());
@@ -120,7 +120,7 @@ public abstract class Invokable extends Expression {
     private void concreteDesugarizeWithoutAsterisk(SymbolResolver resolver) {
         Map<String, ActualParam> paramsAssigned = new HashMap<>();
 
-        List<FormalParameter> formalParams = formalParameters(resolver);
+        List<FormalParameterNode> formalParams = formalParameters(resolver);
         formalParams.forEach((fp)->fp.setParent(this));
         List<ActualParam> unnamedParams = ParamUtils.unnamedParams(actualParams);
         List<ActualParam> namedParams = ParamUtils.namedParams(actualParams);
@@ -143,7 +143,7 @@ public abstract class Invokable extends Expression {
             i++;
         }
         // use the named params
-        Map<String, FormalParameter> validNames = new HashMap<>();
+        Map<String, FormalParameterNode> validNames = new HashMap<>();
         formalParams.forEach((p) -> validNames.put(p.getName(), p));
         for (ActualParam param : namedParams) {
             if (paramsAssigned.containsKey(param.getName())) {
@@ -159,14 +159,14 @@ public abstract class Invokable extends Expression {
         }
 
         // all parameters have been assigned
-        for (FormalParameter formalParameter : formalParams) {
+        for (FormalParameterNode formalParameter : formalParams) {
             if (!paramsAssigned.containsKey(formalParameter.getName()) && !formalParameter.hasDefaultValue()) {
                 throw new IllegalArgumentException("Param not assigned: " + formalParameter.getName());
             }
         }
 
         List<ActualParam> orderedParams = new ArrayList<>();
-        for (FormalParameter formalParameter : formalParams) {
+        for (FormalParameterNode formalParameter : formalParams) {
             if (!formalParameter.hasDefaultValue()) {
                 ActualParam actualParam = paramsAssigned.get(formalParameter.getName());
                 if (actualParam.isNamed()) {
@@ -179,7 +179,7 @@ public abstract class Invokable extends Expression {
         // add the map with the default params
         if (hasDefaultParameters(resolver)) {
             Expression mapCreation = new Creation("turin.collections.MapBuilder", Collections.emptyList());
-            for (FormalParameter formalParameter : defaultParameters(resolver)) {
+            for (FormalParameterNode formalParameter : defaultParameters(resolver)) {
                 if (paramsAssigned.containsKey(formalParameter.getName())) {
                     List<ActualParam> params = new ArrayList<>();
                     params.add(new ActualParam(new StringLiteral(formalParameter.getName())));

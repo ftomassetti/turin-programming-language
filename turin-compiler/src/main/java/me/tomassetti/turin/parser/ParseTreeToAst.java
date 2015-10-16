@@ -160,7 +160,7 @@ class ParseTreeToAst {
     }
 
     private FunctionDefinition toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
-        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<FormalParameterNode> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         FunctionDefinition functionDefinition = new FunctionDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(functionDefinition, ctx);
         ctx.annotations.forEach((anCtx)->{
@@ -229,14 +229,14 @@ class ParseTreeToAst {
     }
 
     private Node toAst(TurinParser.MethodDefinitionContext ctx) {
-        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<FormalParameterNode> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         TurinTypeMethodDefinition methodDefinition = new TurinTypeMethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(methodDefinition, ctx);
         return methodDefinition;
     }
 
     private Node toAst(TurinParser.ConstructorDefinitionContext ctx) {
-        List<FormalParameter> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
+        List<FormalParameterNode> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         List<ActualParam> superParams = ctx.superParams.stream().map((p) -> toAst(p)).collect(Collectors.toList());
         List<Statement> bodyStatements = ctx.statements.stream().map((s) -> toAst(s)).collect(Collectors.toList());
         bodyStatements.add(new ExpressionStatement(new SuperInvokation(superParams)));
@@ -257,8 +257,8 @@ class ParseTreeToAst {
         }
     }
 
-    private FormalParameter toAst(TurinParser.FormalParamContext ctx) {
-        FormalParameter formalParameter = new FormalParameter(toAst(ctx.type), idText(ctx.name));
+    private FormalParameterNode toAst(TurinParser.FormalParamContext ctx) {
+        FormalParameterNode formalParameter = new FormalParameterNode(toAst(ctx.type), idText(ctx.name));
         getPositionFrom(formalParameter, ctx);
         return formalParameter;
     }

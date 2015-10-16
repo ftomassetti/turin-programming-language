@@ -3,9 +3,8 @@ package me.tomassetti.turin.parser.ast.expressions;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
@@ -70,7 +69,7 @@ public class FunctionCall extends Invokable {
     }
 
     @Override
-    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
         return function.findFormalParametersFor(this, resolver).get();
     }
 

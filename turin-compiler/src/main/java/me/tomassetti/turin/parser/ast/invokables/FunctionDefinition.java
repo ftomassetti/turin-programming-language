@@ -4,7 +4,7 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Named;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
@@ -45,7 +45,7 @@ public class FunctionDefinition extends InvokableDefinition implements Named, Sy
         return children;
     }
 
-    public FunctionDefinition(String name, TypeUsageNode returnType, List<FormalParameter> parameters, Statement body) {
+    public FunctionDefinition(String name, TypeUsageNode returnType, List<FormalParameterNode> parameters, Statement body) {
         super(parameters, body, name, returnType);
     }
 
@@ -57,7 +57,7 @@ public class FunctionDefinition extends InvokableDefinition implements Named, Sy
     }
 
     @Override
-    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return Optional.of(parameters);
     }
 
@@ -80,7 +80,7 @@ public class FunctionDefinition extends InvokableDefinition implements Named, Sy
             return false;
         }
         int i = 0;
-        for (FormalParameter formalParameter : parameters) {
+        for (FormalParameterNode formalParameter : parameters) {
             if (!formalParameter.getType().jvmType(resolver).isAssignableBy(argsTypes.get(i))) {
                 return false;
             }

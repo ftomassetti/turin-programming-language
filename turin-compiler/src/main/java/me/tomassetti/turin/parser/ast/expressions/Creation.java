@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -59,7 +59,7 @@ public class Creation extends Invokable {
     }
 
     @Override
-    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
         return getTypeDefinition(resolver).getConstructorParams(actualParams, resolver);
     }
 

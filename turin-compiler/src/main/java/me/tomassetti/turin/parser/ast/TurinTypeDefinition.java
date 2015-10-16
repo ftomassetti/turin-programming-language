@@ -119,7 +119,7 @@ public class TurinTypeDefinition extends TypeDefinition {
             {
                 String descriptor = "(" + property.getTypeUsage().jvmType(resolver).getDescriptor() + ")V";
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.setterName(), descriptor, false, false);
-                FormalParameter param = new FormalParameter(property.getTypeUsage().copy(), property.getName());
+                FormalParameterNode param = new FormalParameterNode(property.getTypeUsage().copy(), property.getName());
                 param.setParent(this);
                 InternalMethodDefinition setter = new InternalMethodDefinition(property.setterName(), ImmutableList.of(param), new VoidTypeUsageNode(), jvmMethodDefinition);
                 registerMethod(setter);
@@ -145,7 +145,7 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     private void initializeImplicitConstructor(SymbolResolver resolver) {
-        List<FormalParameter> inheritedParams = Collections.emptyList();
+        List<FormalParameterNode> inheritedParams = Collections.emptyList();
         if (getBaseType().isPresent()) {
             List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition(resolver).getConstructors(resolver);
             if (constructors.size() != 1) {
@@ -154,19 +154,19 @@ public class TurinTypeDefinition extends TypeDefinition {
             inheritedParams = constructors.get(0).getFormalParameters();
         }
 
-        List<FormalParameter> newParams = this.assignableProperties(resolver).stream()
-                .map((p) -> new FormalParameter(p.getTypeUsage().copy(), p.getName(), p.getDefaultValue()))
+        List<FormalParameterNode> newParams = this.assignableProperties(resolver).stream()
+                .map((p) -> new FormalParameterNode(p.getTypeUsage().copy(), p.getName(), p.getDefaultValue()))
                 .collect(Collectors.toList());
-        List<FormalParameter> allParams = new LinkedList<>();
+        List<FormalParameterNode> allParams = new LinkedList<>();
         allParams.addAll(inheritedParams);
         allParams.addAll(newParams);
-        allParams.sort(new Comparator<FormalParameter>() {
+        allParams.sort(new Comparator<FormalParameterNode>() {
             @Override
-            public int compare(FormalParameter o1, FormalParameter o2) {
+            public int compare(FormalParameterNode o1, FormalParameterNode o2) {
                 return Boolean.compare(o1.hasDefaultValue(), o2.hasDefaultValue());
             }
         });
-        for (FormalParameter p : allParams) {
+        for (FormalParameterNode p : allParams) {
             // needed to solve symbols
             p.setParent(this);
         }
@@ -185,8 +185,8 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
     }
 
-    private void addConstructorWithParams(List<FormalParameter> allParams, SymbolResolver resolver) {
-        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+    private void addConstructorWithParams(List<FormalParameterNode> allParams, SymbolResolver resolver) {
+        List<FormalParameterNode> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
                 .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());
@@ -199,8 +199,8 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     private void initializeExplicitConstructor(TurinTypeContructorDefinition constructor, SymbolResolver resolver) {
-        List<FormalParameter> allParams = constructor.getParameters();
-        List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
+        List<FormalParameterNode> allParams = constructor.getParameters();
+        List<FormalParameterNode> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
                 .map((p) -> p.getType().jvmType(resolver).getSignature())
                 .collect(Collectors.toList());

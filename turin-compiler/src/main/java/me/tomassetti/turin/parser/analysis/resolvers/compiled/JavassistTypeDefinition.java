@@ -9,7 +9,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -110,7 +110,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
         return getDefaultParamData(ctBehavior).size() > 0;
     }
 
-    private List<FormalParameter> getFormalParametersConsideringDefaultParams(CtBehavior ctBehavior) {
+    private List<FormalParameterNode> getFormalParametersConsideringDefaultParams(CtBehavior ctBehavior) {
         List<DefaultParamData> defaultParamDatas = getDefaultParamData(ctBehavior);
         defaultParamDatas.sort(new Comparator<DefaultParamData>() {
             @Override
@@ -118,7 +118,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
                 return Integer.compare(o1.index, o2.index);
             }
         });
-        List<FormalParameter> formalParameters = new ArrayList<>();
+        List<FormalParameterNode> formalParameters = new ArrayList<>();
         try {
             MethodInfo methodInfo = ctBehavior.getMethodInfo();
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
@@ -128,14 +128,14 @@ public class JavassistTypeDefinition extends TypeDefinition {
             for (int i=0;i<ctBehavior.getParameterTypes().length - 1;i++) {
                 CtClass type = ctBehavior.getParameterTypes()[i];
                 String paramName = attr.variableName(i);
-                formalParameters.add(new FormalParameter(toTypeUsage(type), paramName));
+                formalParameters.add(new FormalParameterNode(toTypeUsage(type), paramName));
             }
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
         for (DefaultParamData defaultParamData : defaultParamDatas) {
             TypeUsageNode paramType = TypeUsageNode.fromJvmType(new JvmType(defaultParamData.signature));
-            formalParameters.add(FormalParameter.createWithDefaultValuePlaceholder(paramType, defaultParamData.name));
+            formalParameters.add(FormalParameterNode.createWithDefaultValuePlaceholder(paramType, defaultParamData.name));
         }
         return formalParameters;
     }
@@ -161,18 +161,18 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private List<FormalParameter> formalParameters(CtConstructor constructor) {
+    private List<FormalParameterNode> formalParameters(CtConstructor constructor) {
         if (hasDefaultParamAnnotation(constructor)) {
             return getFormalParametersConsideringDefaultParams(ctClass.getConstructors()[0]);
         }
         try {
-            List<FormalParameter> formalParameters = new ArrayList<>();
+            List<FormalParameterNode> formalParameters = new ArrayList<>();
             MethodInfo methodInfo = constructor.getMethodInfo();
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             int i=0;
             for (CtClass type : constructor.getParameterTypes()) {
-                formalParameters.add(new FormalParameter(toTypeUsage(type), attr.variableName(i)));
+                formalParameters.add(new FormalParameterNode(toTypeUsage(type), attr.variableName(i)));
                 i++;
             }
             return formalParameters;
@@ -181,15 +181,15 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private List<FormalParameter> formalParameters(CtMethod method) {
+    private List<FormalParameterNode> formalParameters(CtMethod method) {
         try {
-            List<FormalParameter> formalParameters = new ArrayList<>();
+            List<FormalParameterNode> formalParameters = new ArrayList<>();
             MethodInfo methodInfo = method.getMethodInfo();
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             int i=0;
             for (CtClass type : method.getParameterTypes()) {
-                formalParameters.add(new FormalParameter(toTypeUsage(type),  attr.variableName(i)));
+                formalParameters.add(new FormalParameterNode(toTypeUsage(type),  attr.variableName(i)));
                 i++;
             }
             return formalParameters;

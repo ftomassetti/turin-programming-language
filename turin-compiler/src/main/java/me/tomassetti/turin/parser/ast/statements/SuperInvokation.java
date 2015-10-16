@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.statements;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -36,7 +36,7 @@ public class SuperInvokation extends Invokable {
     }
 
     @Override
-    protected List<FormalParameter> formalParameters(SymbolResolver resolver) {
+    protected List<FormalParameterNode> formalParameters(SymbolResolver resolver) {
         return getTurinTypeDefinition().getSuperclass(resolver).getConstructorParams(actualParams, resolver);
     }
 

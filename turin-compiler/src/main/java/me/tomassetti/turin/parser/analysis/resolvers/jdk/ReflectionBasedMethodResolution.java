@@ -4,7 +4,7 @@ import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -47,21 +47,21 @@ class ReflectionBasedMethodResolution {
         }
     }
 
-    public static List<FormalParameter> formalParameters(Constructor constructor) {
-        List<FormalParameter> formalParameters = new ArrayList<>();
+    public static List<FormalParameterNode> formalParameters(Constructor constructor) {
+        List<FormalParameterNode> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : constructor.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameter(toTypeUsage(type, Collections.emptyMap()), constructor.getParameters()[i].getName()));
+            formalParameters.add(new FormalParameterNode(toTypeUsage(type, Collections.emptyMap()), constructor.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;
     }
 
-    public static List<FormalParameter> formalParameters(Method method, Map<String, TypeUsageNode> typeVariables) {
-        List<FormalParameter> formalParameters = new ArrayList<>();
+    public static List<FormalParameterNode> formalParameters(Method method, Map<String, TypeUsageNode> typeVariables) {
+        List<FormalParameterNode> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : method.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameter(toTypeUsage(type, typeVariables), method.getParameters()[i].getName()));
+            formalParameters.add(new FormalParameterNode(toTypeUsage(type, typeVariables), method.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;

@@ -394,9 +394,9 @@ public class Compilation {
         generateInvokable(methodDefinition, "<init>", false);
     }
 
-    void addDefaultParamAnnotations(MethodVisitor mv, List<FormalParameter> formalParameters) {
+    void addDefaultParamAnnotations(MethodVisitor mv, List<FormalParameterNode> formalParameters) {
         int defaultParamIndex = 0;
-        for (FormalParameter defaultParam : formalParameters.stream()
+        for (FormalParameterNode defaultParam : formalParameters.stream()
                 .filter((p)->p.hasDefaultValue())
                 .collect(Collectors.toList())) {
             AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmNameUtils.canonicalToDescriptor(DefaultParam.class.getCanonicalName()), true);
@@ -434,7 +434,7 @@ public class Compilation {
         Label start = new Label();
         Label end = new Label();
         mv.visitLabel(start);
-        for (FormalParameter formalParameter : invokableDefinition.getParameters()) {
+        for (FormalParameterNode formalParameter : invokableDefinition.getParameters()) {
             int index = localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
             mv.visitLocalVariable(formalParameter.getName(),
                     formalParameter.getType().jvmType(resolver).getDescriptor(),

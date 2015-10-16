@@ -13,10 +13,10 @@ public class Program extends Node implements Named, Symbol {
 
     private String name;
     private Statement statement;
-    private FormalParameter formalParameter;
+    private FormalParameterNode formalParameter;
     private String paramName;
 
-    public FormalParameter getFormalParameter() {
+    public FormalParameterNode getFormalParameter() {
         return formalParameter;
     }
 
@@ -28,7 +28,7 @@ public class Program extends Node implements Named, Symbol {
         this.name = name;
         this.statement = statement;
         this.statement.setParent(this);
-        this.formalParameter = new FormalParameter(new ArrayTypeUsageNode(ReferenceTypeUsage.STRING), paramName);
+        this.formalParameter = new FormalParameterNode(new ArrayTypeUsageNode(ReferenceTypeUsage.STRING), paramName);
         this.formalParameter.parent = this;
         this.paramName = paramName;
     }

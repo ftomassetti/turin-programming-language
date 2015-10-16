@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
@@ -20,7 +20,7 @@ public class RelationFieldDefinition extends Node {
     private TypeUsageNode type;
 
     public boolean isApplicableTo(TypeDefinition typeDefinition, SymbolResolver resolver) {
-        if ((type.getParent() instanceof FormalParameter) && type.getParent().getParent() == null){
+        if ((type.getParent() instanceof FormalParameterNode) && type.getParent().getParent() == null){
             throw new UnsupportedOperationException();
         }
         ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);

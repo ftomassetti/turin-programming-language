@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.invokables;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
@@ -18,7 +18,7 @@ public class TurinTypeContructorDefinition extends InvokableDefinition {
         return body;
     }
 
-    public TurinTypeContructorDefinition(List<FormalParameter> parameters, BlockStatement body) {
+    public TurinTypeContructorDefinition(List<FormalParameterNode> parameters, BlockStatement body) {
         super(parameters, body, "<init>", new VoidTypeUsageNode());
     }
 

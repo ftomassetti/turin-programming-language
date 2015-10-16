@@ -62,7 +62,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
         return getConstructors(resolver).size() > 1;
     }
 
-    public final List<FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public final List<FormalParameterNode> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
         return getConstructor(actualParams, resolver).getFormalParameters();
     }
 
@@ -102,7 +102,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
         return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
     }
 
-    public final List<FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public final List<FormalParameterNode> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return getMethod(methodName, actualParams, resolver, staticContext).getFormalParameters();
     }
 

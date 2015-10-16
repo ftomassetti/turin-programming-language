@@ -8,7 +8,7 @@ import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstruct
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -65,7 +65,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public Optional<List<FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<FormalParameterNode>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         return super.findFormalParametersFor(invokable, resolver);
     }
 
@@ -191,11 +191,11 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
                 ReflectionTypeDefinitionFactory.toMethodDefinition(method));
     }
 
-    private List<FormalParameter> formalParameters(Constructor constructor) {
+    private List<FormalParameterNode> formalParameters(Constructor constructor) {
         return ReflectionBasedMethodResolution.formalParameters(constructor);
     }
 
-    private List<FormalParameter> formalParameters(Method method) {
+    private List<FormalParameterNode> formalParameters(Method method) {
         return ReflectionBasedMethodResolution.formalParameters(method, getTypeVariables());
     }
 

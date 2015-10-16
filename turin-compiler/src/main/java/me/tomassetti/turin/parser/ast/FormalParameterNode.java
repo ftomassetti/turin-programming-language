@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class FormalParameter extends Node implements Symbol {
+public class FormalParameterNode extends Node implements Symbol, FormalParameter {
 
     private TypeUsageNode type;
     private String name;
@@ -28,9 +29,9 @@ public class FormalParameter extends Node implements Symbol {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FormalParameter)) return false;
+        if (!(o instanceof FormalParameterNode)) return false;
 
-        FormalParameter that = (FormalParameter) o;
+        FormalParameterNode that = (FormalParameterNode) o;
 
         if (!defaultValue.equals(that.defaultValue)) return false;
         if (!name.equals(that.name)) return false;
@@ -43,6 +44,7 @@ public class FormalParameter extends Node implements Symbol {
         return defaultValue;
     }
 
+    @Override
     public boolean hasDefaultValue() {
         return defaultValue.isPresent();
     }
@@ -69,15 +71,15 @@ public class FormalParameter extends Node implements Symbol {
         }
     }
 
-    public static FormalParameter createWithDefaultValuePlaceholder(TypeUsageNode type, String name) {
-        return new FormalParameter(type, name, Optional.of(new DefaultValuePlaceholder()));
+    public static FormalParameterNode createWithDefaultValuePlaceholder(TypeUsageNode type, String name) {
+        return new FormalParameterNode(type, name, Optional.of(new DefaultValuePlaceholder()));
     }
 
-    public FormalParameter(TypeUsageNode type, String name) {
+    public FormalParameterNode(TypeUsageNode type, String name) {
         this(type, name, Optional.empty());
     }
 
-    public FormalParameter(TypeUsageNode type, String name, Optional<Expression> defaultValue) {
+    public FormalParameterNode(TypeUsageNode type, String name, Optional<Expression> defaultValue) {
         this.type = type;
         this.type.parent = this;
         this.name = name;
@@ -102,10 +104,12 @@ public class FormalParameter extends Node implements Symbol {
         return type;
     }
 
+    @Override
     public TypeUsageNode getType() {
         return type;
     }
 
+    @Override
     public String getName() {
         return name;
     }

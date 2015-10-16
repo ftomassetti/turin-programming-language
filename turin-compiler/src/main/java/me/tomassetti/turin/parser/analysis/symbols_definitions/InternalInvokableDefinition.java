@@ -3,10 +3,9 @@ package me.tomassetti.turin.parser.analysis.symbols_definitions;
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
@@ -28,7 +27,7 @@ public abstract class InternalInvokableDefinition {
         }
     }
 
-    private Optional<String> matchAsterisk(SymbolResolver resolver, ActualParam actualParam, List<FormalParameter> formalParameters) {
+    private Optional<String> matchAsterisk(SymbolResolver resolver, ActualParam actualParam, List<FormalParameterNode> formalParameters) {
         TypeUsage paramType = actualParam.getValue().calcType(resolver);
         // it needs to have all the getters for the non-default parameters
         // all the other getters that match default params have to be the right type
@@ -39,7 +38,7 @@ public abstract class InternalInvokableDefinition {
         List<ActualParam> actualParams = new ArrayList<>();
         TypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
 
-        for (FormalParameter formalParameter : formalParameters) {
+        for (FormalParameterNode formalParameter : formalParameters) {
             String getterName = ParamUtils.getterName(formalParameter, resolver);
             if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), resolver, false)) {
                 TypeUsage res = typeDefinition.returnTypeWhenInvokedWith(getterName, Collections.emptyList(), resolver, false);
@@ -58,7 +57,7 @@ public abstract class InternalInvokableDefinition {
     private Optional<String> matchNotAsterisk(SymbolResolver resolver, List<ActualParam> actualParams) {
         Set<String> paramsAssigned = new HashSet<>();
 
-        List<FormalParameter> formalParameters = getFormalParameters();
+        List<FormalParameterNode> formalParameters = getFormalParameters();
         List<ActualParam> unnamedParams = ParamUtils.unnamedParams(actualParams);
         List<ActualParam> namedParams = ParamUtils.namedParams(actualParams);
 
@@ -75,7 +74,7 @@ public abstract class InternalInvokableDefinition {
             i++;
         }
         // use the named params
-        Map<String, FormalParameter> validNames = new HashMap<>();
+        Map<String, FormalParameterNode> validNames = new HashMap<>();
         formalParameters.forEach((p) -> validNames.put(p.getName(), p));
         for (ActualParam param : namedParams) {
             if (paramsAssigned.contains(param.getName())) {
@@ -91,7 +90,7 @@ public abstract class InternalInvokableDefinition {
         }
 
         // verify that all properties with no default or initial value have been assigned
-        for (FormalParameter formalParameter : formalParameters) {
+        for (FormalParameterNode formalParameter : formalParameters) {
             if (!paramsAssigned.contains(formalParameter.getName()) && !formalParameter.hasDefaultValue()) {
                 return Optional.of("Param not assigned: " + formalParameter.getName());
             }
@@ -99,23 +98,23 @@ public abstract class InternalInvokableDefinition {
         return Optional.empty();
     }
 
-    private List<FormalParameter> formalParameters;
+    private List<FormalParameterNode> formalParameters;
 
-    public InternalInvokableDefinition(List<FormalParameter> formalParameters) {
+    public InternalInvokableDefinition(List<FormalParameterNode> formalParameters) {
         this.formalParameters = formalParameters;
     }
 
-    public List<FormalParameter> getFormalParameters() {
+    public List<FormalParameterNode> getFormalParameters() {
         return formalParameters;
     }
 
     public boolean matchJvmTypes(SymbolResolver resolver, List<JvmType> jvmTypes) {
-        List<FormalParameter> formalParameters = getFormalParameters();
+        List<FormalParameterNode> formalParameters = getFormalParameters();
         if (formalParameters.size() != jvmTypes.size()) {
             return false;
         }
         for (int i=0;i<jvmTypes.size();i++) {
-            FormalParameter formalParameter = formalParameters.get(i);
+            FormalParameterNode formalParameter = formalParameters.get(i);
             JvmType jvmType = jvmTypes.get(i);
             if (!formalParameter.getType().jvmType(resolver).isAssignableBy(jvmType)) {
                 return false;

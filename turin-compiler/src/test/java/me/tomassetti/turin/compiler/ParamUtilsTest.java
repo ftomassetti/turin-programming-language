@@ -3,7 +3,7 @@ package me.tomassetti.turin.compiler;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameter;
+import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -40,10 +40,10 @@ public class ParamUtilsTest {
     private ActualParam u1 = new ActualParam(new IntLiteral(3));
     private ActualParam u2 = new ActualParam(new IntLiteral(4));
 
-    private FormalParameter fd1 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fd1", Optional.of(new IntLiteral(1)));
-    private FormalParameter fd2 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fd2", Optional.of(new IntLiteral(1)));
-    private FormalParameter fn1 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fn1");
-    private FormalParameter fn2 = new FormalParameter(PrimitiveTypeUsageNode.INT, "fn2");
+    private FormalParameterNode fd1 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fd1", Optional.of(new IntLiteral(1)));
+    private FormalParameterNode fd2 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fd2", Optional.of(new IntLiteral(1)));
+    private FormalParameterNode fn1 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fn1");
+    private FormalParameterNode fn2 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fn2");
 
     @Test
     public void verifyOrderOnlyOneNamedParam() {
@@ -93,20 +93,20 @@ public class ParamUtilsTest {
 
     @Test
     public void testGetterNameBoolean() {
-        assertEquals("isFoo", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "foo"), DUMMY_RESOLVER));
-        assertEquals("isA", ParamUtils.getterName(new FormalParameter(PrimitiveTypeUsageNode.BOOLEAN, "a"), DUMMY_RESOLVER));
+        assertEquals("isFoo", ParamUtils.getterName(new FormalParameterNode(PrimitiveTypeUsageNode.BOOLEAN, "foo"), DUMMY_RESOLVER));
+        assertEquals("isA", ParamUtils.getterName(new FormalParameterNode(PrimitiveTypeUsageNode.BOOLEAN, "a"), DUMMY_RESOLVER));
     }
 
     @Test
     public void testGetterNameNotBoolean() {
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameter(new ReferenceTypeUsage(Boolean.class.getCanonicalName()), "foo"), DUMMY_RESOLVER));
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameter(ReferenceTypeUsage.STRING, "foo"), DUMMY_RESOLVER));
-        assertEquals("getA", ParamUtils.getterName(new FormalParameter(ReferenceTypeUsage.STRING, "a"), DUMMY_RESOLVER));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterNode(new ReferenceTypeUsage(Boolean.class.getCanonicalName()), "foo"), DUMMY_RESOLVER));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterNode(ReferenceTypeUsage.STRING, "foo"), DUMMY_RESOLVER));
+        assertEquals("getA", ParamUtils.getterName(new FormalParameterNode(ReferenceTypeUsage.STRING, "a"), DUMMY_RESOLVER));
     }
 
     @Test
     public void testDesugarizeAsteriskParamWhichIsNotAReference() {
-        List<FormalParameter> formalParameters = ImmutableList.of(fn1, fn2, fd2, fd2);
+        List<FormalParameterNode> formalParameters = ImmutableList.of(fn1, fn2, fd2, fd2);
         Expression value = createMock(Expression.class);
         SymbolResolver resolver = createMock(SymbolResolver.class);
         TypeUsageNode typeOfAsteriskParam = createMock(TypeUsageNode.class);
@@ -122,7 +122,7 @@ public class ParamUtilsTest {
 
     @Test
     public void testDesugarizeAsteriskParamWithAllTheParamsAvailable() {
-        List<FormalParameter> formalParameters = ImmutableList.of(fn1, fn2, fd1, fd2);
+        List<FormalParameterNode> formalParameters = ImmutableList.of(fn1, fn2, fd1, fd2);
         Expression value = createMock(Expression.class);
         value.setParent(EasyMock.anyObject());
         value.setParent(EasyMock.anyObject());
@@ -153,7 +153,7 @@ public class ParamUtilsTest {
 
     @Test
     public void testDesugarizeAsteriskParamWithOnlyNonDefaultAvailable() {
-        List<FormalParameter> formalParameters = ImmutableList.of(fn1, fn2, fd1, fd2);
+        List<FormalParameterNode> formalParameters = ImmutableList.of(fn1, fn2, fd1, fd2);
         Expression value = createMock(Expression.class);
         value.setParent(EasyMock.anyObject());
         value.setParent(EasyMock.anyObject());
@@ -184,7 +184,7 @@ public class ParamUtilsTest {
 
     @Test
     public void testDesugarizeAsteriskParamWithMissingNonDefault() {
-        List<FormalParameter> formalParameters = ImmutableList.of(fn1, fn2, fd1, fd2);
+        List<FormalParameterNode> formalParameters = ImmutableList.of(fn1, fn2, fd1, fd2);
         Expression value = createMock(Expression.class);
         value.setParent(EasyMock.anyObject());
         value.setParent(EasyMock.anyObject());
