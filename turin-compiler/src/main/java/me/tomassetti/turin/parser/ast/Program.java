@@ -5,7 +5,10 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.ArrayTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 
 import java.util.Optional;
 
@@ -13,10 +16,10 @@ public class Program extends Node implements Named, Symbol {
 
     private String name;
     private Statement statement;
-    private FormalParameterNode formalParameter;
+    private FormalParameterSymbol formalParameter;
     private String paramName;
 
-    public FormalParameterNode getFormalParameter() {
+    public FormalParameterSymbol getFormalParameter() {
         return formalParameter;
     }
 
@@ -28,8 +31,7 @@ public class Program extends Node implements Named, Symbol {
         this.name = name;
         this.statement = statement;
         this.statement.setParent(this);
-        this.formalParameter = new FormalParameterNode(new ArrayTypeUsageNode(ReferenceTypeUsageNode.STRING), paramName);
-        this.formalParameter.parent = this;
+        this.formalParameter = new FormalParameterSymbol(new ArrayTypeUsage(ReferenceTypeUsage.STRING), paramName);
         this.paramName = paramName;
     }
 
@@ -43,7 +45,7 @@ public class Program extends Node implements Named, Symbol {
 
     @Override
     public Iterable<Node> getChildren() {
-        return ImmutableList.of(formalParameter, statement);
+        return ImmutableList.of(statement);
     }
 
     @Override

@@ -3,6 +3,7 @@ package me.tomassetti.turin.compiler;
 import me.tomassetti.bytecode_generation.BytecodeSequence;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
@@ -37,7 +38,7 @@ public class LocalVarsSymbolTable {
         return aliases.get(name);
     }
 
-    public void add(FormalParameterNode formalParameter) {
+    public void add(FormalParameter formalParameter) {
         add(formalParameter.getName(), formalParameter);
     }
 

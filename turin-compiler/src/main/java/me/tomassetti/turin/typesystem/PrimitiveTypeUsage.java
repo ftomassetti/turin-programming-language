@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
@@ -37,30 +38,30 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),
-            new ReferenceTypeUsageNode(Boolean.class.getCanonicalName()));
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Boolean.class)));
     public static PrimitiveTypeUsage CHAR = new PrimitiveTypeUsage("char",  new JvmType("C"),
-            new ReferenceTypeUsageNode(Character.class.getCanonicalName()));
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Character.class)));
     public static PrimitiveTypeUsage LONG = new PrimitiveTypeUsage("long",  new JvmType("J"),
-            new ReferenceTypeUsageNode(Long.class.getCanonicalName()));
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Long.class)));
     public static PrimitiveTypeUsage INT = new PrimitiveTypeUsage("int",  new JvmType("I"),
-            new ReferenceTypeUsageNode(Integer.class.getCanonicalName()),
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Integer.class)),
             ImmutableList.of(LONG));
     public static PrimitiveTypeUsage SHORT = new PrimitiveTypeUsage("short",  new JvmType("S"),
-            new ReferenceTypeUsageNode(Short.class.getCanonicalName()),
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Short.class)),
             ImmutableList.of(INT, LONG));
     public static PrimitiveTypeUsage BYTE = new PrimitiveTypeUsage("byte",  new JvmType("B"),
-            new ReferenceTypeUsageNode(Byte.class.getCanonicalName()),
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Byte.class)),
             ImmutableList.of(SHORT, INT, LONG));
     public static PrimitiveTypeUsage DOUBLE = new PrimitiveTypeUsage("double",  new JvmType("D"),
-            new ReferenceTypeUsageNode(Double.class.getCanonicalName()));
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Double.class)));
     public static PrimitiveTypeUsage FLOAT = new PrimitiveTypeUsage("float",  new JvmType("F"),
-            new ReferenceTypeUsageNode(Float.class.getCanonicalName()),
+            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Float.class)),
             ImmutableList.of(DOUBLE));
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
     public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
-        if (other.sameType(boxType, resolver) || other.sameType(ReferenceTypeUsageNode.OBJECT, resolver)) {
+        if (other.sameType(boxType, resolver) || other.sameType(ReferenceTypeUsage.OBJECT, resolver)) {
             return true;
         }
         if (!other.isPrimitive()) {
@@ -81,22 +82,22 @@ public class PrimitiveTypeUsage implements TypeUsage {
         return Optional.empty();
     }
 
-    public TypeUsageNode getBoxType() {
+    public TypeUsage getBoxType() {
         return boxType;
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsageNode boxType, List<PrimitiveTypeUsage> promotionsTypes) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType, List<PrimitiveTypeUsage> promotionsTypes) {
         this.name = name;
         this.jvmType = jvmType;
         this.boxType = boxType;
         this.promotionsTypes = promotionsTypes;
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsageNode boxType) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
         this(name, jvmType, boxType, Collections.emptyList());
     }
 
-    private TypeUsageNode boxType;
+    private TypeUsage boxType;
 
     @Override
     public JvmType jvmType(SymbolResolver resolver) {

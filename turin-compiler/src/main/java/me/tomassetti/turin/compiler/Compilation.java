@@ -23,6 +23,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
@@ -492,7 +493,7 @@ public class Compilation {
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
         TypeUsage pieceType = piece.calcType(resolver);
-        if (pieceType.sameType(ReferenceTypeUsageNode.STRING, resolver)) {
+        if (pieceType.sameType(ReferenceTypeUsage.STRING, resolver)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isReference()) {

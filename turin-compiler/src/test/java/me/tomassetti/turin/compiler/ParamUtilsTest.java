@@ -13,6 +13,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.util.Either;
 import org.easymock.EasyMock;
@@ -101,8 +102,8 @@ public class ParamUtilsTest {
     @Test
     public void testGetterNameNotBoolean() {
         assertEquals("getFoo", ParamUtils.getterName(new FormalParameterNode(new ReferenceTypeUsageNode(Boolean.class.getCanonicalName()), "foo"), DUMMY_RESOLVER));
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterNode(ReferenceTypeUsageNode.STRING, "foo"), DUMMY_RESOLVER));
-        assertEquals("getA", ParamUtils.getterName(new FormalParameterNode(ReferenceTypeUsageNode.STRING, "a"), DUMMY_RESOLVER));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING, "foo"), DUMMY_RESOLVER));
+        assertEquals("getA", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING, "a"), DUMMY_RESOLVER));
     }
 
     @Test

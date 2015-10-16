@@ -3,9 +3,11 @@ package me.tomassetti.turin.parser.ast.statements;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class ThrowStatement extends Statement {
@@ -59,7 +61,8 @@ public class ThrowStatement extends Statement {
             errorCollector.recordSemanticError(exception.getPosition(), ERR_MESSAGE);
             return false;
         } else {
-            if (exceptionType.asReferenceTypeUsage().canBeAssignedTo(new ReferenceTypeUsageNode(Exception.class.getCanonicalName()), resolver)) {
+            if (exceptionType.asReferenceTypeUsage().canBeAssignedTo(new ReferenceTypeUsage(
+                    ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Exception.class)), resolver)) {
                 return true;
             } else {
                 errorCollector.recordSemanticError(exception.getPosition(), ERR_MESSAGE);

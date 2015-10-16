@@ -5,6 +5,8 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +46,8 @@ public class StringInterpolation extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
-        return ReferenceTypeUsageNode.STRING;
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return ReferenceTypeUsage.STRING;
     }
 
     /**

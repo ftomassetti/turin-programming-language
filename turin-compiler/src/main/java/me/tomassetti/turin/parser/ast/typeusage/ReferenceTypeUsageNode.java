@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
  */
 public class ReferenceTypeUsageNode extends TypeUsageNode {
 
-    public static final ReferenceTypeUsageNode OBJECT = new ReferenceTypeUsageNode("java.lang.Object");
-    public static final ReferenceTypeUsageNode STRING = new ReferenceTypeUsageNode("java.lang.String");
     private List<TypeUsage> typeParams;
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
@@ -34,10 +32,6 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
     private TypeDefinition cachedTypeDefinition;
 
     public ReferenceTypeUsageNode(String name) {
-        this(name, false);
-    }
-
-    public ReferenceTypeUsageNode(String name, boolean fullyQualifiedName) {
         if (JvmNameUtils.isPrimitiveTypeName(name)) {
             throw new IllegalArgumentException(name);
         }
@@ -46,7 +40,7 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
         }
         this.name = name;
         this.typeParams = Collections.emptyList();
-        this.fullyQualifiedName = fullyQualifiedName;
+        this.fullyQualifiedName = false;
     }
 
     @Override

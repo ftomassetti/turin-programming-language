@@ -416,10 +416,10 @@ public class TurinTypeDefinition extends TypeDefinition {
      * Does it override the equals method defined in Object?
      */
     public boolean defineMethodEquals(SymbolResolver resolver) {
-        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsageNode.OBJECT), resolver);
+        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT), resolver);
     }
 
-    private boolean isDefiningMethod(String name, List<TypeUsageNode> paramTypes, SymbolResolver resolver) {
+    private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, SymbolResolver resolver) {
         return getDirectMethods().stream().filter((m)->m.getName().equals(name))
                 .filter((m) -> m.getParameters().stream().map((p) -> p.calcType(resolver).jvmType(resolver)).collect(Collectors.toList())
                         .equals(paramTypes.stream().map((p) -> p.jvmType(resolver)).collect(Collectors.toList())))
