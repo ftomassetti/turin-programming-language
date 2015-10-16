@@ -145,7 +145,7 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }
-        ReferenceTypeUsageNode other = (ReferenceTypeUsageNode)type;
+        ReferenceTypeUsage other = type.asReferenceTypeUsage();
         if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
             return true;
         }

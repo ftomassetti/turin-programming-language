@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class AllPackageImportDeclaration extends ImportDeclaration {
     }
 
     @Override
-    public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findAmongImported(String name, SymbolResolver resolver) {
         // TODO correct the context passed
         if (JvmNameUtils.isSimpleName(name)) {
             Optional<TypeDefinition> res = resolver.findTypeDefinitionIn(qualifiedName.qualifiedName() + "." + name, this, resolver);

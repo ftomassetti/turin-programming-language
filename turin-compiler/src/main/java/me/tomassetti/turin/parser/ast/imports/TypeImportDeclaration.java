@@ -7,6 +7,7 @@ import me.tomassetti.turin.parser.ast.NoContext;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
@@ -60,7 +61,7 @@ public class TypeImportDeclaration extends ImportDeclaration {
     }
 
     @Override
-    public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findAmongImported(String name, SymbolResolver resolver) {
         String targetName = alternativeName == null ? typeName : alternativeName;
         if (name.equals(targetName)) {
             findTypeDefinition(resolver);

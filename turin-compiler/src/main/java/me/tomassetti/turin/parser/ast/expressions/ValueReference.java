@@ -86,7 +86,7 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public Node getField(String fieldName, SymbolResolver resolver) {
+    public Symbol getField(String fieldName, SymbolResolver resolver) {
         return resolve(resolver).getField(fieldName, resolver);
     }
 
@@ -119,18 +119,18 @@ public class ValueReference extends Expression {
         return ImmutableList.of();
     }
 
-    private Node cache;
+    private Symbol cache;
 
-    public Node resolve(SymbolResolver resolver) {
+    public Symbol resolve(SymbolResolver resolver) {
         if (cache != null) {
             return cache;
         }
         Optional<Symbol> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
-            if (!(declaration.get() instanceof Node)) {
+            if (!(declaration.get() instanceof Symbol)) {
                 throw new UnsupportedOperationException();
             }
-            cache = (Node)declaration.get();
+            cache = (Symbol)declaration.get();
             return cache;
         } else {
             throw new UnsolvedSymbolException(this);

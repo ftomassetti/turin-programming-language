@@ -137,7 +137,7 @@ public class TurinFile extends Node {
     @Override
     public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
         for (ImportDeclaration importDeclaration : imports) {
-            Optional<Node> imported = importDeclaration.findAmongImported(name, resolver);
+            Optional<Symbol> imported = importDeclaration.findAmongImported(name, resolver);
             if (imported.isPresent()) {
                 return Optional.of(imported.get());
             }

@@ -157,7 +157,7 @@ public class InFileSymbolResolver implements SymbolResolver {
                 // this is necessary to avoid infinite recursion
                 if (child != previousContext) {
                     ImportDeclaration importDeclaration = (ImportDeclaration) child;
-                    Optional<Node> resolvedNode = importDeclaration.findAmongImported(typeName, resolver);
+                    Optional<Symbol> resolvedNode = importDeclaration.findAmongImported(typeName, resolver);
                     if (resolvedNode.isPresent()) {
                         if (resolvedNode.get() instanceof TypeDefinition) {
                             return Optional.of((TypeDefinition) resolvedNode.get());

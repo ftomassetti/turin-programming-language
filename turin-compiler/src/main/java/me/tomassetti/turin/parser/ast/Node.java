@@ -148,11 +148,11 @@ public abstract class Node implements Symbol {
         }
     }
 
-    public final Node getField(QualifiedName fieldsPath, SymbolResolver resolver) {
+    public final Symbol getField(QualifiedName fieldsPath, SymbolResolver resolver) {
         if (fieldsPath.isSimpleName()) {
             return getField(fieldsPath.getName(), resolver);
         } else {
-            Node next = getField(fieldsPath.firstSegment(), resolver);
+            Symbol next = getField(fieldsPath.firstSegment(), resolver);
             return next.getField(fieldsPath.rest(), resolver);
         }
     }
@@ -164,7 +164,7 @@ public abstract class Node implements Symbol {
     /**
      * This is intended in a broad way: everything that can be accessed with a dot.
      */
-    public Node getField(String fieldName, SymbolResolver resolver) {
+    public Symbol getField(String fieldName, SymbolResolver resolver) {
         return calcType(resolver).getFieldOnInstance(fieldName, this, resolver);
     }
 

@@ -21,6 +21,7 @@ import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -46,7 +47,7 @@ public class CompilationOfPush {
             return pushExpression(((FieldAccess) function).getSubject());
         } else if (function instanceof ValueReference) {
             ValueReference valueReference = (ValueReference) function;
-            Node declaration = valueReference.resolve(compilation.getResolver());
+            Symbol declaration = valueReference.resolve(compilation.getResolver());
             if (declaration instanceof ReflectionBasedSetOfOverloadedMethods) {
                 ReflectionBasedSetOfOverloadedMethods methods = (ReflectionBasedSetOfOverloadedMethods) declaration;
                 if (methods.isStatic()) {
@@ -63,6 +64,14 @@ public class CompilationOfPush {
             return NoOp.getInstance();
         } else {
             throw new UnsupportedOperationException(function.getClass().getCanonicalName());
+        }
+    }
+
+    BytecodeSequence push(Symbol symbol) {
+        if (symbol.isNode()) {
+            return push(symbol.asNode());
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 

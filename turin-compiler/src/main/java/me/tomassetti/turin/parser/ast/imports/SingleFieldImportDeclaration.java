@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
         }
     }
 
-    private Node importedValueCache = null;
+    private Symbol importedValueCache = null;
 
     private void findImportedValue(SymbolResolver resolver) {
         if (importedValueCache != null) {
@@ -67,7 +68,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
     }
 
     @Override
-    public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findAmongImported(String name, SymbolResolver resolver) {
         if (exposedName().equals(name)) {
             findImportedValue(resolver);
             if (importedValueCache == null) {

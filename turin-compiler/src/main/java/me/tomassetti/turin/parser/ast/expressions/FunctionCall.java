@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOve
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
@@ -82,7 +83,7 @@ public class FunctionCall extends Invokable {
     }
 
     public boolean isStatic(SymbolResolver resolver) {
-        Node f = function;
+        Symbol f = function;
         if (f instanceof ValueReference) {
             f = ((ValueReference) function).resolve(resolver);
         }

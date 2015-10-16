@@ -165,7 +165,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
             if (!hasField(firstName, staticContext)) {
                 return false;
             }
-            Node field = getField(firstName, resolver);
+            Symbol field = getField(firstName, resolver);
             TypeUsage typeUsage = field.calcType(resolver);
             if (typeUsage.isReferenceTypeUsage()) {
                 TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);

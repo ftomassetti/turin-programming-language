@@ -280,8 +280,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {
                 TypeVariable<? extends Class<?>> typeVariable = clazz.getTypeParameters()[tp];
                 Type parameterType = parameterizedType.getActualTypeArguments()[tp];
-                // TODO in the long run we should use RefernceTypeUsage here
-                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), (TypeUsageNode)toTypeUsage(parameterType));
+                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), toTypeUsage(parameterType));
             }
         }
         return referenceTypeUsage;

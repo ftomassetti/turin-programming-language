@@ -6,6 +6,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
 
@@ -45,7 +46,7 @@ public class AllFieldsImportDeclaration extends ImportDeclaration {
     private Optional<TypeDefinition> typeDefinitionCache;
 
     @Override
-    public Optional<Node> findAmongImported(String name, SymbolResolver resolver) {
+    public Optional<Symbol> findAmongImported(String name, SymbolResolver resolver) {
         lookForTypeDefinition(resolver);
         if (typeDefinitionCache.isPresent() && typeDefinitionCache.get().hasField(name, true)) {
             return Optional.of(typeDefinitionCache.get().getField(QualifiedName.create(name), resolver));

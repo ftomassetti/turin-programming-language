@@ -109,8 +109,7 @@ public class ReferenceTypeUsage implements TypeUsage {
 
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         // TODO perhaps some generic type substitution needs to be done
-        //return getTypeDefinition(resolver).getAllAncestors(resolver);
-        throw new UnsupportedOperationException();
+        return getTypeDefinition(resolver).getAllAncestors(resolver);
     }
 
     @Override
