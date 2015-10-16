@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import me.tomassetti.turin.compiler.ExamplesAst;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -19,11 +20,12 @@ import static org.junit.Assert.*;
 public class TypeDefinitionTest {
 
     private TurinTypeDefinition mangaCharacter;
+    private TurinFile turinFile;
 
     @Before
     public void setup() {
         // define AST
-        TurinFile turinFile = new TurinFile();
+        turinFile = new TurinFile();
 
         NamespaceDefinition namespaceDefinition = new NamespaceDefinition("manga");
 
@@ -53,6 +55,7 @@ public class TypeDefinitionTest {
     @Test
     public void getDirectProperties() {
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         assertEquals(2, mangaCharacter.getDirectProperties(resolver).size());
 
         assertEquals("name", mangaCharacter.getDirectProperties(resolver).get(0).getName());

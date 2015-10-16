@@ -20,6 +20,37 @@ public class FormalParameterSymbol implements FormalParameter {
     }
 
     @Override
+    public String toString() {
+        return "FormalParameterSymbol{" +
+                "name='" + name + '\'' +
+                ", typeUsage=" + typeUsage +
+                ", defaultValue=" + defaultValue +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FormalParameterSymbol)) return false;
+
+        FormalParameterSymbol that = (FormalParameterSymbol) o;
+
+        if (defaultValue != that.defaultValue) return false;
+        if (!name.equals(that.name)) return false;
+        if (!typeUsage.equals(that.typeUsage)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + typeUsage.hashCode();
+        result = 31 * result + (defaultValue ? 1 : 0);
+        return result;
+    }
+
+    @Override
     public boolean hasDefaultValue() {
         return defaultValue;
     }
