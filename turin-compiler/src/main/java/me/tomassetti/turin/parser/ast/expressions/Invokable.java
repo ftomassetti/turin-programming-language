@@ -79,7 +79,7 @@ public abstract class Invokable extends Expression {
     protected abstract List<? extends FormalParameter> formalParameters(SymbolResolver resolver);
 
     protected final List<? extends FormalParameter> defaultParameters(SymbolResolver resolver) {
-        return formalParameters(resolver).stream().filter((p)->p.hasDefaultValue()).collect(Collectors.toList());
+        return formalParameters(resolver).stream().filter((p)->p.hasDefaultValue()).collect(Collectors.<FormalParameter>toList());
     }
 
     protected final boolean hasDefaultParameters(SymbolResolver resolver) {
