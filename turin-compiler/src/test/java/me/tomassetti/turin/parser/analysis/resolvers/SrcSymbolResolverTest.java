@@ -30,6 +30,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
         replayAll();
 
         SymbolResolver symbolResolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, symbolResolver);
 
         Optional<PropertyDefinition> optionalDefinition = srcSymbolResolver.findDefinition(propertyReference);
         assertEquals(true, optionalDefinition.isPresent());
