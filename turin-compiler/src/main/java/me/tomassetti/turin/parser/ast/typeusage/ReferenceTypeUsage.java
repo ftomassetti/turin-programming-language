@@ -281,6 +281,26 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TypeParameterValues)) return false;
+
+            TypeParameterValues that = (TypeParameterValues) o;
+
+            if (!names.equals(that.names)) return false;
+            if (!usages.equals(that.usages)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = usages.hashCode();
+            result = 31 * result + names.hashCode();
+            return result;
+        }
+
+        @Override
         public String toString() {
             return "TypeParameterValues{" +
                     "usages=" + usages +

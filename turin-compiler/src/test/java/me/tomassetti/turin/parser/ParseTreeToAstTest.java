@@ -91,7 +91,14 @@ public class ParseTreeToAstTest {
     public void convertBasicMangaExample() throws IOException {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("basicManga.to");
         TurinParser.TurinFileContext root = new InternalParser().produceParseTree(inputStream);
-        assertEquals(basicMangaAst(), new ParseTreeToAst().toAst(root));
+        TurinFile expectedAst = basicMangaAst();
+        TurinFile actualAst = new ParseTreeToAst().toAst(root);
+        assertEquals(expectedAst.getTopLevelPropertyDefinitions().size(), actualAst.getTopLevelPropertyDefinitions().size());
+        PropertyDefinition expProp = expectedAst.getTopLevelPropertyDefinitions().get(0);
+        PropertyDefinition actProp = actualAst.getTopLevelPropertyDefinitions().get(0);
+        assertEquals(expProp, actProp);
+        assertEquals(expectedAst.getTopLevelPropertyDefinitions(), actualAst.getTopLevelPropertyDefinitions());
+        assertEquals(expectedAst, actualAst);
     }
 
     @Test
