@@ -7,7 +7,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitio
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.util.StringUtils;
 import turin.relations.Relation;
@@ -23,7 +23,7 @@ public class RelationFieldDefinition extends Node {
         if ((type.getParent() instanceof FormalParameterNode) && type.getParent().getParent() == null){
             throw new UnsupportedOperationException();
         }
-        ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+        ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
         return referenceTypeUsage.canBeAssignedTo(type, resolver);
     }
 
@@ -50,13 +50,13 @@ public class RelationFieldDefinition extends Node {
     public TypeUsageNode calcType(SymbolResolver resolver) {
         if (cardinality == Cardinality.SINGLE) {
             List<TypeUsageNode> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
-            ReferenceTypeUsage res = new ReferenceTypeUsage(
+            ReferenceTypeUsageNode res = new ReferenceTypeUsageNode(
                     ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceSingleEndpoint.class, typeParams),
                     typeParams);
             return res;
         } else if (cardinality == Cardinality.MANY) {
             List<TypeUsageNode> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
-            ReferenceTypeUsage res = new ReferenceTypeUsage(
+            ReferenceTypeUsageNode res = new ReferenceTypeUsageNode(
                     ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceMultipleEndpoint.class, typeParams),
                     typeParams);
             return res;

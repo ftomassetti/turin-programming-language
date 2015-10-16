@@ -9,7 +9,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -227,8 +227,8 @@ public class JavassistBasedMethodResolution {
         // TODO consider generic parameters?
         JavassistTypeDefinition firstDef = new JavassistTypeDefinition(firstType);
         JavassistTypeDefinition secondDef = new JavassistTypeDefinition(secondType);
-        TypeUsageNode firstTypeUsage = new ReferenceTypeUsage(firstDef);
-        TypeUsageNode secondTypeUsage = new ReferenceTypeUsage(secondDef);
+        TypeUsageNode firstTypeUsage = new ReferenceTypeUsageNode(firstDef);
+        TypeUsageNode secondTypeUsage = new ReferenceTypeUsageNode(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);
     }
 

@@ -6,7 +6,7 @@ import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 
@@ -49,7 +49,7 @@ public class ArrayTypeUsage implements TypeUsage {
         if (type.isArray()) {
             return componentType.equals(type.asArrayTypeUsage().getComponentType());
         } else {
-            return type.equals(ReferenceTypeUsage.OBJECT);
+            return type.equals(ReferenceTypeUsageNode.OBJECT);
         }
     }
 

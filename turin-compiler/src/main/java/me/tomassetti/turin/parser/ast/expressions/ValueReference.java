@@ -6,8 +6,7 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameterNode;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -37,8 +36,8 @@ public class ValueReference extends Expression {
         if (declaration.isPresent()) {
             if (declaration.get() instanceof Expression) {
                 return ((Expression) declaration.get()).findMethodFor(argsTypes, resolver, staticContext);
-            } else if (declaration.get() instanceof FunctionDefinition) {
-                FunctionDefinition functionDefinition = (FunctionDefinition)declaration.get();
+            } else if (declaration.get() instanceof FunctionDefinitionNode) {
+                FunctionDefinitionNode functionDefinition = (FunctionDefinitionNode)declaration.get();
                 if (functionDefinition.match(argsTypes, resolver)) {
                     return functionDefinition.jvmMethodDefinition(resolver);
                 } else {

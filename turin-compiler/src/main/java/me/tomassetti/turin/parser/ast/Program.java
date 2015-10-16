@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class Program extends Node implements Named, Symbol {
         this.name = name;
         this.statement = statement;
         this.statement.setParent(this);
-        this.formalParameter = new FormalParameterNode(new ArrayTypeUsageNode(ReferenceTypeUsage.STRING), paramName);
+        this.formalParameter = new FormalParameterNode(new ArrayTypeUsageNode(ReferenceTypeUsageNode.STRING), paramName);
         this.formalParameter.parent = this;
         this.paramName = paramName;
     }

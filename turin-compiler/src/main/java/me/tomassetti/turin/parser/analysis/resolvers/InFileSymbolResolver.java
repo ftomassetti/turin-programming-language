@@ -10,11 +10,11 @@ import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.StaticFieldAccess;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -92,7 +92,7 @@ public class InFileSymbolResolver implements SymbolResolver {
 
         Optional<TypeDefinition> typeDefinition = findTypeDefinitionIn(typeName, context, resolver.getRoot());
         if (typeDefinition.isPresent()) {
-            ReferenceTypeUsage ref = new ReferenceTypeUsage(typeDefinition.get());
+            ReferenceTypeUsageNode ref = new ReferenceTypeUsageNode(typeDefinition.get());
             ref.setParent(context);
             return Optional.of(ref);
         } else {
@@ -117,7 +117,7 @@ public class InFileSymbolResolver implements SymbolResolver {
             if (typeDefinition.isPresent()) {
                 return Optional.of(typeDefinition.get());
             }
-            Optional<FunctionDefinition> functionDefinition = typeResolver.resolveAbsoluteFunctionName(name);
+            Optional<FunctionDefinitionNode> functionDefinition = typeResolver.resolveAbsoluteFunctionName(name);
             if (functionDefinition.isPresent()) {
                 return Optional.of(functionDefinition.get());
             }

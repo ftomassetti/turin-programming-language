@@ -323,7 +323,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
             } else if (pt.isPrimitive()) {
                 return PrimitiveTypeUsageNode.getByName(pt.getSimpleName());
             } else {
-                return new ReferenceTypeUsage(new JavassistTypeDefinition(pt));
+                return new ReferenceTypeUsageNode(new JavassistTypeDefinition(pt));
             }
         } catch (NotFoundException e){
             throw new RuntimeException(e);
@@ -335,35 +335,35 @@ public class JavassistTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
         try {
             if (ctClass.getGenericSignature() != null) {
                 SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
-                List<ReferenceTypeUsage> ancestors = new ArrayList<>();
+                List<ReferenceTypeUsageNode> ancestors = new ArrayList<>();
                 if (ctClass.getSuperclass() != null) {
-                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass());
+                    ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass());
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                 }
                 int i = 0;
                 for (CtClass interfaze : ctClass.getInterfaces()) {
                     SignatureAttribute.ClassType genericInterfaze = classSignature.getInterfaces()[i];
-                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+                    ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                     i++;
                 }
                 return ancestors;
             } else {
-                List<ReferenceTypeUsage> ancestors = new ArrayList<>();
+                List<ReferenceTypeUsageNode> ancestors = new ArrayList<>();
                 if (ctClass.getSuperclass() != null) {
-                    ReferenceTypeUsage superTypeDefinition = (ReferenceTypeUsage) toTypeUsage(ctClass.getSuperclass());
+                    ReferenceTypeUsageNode superTypeDefinition = (ReferenceTypeUsageNode) toTypeUsage(ctClass.getSuperclass());
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                 }
                 int i = 0;
                 for (CtClass interfaze : ctClass.getInterfaces()) {
-                    ReferenceTypeUsage superTypeDefinition = (ReferenceTypeUsage)toTypeUsage(interfaze);
+                    ReferenceTypeUsageNode superTypeDefinition = (ReferenceTypeUsageNode)toTypeUsage(interfaze);
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                     i++;
@@ -377,11 +377,11 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private ReferenceTypeUsage toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType) {
+    private ReferenceTypeUsageNode toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType) {
         try {
             SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(clazz.getGenericSignature());
             TypeDefinition typeDefinition = new JavassistTypeDefinition(clazz);
-            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+            ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
             int i=0;
             for (SignatureAttribute.TypeArgument typeArgument : genericClassType.getTypeArguments()) {
                 referenceTypeUsage.getTypeParameterValues().add(classSignature.getParameters()[i].getName(), toTypeUsage(typeArgument.getType()));

@@ -12,13 +12,13 @@ import java.util.List;
 /**
  * Definition of a method in a Turin Type.
  */
-public class TurinTypeContructorDefinition extends InvokableDefinitionNode {
+public class TurinTypeContructorDefinitionNode extends InvokableDefinitionNode {
 
     public Statement getBody() {
         return body;
     }
 
-    public TurinTypeContructorDefinition(List<FormalParameterNode> parameters, BlockStatement body) {
+    public TurinTypeContructorDefinitionNode(List<FormalParameterNode> parameters, BlockStatement body) {
         super(parameters, body, "<init>", new VoidTypeUsageNode());
     }
 

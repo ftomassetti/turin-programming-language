@@ -9,7 +9,7 @@ import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
@@ -89,7 +89,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
         functionName = functionName.replaceAll("/", ".");
         functionName = functionName.replaceAll("\\$", ".");
         functionName += ".";
-        functionName += classFile.getName().substring(FunctionDefinition.CLASS_PREFIX.length());
+        functionName += classFile.getName().substring(FunctionDefinitionNode.CLASS_PREFIX.length());
         functionName = functionName.substring(0, functionName.length() - ".class".length());
         if (functionName.startsWith(".")) {
             functionName = functionName.substring(1);
@@ -112,7 +112,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
     }
 
     @Override
-    public Optional<FunctionDefinition> resolveAbsoluteFunctionName(String typeName) {
+    public Optional<FunctionDefinitionNode> resolveAbsoluteFunctionName(String typeName) {
         if (functionElements.containsKey(typeName)) {
             try {
                 CtClass ctClass = functionElements.get(typeName).toCtClass();
@@ -120,7 +120,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
                     throw new UnsupportedOperationException();
                 }
                 CtMethod invokeMethod = ctClass.getDeclaredMethods()[0];
-                if (!invokeMethod.getName().equals(FunctionDefinition.INVOKE_METHOD_NAME)) {
+                if (!invokeMethod.getName().equals(FunctionDefinitionNode.INVOKE_METHOD_NAME)) {
                     throw new UnsupportedOperationException();
                 }
                 // necessary to get local var names
@@ -138,7 +138,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
                     formalParameters.add(new FormalParameterNode(type, paramName));
                     i++;
                 }
-                FunctionDefinition functionDefinition = new LoadedFunctionDefinition(typeName, returnType, formalParameters);
+                FunctionDefinitionNode functionDefinition = new LoadedFunctionDefinition(typeName, returnType, formalParameters);
                 return Optional.of(functionDefinition);
             } catch (IOException e) {
                 throw new RuntimeException(e);

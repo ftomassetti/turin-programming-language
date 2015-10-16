@@ -13,7 +13,7 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedField;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.Placeholder;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -21,7 +21,6 @@ import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -55,7 +54,7 @@ public class CompilationOfPush {
                 } else {
                     return push(methods.getInstance());
                 }
-            } else if (declaration instanceof FunctionDefinition) {
+            } else if (declaration instanceof FunctionDefinitionNode) {
                 return NoOp.getInstance();
             } else {
                 throw new UnsupportedOperationException(declaration.getClass().getCanonicalName());

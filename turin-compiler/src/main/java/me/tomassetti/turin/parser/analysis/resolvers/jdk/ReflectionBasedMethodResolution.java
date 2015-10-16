@@ -10,7 +10,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.typesystem.TypeUsage;
-import me.tomassetti.turin.typesystem.TypeVariableTypeUsage;
+import me.tomassetti.turin.typesystem.TypeVariableUsage;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -80,13 +80,13 @@ class ReflectionBasedMethodResolution {
                 return new ArrayTypeUsageNode(toTypeUsage(clazz.getComponentType(), typeVariables));
             }
             TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
-            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+            ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
             return referenceTypeUsage;
         } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
             List<TypeUsageNode> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt, typeVariables)).collect(Collectors.toList());
-            return new ReferenceTypeUsage(typeDefinition, typeParams);
+            return new ReferenceTypeUsageNode(typeDefinition, typeParams);
         } else if (type instanceof TypeVariable) {
             TypeVariable typeVariable = (TypeVariable)type;
             return toTypeUsage(typeVariable, typeVariables);
@@ -96,7 +96,7 @@ class ReflectionBasedMethodResolution {
     }
 
     public static TypeUsageNode toTypeUsage(TypeVariable typeVariable, Map<String, TypeUsageNode> typeVariables) {
-        TypeVariableTypeUsage.GenericDeclaration genericDeclaration = null;
+        TypeVariableUsage.GenericDeclaration genericDeclaration = null;
         List<TypeUsageNode> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b, typeVariables)).collect(Collectors.toList());
         if (typeVariable.getGenericDeclaration() instanceof Class) {
             if (typeVariables.containsKey(typeVariable.getName())) {
@@ -104,15 +104,15 @@ class ReflectionBasedMethodResolution {
             } else {
                 Class c = (Class)typeVariable.getGenericDeclaration();
                 //throw new UnsolvedSymbolException("Cannot solve type variable " + typeVariable.getName());
-                return new TypeVariableTypeUsageNode(TypeVariableTypeUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
+                return new TypeVariableTypeNode(TypeVariableUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
             }
         } else if (typeVariable.getGenericDeclaration() instanceof Method) {
             Method method = (Method)typeVariable.getGenericDeclaration();
-            genericDeclaration = TypeVariableTypeUsage.GenericDeclaration.onMethod(method.getDeclaringClass().getCanonicalName(), ReflectionTypeDefinitionFactory.toMethodDefinition(method).getDescriptor());
+            genericDeclaration = TypeVariableUsage.GenericDeclaration.onMethod(method.getDeclaringClass().getCanonicalName(), ReflectionTypeDefinitionFactory.toMethodDefinition(method).getDescriptor());
         } else {
             throw new UnsupportedOperationException(typeVariable.getGenericDeclaration().getClass().getCanonicalName());
         }
-        return new TypeVariableTypeUsageNode(genericDeclaration, typeVariable.getName(), bounds);
+        return new TypeVariableTypeNode(genericDeclaration, typeVariable.getName(), bounds);
     }
 
     public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
@@ -271,8 +271,8 @@ class ReflectionBasedMethodResolution {
         // TODO consider generic parameters?
         ReflectionBasedTypeDefinition firstDef = new ReflectionBasedTypeDefinition(firstType);
         ReflectionBasedTypeDefinition secondDef = new ReflectionBasedTypeDefinition(secondType);
-        TypeUsageNode firstTypeUsage = new ReferenceTypeUsage(firstDef);
-        TypeUsageNode secondTypeUsage = new ReferenceTypeUsage(secondDef);
+        TypeUsageNode firstTypeUsage = new ReferenceTypeUsageNode(firstDef);
+        TypeUsageNode secondTypeUsage = new ReferenceTypeUsageNode(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);
     }
 

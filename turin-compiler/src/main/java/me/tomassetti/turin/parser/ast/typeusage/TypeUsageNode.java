@@ -35,7 +35,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         } else if (signature.startsWith("L") && signature.endsWith(";")) {
             String typeName = signature.substring(1, signature.length() - 1);
             typeName = typeName.replaceAll("/", ".");
-            return new ReferenceTypeUsage(typeName, true);
+            return new ReferenceTypeUsageNode(typeName, true);
         } else {
             throw new UnsupportedOperationException(signature);
         }
@@ -53,7 +53,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     @Override
-    public ReferenceTypeUsage asReferenceTypeUsage() {
+    public ReferenceTypeUsageNode asReferenceTypeUsage() {
         throw new UnsupportedOperationException();
     }
 

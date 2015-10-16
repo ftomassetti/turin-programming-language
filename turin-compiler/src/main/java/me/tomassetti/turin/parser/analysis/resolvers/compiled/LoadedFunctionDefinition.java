@@ -3,13 +3,13 @@ package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 
-public class LoadedFunctionDefinition extends FunctionDefinition {
+public class LoadedFunctionDefinition extends FunctionDefinitionNode {
 
     private String qualifiedName;
 

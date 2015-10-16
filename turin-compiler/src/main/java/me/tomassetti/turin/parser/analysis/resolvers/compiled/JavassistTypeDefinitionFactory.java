@@ -83,7 +83,7 @@ public class JavassistTypeDefinitionFactory {
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsageNode.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsage(type.getName(), true);
+            return new ReferenceTypeUsageNode(type.getName(), true);
         }
     }
 

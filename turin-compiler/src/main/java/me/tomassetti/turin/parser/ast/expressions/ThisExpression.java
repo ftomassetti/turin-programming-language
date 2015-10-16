@@ -4,7 +4,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 
 import java.util.Collections;
 
@@ -25,9 +25,9 @@ public class ThisExpression extends Expression {
     }
 
     @Override
-    public ReferenceTypeUsage calcType(SymbolResolver resolver) {
+    public ReferenceTypeUsageNode calcType(SymbolResolver resolver) {
         TurinTypeDefinition turinTypeDefinition = getParentOfType(TurinTypeDefinition.class);
-        return new ReferenceTypeUsage(turinTypeDefinition);
+        return new ReferenceTypeUsageNode(turinTypeDefinition);
     }
 
     @Override

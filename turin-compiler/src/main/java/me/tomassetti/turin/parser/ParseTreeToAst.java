@@ -8,9 +8,9 @@ import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.imports.*;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
-import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinition;
-import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinitionNode;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
@@ -58,8 +58,8 @@ class ParseTreeToAst {
                 turinFile.add((PropertyDefinition) memberNode);
             } else if (memberNode instanceof Program) {
                 turinFile.add((Program) memberNode);
-            } else if (memberNode instanceof FunctionDefinition) {
-                turinFile.add((FunctionDefinition)memberNode);
+            } else if (memberNode instanceof FunctionDefinitionNode) {
+                turinFile.add((FunctionDefinitionNode)memberNode);
             } else if (memberNode instanceof RelationDefinition) {
                 turinFile.add((RelationDefinition)memberNode);
             } else {
@@ -159,9 +159,9 @@ class ParseTreeToAst {
         return relationFieldDefinition;
     }
 
-    private FunctionDefinition toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
+    private FunctionDefinitionNode toAst(TurinParser.TopLevelFunctionDeclarationContext ctx) {
         List<FormalParameterNode> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        FunctionDefinition functionDefinition = new FunctionDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        FunctionDefinitionNode functionDefinition = new FunctionDefinitionNode(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(functionDefinition, ctx);
         ctx.annotations.forEach((anCtx)->{
             AnnotationUsage annotationUsage = toAst(anCtx);
@@ -195,10 +195,10 @@ class ParseTreeToAst {
                 typeDefinition.add((PropertyReference)memberNode);
             } else if (memberNode instanceof PropertyDefinition) {
                 typeDefinition.add((PropertyDefinition) memberNode);
-            } else if (memberNode instanceof TurinTypeMethodDefinition) {
-                typeDefinition.add((TurinTypeMethodDefinition) memberNode);
-            } else if (memberNode instanceof TurinTypeContructorDefinition) {
-                typeDefinition.add((TurinTypeContructorDefinition) memberNode);
+            } else if (memberNode instanceof TurinTypeMethodDefinitionNode) {
+                typeDefinition.add((TurinTypeMethodDefinitionNode) memberNode);
+            } else if (memberNode instanceof TurinTypeContructorDefinitionNode) {
+                typeDefinition.add((TurinTypeContructorDefinitionNode) memberNode);
             } else {
                 throw new UnsupportedOperationException();
             }
@@ -230,7 +230,7 @@ class ParseTreeToAst {
 
     private Node toAst(TurinParser.MethodDefinitionContext ctx) {
         List<FormalParameterNode> params = ctx.params.stream().map((p) -> toAst(p)).collect(Collectors.toList());
-        TurinTypeMethodDefinition methodDefinition = new TurinTypeMethodDefinition(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
+        TurinTypeMethodDefinitionNode methodDefinition = new TurinTypeMethodDefinitionNode(idText(ctx.name), toAst(ctx.type), params, toAst(ctx.methodBody()));
         getPositionFrom(methodDefinition, ctx);
         return methodDefinition;
     }
@@ -241,7 +241,7 @@ class ParseTreeToAst {
         List<Statement> bodyStatements = ctx.statements.stream().map((s) -> toAst(s)).collect(Collectors.toList());
         bodyStatements.add(new ExpressionStatement(new SuperInvokation(superParams)));
         BlockStatement body = new BlockStatement(bodyStatements);
-        TurinTypeContructorDefinition constructorDefinition = new TurinTypeContructorDefinition(params, body);
+        TurinTypeContructorDefinitionNode constructorDefinition = new TurinTypeContructorDefinitionNode(params, body);
         getPositionFrom(constructorDefinition, ctx);
         return constructorDefinition;
     }
@@ -298,7 +298,7 @@ class ParseTreeToAst {
 
     private TypeUsageNode toAst(TurinParser.TypeUsageContext type) {
         if (type.ref != null) {
-            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(type.ref.getText());
+            ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(type.ref.getText());
             getPositionFrom(referenceTypeUsage, type);
             return referenceTypeUsage;
         } else if (type.primitiveType != null) {

@@ -12,13 +12,13 @@ import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.invokables.InvokableDefinitionNode;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.StringLiteral;
-import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinition;
-import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinitionNode;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinitionNode;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
@@ -77,8 +77,8 @@ public class Compilation {
                 classFileDefinitions.addAll(compile((TurinTypeDefinition)node));
             } else if (node instanceof Program) {
                 classFileDefinitions.addAll(compile((Program) node));
-            } else if (node instanceof FunctionDefinition) {
-                classFileDefinitions.addAll(compile((FunctionDefinition) node, turinFile.getNamespaceDefinition()));
+            } else if (node instanceof FunctionDefinitionNode) {
+                classFileDefinitions.addAll(compile((FunctionDefinitionNode) node, turinFile.getNamespaceDefinition()));
             } else if (node instanceof RelationDefinition) {
                 classFileDefinitions.addAll(compile((RelationDefinition) node, turinFile.getNamespaceDefinition()));
             }
@@ -257,8 +257,8 @@ public class Compilation {
         mv.visitEnd();
     }
 
-    private List<ClassFileDefinition> compile(FunctionDefinition functionDefinition, NamespaceDefinition namespaceDefinition) {
-        String canonicalClassName = namespaceDefinition.getName() + "." + FunctionDefinition.CLASS_PREFIX + functionDefinition.getName();
+    private List<ClassFileDefinition> compile(FunctionDefinitionNode functionDefinition, NamespaceDefinition namespaceDefinition) {
+        String canonicalClassName = namespaceDefinition.getName() + "." + FunctionDefinitionNode.CLASS_PREFIX + functionDefinition.getName();
         String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
@@ -387,11 +387,11 @@ public class Compilation {
         return ImmutableList.of(endClass(typeDefinition.getQualifiedName()));
     }
 
-    private void generateTurinTypeMethod(TurinTypeMethodDefinition methodDefinition) {
+    private void generateTurinTypeMethod(TurinTypeMethodDefinitionNode methodDefinition) {
         generateInvokable(methodDefinition, methodDefinition.getName(), false);
     }
 
-    private void generateTurinTypeConstructor(TurinTypeContructorDefinition methodDefinition) {
+    private void generateTurinTypeConstructor(TurinTypeContructorDefinitionNode methodDefinition) {
         generateInvokable(methodDefinition, "<init>", false);
     }
 
@@ -492,7 +492,7 @@ public class Compilation {
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
         TypeUsage pieceType = piece.calcType(resolver);
-        if (pieceType.sameType(ReferenceTypeUsage.STRING, resolver)) {
+        if (pieceType.sameType(ReferenceTypeUsageNode.STRING, resolver)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isReference()) {

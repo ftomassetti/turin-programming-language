@@ -4,11 +4,10 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
@@ -43,7 +42,7 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    default ReferenceTypeUsage asReferenceTypeUsage() {
+    default ReferenceTypeUsageNode asReferenceTypeUsage() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

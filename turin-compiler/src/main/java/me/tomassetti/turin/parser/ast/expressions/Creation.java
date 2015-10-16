@@ -4,10 +4,9 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 
@@ -71,7 +70,7 @@ public class Creation extends Invokable {
     }
 
     public Creation(String typeName, List<ActualParam> actualParams) {
-        this(new ReferenceTypeUsage(typeName), actualParams);
+        this(new ReferenceTypeUsageNode(typeName), actualParams);
     }
 
     @Override

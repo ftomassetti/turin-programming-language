@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 /**
@@ -54,6 +54,6 @@ public class StringLiteral extends Expression {
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        return ReferenceTypeUsage.STRING;
+        return ReferenceTypeUsageNode.STRING;
     }
 }

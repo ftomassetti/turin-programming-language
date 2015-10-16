@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.symbols.Symbol;
@@ -122,8 +122,8 @@ public class TurinFile extends Node {
         return topNodes.stream().filter((n)-> (n instanceof TurinTypeDefinition)).map((n) -> (TurinTypeDefinition)n).collect(Collectors.toList());
     }
 
-    public List<FunctionDefinition> getTopLevelFunctionDefinitions() {
-        return topNodes.stream().filter((n)-> (n instanceof FunctionDefinition)).map((n) -> (FunctionDefinition)n).collect(Collectors.toList());
+    public List<FunctionDefinitionNode> getTopLevelFunctionDefinitions() {
+        return topNodes.stream().filter((n)-> (n instanceof FunctionDefinitionNode)).map((n) -> (FunctionDefinitionNode)n).collect(Collectors.toList());
     }
 
     public List<PropertyDefinition> getTopLevelPropertyDefinitions() {
@@ -142,7 +142,7 @@ public class TurinFile extends Node {
                 return Optional.of(imported.get());
             }
         }
-        for (FunctionDefinition functionDefinition : getTopLevelFunctionDefinitions()) {
+        for (FunctionDefinitionNode functionDefinition : getTopLevelFunctionDefinitions()) {
             if (functionDefinition.getName().equals(name)) {
                 return Optional.of(functionDefinition);
             }
@@ -166,7 +166,7 @@ public class TurinFile extends Node {
         return resolver.getRoot().findSymbol(qName, null);
     }
 
-    public void add(FunctionDefinition functionDefinition) {
+    public void add(FunctionDefinitionNode functionDefinition) {
         topNodes.add(functionDefinition);
         functionDefinition.parent = this;
     }

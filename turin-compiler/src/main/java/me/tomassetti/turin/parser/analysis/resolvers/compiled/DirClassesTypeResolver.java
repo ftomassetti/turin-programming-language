@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class DirClassesTypeResolver extends AbstractCompiledTypeResolver<DirClas
             }
         } else if (file.isFile()) {
             if (file.getName().endsWith(".class")) {
-                if (file.getName().startsWith(FunctionDefinition.CLASS_PREFIX)) {
+                if (file.getName().startsWith(FunctionDefinitionNode.CLASS_PREFIX)) {
                     String name = classFileToFunctionName(file, dir);
                     if (!JvmNameUtils.isSimpleName(name)) {
                         packages.add(JvmNameUtils.getPackagePart(name));

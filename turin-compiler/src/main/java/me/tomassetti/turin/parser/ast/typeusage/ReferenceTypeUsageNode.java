@@ -7,7 +7,6 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -22,27 +21,27 @@ import java.util.stream.Collectors;
 /**
  * It could represent also a reference to a Type Variable.
  */
-public class ReferenceTypeUsage extends TypeUsageNode {
+public class ReferenceTypeUsageNode extends TypeUsageNode {
 
-    public static final ReferenceTypeUsage OBJECT = new ReferenceTypeUsage("java.lang.Object");
-    public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage("java.lang.String");
+    public static final ReferenceTypeUsageNode OBJECT = new ReferenceTypeUsageNode("java.lang.Object");
+    public static final ReferenceTypeUsageNode STRING = new ReferenceTypeUsageNode("java.lang.String");
     private List<TypeUsage> typeParams;
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private String name;
     private boolean fullyQualifiedName;
     private TypeDefinition cachedTypeDefinition;
 
-    public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsageNode> typeParams) {
+    public ReferenceTypeUsageNode(TypeDefinition typeDefinition, List<TypeUsageNode> typeParams) {
         this(typeDefinition.getQualifiedName(), false);
         this.typeParams = new ArrayList<>(typeParams);
         this.cachedTypeDefinition = typeDefinition;
     }
 
-    public ReferenceTypeUsage(String name) {
+    public ReferenceTypeUsageNode(String name) {
         this(name, false);
     }
 
-    public ReferenceTypeUsage(String name, boolean fullyQualifiedName) {
+    public ReferenceTypeUsageNode(String name, boolean fullyQualifiedName) {
         if (JvmNameUtils.isPrimitiveTypeName(name)) {
             throw new IllegalArgumentException(name);
         }
@@ -54,7 +53,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         this.fullyQualifiedName = fullyQualifiedName;
     }
 
-    public ReferenceTypeUsage(TypeDefinition td) {
+    public ReferenceTypeUsageNode(TypeDefinition td) {
         this(td.getQualifiedName(), true);
         this.cachedTypeDefinition = td;
     }
@@ -87,9 +86,9 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ReferenceTypeUsage)) return false;
+        if (!(o instanceof ReferenceTypeUsageNode)) return false;
 
-        ReferenceTypeUsage that = (ReferenceTypeUsage) o;
+        ReferenceTypeUsageNode that = (ReferenceTypeUsageNode) o;
 
         if (fullyQualifiedName != that.fullyQualifiedName) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
@@ -152,7 +151,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public ReferenceTypeUsage asReferenceTypeUsage() {
+    public ReferenceTypeUsageNode asReferenceTypeUsage() {
         return this;
     }
 
@@ -161,7 +160,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }
-        ReferenceTypeUsage other = (ReferenceTypeUsage)type;
+        ReferenceTypeUsageNode other = (ReferenceTypeUsageNode)type;
         if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
             return true;
         }
@@ -173,7 +172,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         return false;
     }
 
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
         // TODO perhaps some generic type substitution needs to be done
         return getTypeDefinition(resolver).getAllAncestors(resolver);
     }
@@ -219,7 +218,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
         }
         List<TypeUsage> replacedParams = this.typeParams.stream().map((tp)->tp.replaceTypeVariables(typeParams)).collect(Collectors.toList());
         if (!replacedParams.equals(this.typeParams)) {
-            ReferenceTypeUsage copy = (ReferenceTypeUsage) this.copy();
+            ReferenceTypeUsageNode copy = (ReferenceTypeUsageNode) this.copy();
             copy.typeParams = replacedParams;
             return copy;
         } else {
@@ -246,7 +245,7 @@ public class ReferenceTypeUsage extends TypeUsageNode {
 
     @Override
     public TypeUsageNode copy() {
-        ReferenceTypeUsage copy = new ReferenceTypeUsage(name);
+        ReferenceTypeUsageNode copy = new ReferenceTypeUsageNode(name);
         copy.parent = this.parent;
         copy.cachedTypeDefinition = this.cachedTypeDefinition;
         copy.fullyQualifiedName = this.fullyQualifiedName;

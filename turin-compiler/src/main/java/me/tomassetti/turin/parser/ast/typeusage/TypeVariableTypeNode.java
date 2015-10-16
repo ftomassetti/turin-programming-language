@@ -1,12 +1,11 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.typesystem.TypeUsage;
-import me.tomassetti.turin.typesystem.TypeVariableTypeUsage;
+import me.tomassetti.turin.typesystem.TypeVariableUsage;
 
 import java.util.List;
 
-public class TypeVariableTypeUsageNode extends TypeUsageWrapperNode {
+public class TypeVariableTypeNode extends TypeUsageWrapperNode {
 
     @Override
     public TypeUsageNode copy() {
@@ -15,10 +14,10 @@ public class TypeVariableTypeUsageNode extends TypeUsageWrapperNode {
 
     private String name;
     private List<TypeUsageNode> bounds;
-    private TypeVariableTypeUsage.GenericDeclaration genericDeclaration;
+    private TypeVariableUsage.GenericDeclaration genericDeclaration;
 
-    public TypeVariableTypeUsageNode(TypeVariableTypeUsage.GenericDeclaration genericDeclaration, String name, List<TypeUsageNode> bounds) {
-        super(new TypeVariableTypeUsage(genericDeclaration, name, bounds));
+    public TypeVariableTypeNode(TypeVariableUsage.GenericDeclaration genericDeclaration, String name, List<TypeUsageNode> bounds) {
+        super(new TypeVariableUsage(genericDeclaration, name, bounds));
         this.name = name;
         this.genericDeclaration = genericDeclaration;
         this.bounds = bounds;

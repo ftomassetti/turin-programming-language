@@ -2,14 +2,11 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,24 +22,24 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     private List<PrimitiveTypeUsageNode> promotionsTypes;
 
     public static PrimitiveTypeUsageNode BOOLEAN = new PrimitiveTypeUsageNode("boolean", new JvmType("Z"),
-            new ReferenceTypeUsage(Boolean.class.getCanonicalName()));
+            new ReferenceTypeUsageNode(Boolean.class.getCanonicalName()));
     public static PrimitiveTypeUsageNode CHAR = new PrimitiveTypeUsageNode("char",  new JvmType("C"),
-            new ReferenceTypeUsage(Character.class.getCanonicalName()));
+            new ReferenceTypeUsageNode(Character.class.getCanonicalName()));
     public static PrimitiveTypeUsageNode LONG = new PrimitiveTypeUsageNode("long",  new JvmType("J"),
-            new ReferenceTypeUsage(Long.class.getCanonicalName()));
+            new ReferenceTypeUsageNode(Long.class.getCanonicalName()));
     public static PrimitiveTypeUsageNode INT = new PrimitiveTypeUsageNode("int",  new JvmType("I"),
-            new ReferenceTypeUsage(Integer.class.getCanonicalName()),
+            new ReferenceTypeUsageNode(Integer.class.getCanonicalName()),
             ImmutableList.of(LONG));
     public static PrimitiveTypeUsageNode SHORT = new PrimitiveTypeUsageNode("short",  new JvmType("S"),
-            new ReferenceTypeUsage(Short.class.getCanonicalName()),
+            new ReferenceTypeUsageNode(Short.class.getCanonicalName()),
             ImmutableList.of(INT, LONG));
     public static PrimitiveTypeUsageNode BYTE = new PrimitiveTypeUsageNode("byte",  new JvmType("B"),
-            new ReferenceTypeUsage(Byte.class.getCanonicalName()),
+            new ReferenceTypeUsageNode(Byte.class.getCanonicalName()),
             ImmutableList.of(SHORT, INT, LONG));
     public static PrimitiveTypeUsageNode DOUBLE = new PrimitiveTypeUsageNode("double",  new JvmType("D"),
-            new ReferenceTypeUsage(Double.class.getCanonicalName()));
+            new ReferenceTypeUsageNode(Double.class.getCanonicalName()));
     public static PrimitiveTypeUsageNode FLOAT = new PrimitiveTypeUsageNode("float",  new JvmType("F"),
-            new ReferenceTypeUsage(Float.class.getCanonicalName()),
+            new ReferenceTypeUsageNode(Float.class.getCanonicalName()),
             ImmutableList.of(DOUBLE));
     public static List<PrimitiveTypeUsageNode> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.TypeIdentifier;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 
@@ -30,7 +30,7 @@ public class CatchClause extends Node implements Symbol {
 
     @Override
     public TypeUsageNode calcType(SymbolResolver resolver) {
-        return new ReferenceTypeUsage(exceptionType.resolve(resolver));
+        return new ReferenceTypeUsageNode(exceptionType.resolve(resolver));
     }
 
     public CatchClause(TypeIdentifier exceptionType, String variableName, BlockStatement body) {

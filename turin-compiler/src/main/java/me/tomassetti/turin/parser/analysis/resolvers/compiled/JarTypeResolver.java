@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers.compiled;
 
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class JarTypeResolver extends AbstractCompiledTypeResolver<JarClasspathEl
         JarEntry entry = null;
         for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); entry = e.nextElement()) {
             if (entry != null && !entry.isDirectory() && entry.getName().endsWith(".class")) {
-                if (file.getName().startsWith(FunctionDefinition.CLASS_PREFIX)) {
+                if (file.getName().startsWith(FunctionDefinitionNode.CLASS_PREFIX)) {
                     String name = classFileToFunctionName(entry.getName());
                     if (!JvmNameUtils.isSimpleName(name)) {
                         packages.add(JvmNameUtils.getPackagePart(name));
@@ -55,7 +55,7 @@ public class JarTypeResolver extends AbstractCompiledTypeResolver<JarClasspathEl
 
         int index = functionName.lastIndexOf('.');
         // remove the 'Function_' prefix
-        functionName = functionName.substring(0, index) + functionName.substring(index + FunctionDefinition.CLASS_PREFIX.length());
+        functionName = functionName.substring(0, index) + functionName.substring(index + FunctionDefinitionNode.CLASS_PREFIX.length());
 
         return functionName;
     }

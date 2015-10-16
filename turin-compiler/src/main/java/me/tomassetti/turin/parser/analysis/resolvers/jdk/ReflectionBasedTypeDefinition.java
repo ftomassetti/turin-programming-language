@@ -242,17 +242,17 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
-        List<ReferenceTypeUsage> ancestors = new ArrayList<>();
+    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
+        List<ReferenceTypeUsageNode> ancestors = new ArrayList<>();
         if (clazz.getSuperclass() != null) {
-            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
+            ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
             ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
         int i = 0;
         for (Class<?> interfaze : clazz.getInterfaces()) {
             Type genericInterfaze = clazz.getGenericInterfaces()[i];
-            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+            ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
             ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
             i++;
@@ -270,9 +270,9 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return !clazz.isInterface() && !clazz.isEnum() && !clazz.isAnnotation() && !clazz.isArray() && !clazz.isPrimitive();
     }
 
-    private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
+    private ReferenceTypeUsageNode toReferenceTypeUsage(Class<?> clazz, Type type) {
         TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
-        ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
+        ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType)type;
             for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {

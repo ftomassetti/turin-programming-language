@@ -15,11 +15,11 @@ import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstruct
 import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinition;
-import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinition;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeContructorDefinitionNode;
+import me.tomassetti.turin.parser.ast.invokables.TurinTypeMethodDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -39,10 +39,10 @@ public class TurinTypeDefinition extends TypeDefinition {
 
     private List<AnnotationUsage> annotations = new ArrayList<>();
 
-    public List<TurinTypeContructorDefinition> getExplicitConstructors() {
+    public List<TurinTypeContructorDefinitionNode> getExplicitConstructors() {
         return members.stream()
-                .filter((m) -> m instanceof TurinTypeContructorDefinition)
-                .map((m) -> (TurinTypeContructorDefinition) m)
+                .filter((m) -> m instanceof TurinTypeContructorDefinitionNode)
+                .map((m) -> (TurinTypeContructorDefinitionNode) m)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +63,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         }
 
         if (getExplicitConstructors().size() > 1) {
-            for (TurinTypeContructorDefinition contructorDefinition : getExplicitConstructors()) {
+            for (TurinTypeContructorDefinitionNode contructorDefinition : getExplicitConstructors()) {
                 errorCollector.recordSemanticError(contructorDefinition.getPosition(), "At most one explicit constructor can be defined");
             }
             return false;
@@ -201,7 +201,7 @@ public class TurinTypeDefinition extends TypeDefinition {
         constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
     }
 
-    private void initializeExplicitConstructor(TurinTypeContructorDefinition constructor, SymbolResolver resolver) {
+    private void initializeExplicitConstructor(TurinTypeContructorDefinitionNode constructor, SymbolResolver resolver) {
         List<? extends FormalParameter> allParams = constructor.getParameters();
         List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.<FormalParameter>toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
@@ -304,14 +304,14 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
         if (getBaseType().isPresent()) {
-            List<ReferenceTypeUsage> res = new ArrayList<>();
+            List<ReferenceTypeUsageNode> res = new ArrayList<>();
             res.add(getBaseType().get().asReferenceTypeUsage());
             res.addAll(getBaseType().get().asReferenceTypeUsage().getAllAncestors(resolver));
             return res;
         }
-        return ImmutableList.of(ReferenceTypeUsage.OBJECT);
+        return ImmutableList.of(ReferenceTypeUsageNode.OBJECT);
     }
 
     @Override
@@ -415,7 +415,7 @@ public class TurinTypeDefinition extends TypeDefinition {
      * Does it override the equals method defined in Object?
      */
     public boolean defineMethodEquals(SymbolResolver resolver) {
-        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT), resolver);
+        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsageNode.OBJECT), resolver);
     }
 
     private boolean isDefiningMethod(String name, List<TypeUsageNode> paramTypes, SymbolResolver resolver) {
@@ -453,11 +453,11 @@ public class TurinTypeDefinition extends TypeDefinition {
         return properties;
     }
 
-    public List<TurinTypeMethodDefinition> getDirectMethods() {
-        List<TurinTypeMethodDefinition> methods = new ArrayList<>();
+    public List<TurinTypeMethodDefinitionNode> getDirectMethods() {
+        List<TurinTypeMethodDefinitionNode> methods = new ArrayList<>();
         for (Node member : members) {
-            if (member instanceof TurinTypeMethodDefinition) {
-                methods.add((TurinTypeMethodDefinition)member);
+            if (member instanceof TurinTypeMethodDefinitionNode) {
+                methods.add((TurinTypeMethodDefinitionNode)member);
             }
         }
         return methods;
@@ -479,12 +479,12 @@ public class TurinTypeDefinition extends TypeDefinition {
         return getDirectProperties(resolver);
     }
 
-    public void add(TurinTypeMethodDefinition methodDefinition) {
+    public void add(TurinTypeMethodDefinitionNode methodDefinition) {
         members.add(methodDefinition);
         methodDefinition.parent = this;
     }
 
-    public void add(TurinTypeContructorDefinition contructorDefinition) {
+    public void add(TurinTypeContructorDefinitionNode contructorDefinition) {
         members.add(contructorDefinition);
         contructorDefinition.parent = this;
     }

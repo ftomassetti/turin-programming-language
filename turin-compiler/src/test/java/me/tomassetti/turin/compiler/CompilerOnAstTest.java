@@ -10,7 +10,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,7 +31,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
+        ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());

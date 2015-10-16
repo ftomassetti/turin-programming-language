@@ -5,7 +5,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -22,14 +22,14 @@ public class ReflectionBasedTypeDefinitionTest {
     public void getAllAncestorsOfString(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
-        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
+        List<ReferenceTypeUsageNode> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(4, ancestors.size());
         Set<String> names = ancestors.stream().map((a)->a.asReferenceTypeUsage().getQualifiedName(resolver)).collect(Collectors.toSet());
         assertTrue(names.contains(Object.class.getCanonicalName()));
         assertTrue(names.contains(Serializable.class.getCanonicalName()));
         assertTrue(names.contains(CharSequence.class.getCanonicalName()));
         assertTrue(names.contains(Comparable.class.getCanonicalName()));
-        for (ReferenceTypeUsage ancestor : ancestors) {
+        for (ReferenceTypeUsageNode ancestor : ancestors) {
             if (ancestor.getQualifiedName(resolver).equals(Comparable.class.getCanonicalName())) {
                 assertEquals(1, ancestor.getTypeParameterValues().getInOrder().size());
                 assertEquals("java.lang.String", ancestor.getTypeParameterValues().getInOrder().get(0).asReferenceTypeUsage().getQualifiedName(resolver));
@@ -41,7 +41,7 @@ public class ReflectionBasedTypeDefinitionTest {
     public void getAllAncestorsOfObject(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
-        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
+        List<ReferenceTypeUsageNode> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(0, ancestors.size());
     }
 
@@ -49,7 +49,7 @@ public class ReflectionBasedTypeDefinitionTest {
     public void getAllAncestorsOfSerializable(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
-        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
+        List<ReferenceTypeUsageNode> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(0, ancestors.size());
     }
 

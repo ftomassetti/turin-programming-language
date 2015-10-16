@@ -31,7 +31,7 @@ public class ReferenceTypeUsageTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
+        ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
@@ -57,14 +57,14 @@ public class ReferenceTypeUsageTest {
     @Test
     public void isInterfaceNegativeCase() {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
-        ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
+        ReferenceTypeUsageNode typeUsage = new ReferenceTypeUsageNode(typeDefinition);
         assertEquals(false, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }
 
     @Test
     public void isInterfacePositiveCase() {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
-        ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
+        ReferenceTypeUsageNode typeUsage = new ReferenceTypeUsageNode(typeDefinition);
         assertEquals(true, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }
 

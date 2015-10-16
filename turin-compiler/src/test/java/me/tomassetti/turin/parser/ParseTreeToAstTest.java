@@ -12,7 +12,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.ExpressionStatement;
 import me.tomassetti.turin.parser.ast.statements.VariableDeclaration;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class ParseTreeToAstTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
+        ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
@@ -57,7 +57,7 @@ public class ParseTreeToAstTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
+        ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());

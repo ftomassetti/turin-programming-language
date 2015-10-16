@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class FunctionDefinition extends InvokableDefinitionNode implements Named, Symbol {
+public class FunctionDefinitionNode extends InvokableDefinitionNode implements Named, Symbol {
 
     public static final String CLASS_PREFIX = "Function_";
     public static final String INVOKE_METHOD_NAME = "invoke";
@@ -46,7 +46,7 @@ public class FunctionDefinition extends InvokableDefinitionNode implements Named
         return children;
     }
 
-    public FunctionDefinition(String name, TypeUsageNode returnType, List<FormalParameterNode> parameters, Statement body) {
+    public FunctionDefinitionNode(String name, TypeUsageNode returnType, List<FormalParameterNode> parameters, Statement body) {
         super(parameters, body, name, returnType);
     }
 

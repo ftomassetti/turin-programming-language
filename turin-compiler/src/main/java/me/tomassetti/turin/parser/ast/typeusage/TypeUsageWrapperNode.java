@@ -36,7 +36,7 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final ReferenceTypeUsage asReferenceTypeUsage() {
+    public final ReferenceTypeUsageNode asReferenceTypeUsage() {
         return typeUsage().asReferenceTypeUsage();
     }
 

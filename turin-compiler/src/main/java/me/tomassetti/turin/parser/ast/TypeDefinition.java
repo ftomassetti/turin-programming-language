@@ -14,7 +14,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
@@ -182,7 +182,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
     // Hierarchy
     //
 
-    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
+    public abstract List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver);
 
     public abstract boolean isInterface();
 

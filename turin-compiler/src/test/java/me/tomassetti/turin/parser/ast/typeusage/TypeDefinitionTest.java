@@ -29,7 +29,7 @@ public class TypeDefinitionTest {
 
         turinFile.setNameSpace(namespaceDefinition);
 
-        ReferenceTypeUsage stringType = new ReferenceTypeUsage("String");
+        ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
         BasicTypeUsage intType = BasicTypeUsage.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
@@ -56,7 +56,7 @@ public class TypeDefinitionTest {
         assertEquals(2, mangaCharacter.getDirectProperties(resolver).size());
 
         assertEquals("name", mangaCharacter.getDirectProperties(resolver).get(0).getName());
-        assertTrue(new ReferenceTypeUsage("String").sameType(mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage(), resolver));
+        assertTrue(new ReferenceTypeUsageNode("String").sameType(mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage(), resolver));
 
         assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
         assertTrue(mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage().sameType(BasicTypeUsage.UINT, resolver));

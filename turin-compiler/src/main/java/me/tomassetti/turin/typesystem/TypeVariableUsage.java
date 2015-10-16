@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TypeVariableTypeUsage implements TypeUsage {
+public class TypeVariableUsage implements TypeUsage {
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
@@ -63,7 +63,7 @@ public class TypeVariableTypeUsage implements TypeUsage {
     private List<TypeUsage> bounds;
     private GenericDeclaration genericDeclaration;
 
-    public TypeVariableTypeUsage(GenericDeclaration genericDeclaration, String name, List<? extends TypeUsage> bounds) {
+    public TypeVariableUsage(GenericDeclaration genericDeclaration, String name, List<? extends TypeUsage> bounds) {
         this.name = name;
         this.genericDeclaration = genericDeclaration;
         this.bounds = new ArrayList<>(bounds);

@@ -4,10 +4,10 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
-import me.tomassetti.turin.parser.ast.invokables.FunctionDefinition;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -22,7 +22,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     private Map<String, TypeDefinition> typeDefinitions;
     private Map<String, PropertyDefinition> propertyDefinitions;
     private Map<String, Program> programsDefinitions;
-    private Map<String, FunctionDefinition> functionDefinitions;
+    private Map<String, FunctionDefinitionNode> functionDefinitions;
 
     private SymbolResolver parent = null;
 
@@ -54,7 +54,7 @@ public class SrcSymbolResolver implements SymbolResolver {
                 packages.add(program.contextName());
                 programsDefinitions.put(program.getQualifiedName(), program);
             }
-            for (FunctionDefinition functionDefinition : turinFile.getTopLevelFunctionDefinitions()) {
+            for (FunctionDefinitionNode functionDefinition : turinFile.getTopLevelFunctionDefinitions()) {
                 packages.add(functionDefinition.contextName());
                 functionDefinitions.put(functionDefinition.getQualifiedName(), functionDefinition);
             }
@@ -83,7 +83,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     @Override
     public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (typeDefinitions.containsKey(typeName)) {
-            return Optional.of(new ReferenceTypeUsage(typeDefinitions.get(typeName)));
+            return Optional.of(new ReferenceTypeUsageNode(typeDefinitions.get(typeName)));
         } else {
             return Optional.empty();
         }
