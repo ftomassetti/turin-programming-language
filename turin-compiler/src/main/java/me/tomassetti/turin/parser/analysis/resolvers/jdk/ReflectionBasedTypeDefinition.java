@@ -15,6 +15,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.*;
@@ -35,7 +36,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         typeParameters.add(typeUsage);
     }
 
-    private static TypeUsageNode typeFor(List<Method> methods, Node parentToAssign) {
+    private static TypeUsage typeFor(List<Method> methods, Node parentToAssign) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -50,18 +51,17 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return typeFor(methods.get(0), parentToAssign);
     }
 
-    private static TypeUsageNode typeFor(Method method, Node parentToAssign) {
-        List<TypeUsageNode> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
-        FunctionReferenceTypeUsageNode functionReferenceTypeUsage = new FunctionReferenceTypeUsageNode(paramTypes, toTypeUsage(method.getGenericReturnType()));
-        functionReferenceTypeUsage.setParent(parentToAssign);
+    private static TypeUsage typeFor(Method method, Node parentToAssign) {
+        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
+        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
         return functionReferenceTypeUsage;
     }
 
-    private static TypeUsageNode toTypeUsage(Type type) {
+    private static TypeUsage toTypeUsage(Type type) {
         return ReflectionBasedMethodResolution.toTypeUsage(type, Collections.emptyMap());
     }
 
-    private static TypeUsageNode toTypeUsage(TypeVariable typeVariable) {
+    private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
         return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap());
     }
 
@@ -216,7 +216,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
@@ -278,7 +278,8 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
             for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {
                 TypeVariable<? extends Class<?>> typeVariable = clazz.getTypeParameters()[tp];
                 Type parameterType = parameterizedType.getActualTypeArguments()[tp];
-                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), toTypeUsage(parameterType));
+                // TODO in the long run we should use RefernceTypeUsage here
+                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), (TypeUsageNode)toTypeUsage(parameterType));
             }
         }
         return referenceTypeUsage;

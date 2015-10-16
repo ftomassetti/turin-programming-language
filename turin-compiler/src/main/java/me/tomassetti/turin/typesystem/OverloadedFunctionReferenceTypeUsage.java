@@ -1,11 +1,7 @@
 package me.tomassetti.turin.typesystem;
 
-import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.FunctionReferenceTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 
