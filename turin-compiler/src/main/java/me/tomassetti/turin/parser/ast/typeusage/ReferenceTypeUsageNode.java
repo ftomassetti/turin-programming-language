@@ -6,6 +6,7 @@ import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
+import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
@@ -13,6 +14,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
@@ -31,12 +33,6 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
     private boolean fullyQualifiedName;
     private TypeDefinition cachedTypeDefinition;
 
-    public ReferenceTypeUsageNode(TypeDefinition typeDefinition, List<TypeUsageNode> typeParams) {
-        this(typeDefinition.getQualifiedName(), false);
-        this.typeParams = new ArrayList<>(typeParams);
-        this.cachedTypeDefinition = typeDefinition;
-    }
-
     public ReferenceTypeUsageNode(String name) {
         this(name, false);
     }
@@ -51,11 +47,6 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
         this.name = name;
         this.typeParams = Collections.emptyList();
         this.fullyQualifiedName = fullyQualifiedName;
-    }
-
-    public ReferenceTypeUsageNode(TypeDefinition td) {
-        this(td.getQualifiedName(), true);
-        this.cachedTypeDefinition = td;
     }
 
     @Override
@@ -106,7 +97,7 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
 
     @Override
     public String toString() {
-        return "ReferenceTypeUsage{" +
+        return "ReferenceTypeUsageNode{" +
                 "typeParams=" + typeParams +
                 ", typeParameterValues=" + typeParameterValues +
                 ", name='" + name + '\'' +
@@ -151,8 +142,8 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
     }
 
     @Override
-    public ReferenceTypeUsageNode asReferenceTypeUsage() {
-        return this;
+    public ReferenceTypeUsage asReferenceTypeUsage() {
+        return new ReferenceTypeUsage(getTypeDefinition(ResolverRegistry.INSTANCE.requireResolver(this)));
     }
 
     @Override
@@ -164,7 +155,7 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
         if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
             return true;
         }
-        for (TypeUsageNode ancestor : this.getAllAncestors(resolver)) {
+        for (TypeUsage ancestor : this.getAllAncestors(resolver)) {
             if (ancestor.canBeAssignedTo(type, resolver)) {
                 return true;
             }
@@ -172,7 +163,7 @@ public class ReferenceTypeUsageNode extends TypeUsageNode {
         return false;
     }
 
-    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         // TODO perhaps some generic type substitution needs to be done
         return getTypeDefinition(resolver).getAllAncestors(resolver);
     }

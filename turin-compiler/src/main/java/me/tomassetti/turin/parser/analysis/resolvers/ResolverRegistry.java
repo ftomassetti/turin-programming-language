@@ -21,7 +21,7 @@ public enum ResolverRegistry implements ResolverProvider {
     public Optional<SymbolResolver> findResolver(Node node) {
         Node root = node.getRoot();
         if (resolvers.containsKey(root)) {
-            return Optional.of(resolvers.get(node));
+            return Optional.of(resolvers.get(root));
         } else {
             return Optional.empty();
         }
@@ -33,7 +33,7 @@ public enum ResolverRegistry implements ResolverProvider {
         if (or.isPresent()) {
             return or.get();
         } else {
-            throw new IllegalStateException();
+            throw new IllegalStateException(node.toString());
         }
     }
 

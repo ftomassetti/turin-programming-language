@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,14 +58,14 @@ public class ReferenceTypeUsageTest {
     @Test
     public void isInterfaceNegativeCase() {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
-        ReferenceTypeUsageNode typeUsage = new ReferenceTypeUsageNode(typeDefinition);
+        ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
         assertEquals(false, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }
 
     @Test
     public void isInterfacePositiveCase() {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
-        ReferenceTypeUsageNode typeUsage = new ReferenceTypeUsageNode(typeDefinition);
+        ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
         assertEquals(true, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }
 

@@ -42,7 +42,7 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    default ReferenceTypeUsageNode asReferenceTypeUsage() {
+    default ReferenceTypeUsage asReferenceTypeUsage() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

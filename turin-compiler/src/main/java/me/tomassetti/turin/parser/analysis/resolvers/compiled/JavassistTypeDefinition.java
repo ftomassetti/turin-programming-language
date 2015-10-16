@@ -14,10 +14,9 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
-import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.JarOverloadedFunctionReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.OverloadedFunctionReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
+import me.tomassetti.turin.typesystem.*;
 import turin.compilation.DefaultParam;
 
 import java.lang.reflect.InvocationTargetException;
@@ -49,14 +48,14 @@ public class JavassistTypeDefinition extends TypeDefinition {
     @Override
     public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
         return Arrays.stream(ctClass.getConstructors())
-                .map((c) -> toInternalConstructorDefinition(c))
+                .map((c) -> toInternalConstructorDefinition(c, resolver))
                 .collect(Collectors.toList());
     }
 
-    private InternalConstructorDefinition toInternalConstructorDefinition(CtConstructor constructor) {
+    private InternalConstructorDefinition toInternalConstructorDefinition(CtConstructor constructor, SymbolResolver resolver) {
         try {
             JvmConstructorDefinition jvmConstructorDefinition = JavassistTypeDefinitionFactory.toConstructorDefinition(constructor);
-            return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
+            return new InternalConstructorDefinition(formalParameters(constructor, resolver), jvmConstructorDefinition);
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +112,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
         return getDefaultParamData(ctBehavior).size() > 0;
     }
 
-    private List<FormalParameterNode> getFormalParametersConsideringDefaultParams(CtBehavior ctBehavior) {
+    private List<? extends FormalParameter> getFormalParametersConsideringDefaultParams(CtBehavior ctBehavior, SymbolResolver resolver) {
         List<DefaultParamData> defaultParamDatas = getDefaultParamData(ctBehavior);
         defaultParamDatas.sort(new Comparator<DefaultParamData>() {
             @Override
@@ -121,7 +120,7 @@ public class JavassistTypeDefinition extends TypeDefinition {
                 return Integer.compare(o1.index, o2.index);
             }
         });
-        List<FormalParameterNode> formalParameters = new ArrayList<>();
+        List<FormalParameterSymbol> formalParameters = new ArrayList<>();
         try {
             MethodInfo methodInfo = ctBehavior.getMethodInfo();
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
@@ -131,14 +130,14 @@ public class JavassistTypeDefinition extends TypeDefinition {
             for (int i=0;i<ctBehavior.getParameterTypes().length - 1;i++) {
                 CtClass type = ctBehavior.getParameterTypes()[i];
                 String paramName = attr.variableName(i);
-                formalParameters.add(new FormalParameterNode(toTypeUsage(type), paramName));
+                formalParameters.add(new FormalParameterSymbol(toTypeUsage(type), paramName));
             }
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
         for (DefaultParamData defaultParamData : defaultParamDatas) {
-            TypeUsageNode paramType = TypeUsageNode.fromJvmType(new JvmType(defaultParamData.signature));
-            formalParameters.add(FormalParameterNode.createWithDefaultValuePlaceholder(paramType, defaultParamData.name));
+            TypeUsage paramType = TypeUsageNode.fromJvmType(new JvmType(defaultParamData.signature), resolver);
+            formalParameters.add(new FormalParameterSymbol(paramType, defaultParamData.name, true));
         }
         return formalParameters;
     }
@@ -149,33 +148,33 @@ public class JavassistTypeDefinition extends TypeDefinition {
         Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
                 actualParams, resolver, staticContext, candidates);
         if (method.isPresent()) {
-            return Optional.of(toInternalMethodDefinition(method.get()));
+            return Optional.of(toInternalMethodDefinition(method.get(), resolver));
         } else {
             return Optional.empty();
         }
     }
 
-    private InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod) {
+    private InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod, SymbolResolver resolver) {
         try {
-            return new InternalMethodDefinition(ctMethod.getName(), formalParameters(ctMethod),
+            return new InternalMethodDefinition(ctMethod.getName(), formalParameters(ctMethod, resolver),
                     toTypeUsage(ctMethod.getReturnType()), JavassistTypeDefinitionFactory.toMethodDefinition(ctMethod));
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private List<FormalParameterNode> formalParameters(CtConstructor constructor) {
+    private List<? extends FormalParameter> formalParameters(CtConstructor constructor, SymbolResolver resolver) {
         if (hasDefaultParamAnnotation(constructor)) {
-            return getFormalParametersConsideringDefaultParams(ctClass.getConstructors()[0]);
+            return getFormalParametersConsideringDefaultParams(ctClass.getConstructors()[0], resolver);
         }
         try {
-            List<FormalParameterNode> formalParameters = new ArrayList<>();
+            List<FormalParameterSymbol> formalParameters = new ArrayList<>();
             MethodInfo methodInfo = constructor.getMethodInfo();
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             int i=0;
             for (CtClass type : constructor.getParameterTypes()) {
-                formalParameters.add(new FormalParameterNode(toTypeUsage(type), attr.variableName(i)));
+                formalParameters.add(new FormalParameterSymbol(toTypeUsage(type), attr.variableName(i)));
                 i++;
             }
             return formalParameters;
@@ -184,15 +183,15 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private List<FormalParameterNode> formalParameters(CtMethod method) {
+    private List<FormalParameterSymbol> formalParameters(CtMethod method, SymbolResolver resolver) {
         try {
-            List<FormalParameterNode> formalParameters = new ArrayList<>();
+            List<FormalParameterSymbol> formalParameters = new ArrayList<>();
             MethodInfo methodInfo = method.getMethodInfo();
             CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
             LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
             int i=0;
             for (CtClass type : method.getParameterTypes()) {
-                formalParameters.add(new FormalParameterNode(toTypeUsage(type),  attr.variableName(i)));
+                formalParameters.add(new FormalParameterSymbol(toTypeUsage(type),  attr.variableName(i)));
                 i++;
             }
             return formalParameters;
@@ -266,14 +265,14 @@ public class JavassistTypeDefinition extends TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return typeFor(methods, this);
+            return typeFor(methods, this, resolver);
         }
 
         // TODO consider inherited fields and methods
         throw new UnsupportedOperationException(fieldName);
     }
 
-    private static TypeUsage typeFor(List<CtMethod> methods, Node parentToAssign) {
+    private static TypeUsage typeFor(List<CtMethod> methods, Node parentToAssign, SymbolResolver resolver) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -283,23 +282,23 @@ public class JavassistTypeDefinition extends TypeDefinition {
             }
         });
         if (methods.size() != 1) {
-            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, null)).collect(Collectors.toList()), methods);
+            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, null, resolver)).collect(Collectors.toList()), methods);
             return overloadedFunctionReferenceTypeUsage;
         }
-        return typeFor(methods.get(0), parentToAssign);
+        return typeFor(methods.get(0), parentToAssign, resolver);
     }
 
-    private static FunctionReferenceTypeUsage typeFor(CtMethod method, Node parentToAssign) {
+    private static FunctionReferenceTypeUsage typeFor(CtMethod method, Node parentToAssign, SymbolResolver resolver) {
         try {
             if (method.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
-                List<TypeUsageNode> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
-                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType()));
+                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver)).collect(Collectors.toList());
+                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType(), resolver));
                 return functionReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
-                List<TypeUsageNode> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
+                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt)).collect(Collectors.toList());
                 FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType()));
                 return functionReferenceTypeUsage;
             }
@@ -310,56 +309,56 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private static TypeUsageNode toTypeUsage(CtClass pt) {
+    private static TypeUsage toTypeUsage(CtClass pt) {
         try {
             if (pt.isArray()) {
-                return new ArrayTypeUsageNode(toTypeUsage(pt.getComponentType()));
+                return new ArrayTypeUsage(toTypeUsage(pt.getComponentType()));
             } else if (pt.getName().equals(void.class.getCanonicalName())) {
                 return new VoidTypeUsageNode();
             } else if (pt.isPrimitive()) {
                 return PrimitiveTypeUsageNode.getByName(pt.getSimpleName());
             } else {
-                return new ReferenceTypeUsageNode(new JavassistTypeDefinition(pt));
+                return new ReferenceTypeUsage(new JavassistTypeDefinition(pt));
             }
         } catch (NotFoundException e){
             throw new RuntimeException(e);
         }
     }
 
-    private static TypeUsageNode toTypeUsage(SignatureAttribute.Type type) {
-        return TypeUsageNode.fromJvmType(new JvmType(type.jvmTypeName()));
+    private static TypeUsage toTypeUsage(SignatureAttribute.Type type, SymbolResolver resolver) {
+        return TypeUsageNode.fromJvmType(new JvmType(type.jvmTypeName()), resolver);
     }
 
     @Override
-    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         try {
             if (ctClass.getGenericSignature() != null) {
                 SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
-                List<ReferenceTypeUsageNode> ancestors = new ArrayList<>();
+                List<ReferenceTypeUsage> ancestors = new ArrayList<>();
                 if (ctClass.getSuperclass() != null) {
-                    ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass());
+                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass(), resolver);
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                 }
                 int i = 0;
                 for (CtClass interfaze : ctClass.getInterfaces()) {
                     SignatureAttribute.ClassType genericInterfaze = classSignature.getInterfaces()[i];
-                    ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze, resolver);
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                     i++;
                 }
                 return ancestors;
             } else {
-                List<ReferenceTypeUsageNode> ancestors = new ArrayList<>();
+                List<ReferenceTypeUsage> ancestors = new ArrayList<>();
                 if (ctClass.getSuperclass() != null) {
-                    ReferenceTypeUsageNode superTypeDefinition = (ReferenceTypeUsageNode) toTypeUsage(ctClass.getSuperclass());
+                    ReferenceTypeUsage superTypeDefinition = toTypeUsage(ctClass.getSuperclass()).asReferenceTypeUsage();
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                 }
                 int i = 0;
                 for (CtClass interfaze : ctClass.getInterfaces()) {
-                    ReferenceTypeUsageNode superTypeDefinition = (ReferenceTypeUsageNode)toTypeUsage(interfaze);
+                    ReferenceTypeUsage superTypeDefinition = toTypeUsage(interfaze).asReferenceTypeUsage();
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
                     i++;
@@ -373,14 +372,16 @@ public class JavassistTypeDefinition extends TypeDefinition {
         }
     }
 
-    private ReferenceTypeUsageNode toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType) {
+    private ReferenceTypeUsage toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType, SymbolResolver resolver) {
         try {
             SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(clazz.getGenericSignature());
             TypeDefinition typeDefinition = new JavassistTypeDefinition(clazz);
-            ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
+            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             int i=0;
             for (SignatureAttribute.TypeArgument typeArgument : genericClassType.getTypeArguments()) {
-                referenceTypeUsage.getTypeParameterValues().add(classSignature.getParameters()[i].getName(), toTypeUsage(typeArgument.getType()));
+                SignatureAttribute.Type t = typeArgument.getType();
+                referenceTypeUsage.getTypeParameterValues().add(classSignature.getParameters()[i].getName(),
+                        toTypeUsage(t, resolver));
                 i++;
             }
             return referenceTypeUsage;
@@ -442,11 +443,11 @@ public class JavassistTypeDefinition extends TypeDefinition {
     public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         // if this is the compiled version of a turin type we have to handle default parameters
         if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
-            return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0]));
+            return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0], resolver));
         }
 
         CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
                 actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
-        return Optional.of(toInternalConstructorDefinition(constructor));
+        return Optional.of(toInternalConstructorDefinition(constructor, resolver));
     }
 }

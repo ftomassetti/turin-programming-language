@@ -18,6 +18,7 @@ import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.LinkedList;
@@ -182,7 +183,7 @@ public abstract class TypeDefinition extends Node implements Named, Symbol {
     // Hierarchy
     //
 
-    public abstract List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver);
+    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
     public abstract boolean isInterface();
 

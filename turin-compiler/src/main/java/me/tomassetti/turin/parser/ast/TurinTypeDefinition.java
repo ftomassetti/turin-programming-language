@@ -24,6 +24,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
@@ -304,14 +305,14 @@ public class TurinTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         if (getBaseType().isPresent()) {
-            List<ReferenceTypeUsageNode> res = new ArrayList<>();
+            List<ReferenceTypeUsage> res = new ArrayList<>();
             res.add(getBaseType().get().asReferenceTypeUsage());
             res.addAll(getBaseType().get().asReferenceTypeUsage().getAllAncestors(resolver));
             return res;
         }
-        return ImmutableList.of(ReferenceTypeUsageNode.OBJECT);
+        return ImmutableList.of(ReferenceTypeUsage.OBJECT);
     }
 
     @Override

@@ -4,6 +4,7 @@ import me.tomassetti.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -12,13 +13,13 @@ import java.util.Collections;
 public class ReflectionBasedField extends Node {
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
     }
 
     @Override
     public Node getField(String fieldName, SymbolResolver resolver) {
-        TypeUsageNode fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
+        TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
         return fieldType.getFieldOnInstance(fieldName, this, resolver);
     }
 
@@ -62,8 +63,8 @@ public class ReflectionBasedField extends Node {
     }
 
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
-        TypeUsageNode fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
-        TypeUsageNode ownerType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getDeclaringClass());
+        TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
+        TypeUsage ownerType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getDeclaringClass());
         return new JvmFieldDefinition(ownerType.jvmType(resolver).getInternalName(), field.getName(), fieldType.jvmType(resolver).getSignature(), true);
     }
 }

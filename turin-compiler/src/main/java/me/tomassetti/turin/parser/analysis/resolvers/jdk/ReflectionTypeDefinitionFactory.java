@@ -8,6 +8,10 @@ import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.ArrayTypeUsage;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -66,13 +70,13 @@ public class ReflectionTypeDefinitionFactory {
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsageNode toTypeUsage(Class<?> type) {
+    public static TypeUsage toTypeUsage(Class<?> type) {
         if (type.isArray()) {
-            return new ArrayTypeUsageNode(toTypeUsage(type.getComponentType()));
+            return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
         } else if (type.isPrimitive()) {
-            return PrimitiveTypeUsageNode.getByName(type.getName());
+            return PrimitiveTypeUsage.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsageNode(type.getCanonicalName());
+            return new ReferenceTypeUsage(getInstance().getTypeDefinition(type));
         }
     }
 
@@ -80,7 +84,7 @@ public class ReflectionTypeDefinitionFactory {
         return getTypeDefinition(clazz, Collections.emptyList());
     }
 
-    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsageNode> typeParams) {
+    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
@@ -88,7 +92,7 @@ public class ReflectionTypeDefinitionFactory {
             throw new IllegalArgumentException();
         }
         ReflectionBasedTypeDefinition type = new ReflectionBasedTypeDefinition(clazz);
-        for (TypeUsageNode typeUsage : typeParams) {
+        for (TypeUsage typeUsage : typeParams) {
             type.addTypeParameter(typeUsage);
         }
         return type;

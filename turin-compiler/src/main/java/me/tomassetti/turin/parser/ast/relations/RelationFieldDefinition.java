@@ -9,9 +9,12 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import me.tomassetti.turin.util.StringUtils;
 import turin.relations.Relation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RelationFieldDefinition extends Node {
@@ -23,7 +26,7 @@ public class RelationFieldDefinition extends Node {
         if ((type.getParent() instanceof FormalParameterNode) && type.getParent().getParent() == null){
             throw new UnsupportedOperationException();
         }
-        ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
+        ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
         return referenceTypeUsage.canBeAssignedTo(type, resolver);
     }
 
@@ -47,16 +50,16 @@ public class RelationFieldDefinition extends Node {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsage calcType(SymbolResolver resolver) {
         if (cardinality == Cardinality.SINGLE) {
-            List<TypeUsageNode> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
-            ReferenceTypeUsageNode res = new ReferenceTypeUsageNode(
+            List<TypeUsage> typeParams = new ArrayList<>(getParentOfType(RelationDefinition.class).getTypeParameters());
+            ReferenceTypeUsage res = new ReferenceTypeUsage(
                     ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceSingleEndpoint.class, typeParams),
                     typeParams);
             return res;
         } else if (cardinality == Cardinality.MANY) {
-            List<TypeUsageNode> typeParams = getParentOfType(RelationDefinition.class).getTypeParameters();
-            ReferenceTypeUsageNode res = new ReferenceTypeUsageNode(
+            List<TypeUsage> typeParams = new ArrayList<>(getParentOfType(RelationDefinition.class).getTypeParameters());
+            ReferenceTypeUsage res = new ReferenceTypeUsage(
                     ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceMultipleEndpoint.class, typeParams),
                     typeParams);
             return res;

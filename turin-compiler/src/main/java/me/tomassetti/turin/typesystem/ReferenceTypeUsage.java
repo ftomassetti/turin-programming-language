@@ -29,7 +29,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private TypeDefinition cachedTypeDefinition;
 
-    public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsageNode> typeParams) {
+    public ReferenceTypeUsage(TypeDefinition typeDefinition, List<TypeUsage> typeParams) {
         this.typeParams = new ArrayList<>(typeParams);
         this.cachedTypeDefinition = typeDefinition;
     }
@@ -88,8 +88,8 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public ReferenceTypeUsageNode asReferenceTypeUsage() {
-        throw new UnsupportedOperationException();
+    public ReferenceTypeUsage asReferenceTypeUsage() {
+        return this;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ReferenceTypeUsage implements TypeUsage {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }
-        ReferenceTypeUsage other = (ReferenceTypeUsage)type;
+        ReferenceTypeUsage other = type.asReferenceTypeUsage();
         if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
             return true;
         }
@@ -176,15 +176,15 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     public class TypeParameterValues {
-        private List<TypeUsageNode> usages = new ArrayList<>();
+        private List<TypeUsage> usages = new ArrayList<>();
         private List<String> names = new ArrayList<>();
 
-        public void add(String name, TypeUsageNode typeUsage) {
+        public void add(String name, TypeUsage typeUsage) {
             names.add(name);
             usages.add(typeUsage);
         }
 
-        public List<TypeUsageNode> getInOrder() {
+        public List<TypeUsage> getInOrder() {
             return usages;
         }
 
@@ -192,7 +192,7 @@ public class ReferenceTypeUsage implements TypeUsage {
             return names;
         }
 
-        public TypeUsageNode getByName(String name) {
+        public TypeUsage getByName(String name) {
             for (int i=0; i<names.size(); i++) {
                 if (names.get(i).equals(name)) {
                     return usages.get(i);

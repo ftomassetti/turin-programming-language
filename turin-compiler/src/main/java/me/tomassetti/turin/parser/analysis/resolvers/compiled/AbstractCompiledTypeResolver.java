@@ -12,6 +12,7 @@ import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,17 +129,17 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
                 CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                 LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
 
-                TypeUsageNode returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType());
+                TypeUsage returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType());
                 List<FormalParameterNode> formalParameters = new ArrayList<>();
 
                 int i=0;
                 for (CtClass paramType : invokeMethod.getParameterTypes()) {
-                    TypeUsageNode type =JavassistTypeDefinitionFactory.toTypeUsage(paramType);
+                    TypeUsage type =JavassistTypeDefinitionFactory.toTypeUsage(paramType);
                     String paramName = attr.variableName(i);
-                    formalParameters.add(new FormalParameterNode(type, paramName));
+                    formalParameters.add(new FormalParameterNode(TypeUsageNode.wrap(type), paramName));
                     i++;
                 }
-                FunctionDefinitionNode functionDefinition = new LoadedFunctionDefinition(typeName, returnType, formalParameters);
+                FunctionDefinitionNode functionDefinition = new LoadedFunctionDefinition(typeName, TypeUsageNode.wrap(returnType), formalParameters);
                 return Optional.of(functionDefinition);
             } catch (IOException e) {
                 throw new RuntimeException(e);

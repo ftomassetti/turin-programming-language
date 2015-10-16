@@ -8,8 +8,10 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final ReferenceTypeUsageNode asReferenceTypeUsage() {
+    public final ReferenceTypeUsage asReferenceTypeUsage() {
         return typeUsage().asReferenceTypeUsage();
     }
 

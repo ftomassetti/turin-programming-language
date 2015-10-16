@@ -6,9 +6,12 @@ import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.typesystem.ArrayTypeUsage;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +26,21 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         return this;
     }
 
-    public static TypeUsageNode fromJvmType(JvmType jvmType) {
+    public static TypeUsageNode wrap(TypeUsage typeUsage) {
+        return new TypeUsageWrapperNode(typeUsage) {
+            @Override
+            public TypeUsageNode copy() {
+                return this;
+            }
+
+            @Override
+            public Iterable<Node> getChildren() {
+                return Collections.emptyList();
+            }
+        };
+    }
+
+    public static TypeUsage fromJvmType(JvmType jvmType, SymbolResolver resolver) {
         Optional<PrimitiveTypeUsageNode> primitive = PrimitiveTypeUsageNode.findByJvmType(jvmType);
         if (primitive.isPresent()) {
             return primitive.get();
@@ -31,11 +48,11 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         String signature = jvmType.getSignature();
         if (signature.startsWith("[")) {
             JvmType componentType = new JvmType(signature.substring(1));
-            return new ArrayTypeUsageNode(fromJvmType(componentType));
+            return new ArrayTypeUsage(fromJvmType(componentType, resolver));
         } else if (signature.startsWith("L") && signature.endsWith(";")) {
             String typeName = signature.substring(1, signature.length() - 1);
             typeName = typeName.replaceAll("/", ".");
-            return new ReferenceTypeUsageNode(typeName, true);
+            return new ReferenceTypeUsage(resolver.findTypeDefinitionIn(typeName, null, resolver).get());
         } else {
             throw new UnsupportedOperationException(signature);
         }
@@ -53,7 +70,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     @Override
-    public ReferenceTypeUsageNode asReferenceTypeUsage() {
+    public ReferenceTypeUsage asReferenceTypeUsage() {
         throw new UnsupportedOperationException();
     }
 

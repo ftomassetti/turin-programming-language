@@ -1,11 +1,7 @@
 package me.tomassetti.turin.symbols;
 
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
-
-import java.util.Optional;
 
 public class FormalParameterSymbol implements FormalParameter {
 
@@ -13,7 +9,11 @@ public class FormalParameterSymbol implements FormalParameter {
     private TypeUsage typeUsage;
     private boolean defaultValue;
 
-    public FormalParameterSymbol(String name, TypeUsage typeUsage, boolean defaultValue) {
+    public FormalParameterSymbol(TypeUsage typeUsage, String name) {
+        this(typeUsage, name, false);
+    }
+
+    public FormalParameterSymbol(TypeUsage typeUsage, String name, boolean defaultValue) {
         this.name = name;
         this.typeUsage = typeUsage;
         this.defaultValue = defaultValue;

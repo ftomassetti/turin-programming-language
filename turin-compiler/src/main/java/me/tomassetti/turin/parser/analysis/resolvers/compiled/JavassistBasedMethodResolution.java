@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Modifier;
@@ -116,8 +117,8 @@ public class JavassistBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsageNode actualType = TypeUsageNode.fromJvmType(argsTypes.get(i));
-                    TypeUsageNode formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver);
+                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -227,8 +228,8 @@ public class JavassistBasedMethodResolution {
         // TODO consider generic parameters?
         JavassistTypeDefinition firstDef = new JavassistTypeDefinition(firstType);
         JavassistTypeDefinition secondDef = new JavassistTypeDefinition(secondType);
-        TypeUsageNode firstTypeUsage = new ReferenceTypeUsageNode(firstDef);
-        TypeUsageNode secondTypeUsage = new ReferenceTypeUsageNode(secondDef);
+        TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
+        TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);
     }
 

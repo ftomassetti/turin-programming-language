@@ -13,6 +13,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.util.Either;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -129,7 +130,7 @@ public class ParamUtilsTest {
         value.setParent(EasyMock.anyObject());
         value.setParent(EasyMock.anyObject());
         SymbolResolver resolver = createMock(SymbolResolver.class);
-        ReferenceTypeUsageNode typeUsageOfAsteriskParam = createMock(ReferenceTypeUsageNode.class);
+        ReferenceTypeUsage typeUsageOfAsteriskParam = createMock(ReferenceTypeUsage.class);
         expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
@@ -160,7 +161,7 @@ public class ParamUtilsTest {
         value.setParent(EasyMock.anyObject());
         value.setParent(EasyMock.anyObject());
         SymbolResolver resolver = createMock(SymbolResolver.class);
-        ReferenceTypeUsageNode typeUsageOfAsteriskParam = createMock(ReferenceTypeUsageNode.class);
+        ReferenceTypeUsage typeUsageOfAsteriskParam = createMock(ReferenceTypeUsage.class);
         expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
@@ -189,7 +190,7 @@ public class ParamUtilsTest {
         value.setParent(EasyMock.anyObject());
         value.setParent(EasyMock.anyObject());
         SymbolResolver resolver = createMock(SymbolResolver.class);
-        ReferenceTypeUsageNode typeUsageOfAsteriskParam = createMock(ReferenceTypeUsageNode.class);
+        ReferenceTypeUsage typeUsageOfAsteriskParam = createMock(ReferenceTypeUsage.class);
         expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);

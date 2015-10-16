@@ -9,6 +9,9 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
+import me.tomassetti.turin.typesystem.ArrayTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import me.tomassetti.turin.typesystem.TypeVariableUsage;
 
@@ -47,27 +50,27 @@ class ReflectionBasedMethodResolution {
         }
     }
 
-    public static List<FormalParameterNode> formalParameters(Constructor constructor) {
-        List<FormalParameterNode> formalParameters = new ArrayList<>();
+    public static List<FormalParameterSymbol> formalParameters(Constructor constructor) {
+        List<FormalParameterSymbol> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : constructor.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameterNode(toTypeUsage(type, Collections.emptyMap()), constructor.getParameters()[i].getName()));
+            formalParameters.add(new FormalParameterSymbol(toTypeUsage(type, Collections.emptyMap()), constructor.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;
     }
 
-    public static List<FormalParameterNode> formalParameters(Method method, Map<String, TypeUsageNode> typeVariables) {
-        List<FormalParameterNode> formalParameters = new ArrayList<>();
+    public static List<FormalParameterSymbol> formalParameters(Method method, Map<String, TypeUsage> typeVariables) {
+        List<FormalParameterSymbol> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : method.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameterNode(toTypeUsage(type, typeVariables), method.getParameters()[i].getName()));
+            formalParameters.add(new FormalParameterSymbol(toTypeUsage(type, typeVariables), method.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;
     }
 
-    public static TypeUsageNode toTypeUsage(Type type, Map<String, TypeUsageNode> typeVariables) {
+    public static TypeUsage toTypeUsage(Type type, Map<String, TypeUsage> typeVariables) {
         if (type instanceof Class) {
             Class clazz = (Class)type;
             if (clazz.getCanonicalName().equals(void.class.getCanonicalName())) {
@@ -77,16 +80,16 @@ class ReflectionBasedMethodResolution {
                 return PrimitiveTypeUsageNode.getByName(clazz.getName());
             }
             if (clazz.isArray()) {
-                return new ArrayTypeUsageNode(toTypeUsage(clazz.getComponentType(), typeVariables));
+                return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType(), typeVariables));
             }
             TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
-            ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
+            ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             return referenceTypeUsage;
         } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
-            List<TypeUsageNode> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt, typeVariables)).collect(Collectors.toList());
-            return new ReferenceTypeUsageNode(typeDefinition, typeParams);
+            List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt, typeVariables)).collect(Collectors.toList());
+            return new ReferenceTypeUsage(typeDefinition, typeParams);
         } else if (type instanceof TypeVariable) {
             TypeVariable typeVariable = (TypeVariable)type;
             return toTypeUsage(typeVariable, typeVariables);
@@ -95,16 +98,16 @@ class ReflectionBasedMethodResolution {
         }
     }
 
-    public static TypeUsageNode toTypeUsage(TypeVariable typeVariable, Map<String, TypeUsageNode> typeVariables) {
+    public static TypeUsage toTypeUsage(TypeVariable typeVariable, Map<String, TypeUsage> typeVariables) {
         TypeVariableUsage.GenericDeclaration genericDeclaration = null;
-        List<TypeUsageNode> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b, typeVariables)).collect(Collectors.toList());
+        List<TypeUsage> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b, typeVariables)).collect(Collectors.toList());
         if (typeVariable.getGenericDeclaration() instanceof Class) {
             if (typeVariables.containsKey(typeVariable.getName())) {
                 return typeVariables.get(typeVariable.getName());
             } else {
                 Class c = (Class)typeVariable.getGenericDeclaration();
                 //throw new UnsolvedSymbolException("Cannot solve type variable " + typeVariable.getName());
-                return new TypeVariableTypeNode(TypeVariableUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
+                return new TypeVariableUsage(TypeVariableUsage.GenericDeclaration.onClass(c.getCanonicalName()), typeVariable.getName(), bounds);
             }
         } else if (typeVariable.getGenericDeclaration() instanceof Method) {
             Method method = (Method)typeVariable.getGenericDeclaration();
@@ -112,7 +115,7 @@ class ReflectionBasedMethodResolution {
         } else {
             throw new UnsupportedOperationException(typeVariable.getGenericDeclaration().getClass().getCanonicalName());
         }
-        return new TypeVariableTypeNode(genericDeclaration, typeVariable.getName(), bounds);
+        return new TypeVariableUsage(genericDeclaration, typeVariable.getName(), bounds);
     }
 
     public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
@@ -163,9 +166,8 @@ class ReflectionBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsageNode actualType = TypeUsageNode.fromJvmType(argsTypes.get(i));
-                    actualType.setParent(context);
-                    TypeUsageNode formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver);
+                    TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -192,7 +194,7 @@ class ReflectionBasedMethodResolution {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
                     TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
-                    TypeUsageNode formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -271,8 +273,8 @@ class ReflectionBasedMethodResolution {
         // TODO consider generic parameters?
         ReflectionBasedTypeDefinition firstDef = new ReflectionBasedTypeDefinition(firstType);
         ReflectionBasedTypeDefinition secondDef = new ReflectionBasedTypeDefinition(secondType);
-        TypeUsageNode firstTypeUsage = new ReferenceTypeUsageNode(firstDef);
-        TypeUsageNode secondTypeUsage = new ReferenceTypeUsageNode(secondDef);
+        TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
+        TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);
     }
 

@@ -9,6 +9,10 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.ArrayTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.typesystem.VoidTypeUsage;
 
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -71,19 +75,19 @@ public class JavassistTypeDefinitionFactory {
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsageNode toTypeUsage(CtClass type) {
+    public static TypeUsage toTypeUsage(CtClass type) {
         if (type.isArray()) {
             try {
-                return new ArrayTypeUsageNode(toTypeUsage(type.getComponentType()));
+                return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
             } catch (NotFoundException e) {
                 throw new RuntimeException(e);
             }
         } else if (type.getName().equals(void.class.getCanonicalName())) {
-            return new VoidTypeUsageNode();
+            return new VoidTypeUsage();
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsageNode.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsageNode(type.getName(), true);
+            return JavassistTypeDefinitionFactory.toTypeUsage(type);
         }
     }
 

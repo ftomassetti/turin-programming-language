@@ -15,7 +15,9 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.*;
@@ -25,14 +27,14 @@ import java.util.stream.Collectors;
 class ReflectionBasedTypeDefinition extends TypeDefinition {
 
     private Class<?> clazz;
-    private List<TypeUsageNode> typeParameters = new LinkedList<>();
+    private List<TypeUsage> typeParameters = new LinkedList<>();
 
     public ReflectionBasedTypeDefinition(Class<?> clazz) {
         super(clazz.getCanonicalName());
         this.clazz = clazz;
     }
 
-    public void addTypeParameter(TypeUsageNode typeUsage) {
+    public void addTypeParameter(TypeUsage typeUsage) {
         typeParameters.add(typeUsage);
     }
 
@@ -192,18 +194,18 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
                 ReflectionTypeDefinitionFactory.toMethodDefinition(method));
     }
 
-    private List<FormalParameterNode> formalParameters(Constructor constructor) {
+    private List<FormalParameterSymbol> formalParameters(Constructor constructor) {
         return ReflectionBasedMethodResolution.formalParameters(constructor);
     }
 
-    private List<FormalParameterNode> formalParameters(Method method) {
+    private List<FormalParameterSymbol> formalParameters(Method method) {
         return ReflectionBasedMethodResolution.formalParameters(method, getTypeVariables());
     }
 
     // Type parameters should be part of the usage
     @Deprecated
-    private Map<String, TypeUsageNode> getTypeVariables() {
-        Map<String, TypeUsageNode> map = new HashMap<>();
+    private Map<String, TypeUsage> getTypeVariables() {
+        Map<String, TypeUsage> map = new HashMap<>();
         if (clazz.getTypeParameters().length != typeParameters.size()) {
             throw new IllegalStateException("It should have " + clazz.getTypeParameters().length + " and it has " + typeParameters.size());
         }
@@ -242,17 +244,17 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
     }
 
     @Override
-    public List<ReferenceTypeUsageNode> getAllAncestors(SymbolResolver resolver) {
-        List<ReferenceTypeUsageNode> ancestors = new ArrayList<>();
+    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+        List<ReferenceTypeUsage> ancestors = new ArrayList<>();
         if (clazz.getSuperclass() != null) {
-            ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
+            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(clazz.getSuperclass(), clazz.getGenericSuperclass());
             ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
         }
         int i = 0;
         for (Class<?> interfaze : clazz.getInterfaces()) {
             Type genericInterfaze = clazz.getGenericInterfaces()[i];
-            ReferenceTypeUsageNode superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
+            ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze);
             ancestors.add(superTypeDefinition);
             ancestors.addAll(superTypeDefinition.getAllAncestors(resolver));
             i++;
@@ -270,9 +272,9 @@ class ReflectionBasedTypeDefinition extends TypeDefinition {
         return !clazz.isInterface() && !clazz.isEnum() && !clazz.isAnnotation() && !clazz.isArray() && !clazz.isPrimitive();
     }
 
-    private ReferenceTypeUsageNode toReferenceTypeUsage(Class<?> clazz, Type type) {
+    private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
         TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
-        ReferenceTypeUsageNode referenceTypeUsage = new ReferenceTypeUsageNode(typeDefinition);
+        ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType)type;
             for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {

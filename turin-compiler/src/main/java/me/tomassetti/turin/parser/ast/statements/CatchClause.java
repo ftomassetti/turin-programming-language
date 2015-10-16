@@ -7,6 +7,8 @@ import me.tomassetti.turin.parser.ast.expressions.TypeIdentifier;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Optional;
 
@@ -29,8 +31,8 @@ public class CatchClause extends Node implements Symbol {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
-        return new ReferenceTypeUsageNode(exceptionType.resolve(resolver));
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return new ReferenceTypeUsage(exceptionType.resolve(resolver));
     }
 
     public CatchClause(TypeIdentifier exceptionType, String variableName, BlockStatement body) {
