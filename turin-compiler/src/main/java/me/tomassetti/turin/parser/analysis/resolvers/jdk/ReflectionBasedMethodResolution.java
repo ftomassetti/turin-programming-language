@@ -166,7 +166,7 @@ class ReflectionBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver);
+                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver.getRoot());
                     TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
