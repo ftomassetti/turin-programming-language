@@ -38,7 +38,7 @@ public class SuperInvokation extends Invokable {
 
     @Override
     protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
-        return getTurinTypeDefinition().getSuperclass(resolver).getConstructorParams(actualParams, resolver);
+        return getTurinTypeDefinition().getSuperclass().getConstructorParams(actualParams, resolver);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SuperInvokation extends Invokable {
     }
 
     public Optional<JvmConstructorDefinition> findJvmDefinition(SymbolResolver resolver) {
-        return getTurinTypeDefinition().getSuperclass(resolver).findConstructorDefinition(actualParams, resolver);
+        return getTurinTypeDefinition().getSuperclass().findConstructorDefinition(actualParams, resolver);
     }
 }
 
