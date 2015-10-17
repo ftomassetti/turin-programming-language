@@ -1,16 +1,13 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -18,7 +15,6 @@ import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * It could represent also a reference to a Type Variable.

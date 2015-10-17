@@ -1,13 +1,13 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
@@ -43,7 +43,7 @@ public class SrcSymbolResolver implements SymbolResolver {
         this.programsDefinitions = new HashMap<>();
         this.functionDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
-            for (TypeDefinition typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
+            for (TypeDefinitionNode typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
                 packages.add(typeDefinition.contextName());
                 typeDefinitions.put(typeDefinition.getQualifiedName(), typeDefinition);
             }

@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.analysis.resolvers;
 
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 
 import java.util.List;
 import java.util.Optional;

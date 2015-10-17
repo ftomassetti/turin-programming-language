@@ -1,10 +1,9 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 
 import java.util.Collections;

@@ -7,8 +7,7 @@ import javassist.NotFoundException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.typesystem.*;
 
 import java.lang.reflect.Modifier;

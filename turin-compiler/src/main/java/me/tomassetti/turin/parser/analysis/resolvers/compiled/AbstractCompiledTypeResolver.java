@@ -7,10 +7,10 @@ import javassist.NotFoundException;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 

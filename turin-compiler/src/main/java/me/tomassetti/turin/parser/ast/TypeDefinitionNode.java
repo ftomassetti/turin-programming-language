@@ -1,9 +1,9 @@
 package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.jvm.JvmConstructorDefinition;
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
@@ -16,21 +16,19 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
-import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
  */
-public abstract class TypeDefinition extends Node implements Named {
+public abstract class TypeDefinitionNode extends Node implements me.tomassetti.turin.definitions.TypeDefinition {
     protected String name;
 
-    public TypeDefinition(String name) {
+    public TypeDefinitionNode(String name) {
         this.name = name;
     }
 
@@ -38,16 +36,16 @@ public abstract class TypeDefinition extends Node implements Named {
     // Naming
     //
 
+    @Override
     public String getName() {
         return name;
     }
-
-    public abstract String getQualifiedName();
 
     //
     // Typing
     //
 
+    @Override
     public JvmType jvmType() {
         return new JvmType(JvmNameUtils.canonicalToDescriptor(getQualifiedName()));
     }
@@ -56,16 +54,17 @@ public abstract class TypeDefinition extends Node implements Named {
     // Constructors
     //
 
-    public abstract JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
-
+    @Override
     public final boolean hasManyConstructors(SymbolResolver resolver) {
         return getConstructors(resolver).size() > 1;
     }
 
+    @Override
     public final List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
         return getConstructor(actualParams, resolver).getFormalParameters();
     }
 
+    @Override
     public final Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams, SymbolResolver resolver) {
         Optional<InternalConstructorDefinition> res = findConstructor(actualParams, resolver);
         if (res.isPresent()) {
@@ -75,8 +74,7 @@ public abstract class TypeDefinition extends Node implements Named {
         }
     }
 
-    public abstract Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
-
+    @Override
     public final InternalConstructorDefinition getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         Optional<InternalConstructorDefinition> constructor = findConstructor(actualParams, resolver);
         if (constructor.isPresent()) {
@@ -86,30 +84,26 @@ public abstract class TypeDefinition extends Node implements Named {
         }
     }
 
-    public abstract List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver);
-
     //
     // Methods
     //
 
-    public abstract JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
-
-    public abstract boolean isMethodOverloaded(String methodName, SymbolResolver resolver);
-
-    public abstract Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
-
+    @Override
     public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
     }
 
+    @Override
     public final List<? extends FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return getMethod(methodName, actualParams, resolver, staticContext).getFormalParameters();
     }
 
+    @Override
     public final boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return findMethod(methodName, actualParams, resolver, staticContext).isPresent();
     }
 
+    @Override
     public final InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         Optional<InternalMethodDefinition> method = findMethod(methodName, actualParams, resolver, staticContext);
         if (method.isPresent()) {
@@ -123,8 +117,7 @@ public abstract class TypeDefinition extends Node implements Named {
     // Fields
     //
 
-    public abstract TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
-
+    @Override
     public Node getFieldOnInstance(String fieldName, Node instance, final SymbolResolver resolver) {
         for (RelationDefinition relationDefinition : getVisibleRelations(resolver)) {
             for (RelationFieldDefinition field : relationDefinition.getFieldsApplicableTo(this, resolver)) {
@@ -155,8 +148,7 @@ public abstract class TypeDefinition extends Node implements Named {
         }
     }
 
-    public abstract boolean hasField(String name, boolean staticContext);
-
+    @Override
     public final boolean hasField(QualifiedName fieldName, boolean staticContext, SymbolResolver resolver) {
         if (!fieldName.isSimpleName()) {
             String firstName = fieldName.firstSegment();
@@ -175,19 +167,8 @@ public abstract class TypeDefinition extends Node implements Named {
         return hasField(fieldName.getName(), staticContext);
     }
 
-    public abstract boolean canFieldBeAssigned(String field, SymbolResolver resolver);
-
     //
     // Hierarchy
     //
 
-    public abstract List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
-
-    public abstract boolean isInterface();
-
-    public abstract boolean isClass();
-
-    public abstract TypeDefinition getSuperclass(SymbolResolver resolver);
-
-    public abstract <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams);
 }

@@ -3,10 +3,10 @@ package me.tomassetti.turin.parser.ast.imports;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.jvm.JvmNameUtils;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Optional;

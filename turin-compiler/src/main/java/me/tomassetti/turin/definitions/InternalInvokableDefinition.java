@@ -3,8 +3,6 @@ package me.tomassetti.turin.definitions;
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.FormalParameterNode;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.typesystem.TypeUsage;

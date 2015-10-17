@@ -8,9 +8,10 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
+import me.tomassetti.turin.parser.ast.TypeDefinitionNode;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -24,7 +25,7 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class JavassistTypeDefinition extends TypeDefinition {
+public class JavassistTypeDefinition extends TypeDefinitionNode {
 
     private CtClass ctClass;
 

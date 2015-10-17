@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.jvm.JvmNameUtils;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 /**
  * Type defined in Turin.
  */
-public class TurinTypeDefinition extends TypeDefinition {
+public class TurinTypeDefinition extends TypeDefinitionNode {
     private List<Node> members = new ArrayList<>();
     private List<TypeUsageNode> interfaces = new ArrayList<>();
     private Optional<TypeUsageNode> baseType = Optional.empty();

@@ -2,10 +2,10 @@ package me.tomassetti.turin.parser.analysis.jar;
 
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.compiled.JarTypeResolver;
-import me.tomassetti.turin.parser.ast.TypeDefinition;
 import org.junit.Test;
 
 import java.io.File;
