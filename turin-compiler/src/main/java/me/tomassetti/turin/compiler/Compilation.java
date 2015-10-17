@@ -106,24 +106,24 @@ public class Compilation {
             case MANY_TO_MANY:
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
-                fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
-                fieldSignature += relationDefinition.secondField().getType().jvmType(resolver).getSignature();
+                fieldSignature += relationDefinition.firstField().getType().jvmType().getSignature();
+                fieldSignature += relationDefinition.secondField().getType().jvmType().getSignature();
                 fieldSignature += ">;";
                 fieldTypeInternalName = JvmNameUtils.internalName(ManyToManyRelation.class);
                 break;
             case ONE_TO_MANY:
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
-                fieldSignature += relationDefinition.singleField().getType().jvmType(resolver).getSignature();
-                fieldSignature += relationDefinition.manyField().getType().jvmType(resolver).getSignature();
+                fieldSignature += relationDefinition.singleField().getType().jvmType().getSignature();
+                fieldSignature += relationDefinition.manyField().getType().jvmType().getSignature();
                 fieldSignature += ">;";
                 fieldTypeInternalName = JvmNameUtils.internalName(OneToManyRelation.class);
                 break;
             case ONE_TO_ONE:
                 fieldSignature = fieldDescriptor.substring(0, fieldDescriptor.length() - 1);
                 fieldSignature += "<";
-                fieldSignature += relationDefinition.firstField().getType().jvmType(resolver).getSignature();
-                fieldSignature += relationDefinition.secondField().getType().jvmType(resolver).getSignature();
+                fieldSignature += relationDefinition.firstField().getType().jvmType().getSignature();
+                fieldSignature += relationDefinition.secondField().getType().jvmType().getSignature();
                 fieldTypeInternalName = JvmNameUtils.internalName(OneToOneRelation.class);
                 fieldSignature += ">;";
                 break;
@@ -277,14 +277,14 @@ public class Compilation {
     }
 
     private void generateField(Property property) {
-        JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+        JvmType jvmType = property.getTypeUsage().jvmType();
         FieldVisitor fv = cw.visitField(ACC_PRIVATE, property.getName(), jvmType.getDescriptor(), jvmType.getSignature(), null);
         fv.visitEnd();
     }
 
     private void generateGetter(Property property, String classInternalName, SymbolResolver resolver) {
         String getterName = property.getterName(resolver);
-        JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+        JvmType jvmType = property.getTypeUsage().jvmType();
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, getterName, "()" + jvmType.getDescriptor(), "()" + jvmType.getSignature(), null);
         mv.visitCode();
         mv.visitVarInsn(ALOAD, LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
@@ -404,7 +404,7 @@ public class Compilation {
                 .collect(Collectors.<FormalParameter>toList())) {
             AnnotationVisitor annotationVisitor = mv.visitAnnotation(JvmNameUtils.canonicalToDescriptor(DefaultParam.class.getCanonicalName()), true);
             annotationVisitor.visit("name", defaultParam.getName());
-            annotationVisitor.visit("typeSignature", defaultParam.getType().jvmType(resolver).getSignature());
+            annotationVisitor.visit("typeSignature", defaultParam.getType().jvmType().getSignature());
             annotationVisitor.visit("index", defaultParamIndex);
             annotationVisitor.visitEnd();
             defaultParamIndex++;

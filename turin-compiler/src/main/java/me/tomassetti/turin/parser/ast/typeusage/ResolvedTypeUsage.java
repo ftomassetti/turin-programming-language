@@ -25,6 +25,11 @@ public class ResolvedTypeUsage extends TypeUsageNode {
     }
 
     @Override
+    public JvmType jvmType() {
+        return typeDefinition.jvmType();
+    }
+
+    @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
         return typeDefinition.isMethodOverloaded(methodName, resolver);
     }

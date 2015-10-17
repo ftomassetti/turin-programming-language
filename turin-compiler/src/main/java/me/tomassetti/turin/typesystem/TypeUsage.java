@@ -60,6 +60,8 @@ public interface TypeUsage extends Symbol {
 
     JvmType jvmType(SymbolResolver resolver);
 
+    JvmType jvmType();
+
     default JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
         return jvmType(resolver).typeCategory();
     }

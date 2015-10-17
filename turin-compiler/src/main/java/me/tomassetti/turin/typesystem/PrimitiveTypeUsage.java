@@ -100,8 +100,13 @@ public class PrimitiveTypeUsage implements TypeUsage {
     private TypeUsage boxType;
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
+    public JvmType jvmType() {
         return jvmType;
+    }
+
+    @Override
+    public JvmType jvmType(SymbolResolver resolver) {
+        return jvmType();
     }
 
     @Override

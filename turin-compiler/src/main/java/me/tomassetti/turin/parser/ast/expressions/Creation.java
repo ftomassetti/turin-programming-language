@@ -55,7 +55,7 @@ public class Creation extends Invokable {
     }
 
     private TypeDefinition getTypeDefinition(SymbolResolver resolver) {
-        return type.asReferenceTypeUsage().getTypeDefinition(resolver);
+        return type.asReferenceTypeUsage().getTypeDefinition();
     }
 
     @Override

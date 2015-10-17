@@ -42,11 +42,11 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     public boolean isInterface(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).isInterface();
+        return getTypeDefinition().isInterface();
     }
 
     public boolean isClass(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).isClass();
+        return getTypeDefinition().isClass();
     }
 
     public boolean isEnum(SymbolResolver resolver) {
@@ -61,23 +61,28 @@ public class ReferenceTypeUsage implements TypeUsage {
         return typeParameterValues;
     }
 
-    public TypeDefinition getTypeDefinition(SymbolResolver resolver) {
+    public TypeDefinition getTypeDefinition() {
         return cachedTypeDefinition;
     }
 
     @Override
     public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return getTypeDefinition(resolver).findMethodFor(methodName, argsTypes, resolver, staticContext);
+        return getTypeDefinition().findMethodFor(methodName, argsTypes, resolver, staticContext);
     }
 
 
     @Override
+    public JvmType jvmType() {
+        return getTypeDefinition().jvmType();
+    }
+
+    @Override
     public JvmType jvmType(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).jvmType();
+        return jvmType();
     }
 
     public String getQualifiedName(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).getQualifiedName();
+        return getTypeDefinition().getQualifiedName();
     }
 
     @Override
@@ -109,12 +114,12 @@ public class ReferenceTypeUsage implements TypeUsage {
 
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
         // TODO perhaps some generic type substitution needs to be done
-        return getTypeDefinition(resolver).getAllAncestors(resolver);
+        return getTypeDefinition().getAllAncestors(resolver);
     }
 
     @Override
     public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
-        return getTypeDefinition(resolver).getFieldOnInstance(fieldName, instance, resolver);
+        return getTypeDefinition().getFieldOnInstance(fieldName, instance, resolver);
     }
 
     @Override
@@ -126,7 +131,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
-            TypeDefinition typeDefinition = getTypeDefinition(resolver);
+            TypeDefinition typeDefinition = getTypeDefinition();
             return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic(resolver)));
         } else {
             throw new UnsupportedOperationException();
@@ -135,7 +140,7 @@ public class ReferenceTypeUsage implements TypeUsage {
 
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        TypeDefinition typeDefinition = getTypeDefinition(resolver);
+        TypeDefinition typeDefinition = getTypeDefinition();
         TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
     }
@@ -157,7 +162,7 @@ public class ReferenceTypeUsage implements TypeUsage {
 
     @Override
     public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return getTypeDefinition(resolver).isMethodOverloaded(methodName, resolver);
+        return getTypeDefinition().isMethodOverloaded(methodName, resolver);
     }
 
     @Override
@@ -169,7 +174,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).associatedTypeParametersToName(resolver, typeParams);
+        return getTypeDefinition().associatedTypeParametersToName(resolver, typeParams);
     }
 
     public class TypeParameterValues {

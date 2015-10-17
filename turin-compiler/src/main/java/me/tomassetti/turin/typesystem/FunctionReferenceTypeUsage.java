@@ -61,8 +61,13 @@ public class FunctionReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
+    public JvmType jvmType() {
+        return returnType.jvmType();
+    }
+
+    @Override
     public JvmType jvmType(SymbolResolver resolver) {
-        return returnType.jvmType(resolver);
+        return jvmType();
     }
 
     @Override

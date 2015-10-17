@@ -137,7 +137,7 @@ public class ParamUtilsTest {
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
         TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinitionNode.class);
-        expect(typeUsageOfAsteriskParam.getTypeDefinition(resolver)).andReturn(typeOfAsteriskParam);
+        expect(typeUsageOfAsteriskParam.getTypeDefinition()).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.hasMethodFor("getFn1", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFn2", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFd1", Collections.emptyList(), resolver, false)).andReturn(true);
@@ -168,7 +168,7 @@ public class ParamUtilsTest {
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
         TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinitionNode.class);
-        expect(typeUsageOfAsteriskParam.getTypeDefinition(resolver)).andReturn(typeOfAsteriskParam);
+        expect(typeUsageOfAsteriskParam.getTypeDefinition()).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.hasMethodFor("getFn1", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFn2", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFd1", Collections.emptyList(), resolver, false)).andReturn(false);
@@ -197,7 +197,7 @@ public class ParamUtilsTest {
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
         TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinitionNode.class);
-        expect(typeUsageOfAsteriskParam.getTypeDefinition(resolver)).andReturn(typeOfAsteriskParam);
+        expect(typeUsageOfAsteriskParam.getTypeDefinition()).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.hasMethodFor("getFn1", Collections.emptyList(), resolver, false)).andReturn(true);
         expect(typeOfAsteriskParam.hasMethodFor("getFn2", Collections.emptyList(), resolver, false)).andReturn(false);
         Node parent = new IntLiteral(3); // it does not really matter

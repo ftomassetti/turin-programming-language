@@ -35,7 +35,7 @@ public abstract class InternalInvokableDefinition {
             return Optional.of("An asterisk param should be an object");
         }
         List<ActualParam> actualParams = new ArrayList<>();
-        TypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition(resolver);
+        TypeDefinition typeDefinition = paramType.asReferenceTypeUsage().getTypeDefinition();
 
         for (FormalParameter formalParameter : formalParameters) {
             String getterName = ParamUtils.getterName(formalParameter, resolver);

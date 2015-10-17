@@ -83,6 +83,11 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
+    public JvmType jvmType() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException();
     }

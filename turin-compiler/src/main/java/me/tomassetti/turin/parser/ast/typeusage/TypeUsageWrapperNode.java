@@ -95,6 +95,11 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
+    public final JvmType jvmType() {
+        return typeUsage().jvmType();
+    }
+
+    @Override
     public final ArrayTypeUsage asArrayTypeUsage() {
         return this.typeUsage().asArrayTypeUsage();
     }

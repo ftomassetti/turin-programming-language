@@ -54,7 +54,7 @@ public final class ParamUtils {
             return Either.left("An asterisk param should be an object");
         }
         List<ActualParam> actualParams = new ArrayList<>();
-        TypeDefinition typeDefinition = type.asReferenceTypeUsage().getTypeDefinition(resolver);
+        TypeDefinition typeDefinition = type.asReferenceTypeUsage().getTypeDefinition();
 
         // map with the default params
         Expression mapCreation = new Creation("turin.collections.MapBuilder", Collections.emptyList());

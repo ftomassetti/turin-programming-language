@@ -180,7 +180,7 @@ public class CompilationOfGeneratedMethods {
             if (!baseType.isReferenceTypeUsage()) {
                 throw new IllegalStateException();
             }
-            TypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition(compilation.getResolver());
+            TypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition();
             if (baseTypeDefinition.hasManyConstructors(compilation.getResolver())) {
                 throw new IllegalStateException();
             }

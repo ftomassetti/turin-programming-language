@@ -29,8 +29,13 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
+    public JvmType jvmType() {
         return new JvmType("V");
+    }
+
+    @Override
+    public JvmType jvmType(SymbolResolver resolver) {
+        return jvmType();
     }
 
     @Override

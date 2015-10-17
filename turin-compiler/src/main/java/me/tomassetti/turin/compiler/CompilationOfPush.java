@@ -302,7 +302,7 @@ public class CompilationOfPush {
                 public void operate(MethodVisitor mv) {
                     TypeDefinition typeDefinition = instanceFieldAccess.getSubject().calcType()
                             .asReferenceTypeUsage()
-                            .getTypeDefinition(compilation.getResolver());
+                            .getTypeDefinition();
                     String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
                     String descriptor = typeDefinition.getFieldType(instanceFieldAccess.getField(), false, compilation.getResolver())
                             .jvmType(compilation.getResolver())

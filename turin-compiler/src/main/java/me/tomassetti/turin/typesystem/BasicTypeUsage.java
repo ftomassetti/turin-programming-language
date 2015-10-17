@@ -58,8 +58,13 @@ public class BasicTypeUsage extends TypeUsageNode {
     }
 
     @Override
+    public JvmType jvmType() {
+        return correspondingPrimitiveTypeUsage.jvmType();
+    }
+
+    @Override
     public JvmType jvmType(SymbolResolver resolver) {
-        return correspondingPrimitiveTypeUsage.jvmType(resolver);
+        return jvmType();
     }
 
     @Override

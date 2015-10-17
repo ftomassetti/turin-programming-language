@@ -158,7 +158,7 @@ public abstract class TypeDefinitionNode extends Node implements me.tomassetti.t
             Symbol field = getField(firstName, resolver);
             TypeUsage typeUsage = field.calcType();
             if (typeUsage.isReferenceTypeUsage()) {
-                TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition(resolver);
+                TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition();
                 return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
             } else {
                 return false;
