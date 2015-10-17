@@ -68,7 +68,6 @@ public interface TypeUsage extends Symbol {
     /// Fields
     ///
 
-    // TODO this is not necessarily a Node but a symbol
     Symbol getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
 
     ///
