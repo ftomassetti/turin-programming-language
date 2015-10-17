@@ -1,9 +1,7 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class ArrayAccess extends Expression {

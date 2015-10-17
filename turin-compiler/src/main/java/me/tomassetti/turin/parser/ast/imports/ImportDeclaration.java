@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.ast.imports;
 
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.symbols.Symbol;
 

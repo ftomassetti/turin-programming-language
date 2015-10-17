@@ -1,10 +1,8 @@
 package me.tomassetti.turin.parser.ast;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.statements.Statement;
-import me.tomassetti.turin.parser.ast.typeusage.ArrayTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;

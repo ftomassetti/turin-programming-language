@@ -1,9 +1,8 @@
 package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
-import me.tomassetti.turin.parser.ast.FormalParameterNode;
+import me.tomassetti.turin.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.jdk.ReflectionBasedSetOfOverloadedMethods;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;

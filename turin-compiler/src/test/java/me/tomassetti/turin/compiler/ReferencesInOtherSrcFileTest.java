@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.classloading.TurinClassLoader;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.TurinFile;
 import org.junit.Test;
 

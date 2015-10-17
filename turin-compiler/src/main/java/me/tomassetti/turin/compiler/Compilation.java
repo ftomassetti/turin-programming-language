@@ -10,7 +10,7 @@ import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.invokables.InvokableDefinitionNode;

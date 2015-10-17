@@ -6,9 +6,9 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.TurinFileWithSource;
-import me.tomassetti.turin.parser.analysis.resolvers.*;
-import me.tomassetti.turin.parser.analysis.resolvers.compiled.JarTypeResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
+import me.tomassetti.turin.resolvers.*;
+import me.tomassetti.turin.resolvers.compiled.JarTypeResolver;
+import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.*;
 
 import java.io.*;

@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast.invokables;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Named;
 import me.tomassetti.turin.parser.ast.Node;

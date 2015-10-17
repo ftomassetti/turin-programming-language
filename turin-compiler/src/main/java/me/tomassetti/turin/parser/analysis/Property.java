@@ -2,13 +2,12 @@ package me.tomassetti.turin.parser.analysis;
 
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;

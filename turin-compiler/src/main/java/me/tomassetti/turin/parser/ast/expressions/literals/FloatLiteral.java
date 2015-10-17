@@ -1,10 +1,7 @@
 package me.tomassetti.turin.parser.ast.expressions.literals;
 
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
-import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 

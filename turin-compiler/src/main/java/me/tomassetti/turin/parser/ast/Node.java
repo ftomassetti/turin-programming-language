@@ -1,8 +1,8 @@
 package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
-import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.ResolverRegistry;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;

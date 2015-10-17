@@ -1,6 +1,6 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -2,9 +2,8 @@ package me.tomassetti.turin.parser.ast.properties;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Optional;

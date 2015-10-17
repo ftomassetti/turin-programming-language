@@ -1,11 +1,10 @@
 package me.tomassetti.turin.parser.ast;
 
-import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
-import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
+import me.tomassetti.turin.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.Parser;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.InFileSymbolResolver;
+import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;
 import me.tomassetti.turin.typesystem.BasicTypeUsage;

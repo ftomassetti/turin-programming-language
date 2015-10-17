@@ -1,10 +1,10 @@
 package me.tomassetti.turin.parser.ast.reflection;
 
 import me.tomassetti.turin.definitions.TypeDefinition;
-import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.resolvers.InFileSymbolResolver;
+import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import org.junit.Test;
 

@@ -3,11 +3,10 @@ package me.tomassetti.turin.typesystem;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
+import me.tomassetti.turin.resolvers.SymbolResolver;
+import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.Collections;
