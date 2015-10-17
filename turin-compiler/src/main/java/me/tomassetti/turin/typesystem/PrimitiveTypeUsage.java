@@ -61,7 +61,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
 
     @Override
     public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
-        if (other.sameType(boxType, resolver) || other.sameType(ReferenceTypeUsage.OBJECT, resolver)) {
+        if (other.sameType(boxType) || other.sameType(ReferenceTypeUsage.OBJECT)) {
             return true;
         }
         if (!other.isPrimitive()) {

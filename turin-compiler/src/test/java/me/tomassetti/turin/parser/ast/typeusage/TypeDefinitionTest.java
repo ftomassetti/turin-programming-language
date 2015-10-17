@@ -59,10 +59,10 @@ public class TypeDefinitionTest {
         assertEquals(2, mangaCharacter.getDirectProperties(resolver).size());
 
         assertEquals("name", mangaCharacter.getDirectProperties(resolver).get(0).getName());
-        assertTrue(ReferenceTypeUsage.STRING.sameType(mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage(), resolver));
+        assertTrue(ReferenceTypeUsage.STRING.sameType(mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage()));
 
         assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
-        assertTrue(mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage().sameType(BasicTypeUsageNode.UINT, resolver));
+        assertTrue(mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage().sameType(BasicTypeUsageNode.UINT));
     }
 
     @Test

@@ -101,8 +101,8 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
         return ImmutableList.of();
     }
 
-    public String getQualifiedName(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).getQualifiedName();
+    public String getQualifiedName() {
+        return getTypeDefinition(symbolResolver()).getQualifiedName();
     }
 
     public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
@@ -133,11 +133,11 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         if (!other.isReferenceTypeUsage()) {
             return false;
         }
-        return getQualifiedName(resolver).equals(other.asReferenceTypeUsage().getQualifiedName());
+        return getQualifiedName().equals(other.asReferenceTypeUsage().getQualifiedName());
     }
 
     public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {

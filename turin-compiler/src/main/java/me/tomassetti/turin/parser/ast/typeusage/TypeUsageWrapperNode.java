@@ -120,11 +120,6 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
-        return typeUsage().sameType(other, resolver);
-    }
-
-    @Override
     public boolean sameType(TypeUsage other) {
         return typeUsage().sameType(other);
     }

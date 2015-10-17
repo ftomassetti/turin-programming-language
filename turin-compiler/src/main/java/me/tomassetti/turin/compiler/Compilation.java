@@ -494,7 +494,7 @@ public class Compilation {
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
         TypeUsage pieceType = piece.calcType();
-        if (pieceType.sameType(ReferenceTypeUsage.STRING, resolver)) {
+        if (pieceType.sameType(ReferenceTypeUsage.STRING)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isReference()) {
@@ -503,10 +503,10 @@ public class Compilation {
         } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt()) {
             elements.add(pushUtils.convertAndPush(piece, JvmType.INT));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.sameType(PrimitiveTypeUsage.BOOLEAN, resolver)) {
+        } else if (pieceType.sameType(PrimitiveTypeUsage.BOOLEAN)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.sameType(PrimitiveTypeUsage.CHAR, resolver)) {
+        } else if (pieceType.sameType(PrimitiveTypeUsage.CHAR)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isLong()) {

@@ -86,7 +86,7 @@ public class Property extends Node {
     }
 
     public static String getterName(TypeUsage typeUsage, String propertyName, SymbolResolver resolver) {
-        String prefix = typeUsage.sameType(PrimitiveTypeUsage.BOOLEAN, resolver) ? "is" : "get";
+        String prefix = typeUsage.sameType(PrimitiveTypeUsage.BOOLEAN) ? "is" : "get";
         String rest = propertyName.length() > 1 ? propertyName.substring(1) : "";
         return prefix + Character.toUpperCase(propertyName.charAt(0)) + rest;
     }

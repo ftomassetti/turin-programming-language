@@ -154,10 +154,10 @@ public class CompilationOfPush {
         } else if (expr instanceof MathOperation) {
             MathOperation mathOperation = (MathOperation) expr;
             // TODO do proper conversions
-            if (!mathOperation.getLeft().calcType().sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
+            if (!mathOperation.getLeft().calcType().sameType(PrimitiveTypeUsage.INT)) {
                 throw new UnsupportedOperationException();
             }
-            if (!mathOperation.getRight().calcType().sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
+            if (!mathOperation.getRight().calcType().sameType(PrimitiveTypeUsage.INT)) {
                 throw new UnsupportedOperationException();
             }
             JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType().jvmType().typeCategory();
