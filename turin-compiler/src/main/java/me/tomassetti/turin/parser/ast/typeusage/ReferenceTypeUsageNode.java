@@ -137,7 +137,7 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
         if (!other.isReferenceTypeUsage()) {
             return false;
         }
-        return getQualifiedName(resolver).equals(other.asReferenceTypeUsage().getQualifiedName(resolver));
+        return getQualifiedName(resolver).equals(other.asReferenceTypeUsage().getQualifiedName());
     }
 
     public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {

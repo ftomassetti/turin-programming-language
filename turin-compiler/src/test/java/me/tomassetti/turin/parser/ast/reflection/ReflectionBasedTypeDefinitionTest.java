@@ -24,15 +24,15 @@ public class ReflectionBasedTypeDefinitionTest {
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
         assertEquals(4, ancestors.size());
-        Set<String> names = ancestors.stream().map((a)->a.asReferenceTypeUsage().getQualifiedName(resolver)).collect(Collectors.toSet());
+        Set<String> names = ancestors.stream().map((a)->a.asReferenceTypeUsage().getQualifiedName()).collect(Collectors.toSet());
         assertTrue(names.contains(Object.class.getCanonicalName()));
         assertTrue(names.contains(Serializable.class.getCanonicalName()));
         assertTrue(names.contains(CharSequence.class.getCanonicalName()));
         assertTrue(names.contains(Comparable.class.getCanonicalName()));
         for (ReferenceTypeUsage ancestor : ancestors) {
-            if (ancestor.getQualifiedName(resolver).equals(Comparable.class.getCanonicalName())) {
+            if (ancestor.getQualifiedName().equals(Comparable.class.getCanonicalName())) {
                 assertEquals(1, ancestor.getTypeParameterValues().getInOrder().size());
-                assertEquals("java.lang.String", ancestor.getTypeParameterValues().getInOrder().get(0).asReferenceTypeUsage().getQualifiedName(resolver));
+                assertEquals("java.lang.String", ancestor.getTypeParameterValues().getInOrder().get(0).asReferenceTypeUsage().getQualifiedName());
             }
         }
     }

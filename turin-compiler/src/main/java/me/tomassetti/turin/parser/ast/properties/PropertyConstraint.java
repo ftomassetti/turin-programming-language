@@ -41,7 +41,7 @@ public class PropertyConstraint extends Node {
         }
         TypeUsage messageType = message.calcType();
         if (!messageType.isReference() ||
-                !messageType.asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
+                !messageType.asReferenceTypeUsage().getQualifiedName().equals(String.class.getCanonicalName())) {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint message must have String type, instead it has type " + messageType.describe());
             return false;
         }

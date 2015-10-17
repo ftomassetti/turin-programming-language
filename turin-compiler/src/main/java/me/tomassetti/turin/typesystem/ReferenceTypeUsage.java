@@ -76,7 +76,7 @@ public class ReferenceTypeUsage implements TypeUsage {
         return getTypeDefinition().jvmType();
     }
 
-    public String getQualifiedName(SymbolResolver resolver) {
+    public String getQualifiedName() {
         return getTypeDefinition().getQualifiedName();
     }
 
@@ -96,7 +96,7 @@ public class ReferenceTypeUsage implements TypeUsage {
             return false;
         }
         ReferenceTypeUsage other = type.asReferenceTypeUsage();
-        if (this.getQualifiedName(resolver).equals(other.getQualifiedName(resolver))) {
+        if (this.getQualifiedName().equals(other.getQualifiedName())) {
             return true;
         }
         for (TypeUsage ancestor : this.getAllAncestors(resolver)) {
@@ -165,7 +165,7 @@ public class ReferenceTypeUsage implements TypeUsage {
         if (!other.isReferenceTypeUsage()) {
             return false;
         }
-        return getQualifiedName(resolver).equals(other.asReferenceTypeUsage().getQualifiedName(resolver));
+        return getQualifiedName().equals(other.asReferenceTypeUsage().getQualifiedName());
     }
 
     public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {

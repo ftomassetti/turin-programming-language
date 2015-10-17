@@ -37,7 +37,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
         PropertyDefinition definition = optionalDefinition.get();
         assertEquals("name", definition.getName());
         assertEquals(true, definition.getType().isReferenceTypeUsage());
-        assertEquals("java.lang.String", definition.getType().asReferenceTypeUsage().getQualifiedName(symbolResolver));
+        assertEquals("java.lang.String", definition.getType().asReferenceTypeUsage().getQualifiedName());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class SrcSymbolResolverTest extends EasyMockSupport {
         Optional<TypeUsage> typeDefinition = srcSymbolResolver.findTypeUsageIn("manga.MangaCharacter", NoContext.getInstance(), symbolResolver);
         assertEquals(true, typeDefinition.isPresent());
         assertEquals(true, typeDefinition.get().isReferenceTypeUsage());
-        assertEquals("manga.MangaCharacter", typeDefinition.get().asReferenceTypeUsage().getQualifiedName(srcSymbolResolver));
+        assertEquals("manga.MangaCharacter", typeDefinition.get().asReferenceTypeUsage().getQualifiedName());
     }
 
     @Test

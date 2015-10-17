@@ -350,11 +350,11 @@ public class Compilation {
         // calculate superclass
         String superClassInternalName = OBJECT_INTERNAL_NAME;
         if (typeDefinition.getBaseType().isPresent()) {
-            superClassInternalName = JvmNameUtils.canonicalToInternal(typeDefinition.getBaseType().get().asReferenceTypeUsage().getQualifiedName(resolver));
+            superClassInternalName = JvmNameUtils.canonicalToInternal(typeDefinition.getBaseType().get().asReferenceTypeUsage().getQualifiedName());
         }
         // calculate interfaces
         String[] interfaces = typeDefinition.getInterfaces().stream()
-                .map((i)->JvmNameUtils.canonicalToInternal(i.asReferenceTypeUsage().getQualifiedName(resolver)))
+                .map((i)->JvmNameUtils.canonicalToInternal(i.asReferenceTypeUsage().getQualifiedName()))
                 .collect(Collectors.toList()).toArray(new String[]{});
         cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, null, superClassInternalName, interfaces);
 

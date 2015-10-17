@@ -58,9 +58,9 @@ public class DirClassTypeResolverTest extends AbstractCompilerTest {
         TypeUsageNode returnTypeParse = dirClassesTypeResolver.resolveAbsoluteFunctionName("me.tomassetti.javaformatter.parse").get().getReturnType();
         assertEquals(true, returnTypeFatalError.isVoid());
         assertEquals(true, returnTypeFormat.isReferenceTypeUsage());
-        assertEquals(String.class.getCanonicalName(), returnTypeFormat.asReferenceTypeUsage().getQualifiedName(symbolResolver));
+        assertEquals(String.class.getCanonicalName(), returnTypeFormat.asReferenceTypeUsage().getQualifiedName());
         assertEquals(true, returnTypeParse.isReferenceTypeUsage());
-        assertEquals(CompilationUnit.class.getCanonicalName(), returnTypeParse.asReferenceTypeUsage().getQualifiedName(symbolResolver));
+        assertEquals(CompilationUnit.class.getCanonicalName(), returnTypeParse.asReferenceTypeUsage().getQualifiedName());
     }
 
     @Test
@@ -76,11 +76,11 @@ public class DirClassTypeResolverTest extends AbstractCompilerTest {
         assertEquals(1, paramsTypeParse.size());
 
         assertEquals(true, paramsTypeFatalError.get(0).getType().isReferenceTypeUsage());
-        assertEquals(String.class.getCanonicalName(), paramsTypeFatalError.get(0).getType().asReferenceTypeUsage().getQualifiedName(symbolResolver));
+        assertEquals(String.class.getCanonicalName(), paramsTypeFatalError.get(0).getType().asReferenceTypeUsage().getQualifiedName());
         assertEquals(true, paramsTypeFormat.get(0).getType().isReferenceTypeUsage());
-        assertEquals(CompilationUnit.class.getCanonicalName(), paramsTypeFormat.get(0).getType().asReferenceTypeUsage().getQualifiedName(symbolResolver));
+        assertEquals(CompilationUnit.class.getCanonicalName(), paramsTypeFormat.get(0).getType().asReferenceTypeUsage().getQualifiedName());
         assertEquals(true, paramsTypeParse.get(0).getType().isReferenceTypeUsage());
-        assertEquals(String.class.getCanonicalName(), paramsTypeParse.get(0).getType().asReferenceTypeUsage().getQualifiedName(symbolResolver));
+        assertEquals(String.class.getCanonicalName(), paramsTypeParse.get(0).getType().asReferenceTypeUsage().getQualifiedName());
     }
 
     @Test
