@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ArrayTypeUsage implements TypeUsage {
+
     @Override
     public boolean isArray() {
         return true;

@@ -6,6 +6,7 @@ import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
@@ -124,7 +125,7 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public final Symbol getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         return typeUsage().getFieldOnInstance(fieldName, instance, resolver);
     }
 

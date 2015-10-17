@@ -4,6 +4,7 @@ import me.tomassetti.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Field;
@@ -18,7 +19,7 @@ public class ReflectionBasedField extends Node {
     }
 
     @Override
-    public Node getField(String fieldName, SymbolResolver resolver) {
+    public Symbol getField(String fieldName, SymbolResolver resolver) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
         return fieldType.getFieldOnInstance(fieldName, this, resolver);
     }

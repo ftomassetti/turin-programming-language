@@ -229,7 +229,7 @@ public class CompilationOfPush {
                 return new ComposedBytecodeSequence(pushExpression(instanceFieldAccess.getSubject()), new ArrayLengthBS());
             } else {
                 TypeUsage instanceType = instanceFieldAccess.getSubject().calcType();
-                Node value = instanceType.getFieldOnInstance(instanceFieldAccess.getField(), instanceFieldAccess.getSubject(), compilation.getResolver());
+                Symbol value = instanceType.getFieldOnInstance(instanceFieldAccess.getField(), instanceFieldAccess.getSubject(), compilation.getResolver());
                 return push(value);
             }
         } else if (expr instanceof InstanceMethodInvokation) {
