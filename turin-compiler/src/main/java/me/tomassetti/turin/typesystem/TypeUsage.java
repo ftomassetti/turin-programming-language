@@ -59,11 +59,7 @@ public interface TypeUsage extends Symbol {
     ///
 
     JvmType jvmType();
-
-    default JvmTypeCategory toJvmTypeCategory() {
-        return jvmType().typeCategory();
-    }
-
+    
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
 
     boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver);
