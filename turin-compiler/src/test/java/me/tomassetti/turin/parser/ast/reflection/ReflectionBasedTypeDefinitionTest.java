@@ -22,7 +22,7 @@ public class ReflectionBasedTypeDefinitionTest {
     public void getAllAncestorsOfString(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
-        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
+        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors();
         assertEquals(4, ancestors.size());
         Set<String> names = ancestors.stream().map((a)->a.asReferenceTypeUsage().getQualifiedName()).collect(Collectors.toSet());
         assertTrue(names.contains(Object.class.getCanonicalName()));
@@ -41,7 +41,7 @@ public class ReflectionBasedTypeDefinitionTest {
     public void getAllAncestorsOfObject(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
-        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
+        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors();
         assertEquals(0, ancestors.size());
     }
 
@@ -49,7 +49,7 @@ public class ReflectionBasedTypeDefinitionTest {
     public void getAllAncestorsOfSerializable(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
-        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors(resolver);
+        List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors();
         assertEquals(0, ancestors.size());
     }
 

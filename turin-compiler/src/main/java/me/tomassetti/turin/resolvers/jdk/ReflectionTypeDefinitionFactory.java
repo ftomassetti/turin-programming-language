@@ -4,6 +4,12 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
+import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
+import me.tomassetti.turin.parser.ast.properties.PropertyReference;
+import me.tomassetti.turin.resolvers.SymbolResolver;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
@@ -19,6 +25,49 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ReflectionTypeDefinitionFactory {
+
+    private static class ReflectionSymbolResolver implements SymbolResolver {
+
+        @Override
+        public SymbolResolver getParent() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setParent(SymbolResolver parent) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<PropertyDefinition> findDefinition(PropertyReference propertyReference) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Optional<Symbol> findSymbol(String name, Node context) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean existPackage(String packageName) {
+            throw new UnsupportedOperationException();
+        }
+    }
 
     private static final ReflectionTypeDefinitionFactory INSTANCE = new ReflectionTypeDefinitionFactory();
 

@@ -8,6 +8,7 @@ import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.typesystem.*;
 
 import java.lang.reflect.Modifier;
@@ -71,10 +72,10 @@ public class JavassistTypeDefinitionFactory {
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsage toTypeUsage(CtClass type) {
+    public static TypeUsage toTypeUsage(CtClass type, SymbolResolver symbolResolver) {
         if (type.isArray()) {
             try {
-                return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+                return new ArrayTypeUsage(toTypeUsage(type.getComponentType(), symbolResolver));
             } catch (NotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -83,18 +84,18 @@ public class JavassistTypeDefinitionFactory {
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsage.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsage(getInstance().getTypeDefinition(type));
+            return new ReferenceTypeUsage(getInstance().getTypeDefinition(type, symbolResolver));
         }
     }
 
-    public TypeDefinition getTypeDefinition(CtClass clazz) {
+    public TypeDefinition getTypeDefinition(CtClass clazz, SymbolResolver symbolResolver) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
         if (clazz.isPrimitive()) {
             throw new IllegalArgumentException();
         }
-        return new JavassistTypeDefinition(clazz);
+        return new JavassistTypeDefinition(clazz, symbolResolver);
     }
 
     public static JvmConstructorDefinition toConstructorDefinition(CtConstructor constructor) throws NotFoundException {

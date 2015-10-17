@@ -117,7 +117,7 @@ public class JavassistBasedMethodResolution {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
                     TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver);
-                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i), resolver);
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -145,7 +145,7 @@ public class JavassistBasedMethodResolution {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
                     TypeUsage actualType = argsTypes.get(i).getValue().calcType();
-                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
+                    TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i), resolver);
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
                     }
@@ -225,8 +225,8 @@ public class JavassistBasedMethodResolution {
             return false;
         }
         // TODO consider generic parameters?
-        JavassistTypeDefinition firstDef = new JavassistTypeDefinition(firstType);
-        JavassistTypeDefinition secondDef = new JavassistTypeDefinition(secondType);
+        JavassistTypeDefinition firstDef = new JavassistTypeDefinition(firstType, resolver);
+        JavassistTypeDefinition secondDef = new JavassistTypeDefinition(secondType, resolver);
         TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
         TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);

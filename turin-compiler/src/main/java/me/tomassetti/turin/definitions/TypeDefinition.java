@@ -33,7 +33,7 @@ public interface TypeDefinition extends Symbol, Named {
     /// Hierarchy
     ///
 
-    List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
+    List<ReferenceTypeUsage> getAllAncestors();
 
     TypeDefinition getSuperclass();
 

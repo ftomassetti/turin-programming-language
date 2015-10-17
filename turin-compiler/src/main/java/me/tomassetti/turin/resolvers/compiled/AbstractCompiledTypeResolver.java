@@ -8,6 +8,7 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
@@ -103,7 +104,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
         if (classpathElements.containsKey(typeName)) {
             try {
                 CtClass ctClass = classpathElements.get(typeName).toCtClass();
-                return Optional.of(new JavassistTypeDefinition(ctClass));
+                return Optional.of(new JavassistTypeDefinition(ctClass, new InFileSymbolResolver(this)));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -129,12 +130,12 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
                 CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                 LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
 
-                TypeUsage returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType());
+                TypeUsage returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType(), new InFileSymbolResolver(this));
                 List<FormalParameterNode> formalParameters = new ArrayList<>();
 
                 int i=0;
                 for (CtClass paramType : invokeMethod.getParameterTypes()) {
-                    TypeUsage type =JavassistTypeDefinitionFactory.toTypeUsage(paramType);
+                    TypeUsage type =JavassistTypeDefinitionFactory.toTypeUsage(paramType, new InFileSymbolResolver(this));
                     String paramName = attr.variableName(i);
                     formalParameters.add(new FormalParameterNode(TypeUsageNode.wrap(type), paramName));
                     i++;

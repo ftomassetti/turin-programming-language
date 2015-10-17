@@ -305,11 +305,11 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors() {
         if (getBaseType().isPresent()) {
             List<ReferenceTypeUsage> res = new ArrayList<>();
             res.add(getBaseType().get().asReferenceTypeUsage());
-            res.addAll(getBaseType().get().asReferenceTypeUsage().getAllAncestors(resolver));
+            res.addAll(getBaseType().get().asReferenceTypeUsage().getAllAncestors());
             return res;
         }
         return ImmutableList.of(ReferenceTypeUsage.OBJECT);

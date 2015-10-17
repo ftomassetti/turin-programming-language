@@ -99,7 +99,7 @@ public class ReferenceTypeUsage implements TypeUsage {
         if (this.getQualifiedName().equals(other.getQualifiedName())) {
             return true;
         }
-        for (TypeUsage ancestor : this.getAllAncestors(resolver)) {
+        for (TypeUsage ancestor : this.getAllAncestors()) {
             if (ancestor.canBeAssignedTo(type, resolver)) {
                 return true;
             }
@@ -107,9 +107,9 @@ public class ReferenceTypeUsage implements TypeUsage {
         return false;
     }
 
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
+    public List<ReferenceTypeUsage> getAllAncestors() {
         // TODO perhaps some generic type substitution needs to be done
-        return getTypeDefinition().getAllAncestors(resolver);
+        return getTypeDefinition().getAllAncestors();
     }
 
     @Override
