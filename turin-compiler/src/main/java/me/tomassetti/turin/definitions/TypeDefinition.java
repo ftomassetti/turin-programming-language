@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * A TypeDefinition should not need to receive a SymbolResolver externally.
+ * If it needs it to calculate some answer it should store it since construction time.
+ */
 public interface TypeDefinition extends Symbol, Named {
 
     ///
@@ -31,7 +35,7 @@ public interface TypeDefinition extends Symbol, Named {
 
     List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
 
-    TypeDefinition getSuperclass(SymbolResolver resolver);
+    TypeDefinition getSuperclass();
 
     ///
     /// Type

@@ -106,7 +106,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+    public TypeDefinition getSuperclass() {
         throw new UnsupportedOperationException();
     }
 

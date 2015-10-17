@@ -500,7 +500,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public TypeDefinition getSuperclass(SymbolResolver resolver) {
+    public TypeDefinition getSuperclass() {
         if (this.baseType.isPresent()) {
             return this.baseType.get().asReferenceTypeUsage().getTypeDefinition();
         }
