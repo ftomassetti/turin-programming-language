@@ -67,7 +67,8 @@ public class ValueReferenceTest {
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         TypeUsage type = valueReferences.get(0).calcType(resolver);
-        assertEquals(PrimitiveTypeUsageNode.INT, type);
+        assertTrue(type.isPrimitive());
+        assertTrue(type.asPrimitiveTypeUsage().isInt());
     }
 
 }

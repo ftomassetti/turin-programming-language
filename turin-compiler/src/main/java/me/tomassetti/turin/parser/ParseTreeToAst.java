@@ -18,6 +18,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.*;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
@@ -302,7 +303,7 @@ class ParseTreeToAst {
             getPositionFrom(referenceTypeUsage, type);
             return referenceTypeUsage;
         } else if (type.primitiveType != null) {
-            return PrimitiveTypeUsageNode.getByName(type.primitiveType.getText());
+            return TypeUsageNode.wrap(PrimitiveTypeUsage.getByName(type.primitiveType.getText()));
         } else if (type.basicType != null) {
             return BasicTypeUsage.getByName(type.basicType.getText());
         } else if (type.arrayBase != null) {

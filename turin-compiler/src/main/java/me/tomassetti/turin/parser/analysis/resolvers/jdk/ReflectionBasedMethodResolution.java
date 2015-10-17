@@ -10,10 +10,7 @@ import me.tomassetti.turin.parser.ast.TypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
-import me.tomassetti.turin.typesystem.ArrayTypeUsage;
-import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
-import me.tomassetti.turin.typesystem.TypeVariableUsage;
+import me.tomassetti.turin.typesystem.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -77,7 +74,7 @@ class ReflectionBasedMethodResolution {
                 return new VoidTypeUsageNode();
             }
             if (clazz.isPrimitive()) {
-                return PrimitiveTypeUsageNode.getByName(clazz.getName());
+                return PrimitiveTypeUsage.getByName(clazz.getName());
             }
             if (clazz.isArray()) {
                 return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType(), typeVariables));

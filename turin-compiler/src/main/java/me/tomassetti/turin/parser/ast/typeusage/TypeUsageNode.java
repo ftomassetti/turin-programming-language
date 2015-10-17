@@ -37,6 +37,11 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
             public Iterable<Node> getChildren() {
                 return Collections.emptyList();
             }
+
+            @Override
+            public String toString() {
+                return "TypeUsageWrapperNode{"+typeUsage+"}";
+            }
         };
     }
 

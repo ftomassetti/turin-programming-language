@@ -42,25 +42,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
         return Collections.emptyList();
     }
 
-    /**
-     * In Turin all type names are capitalized, this is true also for primitive types.
-     */
-    public String turinName() {
-        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
-    }
-
-    /**
-     * It accepts both Java name (lower case) or Turin name (capitalized).
-     */
-    public static TypeUsageNode getByName(String name) {
-        for (PrimitiveTypeUsageNode primitiveTypeUsage : ALL) {
-            if (primitiveTypeUsage.turinName().equals(name) || primitiveTypeUsage.name.equals(name)) {
-                return primitiveTypeUsage;
-            }
-        }
-        throw new IllegalArgumentException(name);
-    }
-
     @Override
     public String toString() {
         return "PrimitiveTypeUsage{" +

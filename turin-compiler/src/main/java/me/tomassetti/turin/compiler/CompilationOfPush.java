@@ -22,6 +22,7 @@ import me.tomassetti.turin.parser.ast.expressions.literals.*;
 import me.tomassetti.turin.parser.ast.statements.SuperInvokation;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -154,10 +155,10 @@ public class CompilationOfPush {
         } else if (expr instanceof MathOperation) {
             MathOperation mathOperation = (MathOperation) expr;
             // TODO do proper conversions
-            if (!mathOperation.getLeft().calcType(compilation.getResolver()).equals(PrimitiveTypeUsageNode.INT)) {
+            if (!mathOperation.getLeft().calcType(compilation.getResolver()).sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
                 throw new UnsupportedOperationException();
             }
-            if (!mathOperation.getRight().calcType(compilation.getResolver()).equals(PrimitiveTypeUsageNode.INT)) {
+            if (!mathOperation.getRight().calcType(compilation.getResolver()).sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
                 throw new UnsupportedOperationException();
             }
             JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType(compilation.getResolver()).jvmType(compilation.getResolver()).typeCategory();

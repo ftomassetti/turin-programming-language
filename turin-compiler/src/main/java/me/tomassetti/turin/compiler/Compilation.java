@@ -23,6 +23,7 @@ import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.*;
@@ -502,10 +503,10 @@ public class Compilation {
         } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isStoredInInt()) {
             elements.add(pushUtils.convertAndPush(piece, JvmType.INT));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(I)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsageNode.BOOLEAN)) {
+        } else if (pieceType.sameType(PrimitiveTypeUsage.BOOLEAN, resolver)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false, false)));
-        } else if (pieceType.equals(PrimitiveTypeUsageNode.CHAR)) {
+        } else if (pieceType.sameType(PrimitiveTypeUsage.CHAR, resolver)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(C)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isPrimitive() && pieceType.asPrimitiveTypeUsage().isLong()) {

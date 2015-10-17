@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -78,7 +79,7 @@ public class InFileSymbolResolver implements SymbolResolver {
     @Override
     public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
         if (PrimitiveTypeUsageNode.isPrimitiveTypeName(typeName)){
-            return Optional.of(PrimitiveTypeUsageNode.getByName(typeName));
+            return Optional.of(PrimitiveTypeUsage.getByName(typeName));
         }
         // note that this check has to come after the check for primitive types
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
