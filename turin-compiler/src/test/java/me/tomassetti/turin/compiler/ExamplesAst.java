@@ -29,11 +29,11 @@ public class ExamplesAst {
         address.setPosition(Position.create(0, 0, 0, 0));
         PropertyDefinition streetProperty = new PropertyDefinition("street", new ReferenceTypeUsageNode("String"), Optional.empty(), Optional.empty(), Collections.emptyList());
         address.add(streetProperty);
-        PropertyDefinition numberProperty = new PropertyDefinition("number", BasicTypeUsageNode.UINT, Optional.empty(), Optional.empty(), Collections.emptyList());
+        PropertyDefinition numberProperty = new PropertyDefinition("number", new BasicTypeUsageNode("uint"), Optional.empty(), Optional.empty(), Collections.emptyList());
         address.add(numberProperty);
         PropertyDefinition cityProperty = new PropertyDefinition("city", new ReferenceTypeUsageNode("String"), Optional.empty(), Optional.empty(), Collections.emptyList());
         address.add(cityProperty);
-        PropertyDefinition zipProperty = new PropertyDefinition("zip", BasicTypeUsageNode.UINT, Optional.empty(), Optional.empty(), Collections.emptyList());
+        PropertyDefinition zipProperty = new PropertyDefinition("zip", new BasicTypeUsageNode("uint"), Optional.empty(), Optional.empty(), Collections.emptyList());
         address.add(zipProperty);
 
         turinFile.add(person);

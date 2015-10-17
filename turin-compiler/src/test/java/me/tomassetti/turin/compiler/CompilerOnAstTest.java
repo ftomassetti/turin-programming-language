@@ -32,7 +32,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
+        BasicTypeUsageNode intType = new BasicTypeUsageNode("uint");
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 

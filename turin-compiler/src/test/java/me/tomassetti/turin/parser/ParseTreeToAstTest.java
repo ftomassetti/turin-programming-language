@@ -33,7 +33,7 @@ public class ParseTreeToAstTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
+        BasicTypeUsageNode intType = new BasicTypeUsageNode("uint");
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
@@ -58,7 +58,7 @@ public class ParseTreeToAstTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
+        BasicTypeUsageNode intType = new BasicTypeUsageNode("uint");
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
@@ -97,6 +97,8 @@ public class ParseTreeToAstTest {
         PropertyDefinition expProp = expectedAst.getTopLevelPropertyDefinitions().get(0);
         PropertyDefinition actProp = actualAst.getTopLevelPropertyDefinitions().get(0);
         assertEquals(expProp, actProp);
+        assertEquals(expProp.getName(), actProp.getName());
+        assertEquals(expProp.getType(), actProp.getType());
         assertEquals(expectedAst.getTopLevelPropertyDefinitions(), actualAst.getTopLevelPropertyDefinitions());
         assertEquals(expectedAst, actualAst);
     }

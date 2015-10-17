@@ -19,6 +19,30 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
 
     protected TypeUsage typeUsage;
 
+    @Override
+    public String toString() {
+        return "TypeUsageWrapperNode{" +
+                "typeUsage=" + typeUsage +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TypeUsageWrapperNode)) return false;
+
+        TypeUsageWrapperNode that = (TypeUsageWrapperNode) o;
+
+        if (typeUsage != null ? !typeUsage.equals(that.typeUsage) : that.typeUsage != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return typeUsage != null ? typeUsage.hashCode() : 0;
+    }
+
     public TypeUsage typeUsage() {
         if (typeUsage == null) {
             throw new IllegalStateException();

@@ -8,6 +8,7 @@ import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ValueReference;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;
+import me.tomassetti.turin.typesystem.BasicTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class ValueReferenceTest {
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         ResolverRegistry.INSTANCE.record(turinFile, resolver);
         TypeUsage type = valueReferences.get(0).calcType();
-        assertEquals(BasicTypeUsageNode.UINT, type);
+        assertTrue(type.sameType(BasicTypeUsage.UINT));
     }
 
     @Test

@@ -8,7 +8,9 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
+import me.tomassetti.turin.typesystem.BasicTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class TypeDefinitionTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
+        BasicTypeUsageNode intType = new BasicTypeUsageNode("uint");
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
@@ -62,7 +64,8 @@ public class TypeDefinitionTest {
         assertTrue(ReferenceTypeUsage.STRING.sameType(mangaCharacter.getDirectProperties(resolver).get(0).getTypeUsage()));
 
         assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
-        assertTrue(mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage().sameType(BasicTypeUsageNode.UINT));
+        TypeUsage actualType = mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage();
+        assertTrue(actualType.sameType(BasicTypeUsage.UINT));
     }
 
     @Test

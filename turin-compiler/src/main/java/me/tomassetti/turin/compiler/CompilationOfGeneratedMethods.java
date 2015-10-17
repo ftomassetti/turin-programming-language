@@ -17,6 +17,7 @@ import me.tomassetti.turin.parser.ast.properties.PropertyConstraint;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.typesystem.BasicTypeUsage;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -36,9 +37,9 @@ public class CompilationOfGeneratedMethods {
     }
 
     private void enforceConstraint(Property property, MethodVisitor mv, BytecodeSequence getValue) {
-        if (property.getTypeUsage().sameType(BasicTypeUsageNode.UINT)
-                || property.getTypeUsage().sameType(BasicTypeUsageNode.UBYTE)
-                || property.getTypeUsage().sameType(BasicTypeUsageNode.USHORT)) {
+        if (property.getTypeUsage().sameType(BasicTypeUsage.UINT)
+                || property.getTypeUsage().sameType(BasicTypeUsage.UBYTE)
+                || property.getTypeUsage().sameType(BasicTypeUsage.USHORT)) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -49,7 +50,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().sameType(BasicTypeUsageNode.ULONG)) {
+        } else if (property.getTypeUsage().sameType(BasicTypeUsage.ULONG)) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -64,7 +65,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().equals(BasicTypeUsageNode.UFLOAT)) {
+        } else if (property.getTypeUsage().sameType(BasicTypeUsage.UFLOAT)) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -80,7 +81,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().equals(BasicTypeUsageNode.UDOUBLE)) {
+        } else if (property.getTypeUsage().sameType(BasicTypeUsage.UDOUBLE)) {
             getValue.operate(mv);
             Label label = new Label();
 
