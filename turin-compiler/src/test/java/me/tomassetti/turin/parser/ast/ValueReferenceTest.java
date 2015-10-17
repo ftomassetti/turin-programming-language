@@ -35,7 +35,7 @@ public class ValueReferenceTest {
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         ResolverRegistry.INSTANCE.record(turinFile, resolver);
-        TypeUsage type = valueReferences.get(0).calcType(resolver);
+        TypeUsage type = valueReferences.get(0).calcType();
         assertEquals(BasicTypeUsageNode.UINT, type);
     }
 
@@ -51,7 +51,7 @@ public class ValueReferenceTest {
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         ResolverRegistry.INSTANCE.record(turinFile, resolver);
-        TypeUsage type = valueReferences.get(0).calcType(resolver);
+        TypeUsage type = valueReferences.get(0).calcType();
         assertEquals(new ArrayTypeUsage(ReferenceTypeUsage.STRING), type);
     }
 
@@ -67,7 +67,7 @@ public class ValueReferenceTest {
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         ResolverRegistry.INSTANCE.record(turinFile, resolver);
-        TypeUsage type = valueReferences.get(0).calcType(resolver);
+        TypeUsage type = valueReferences.get(0).calcType();
         assertTrue(type.isPrimitive());
         assertTrue(type.asPrimitiveTypeUsage().isInt());
     }

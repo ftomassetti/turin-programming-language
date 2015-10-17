@@ -49,7 +49,7 @@ public final class ParamUtils {
     }
 
     public static Either<String, List<ActualParam>> desugarizeAsteriskParam(List<? extends FormalParameter> formalParameters, Expression value, SymbolResolver resolver, Node parent) {
-        TypeUsage type = value.calcType(resolver);
+        TypeUsage type = value.calcType();
         if (!type.isReference()) {
             return Either.left("An asterisk param should be an object");
         }

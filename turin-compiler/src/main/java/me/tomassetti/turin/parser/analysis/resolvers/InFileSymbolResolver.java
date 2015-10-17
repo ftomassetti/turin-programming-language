@@ -103,7 +103,7 @@ public class InFileSymbolResolver implements SymbolResolver {
     @Override
     public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
         List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream()
-                .map((ap) -> ap.calcType(this).jvmType(this))
+                .map((ap) -> ap.calcType().jvmType(this))
                 .collect(Collectors.toList());
         Expression function = functionCall.getFunction();
         boolean staticContext = function.isType(this) || (function instanceof StaticFieldAccess);

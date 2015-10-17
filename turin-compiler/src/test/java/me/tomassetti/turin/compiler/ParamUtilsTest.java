@@ -113,7 +113,7 @@ public class ParamUtilsTest {
         Expression value = createMock(Expression.class);
         SymbolResolver resolver = createMock(SymbolResolver.class);
         TypeUsageNode typeOfAsteriskParam = createMock(TypeUsageNode.class);
-        expect(value.calcType(resolver)).andReturn(typeOfAsteriskParam);
+        expect(value.calcType()).andReturn(typeOfAsteriskParam);
         expect(typeOfAsteriskParam.isReference()).andReturn(false);
         Node parent = new IntLiteral(3); // it does not really matter
 
@@ -133,7 +133,7 @@ public class ParamUtilsTest {
         value.setParent(EasyMock.anyObject());
         SymbolResolver resolver = createMock(SymbolResolver.class);
         ReferenceTypeUsage typeUsageOfAsteriskParam = createMock(ReferenceTypeUsage.class);
-        expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
+        expect(value.calcType()).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
         TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinitionNode.class);
@@ -164,7 +164,7 @@ public class ParamUtilsTest {
         value.setParent(EasyMock.anyObject());
         SymbolResolver resolver = createMock(SymbolResolver.class);
         ReferenceTypeUsage typeUsageOfAsteriskParam = createMock(ReferenceTypeUsage.class);
-        expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
+        expect(value.calcType()).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
         TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinitionNode.class);
@@ -193,7 +193,7 @@ public class ParamUtilsTest {
         value.setParent(EasyMock.anyObject());
         SymbolResolver resolver = createMock(SymbolResolver.class);
         ReferenceTypeUsage typeUsageOfAsteriskParam = createMock(ReferenceTypeUsage.class);
-        expect(value.calcType(resolver)).andReturn(typeUsageOfAsteriskParam);
+        expect(value.calcType()).andReturn(typeUsageOfAsteriskParam);
         expect(typeUsageOfAsteriskParam.isReference()).andReturn(true);
         expect(typeUsageOfAsteriskParam.asReferenceTypeUsage()).andReturn(typeUsageOfAsteriskParam);
         TypeDefinition typeOfAsteriskParam = PowerMock.createMock(TypeDefinitionNode.class);

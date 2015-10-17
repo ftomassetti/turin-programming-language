@@ -189,7 +189,7 @@ class ReflectionBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = argsTypes.get(i).getValue().calcType(resolver);
+                    TypeUsage actualType = argsTypes.get(i).getValue().calcType();
                     TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i));
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;
@@ -208,7 +208,7 @@ class ReflectionBasedMethodResolution {
         } else {
             return findMostSpecific(suitableMethods,
                     new AmbiguousCallException(context, argsTypes, desc),
-                    argsTypes.stream().map((ap)->ap.getValue().calcType(resolver).jvmType(resolver)).collect(Collectors.toList()),
+                    argsTypes.stream().map((ap)->ap.getValue().calcType().jvmType(resolver)).collect(Collectors.toList()),
                     resolver);
         }
     }

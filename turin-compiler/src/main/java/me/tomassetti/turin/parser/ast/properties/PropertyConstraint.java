@@ -34,12 +34,12 @@ public class PropertyConstraint extends Node {
 
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
-        TypeUsage conditionType = condition.calcType(resolver);
+        TypeUsage conditionType = condition.calcType();
         if (!conditionType.isPrimitive() || !conditionType.asPrimitiveTypeUsage().isBoolean()) {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint condition must have boolean type, instead it has type " + conditionType.describe());
             return false;
         }
-        TypeUsage messageType = message.calcType(resolver);
+        TypeUsage messageType = message.calcType();
         if (!messageType.isReference() ||
                 !messageType.asReferenceTypeUsage().getQualifiedName(resolver).equals(String.class.getCanonicalName())) {
             errorCollector.recordSemanticError(condition.getPosition(), "A property constraint message must have String type, instead it has type " + messageType.describe());

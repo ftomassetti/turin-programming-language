@@ -127,12 +127,8 @@ public abstract class Node implements Symbol {
     /// Typing
     ///
 
-    public final TypeUsage calcType(SymbolResolver resolver) {
-        return calcType();
-    }
-
     public TypeUsage calcType() {
-        return calcType(symbolResolver());
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     ///
@@ -178,7 +174,7 @@ public abstract class Node implements Symbol {
      * This is intended in a broad way: everything that can be accessed with a dot.
      */
     public Symbol getField(String fieldName, SymbolResolver resolver) {
-        return calcType(resolver).getFieldOnInstance(fieldName, this, resolver);
+        return calcType().getFieldOnInstance(fieldName, this, resolver);
     }
 
     ///

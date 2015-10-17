@@ -52,18 +52,18 @@ public class InstanceMethodInvokation extends Invokable {
     }
 
     public JvmMethodDefinition findJvmDefinition(SymbolResolver resolver) {
-        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType(resolver).jvmType(resolver)).collect(Collectors.toList());
-        return subject.calcType(resolver).findMethodFor(methodName, paramTypes, resolver, false);
+        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType(resolver)).collect(Collectors.toList());
+        return subject.calcType().findMethodFor(methodName, paramTypes, resolver, false);
     }
 
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
-        return subject.calcType(resolver).isMethodOverloaded(resolver, methodName);
+        return subject.calcType().isMethodOverloaded(resolver, methodName);
     }
 
     @Override
     protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
-        TypeUsage typeUsage = subject.calcType(resolver);
+        TypeUsage typeUsage = subject.calcType();
         if (!typeUsage.isReference()) {
             throw new UnsupportedOperationException();
         }

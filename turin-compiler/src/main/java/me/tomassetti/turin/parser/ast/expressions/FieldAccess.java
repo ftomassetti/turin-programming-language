@@ -61,7 +61,7 @@ public class FieldAccess extends Expression {
 
     @Override
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return subject.calcType(resolver).findMethodFor(this.field, argsTypes, resolver, staticContext);
+        return subject.calcType().findMethodFor(this.field, argsTypes, resolver, staticContext);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class FieldAccess extends Expression {
             //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
             throw new UnsupportedOperationException();
         } else if (invokable instanceof FunctionCall) {
-            return subject.calcType(resolver).findFormalParametersFor(invokable, resolver);
+            return subject.calcType().findFormalParametersFor(invokable, resolver);
         } else {
             throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         }

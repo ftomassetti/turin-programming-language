@@ -27,7 +27,7 @@ public abstract class InternalInvokableDefinition {
     }
 
     private Optional<String> matchAsterisk(SymbolResolver resolver, ActualParam actualParam, List<? extends FormalParameter> formalParameters) {
-        TypeUsage paramType = actualParam.getValue().calcType(resolver);
+        TypeUsage paramType = actualParam.getValue().calcType();
         // it needs to have all the getters for the non-default parameters
         // all the other getters that match default params have to be the right type
 
@@ -66,7 +66,7 @@ public abstract class InternalInvokableDefinition {
         }
         int i = 0;
         for (ActualParam param : unnamedParams) {
-            if (!param.getValue().calcType(resolver).canBeAssignedTo(formalParameters.get(i).getType(), resolver)){
+            if (!param.getValue().calcType().canBeAssignedTo(formalParameters.get(i).getType(), resolver)){
                 return Optional.of("TODO");
             }
             paramsAssigned.add(formalParameters.get(i).getName());
@@ -82,7 +82,7 @@ public abstract class InternalInvokableDefinition {
             if (!validNames.containsKey(param.getName())) {
                 return Optional.of("Unknown param " + param.getName());
             }
-            if (!param.getValue().calcType(resolver).canBeAssignedTo(validNames.get(param.getName()).getType(), resolver)){
+            if (!param.getValue().calcType().canBeAssignedTo(validNames.get(param.getName()).getType(), resolver)){
                 return Optional.of("TODO");
             }
             paramsAssigned.add(param.getName());

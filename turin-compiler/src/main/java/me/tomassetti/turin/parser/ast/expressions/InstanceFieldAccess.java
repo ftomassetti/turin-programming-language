@@ -38,7 +38,7 @@ public class InstanceFieldAccess extends Expression {
     }
 
     public boolean isArrayLength(SymbolResolver resolver) {
-        return getSubject().calcType(resolver).isArray() && field.equals("length");
+        return getSubject().calcType().isArray() && field.equals("length");
     }
 
     @Override

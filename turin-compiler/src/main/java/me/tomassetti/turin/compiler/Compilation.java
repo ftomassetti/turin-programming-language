@@ -493,7 +493,7 @@ public class Compilation {
     }
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
-        TypeUsage pieceType = piece.calcType(resolver);
+        TypeUsage pieceType = piece.calcType();
         if (pieceType.sameType(ReferenceTypeUsage.STRING, resolver)) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));

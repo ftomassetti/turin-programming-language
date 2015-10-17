@@ -17,7 +17,7 @@ public final class BoxUnboxing {
     }
 
     public static Expression box(Expression value, SymbolResolver resolver) {
-        TypeUsage type = value.calcType(resolver);
+        TypeUsage type = value.calcType();
         if (!type.isPrimitive()) {
             throw new IllegalArgumentException("type is not primitive, cannot box this value");
         }

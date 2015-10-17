@@ -102,7 +102,7 @@ public class VariableDeclaration extends Statement implements Symbol {
         if (type != null) {
             return type;
         } else {
-            return value.calcType(resolver);
+            return value.calcType();
         }
     }
 }

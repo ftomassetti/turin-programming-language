@@ -154,13 +154,13 @@ public class CompilationOfPush {
         } else if (expr instanceof MathOperation) {
             MathOperation mathOperation = (MathOperation) expr;
             // TODO do proper conversions
-            if (!mathOperation.getLeft().calcType(compilation.getResolver()).sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
+            if (!mathOperation.getLeft().calcType().sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
                 throw new UnsupportedOperationException();
             }
-            if (!mathOperation.getRight().calcType(compilation.getResolver()).sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
+            if (!mathOperation.getRight().calcType().sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
                 throw new UnsupportedOperationException();
             }
-            JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType(compilation.getResolver()).jvmType(compilation.getResolver()).typeCategory();
+            JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType().jvmType(compilation.getResolver()).typeCategory();
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(mathOperation.getLeft()),
                     pushExpression(mathOperation.getRight()),
@@ -221,14 +221,14 @@ public class CompilationOfPush {
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(arrayAccess.getArray()),
                     pushExpression(arrayAccess.getIndex()),
-                    new ArrayAccessBS(arrayAccess.calcType(compilation.getResolver()).jvmType(compilation.getResolver()).typeCategory())));
+                    new ArrayAccessBS(arrayAccess.calcType().jvmType(compilation.getResolver()).typeCategory())));
         } else if (expr instanceof InstanceFieldAccess) {
             InstanceFieldAccess instanceFieldAccess = (InstanceFieldAccess) expr;
             // Ideally it should be desugarized before
             if (instanceFieldAccess.isArrayLength(compilation.getResolver())) {
                 return new ComposedBytecodeSequence(pushExpression(instanceFieldAccess.getSubject()), new ArrayLengthBS());
             } else {
-                TypeUsage instanceType = instanceFieldAccess.getSubject().calcType(compilation.getResolver());
+                TypeUsage instanceType = instanceFieldAccess.getSubject().calcType();
                 Node value = instanceType.getFieldOnInstance(instanceFieldAccess.getField(), instanceFieldAccess.getSubject(), compilation.getResolver());
                 return push(value);
             }
@@ -240,7 +240,7 @@ public class CompilationOfPush {
             instanceMethodInvokation.desugarize(compilation.getResolver());
             BytecodeSequence instancePush = pushExpression(instanceMethodInvokation.getSubject());
             JvmMethodDefinition methodDefinition = instanceMethodInvokation.findJvmDefinition(compilation.getResolver());
-            TypeUsage returnType = instanceMethodInvokation.calcType(compilation.getResolver());
+            TypeUsage returnType = instanceMethodInvokation.calcType();
             String typeReturnedFromMethod = methodDefinition.getReturnTypeDescriptor();
             // This could happen because of generics: in this case a cast is needed
             BytecodeSequence invokationBS = new ComposedBytecodeSequence(ImmutableList.<BytecodeSequence>builder()
@@ -300,7 +300,7 @@ public class CompilationOfPush {
             BytecodeSequence putField = new BytecodeSequence() {
                 @Override
                 public void operate(MethodVisitor mv) {
-                    TypeDefinition typeDefinition = instanceFieldAccess.getSubject().calcType(compilation.getResolver())
+                    TypeDefinition typeDefinition = instanceFieldAccess.getSubject().calcType()
                             .asReferenceTypeUsage()
                             .getTypeDefinition(compilation.getResolver());
                     String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
@@ -330,7 +330,7 @@ public class CompilationOfPush {
     }
 
     private BytecodeSequence adaptAndPush(Expression value, JvmType formalType) {
-        JvmType actualType = value.calcType(compilation.getResolver()).jvmType(compilation.getResolver());
+        JvmType actualType = value.calcType().jvmType(compilation.getResolver());
         boolean isPrimitive = actualType.isPrimitive();
         if (isPrimitive && !formalType.isPrimitive()) {
             // need boxing
@@ -344,7 +344,7 @@ public class CompilationOfPush {
     }
 
     public BytecodeSequence convertAndPush(Expression value, JvmType formalType) {
-        JvmType actualType = value.calcType(compilation.getResolver()).jvmType(compilation.getResolver());
+        JvmType actualType = value.calcType().jvmType(compilation.getResolver());
         if (actualType.equals(formalType)) {
             return pushExpression(value);
         }

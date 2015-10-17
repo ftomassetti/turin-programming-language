@@ -56,7 +56,7 @@ public class ThrowStatement extends Statement {
 
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
-        TypeUsage exceptionType = getException().calcType(resolver);
+        TypeUsage exceptionType = getException().calcType();
         if (!exceptionType.isReference()) {
             errorCollector.recordSemanticError(exception.getPosition(), ERR_MESSAGE);
             return false;

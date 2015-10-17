@@ -139,7 +139,7 @@ public abstract class Invokable extends Expression {
             if (formalParams.get(i).isNode() && formalParams.get(i).asNode().getParent() == null) {
                 throw new IllegalStateException();
             }
-            TypeUsage actualParamType = param.getValue().calcType(resolver);
+            TypeUsage actualParamType = param.getValue().calcType();
             TypeUsage formalParamType = formalParams.get(i).getType();
             if (!actualParamType.canBeAssignedTo(formalParamType, resolver)){
                 throw new UnsolvedInvokableException(this);
@@ -157,7 +157,7 @@ public abstract class Invokable extends Expression {
             if (!validNames.containsKey(param.getName())) {
                 throw new IllegalArgumentException("Unknown param " + param.getName());
             }
-            if (!param.getValue().calcType(resolver).canBeAssignedTo(validNames.get(param.getName()).getType(), resolver)){
+            if (!param.getValue().calcType().canBeAssignedTo(validNames.get(param.getName()).getType(), resolver)){
                 throw new UnsolvedInvokableException(this);
             }
             paramsAssigned.put(param.getName(), param);
