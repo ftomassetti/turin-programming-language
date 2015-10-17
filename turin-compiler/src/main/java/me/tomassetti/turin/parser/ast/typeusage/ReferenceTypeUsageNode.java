@@ -105,11 +105,6 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
         return getTypeDefinition(symbolResolver()).getQualifiedName();
     }
 
-    public List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver) {
-        // TODO perhaps some generic type substitution needs to be done
-        return getTypeDefinition(resolver).getAllAncestors(resolver);
-    }
-
     @Override
     protected boolean specificValidate(SymbolResolver resolver, ErrorCollector errorCollector) {
         try {
@@ -123,25 +118,7 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
 
     @Override
     public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        if (invokable instanceof FunctionCall) {
-            FunctionCall functionCall = (FunctionCall)invokable;
-            TypeDefinition typeDefinition = getTypeDefinition(resolver);
-            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic(resolver)));
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @Override
-    public boolean sameType(TypeUsage other) {
-        if (!other.isReferenceTypeUsage()) {
-            return false;
-        }
-        return getQualifiedName().equals(other.asReferenceTypeUsage().getQualifiedName());
-    }
-
-    public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).associatedTypeParametersToName(resolver, typeParams);
+        return typeUsage().asReferenceTypeUsage().findFormalParametersFor(invokable, resolver);
     }
 
     @Override

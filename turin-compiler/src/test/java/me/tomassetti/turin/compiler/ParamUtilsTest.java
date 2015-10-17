@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
@@ -102,7 +103,7 @@ public class ParamUtilsTest {
 
     @Test
     public void testGetterNameNotBoolean() {
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterNode(new ReferenceTypeUsageNode(Boolean.class.getCanonicalName()), "foo"), DUMMY_RESOLVER));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Boolean.class)), "foo"), DUMMY_RESOLVER));
         assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING, "foo"), DUMMY_RESOLVER));
         assertEquals("getA", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING, "a"), DUMMY_RESOLVER));
     }
