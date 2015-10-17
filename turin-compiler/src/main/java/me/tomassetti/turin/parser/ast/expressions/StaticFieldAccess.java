@@ -86,7 +86,7 @@ public class StaticFieldAccess extends Expression {
 
     private TypeDefinition typeDefinition(SymbolResolver resolver) {
         if (typeDefinitionCache == null) {
-            typeDefinitionCache = resolver.getTypeDefinitionIn(subject.qualifiedName(), this, resolver);
+            typeDefinitionCache = resolver.getTypeDefinitionIn(subject.qualifiedName(), this);
         }
         return typeDefinitionCache;
     }

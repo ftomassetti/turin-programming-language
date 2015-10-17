@@ -96,7 +96,7 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
         if (cachedTypeDefinition != null) {
             return cachedTypeDefinition;
         }
-        TypeDefinition typeDefinition = resolver.getRoot().getTypeDefinitionIn(this.name, this, resolver.getRoot());
+        TypeDefinition typeDefinition = resolver.getRoot().getTypeDefinitionIn(this.name, this);
         return typeDefinition;
     }
 

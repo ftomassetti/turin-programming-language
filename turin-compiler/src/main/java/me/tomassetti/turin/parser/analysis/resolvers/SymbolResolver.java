@@ -46,7 +46,8 @@ public interface SymbolResolver {
      * @param resolver top level resolver used during compilation. This is needed because this resolver could delegate
      *                 to that one during the resolution process.
      */
-    default TypeDefinition getTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
+    default TypeDefinition getTypeDefinitionIn(String typeName, Node context) {
+        SymbolResolver resolver = ResolverRegistry.INSTANCE.requireResolver(context);
         Optional<TypeDefinition> result = findTypeDefinitionIn(typeName, context, resolver.getRoot());
         if (result.isPresent()) {
             return result.get();

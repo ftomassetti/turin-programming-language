@@ -27,6 +27,7 @@ public class FieldAccess extends Expression {
 
     public FieldAccess(Expression subject, String field) {
         this.subject = subject;
+        this.subject.setParent(this);
         this.field = field;
     }
 

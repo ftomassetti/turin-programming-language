@@ -49,7 +49,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
             return;
         }
         String canonicalTypeName = packagePart.qualifiedName() + "." + typeName;
-        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this, resolver);
+        TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this);
 
         if (typeDefinition.hasField(fieldsPath, true, resolver)) {
             importedValueCache = typeDefinition.getField(fieldsPath, resolver);
