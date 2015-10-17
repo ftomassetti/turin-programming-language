@@ -8,7 +8,7 @@ import me.tomassetti.bytecode_generation.returnop.ReturnFalseBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnTrueBS;
 import me.tomassetti.jvm.*;
 import me.tomassetti.turin.implicit.BasicTypeUsage;
-import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstructorDefinition;
+import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;

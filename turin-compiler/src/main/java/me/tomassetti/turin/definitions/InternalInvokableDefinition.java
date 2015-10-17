@@ -1,4 +1,4 @@
-package me.tomassetti.turin.parser.analysis.symbols_definitions;
+package me.tomassetti.turin.definitions;
 
 import me.tomassetti.turin.compiler.ParamUtils;
 import me.tomassetti.jvm.JvmType;

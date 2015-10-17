@@ -5,8 +5,8 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalConstructorDefinition;
-import me.tomassetti.turin.parser.analysis.symbols_definitions.InternalMethodDefinition;
+import me.tomassetti.turin.definitions.InternalConstructorDefinition;
+import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
@@ -14,8 +14,6 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
-import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
-import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
@@ -29,7 +27,7 @@ import java.util.Optional;
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
  */
-public abstract class TypeDefinition extends Node implements Named, Symbol {
+public abstract class TypeDefinition extends Node implements Named {
     protected String name;
 
     public TypeDefinition(String name) {
