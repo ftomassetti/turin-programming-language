@@ -1,19 +1,23 @@
 package me.tomassetti.turin.typesystem;
 
 import com.google.common.collect.ImmutableList;
+import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
  *       parent.
  */
-public class BasicTypeUsage extends TypeUsageNode {
+public class BasicTypeUsage implements TypeUsage {
 
     public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsage.BYTE);
     public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsage.SHORT);
@@ -33,11 +37,6 @@ public class BasicTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public TypeUsageNode copy() {
-        return this;
-    }
-
-    @Override
     public boolean isPrimitive() {
         return true;
     }
@@ -53,6 +52,11 @@ public class BasicTypeUsage extends TypeUsageNode {
     }
 
     @Override
+    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
+        return null;
+    }
+
+    @Override
     public boolean sameType(TypeUsage other) {
         return other == this;
     }
@@ -63,8 +67,28 @@ public class BasicTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public Iterable<Node> getChildren() {
-        return Collections.emptyList();
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+        return false;
+    }
+
+    @Override
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
