@@ -85,7 +85,7 @@ public class CompilationOfPush {
             }
         } else if (node instanceof Property) {
             Property property = (Property) node;
-            JvmFieldDefinition field = new JvmFieldDefinition(compilation.getInternalClassName(), property.fieldName(), property.getTypeUsage().jvmType(compilation.getResolver()).getDescriptor(), false);
+            JvmFieldDefinition field = new JvmFieldDefinition(compilation.getInternalClassName(), property.fieldName(), property.getTypeUsage().jvmType().getDescriptor(), false);
             return new PushInstanceField(field);
         } else if (node instanceof AccessEndpoint) {
             AccessEndpoint accessEndpoint = (AccessEndpoint) node;
@@ -160,7 +160,7 @@ public class CompilationOfPush {
             if (!mathOperation.getRight().calcType().sameType(PrimitiveTypeUsage.INT, compilation.getResolver())) {
                 throw new UnsupportedOperationException();
             }
-            JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType().jvmType(compilation.getResolver()).typeCategory();
+            JvmTypeCategory leftTypeCategory = mathOperation.getLeft().calcType().jvmType().typeCategory();
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(mathOperation.getLeft()),
                     pushExpression(mathOperation.getRight()),
@@ -221,7 +221,7 @@ public class CompilationOfPush {
             return new ComposedBytecodeSequence(ImmutableList.of(
                     pushExpression(arrayAccess.getArray()),
                     pushExpression(arrayAccess.getIndex()),
-                    new ArrayAccessBS(arrayAccess.calcType().jvmType(compilation.getResolver()).typeCategory())));
+                    new ArrayAccessBS(arrayAccess.calcType().jvmType().typeCategory())));
         } else if (expr instanceof InstanceFieldAccess) {
             InstanceFieldAccess instanceFieldAccess = (InstanceFieldAccess) expr;
             // Ideally it should be desugarized before
@@ -247,8 +247,8 @@ public class CompilationOfPush {
                     .add(instancePush)
                     .add(adaptAndPushAllParameters(instanceMethodInvokation.getActualParamValuesInOrder(), methodDefinition))
                     .add(new MethodInvocationBS(methodDefinition)).build());
-            if (!returnType.jvmType(compilation.getResolver()).getDescriptor().equals(typeReturnedFromMethod)){
-                return new ComposedBytecodeSequence(invokationBS, new CastBS(returnType.jvmType(compilation.getResolver()).getInternalName()));
+            if (!returnType.jvmType().getDescriptor().equals(typeReturnedFromMethod)){
+                return new ComposedBytecodeSequence(invokationBS, new CastBS(returnType.jvmType().getInternalName()));
             } else {
                 return invokationBS;
             }
@@ -305,7 +305,7 @@ public class CompilationOfPush {
                             .getTypeDefinition();
                     String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
                     String descriptor = typeDefinition.getFieldType(instanceFieldAccess.getField(), false, compilation.getResolver())
-                            .jvmType(compilation.getResolver())
+                            .jvmType()
                             .getDescriptor();
                     mv.visitFieldInsn(Opcodes.PUTFIELD, internalClassName, instanceFieldAccess.getField(), descriptor);
                 }
@@ -330,7 +330,7 @@ public class CompilationOfPush {
     }
 
     private BytecodeSequence adaptAndPush(Expression value, JvmType formalType) {
-        JvmType actualType = value.calcType().jvmType(compilation.getResolver());
+        JvmType actualType = value.calcType().jvmType();
         boolean isPrimitive = actualType.isPrimitive();
         if (isPrimitive && !formalType.isPrimitive()) {
             // need boxing
@@ -344,7 +344,7 @@ public class CompilationOfPush {
     }
 
     public BytecodeSequence convertAndPush(Expression value, JvmType formalType) {
-        JvmType actualType = value.calcType().jvmType(compilation.getResolver());
+        JvmType actualType = value.calcType().jvmType();
         if (actualType.equals(formalType)) {
             return pushExpression(value);
         }
@@ -368,7 +368,7 @@ public class CompilationOfPush {
     }
 
     int loadTypeForTypeUsage(TypeUsage type) {
-        return loadTypeFor(type.jvmType(compilation.getResolver()));
+        return loadTypeFor(type.jvmType());
     }
 
 }

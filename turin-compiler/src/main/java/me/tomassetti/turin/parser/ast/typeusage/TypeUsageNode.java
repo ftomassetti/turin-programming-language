@@ -64,7 +64,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     public JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
-        return this.jvmType(resolver).typeCategory();
+        return this.jvmType().typeCategory();
     }
 
     private boolean overloaded;

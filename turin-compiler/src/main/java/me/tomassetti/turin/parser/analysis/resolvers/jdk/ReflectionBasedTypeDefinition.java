@@ -164,7 +164,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
                 if (actualParam.isNamed()) {
                     throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
                 } else {
-                    argsTypes.add(actualParam.getValue().calcType().jvmType(resolver));
+                    argsTypes.add(actualParam.getValue().calcType().jvmType());
                 }
             }
             return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()), this);

@@ -196,11 +196,11 @@ public class Compilation {
                     TypeUsageNode firstParamType, TypeUsageNode secondParamType, boolean accessingFirstField) {
         String methodName = fieldAccessed.methodName();
         String descriptor = fieldAccessed.methodDescriptor(resolver);
-        String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
+        String signature = "(" + otherField.getType().jvmType().getSignature() + ")"
                 + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class)
                 + "<"
-                + firstParamType.jvmType(resolver).getSignature()
-                + secondParamType.jvmType(resolver).getSignature()
+                + firstParamType.jvmType().getSignature()
+                + secondParamType.jvmType().getSignature()
                 + ">";
         // TODO record parameter name
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, methodName, descriptor, signature, null);
@@ -213,7 +213,7 @@ public class Compilation {
                 true
         );
         new PushStaticField(instanceField).operate(mv);
-        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
+        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType()), 0).operate(mv);
         JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
                 fieldAccessed.getRelationDefinition().relationClassInternalName(),
                 invokedMethodName,
@@ -231,11 +231,11 @@ public class Compilation {
                                                          TypeUsageNode firstParamType, TypeUsageNode secondParamType, boolean accessingFirstField) {
         String methodName = fieldAccessed.methodName();
         String descriptor = fieldAccessed.methodDescriptor(resolver);
-        String signature = "(" + otherField.getType().jvmType(resolver).getSignature() + ")"
+        String signature = "(" + otherField.getType().jvmType().getSignature() + ")"
                 + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class)
                 + "<"
-                + firstParamType.jvmType(resolver).getSignature()
-                + secondParamType.jvmType(resolver).getSignature()
+                + firstParamType.jvmType().getSignature()
+                + secondParamType.jvmType().getSignature()
                 + ">";
         // TODO record parameter name
         MethodVisitor mv = cw.visitMethod(ACC_PUBLIC + ACC_STATIC, methodName, descriptor, signature, null);
@@ -248,7 +248,7 @@ public class Compilation {
                 true
         );
         new PushStaticField(instanceField).operate(mv);
-        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType(resolver)), 0).operate(mv);
+        new PushLocalVar(OpcodesUtils.loadTypeFor(otherField.getType().jvmType()), 0).operate(mv);
         JvmMethodDefinition methodDefinition = new JvmMethodDefinition(
                 fieldAccessed.getRelationDefinition().relationClassInternalName(),
                 invokedMethodName,
@@ -418,10 +418,10 @@ public class Compilation {
             localVarsSymbolTable = LocalVarsSymbolTable.forInstanceMethod();
         }
 
-        String paramsDescriptor = String.join("", invokableDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
-        String paramsSignature = String.join("", invokableDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
-        String methodDescriptor = "(" + paramsDescriptor + ")" + invokableDefinition.getReturnType().jvmType(resolver).getDescriptor();
-        String methodSignature = "(" + paramsSignature + ")" + invokableDefinition.getReturnType().jvmType(resolver).getSignature();
+        String paramsDescriptor = String.join("", invokableDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType().getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", invokableDefinition.getParameters().stream().map((dp) -> dp.getType().jvmType().getSignature()).collect(Collectors.toList()));
+        String methodDescriptor = "(" + paramsDescriptor + ")" + invokableDefinition.getReturnType().jvmType().getDescriptor();
+        String methodSignature = "(" + paramsSignature + ")" + invokableDefinition.getReturnType().jvmType().getSignature();
         // TODO consider exceptions
         int modifiers = ACC_PUBLIC;
         if (isStatic) {
@@ -440,8 +440,8 @@ public class Compilation {
         for (FormalParameter formalParameter : invokableDefinition.getParameters()) {
             int index = localVarsSymbolTable.add(formalParameter.getName(), formalParameter);
             mv.visitLocalVariable(formalParameter.getName(),
-                    formalParameter.getType().jvmType(resolver).getDescriptor(),
-                    formalParameter.getType().jvmType(resolver).getSignature(),
+                    formalParameter.getType().jvmType().getDescriptor(),
+                    formalParameter.getType().jvmType().getSignature(),
                     start,
                     end,
                     index);

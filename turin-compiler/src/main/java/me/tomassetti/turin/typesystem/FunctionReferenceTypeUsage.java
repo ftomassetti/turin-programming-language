@@ -66,11 +66,6 @@ public class FunctionReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return jvmType();
-    }
-
-    @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException();
     }

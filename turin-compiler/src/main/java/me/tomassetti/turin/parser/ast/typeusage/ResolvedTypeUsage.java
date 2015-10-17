@@ -20,11 +20,6 @@ public class ResolvedTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return typeDefinition.jvmType();
-    }
-
-    @Override
     public JvmType jvmType() {
         return typeDefinition.jvmType();
     }

@@ -30,11 +30,6 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return jvmType();
-    }
-
-    @Override
     public JvmType jvmType() {
         return new JvmType("[" + componentType.jvmType().getSignature());
     }

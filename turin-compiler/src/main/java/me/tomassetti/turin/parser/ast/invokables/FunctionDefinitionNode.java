@@ -72,7 +72,7 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
 
     public JvmMethodDefinition jvmMethodDefinition(SymbolResolver resolver) {
         String qName = getGeneratedClassQualifiedName();
-        String descriptor = "(" + String.join("", parameters.stream().map((fp)->fp.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList())) + ")" + returnType.jvmType(resolver).getDescriptor();
+        String descriptor = "(" + String.join("", parameters.stream().map((fp)->fp.getType().jvmType().getDescriptor()).collect(Collectors.toList())) + ")" + returnType.jvmType().getDescriptor();
         return new JvmMethodDefinition(JvmNameUtils.canonicalToInternal(qName), INVOKE_METHOD_NAME, descriptor, true, false);
     }
 
@@ -82,7 +82,7 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
         }
         int i = 0;
         for (FormalParameterNode formalParameter : parameters) {
-            if (!formalParameter.getType().jvmType(resolver).isAssignableBy(argsTypes.get(i))) {
+            if (!formalParameter.getType().jvmType().isAssignableBy(argsTypes.get(i))) {
                 return false;
             }
             i++;

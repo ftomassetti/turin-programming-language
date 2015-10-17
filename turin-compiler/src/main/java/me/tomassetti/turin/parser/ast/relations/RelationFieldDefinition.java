@@ -35,9 +35,9 @@ public class RelationFieldDefinition extends Node {
 
     public String methodDescriptor(SymbolResolver resolver) {
         if (cardinality == Cardinality.SINGLE) {
-            return "(" + otherField().getType().jvmType(resolver).getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class);
+            return "(" + otherField().getType().jvmType().getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceSingleEndpoint.class);
         } else if (cardinality == Cardinality.MANY) {
-            return "(" + otherField().getType().jvmType(resolver).getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class);
+            return "(" + otherField().getType().jvmType().getDescriptor() + ")" + JvmNameUtils.descriptor(Relation.ReferenceMultipleEndpoint.class);
         } else {
             throw new UnsupportedOperationException();
         }

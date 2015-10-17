@@ -131,8 +131,8 @@ public class CompilationOfGeneratedMethods {
        if (!formalParameter.hasDefaultValue()) {
             int index = compilation.getLocalVarsSymbolTable().add(formalParameter.getName(), formalParameter);
             mv.visitLocalVariable(formalParameter.getName(),
-                    formalParameter.getType().jvmType(compilation.getResolver()).getDescriptor(),
-                    formalParameter.getType().jvmType(compilation.getResolver()).getSignature(),
+                    formalParameter.getType().jvmType().getDescriptor(),
+                    formalParameter.getType().jvmType().getSignature(),
                     start,
                     end,
                     index);
@@ -143,7 +143,7 @@ public class CompilationOfGeneratedMethods {
         compilation.setLocalVarsSymbolTable(LocalVarsSymbolTable.forInstanceMethod());
 
         String setterName = property.setterName();
-        JvmType jvmType = property.getTypeUsage().jvmType(compilation.getResolver());
+        JvmType jvmType = property.getTypeUsage().jvmType();
         MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, setterName, "(" + jvmType.getDescriptor() + ")V", "(" + jvmType.getSignature() + ")V", null);
 
         Label start = new Label();
@@ -196,8 +196,8 @@ public class CompilationOfGeneratedMethods {
         List<? extends FormalParameter> params = typeDefinition.getOnlyConstructor(resolver).getFormalParameters();
         List<FormalParameter> formalParametersWithoutDefaults = params.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.<FormalParameter>toList());
 
-        String paramsDescriptor = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType(resolver).getDescriptor()).collect(Collectors.toList()));
-        String paramsSignature = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType(resolver).getSignature()).collect(Collectors.toList()));
+        String paramsDescriptor = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType().getDescriptor()).collect(Collectors.toList()));
+        String paramsSignature = String.join("", formalParametersWithoutDefaults.stream().map((p) -> p.getType().jvmType().getSignature()).collect(Collectors.toList()));
         if (typeDefinition.hasDefaultProperties(resolver) ||
                 (superConstructor!=null && superConstructor.hasDefaultParams())) {
             paramsDescriptor += "Ljava/util/Map;";
@@ -218,8 +218,8 @@ public class CompilationOfGeneratedMethods {
             if (!formalParameter.hasDefaultValue()) {
                 int index = compilation.getLocalVarsSymbolTable().add(formalParameter.getName(), formalParameter);
                 mv.visitLocalVariable(formalParameter.getName(),
-                        formalParameter.getType().jvmType(resolver).getDescriptor(),
-                        formalParameter.getType().jvmType(resolver).getSignature(),
+                        formalParameter.getType().jvmType().getDescriptor(),
+                        formalParameter.getType().jvmType().getSignature(),
                         start,
                         end,
                         index);
@@ -238,7 +238,7 @@ public class CompilationOfGeneratedMethods {
             int index = 1;
             for (FormalParameter formalParameter : superConstructor.getFormalParameters()){
                 if (!formalParameter.hasDefaultValue()) {
-                    JvmType jvmType = formalParameter.getType().jvmType(resolver);
+                    JvmType jvmType = formalParameter.getType().jvmType();
                     new PushLocalVar(OpcodesUtils.loadTypeFor(jvmType), index).operate(mv);
                     index++;
                 }
@@ -294,7 +294,7 @@ public class CompilationOfGeneratedMethods {
     private void assignDefaultPropertiesFromMapParam(TurinTypeDefinition typeDefinition, final String className, SymbolResolver resolver, MethodVisitor mv, int indexOfMapOfDefaults) {
         int localVarIndex = indexOfMapOfDefaults;
         for (Property property : typeDefinition.defaultPropeties(resolver)) {
-            JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+            JvmType jvmType = property.getTypeUsage().jvmType();
             BytecodeSequence isPropertyInMap = new ComposedBytecodeSequence(
                     // we push the map
                     new PushLocalVar(Opcodes.ALOAD, localVarIndex),
@@ -307,14 +307,14 @@ public class CompilationOfGeneratedMethods {
                 new MethodInvocationBS(new JvmMethodDefinition("java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false, true))
             );
             String propertyBoxedType = property.getTypeUsage().isPrimitive() ?
-                      property.getTypeUsage().asPrimitiveTypeUsage().getBoxType().jvmType(resolver).getInternalName()
-                    : property.getTypeUsage().jvmType(resolver).getInternalName();
+                      property.getTypeUsage().asPrimitiveTypeUsage().getBoxType().jvmType().getInternalName()
+                    : property.getTypeUsage().jvmType().getInternalName();
             BytecodeSequence assignPropertyFromMap = new ComposedBytecodeSequence(
                     PushThis.getInstance(),
                     getSequence,
                     new CastBS(propertyBoxedType),
                     property.getTypeUsage().isPrimitive() ?
-                              new UnboxBS(property.getTypeUsage().jvmType(resolver))
+                              new UnboxBS(property.getTypeUsage().jvmType())
                             : NoOp.getInstance(),
                     new BytecodeSequence() {
                         @Override
@@ -332,7 +332,7 @@ public class CompilationOfGeneratedMethods {
                         }
                     });
             new IfBS(isPropertyInMap, assignPropertyFromMap, assignPropertyFromDefaultValue).operate(mv);
-            JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType(resolver).getDescriptor(),false);
+            JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType().getDescriptor(),false);
             enforceConstraint(property, mv, new PushInstanceField(jvmFieldDefinition));
         }
     }
@@ -342,11 +342,11 @@ public class CompilationOfGeneratedMethods {
                 .filter((p) -> p.hasInitialValue())
                 .collect(Collectors.toList());
         for (Property property : directPropertiesWithInitialValue) {
-            JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+            JvmType jvmType = property.getTypeUsage().jvmType();
             mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
             compilation.getPushUtils().pushExpression(property.getInitialValue().get()).operate(mv);
             mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
-            JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType(resolver).getDescriptor(),false);
+            JvmFieldDefinition jvmFieldDefinition = new JvmFieldDefinition(className, property.getName(), property.getTypeUsage().jvmType().getDescriptor(),false);
             enforceConstraint(property, mv, new PushInstanceField(jvmFieldDefinition));
         }
     }
@@ -355,13 +355,13 @@ public class CompilationOfGeneratedMethods {
                                                    List<Property> directPropertiesAsParameters, MethodVisitor mv, int startIndex) {
         int propIndex = startIndex;
         for (Property property : directPropertiesAsParameters) {
-            enforceConstraint(property, mv, property.getTypeUsage().jvmType(resolver), propIndex);
+            enforceConstraint(property, mv, property.getTypeUsage().jvmType(), propIndex);
             propIndex++;
         }
 
         propIndex = startIndex;
         for (Property property : typeDefinition.propertiesAppearingInDefaultConstructor(resolver)) {
-            JvmType jvmType = property.getTypeUsage().jvmType(resolver);
+            JvmType jvmType = property.getTypeUsage().jvmType();
             mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
             mv.visitVarInsn(OpcodesUtils.loadTypeFor(jvmType), propIndex + 1);
             mv.visitFieldInsn(Opcodes.PUTFIELD, className, property.getName(), jvmType.getDescriptor());
@@ -404,7 +404,7 @@ public class CompilationOfGeneratedMethods {
         // if (!this.aField.equals(other.aField)) return false;
         for (Property property : typeDefinition.getAllProperties(compilation.getResolver())) {
             TypeUsageNode propertyTypeUsage = property.getTypeUsage();
-            String fieldTypeDescriptor = propertyTypeUsage.jvmType(compilation.getResolver()).getDescriptor();
+            String fieldTypeDescriptor = propertyTypeUsage.jvmType().getDescriptor();
 
             mv.visitVarInsn(Opcodes.ALOAD, Compilation.LOCALVAR_INDEX_FOR_THIS_IN_METHOD);
             mv.visitFieldInsn(Opcodes.GETFIELD, internalClassName, property.getName(), fieldTypeDescriptor);
@@ -428,9 +428,9 @@ public class CompilationOfGeneratedMethods {
             } else {
                 boolean isInterface = propertyTypeUsage.asReferenceTypeUsage().isInterface(compilation.getResolver());
                 if (isInterface) {
-                    mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, propertyTypeUsage.jvmType(compilation.getResolver()).getInternalName(), "equals", "(Ljava/lang/Object;)Z", true);
+                    mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, propertyTypeUsage.jvmType().getInternalName(), "equals", "(Ljava/lang/Object;)Z", true);
                 } else {
-                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, propertyTypeUsage.jvmType(compilation.getResolver()).getInternalName(), "equals", "(Ljava/lang/Object;)Z", false);
+                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, propertyTypeUsage.jvmType().getInternalName(), "equals", "(Ljava/lang/Object;)Z", false);
                 }
                 mv.visitJumpInsn(Opcodes.IFNE, propertyIsEqual);
             }
@@ -459,7 +459,7 @@ public class CompilationOfGeneratedMethods {
         for (Property property : typeDefinition.getAllProperties(compilation.getResolver())) {
             // result = 31 * result + this.aField.hashCode();
             TypeUsageNode propertyTypeUsage = property.getTypeUsage();
-            String fieldTypeDescriptor = propertyTypeUsage.jvmType(compilation.getResolver()).getDescriptor();
+            String fieldTypeDescriptor = propertyTypeUsage.jvmType().getDescriptor();
 
             // 31 is just a prime number by which we multiply the current value of result
             mv.visitIntInsn(Opcodes.BIPUSH, 31);
@@ -482,9 +482,9 @@ public class CompilationOfGeneratedMethods {
             } else {
                 boolean isInterface = propertyTypeUsage.asReferenceTypeUsage().isInterface(compilation.getResolver());
                 if (isInterface) {
-                    mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, propertyTypeUsage.jvmType(compilation.getResolver()).getInternalName(), "hashCode", "()I", true);
+                    mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, propertyTypeUsage.jvmType().getInternalName(), "hashCode", "()I", true);
                 } else {
-                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, propertyTypeUsage.jvmType(compilation.getResolver()).getInternalName(), "hashCode", "()I", false);
+                    mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, propertyTypeUsage.jvmType().getInternalName(), "hashCode", "()I", false);
                 }
             }
 

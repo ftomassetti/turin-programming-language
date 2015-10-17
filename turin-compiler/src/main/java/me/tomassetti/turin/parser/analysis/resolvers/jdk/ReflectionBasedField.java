@@ -65,6 +65,6 @@ public class ReflectionBasedField extends Node {
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
         TypeUsage ownerType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getDeclaringClass());
-        return new JvmFieldDefinition(ownerType.jvmType(resolver).getInternalName(), field.getName(), fieldType.jvmType(resolver).getSignature(), true);
+        return new JvmFieldDefinition(ownerType.jvmType().getInternalName(), field.getName(), fieldType.jvmType().getSignature(), true);
     }
 }

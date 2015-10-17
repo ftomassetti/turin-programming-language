@@ -70,7 +70,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
         if (promotionsTypes.contains(other)) {
             return true;
         }
-        return jvmType(resolver).equals(other.jvmType(resolver));
+        return jvmType().equals(other.jvmType());
     }
 
     public static Optional<PrimitiveTypeUsage> findByJvmType(JvmType jvmType) {
@@ -102,11 +102,6 @@ public class PrimitiveTypeUsage implements TypeUsage {
     @Override
     public JvmType jvmType() {
         return jvmType;
-    }
-
-    @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return jvmType();
     }
 
     @Override

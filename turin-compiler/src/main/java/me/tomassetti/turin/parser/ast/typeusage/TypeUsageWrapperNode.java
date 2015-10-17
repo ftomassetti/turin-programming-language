@@ -90,11 +90,6 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final JvmType jvmType(SymbolResolver resolver) {
-        return typeUsage().jvmType(resolver);
-    }
-
-    @Override
     public final JvmType jvmType() {
         return typeUsage().jvmType();
     }

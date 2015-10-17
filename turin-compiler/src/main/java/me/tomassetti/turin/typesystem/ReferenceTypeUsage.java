@@ -76,11 +76,6 @@ public class ReferenceTypeUsage implements TypeUsage {
         return getTypeDefinition().jvmType();
     }
 
-    @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return jvmType();
-    }
-
     public String getQualifiedName(SymbolResolver resolver) {
         return getTypeDefinition().getQualifiedName();
     }

@@ -113,13 +113,13 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
         // TODO if we implement inheritance also other methods inherited from classes or interfaces
         for (Property property : getDirectProperties(resolver)) {
             {
-                String descriptor = "()" + property.getTypeUsage().jvmType(resolver).getDescriptor();
+                String descriptor = "()" + property.getTypeUsage().jvmType().getDescriptor();
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.getterName(resolver), descriptor, false, false);
                 InternalMethodDefinition getter = new InternalMethodDefinition(property.getterName(resolver), Collections.emptyList(), property.getTypeUsage(), jvmMethodDefinition);
                 registerMethod(getter);
             }
             {
-                String descriptor = "(" + property.getTypeUsage().jvmType(resolver).getDescriptor() + ")V";
+                String descriptor = "(" + property.getTypeUsage().jvmType().getDescriptor() + ")V";
                 JvmMethodDefinition jvmMethodDefinition = new JvmMethodDefinition(getInternalName(), property.setterName(), descriptor, false, false);
                 FormalParameterNode param = new FormalParameterNode(property.getTypeUsage().copy(), property.getName());
                 param.setParent(this);
@@ -192,7 +192,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     private void addConstructorWithParams(List<? extends FormalParameter> allParams, SymbolResolver resolver) {
         List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.<FormalParameter>toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
-                .map((p) -> p.getType().jvmType(resolver).getSignature())
+                .map((p) -> p.getType().jvmType().getSignature())
                 .collect(Collectors.toList());
         boolean hasDefaultParameters = allParams.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
         if (hasDefaultParameters) {
@@ -206,7 +206,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
         List<? extends FormalParameter> allParams = constructor.getParameters();
         List<FormalParameter> paramsWithoutDefaultValues = allParams.stream().filter((p)->!p.hasDefaultValue()).collect(Collectors.<FormalParameter>toList());
         List<String> paramSignatures = paramsWithoutDefaultValues.stream()
-                .map((p) -> p.getType().jvmType(resolver).getSignature())
+                .map((p) -> p.getType().jvmType().getSignature())
                 .collect(Collectors.toList());
         boolean hasDefaultParameters = allParams.stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
         if (hasDefaultParameters) {
@@ -421,8 +421,8 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
 
     private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, SymbolResolver resolver) {
         return getDirectMethods().stream().filter((m)->m.getName().equals(name))
-                .filter((m) -> m.getParameters().stream().map((p) -> p.calcType().jvmType(resolver)).collect(Collectors.toList())
-                        .equals(paramTypes.stream().map((p) -> p.jvmType(resolver)).collect(Collectors.toList())))
+                .filter((m) -> m.getParameters().stream().map((p) -> p.calcType().jvmType()).collect(Collectors.toList())
+                        .equals(paramTypes.stream().map((p) -> p.jvmType()).collect(Collectors.toList())))
                 .count() > 0;
     }
 

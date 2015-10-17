@@ -47,12 +47,12 @@ public class InstanceMethodInvokation extends Invokable {
 
     @Override
     public TypeUsage calcType() {
-        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType(symbolResolver())).collect(Collectors.toList());
+        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType()).collect(Collectors.toList());
         return subject.calcType().returnTypeWhenInvokedWith(methodName, actualParams, symbolResolver(), false);
     }
 
     public JvmMethodDefinition findJvmDefinition(SymbolResolver resolver) {
-        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType(resolver)).collect(Collectors.toList());
+        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType()).collect(Collectors.toList());
         return subject.calcType().findMethodFor(methodName, paramTypes, resolver, false);
     }
 

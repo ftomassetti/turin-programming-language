@@ -64,11 +64,6 @@ public class BasicTypeUsageNode extends TypeUsageNode {
     }
 
     @Override
-    public JvmType jvmType(SymbolResolver resolver) {
-        return correspondingPrimitiveTypeUsage.jvmType(resolver);
-    }
-
-    @Override
     public Iterable<Node> getChildren() {
         return Collections.emptyList();
     }

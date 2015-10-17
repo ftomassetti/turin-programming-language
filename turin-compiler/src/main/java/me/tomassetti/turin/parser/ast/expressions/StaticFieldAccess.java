@@ -97,6 +97,6 @@ public class StaticFieldAccess extends Expression {
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
         TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
-        return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType(resolver).getSignature(), true);
+        return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType().getSignature(), true);
     }
 }

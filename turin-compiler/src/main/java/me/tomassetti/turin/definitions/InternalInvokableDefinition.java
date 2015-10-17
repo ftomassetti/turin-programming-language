@@ -115,7 +115,7 @@ public abstract class InternalInvokableDefinition {
         for (int i=0;i<jvmTypes.size();i++) {
             FormalParameter formalParameter = formalParameters.get(i);
             JvmType jvmType = jvmTypes.get(i);
-            if (!formalParameter.getType().jvmType(resolver).isAssignableBy(jvmType)) {
+            if (!formalParameter.getType().jvmType().isAssignableBy(jvmType)) {
                 return false;
             }
         }

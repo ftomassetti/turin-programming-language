@@ -208,7 +208,7 @@ class ReflectionBasedMethodResolution {
         } else {
             return findMostSpecific(suitableMethods,
                     new AmbiguousCallException(context, argsTypes, desc),
-                    argsTypes.stream().map((ap)->ap.getValue().calcType().jvmType(resolver)).collect(Collectors.toList()),
+                    argsTypes.stream().map((ap)->ap.getValue().calcType().jvmType()).collect(Collectors.toList()),
                     resolver);
         }
     }

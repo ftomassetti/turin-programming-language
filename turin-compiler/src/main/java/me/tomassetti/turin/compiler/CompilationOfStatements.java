@@ -44,7 +44,7 @@ public class CompilationOfStatements {
             if (returnStatement.hasValue()) {
                 Expression returnedValue = returnStatement.getValue();
                 TypeUsage returnedValueType = returnedValue.calcType();
-                int returnType = returnedValueType.jvmType(compilation.getResolver()).returnOpcode();
+                int returnType = returnedValueType.jvmType().returnOpcode();
                 return new ReturnValueBS(returnType, compilation.getPushUtils().pushExpression(returnStatement.getValue()));
             } else {
                 return new ReturnVoidBS();

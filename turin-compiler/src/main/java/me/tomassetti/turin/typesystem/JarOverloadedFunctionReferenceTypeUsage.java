@@ -51,7 +51,7 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
             if (actualParam.isNamed()) {
                 throw new SemanticErrorException(actualParam, "It is not possible to use named parameters on Java classes");
             } else {
-                argsTypes.add(actualParam.getValue().calcType().jvmType(resolver));
+                argsTypes.add(actualParam.getValue().calcType().jvmType());
             }
         }
         CtMethod method = JavassistBasedMethodResolution.findMethodAmong(methodName, argsTypes, resolver, staticContext, ctMethods);
@@ -74,11 +74,6 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public JvmType jvmType(SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

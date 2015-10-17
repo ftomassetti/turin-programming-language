@@ -54,8 +54,8 @@ public class ReferenceTypeUsageTest {
     public void javaType() {
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         ResolverRegistry.INSTANCE.record(turinFile, resolver);
-        assertEquals("Ljava/lang/String;", nameRef.getType(resolver).jvmType(resolver).getSignature());
-        assertEquals("I", ageProperty.getType().jvmType(resolver).getSignature());
+        assertEquals("Ljava/lang/String;", nameRef.getType(resolver).jvmType().getSignature());
+        assertEquals("I", ageProperty.getType().jvmType().getSignature());
     }
 
     @Test
