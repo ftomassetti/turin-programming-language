@@ -1,5 +1,6 @@
 package me.tomassetti.turin.resolvers.jdk;
 
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
@@ -324,6 +325,6 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
 
     @Override
     public String getName() {
-        return this.getQualifiedName();
+        return clazz.getName();
     }
 }

@@ -50,7 +50,7 @@ public class JavassistBasedMethodResolution {
         }
     }
 
-    public static CtConstructor findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors, Node context) {
+    public static CtConstructor findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors) {
         try {
             List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
             MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, "constructor");
@@ -63,7 +63,7 @@ public class JavassistBasedMethodResolution {
         }
     }
 
-    public static CtConstructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors, Node context) {
+    public static CtConstructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<CtConstructor> constructors) {
         try {
             List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
             MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, "constructor");

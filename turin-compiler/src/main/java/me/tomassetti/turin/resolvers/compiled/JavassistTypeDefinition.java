@@ -25,13 +25,12 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class JavassistTypeDefinition extends TypeDefinitionNode {
+public class JavassistTypeDefinition implements TypeDefinition {
 
     private CtClass ctClass;
     private SymbolResolver symbolResolver;
 
     public JavassistTypeDefinition(CtClass ctClass, SymbolResolver symbolResolver) {
-        super(ctClass.getSimpleName());
         this.symbolResolver = symbolResolver;
         if (ctClass.isPrimitive()) {
             throw new IllegalArgumentException();
@@ -66,6 +65,16 @@ public class JavassistTypeDefinition extends TypeDefinitionNode {
     @Override
     public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
         return Arrays.stream(ctClass.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
+    }
+
+    @Override
+    public String getName() {
+        return ctClass.getSimpleName();
+    }
+
+    @Override
+    public TypeUsage calcType() {
+        return new ReferenceTypeUsage(this);
     }
 
     class DefaultParamData {
@@ -238,7 +247,7 @@ public class JavassistTypeDefinition extends TypeDefinitionNode {
             }
         }
         try {
-            return JavassistTypeDefinitionFactory.toConstructorDefinition(JavassistBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(ctClass.getConstructors()), this));
+            return JavassistTypeDefinitionFactory.toConstructorDefinition(JavassistBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(ctClass.getConstructors())));
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -267,14 +276,19 @@ public class JavassistTypeDefinition extends TypeDefinitionNode {
             }
         }
         if (!methods.isEmpty()) {
-            return typeFor(methods, this, resolver);
+            return typeFor(methods, resolver);
         }
 
         // TODO consider inherited fields and methods
         throw new UnsupportedOperationException(fieldName);
     }
 
-    private static TypeUsage typeFor(List<CtMethod> methods, Node parentToAssign, SymbolResolver resolver) {
+    @Override
+    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+        throw new UnsupportedOperationException();
+    }
+
+    private static TypeUsage typeFor(List<CtMethod> methods, SymbolResolver resolver) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -284,13 +298,13 @@ public class JavassistTypeDefinition extends TypeDefinitionNode {
             }
         });
         if (methods.size() != 1) {
-            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, null, resolver)).collect(Collectors.toList()), methods);
+            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, resolver)).collect(Collectors.toList()), methods);
             return overloadedFunctionReferenceTypeUsage;
         }
-        return typeFor(methods.get(0), parentToAssign, resolver);
+        return typeFor(methods.get(0), resolver);
     }
 
-    private static FunctionReferenceTypeUsage typeFor(CtMethod method, Node parentToAssign, SymbolResolver resolver) {
+    private static FunctionReferenceTypeUsage typeFor(CtMethod method, SymbolResolver resolver) {
         try {
             if (method.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
@@ -403,11 +417,6 @@ public class JavassistTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public Iterable<Node> getChildren() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
         return true;
     }
@@ -449,7 +458,7 @@ public class JavassistTypeDefinition extends TypeDefinitionNode {
         }
 
         CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
-                actualParams, resolver, Arrays.asList(ctClass.getConstructors()), this);
+                actualParams, resolver, Arrays.asList(ctClass.getConstructors()));
         return Optional.of(toInternalConstructorDefinition(constructor, resolver));
     }
 }
