@@ -43,8 +43,6 @@ public interface SymbolResolver {
      *
      * @param typeName can be a simple name or a canonical name. Note that is not legal to pass a primitive type name
      *                 because it is not a valid identifier and there are no TypeDefinition associated
-     * @param resolver top level resolver used during compilation. This is needed because this resolver could delegate
-     *                 to that one during the resolution process.
      */
     default TypeDefinition getTypeDefinitionIn(String typeName, Node context) {
         SymbolResolver resolver = ResolverRegistry.INSTANCE.requireResolver(context);

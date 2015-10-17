@@ -17,8 +17,8 @@ public class MathOperation extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        return left.calcType(resolver);
+    public TypeUsage calcType() {
+        return left.calcType();
     }
 
     public Expression getLeft() {

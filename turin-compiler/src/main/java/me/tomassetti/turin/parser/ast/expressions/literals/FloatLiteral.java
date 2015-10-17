@@ -47,7 +47,7 @@ public class FloatLiteral extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         return PrimitiveTypeUsage.FLOAT;
     }
 

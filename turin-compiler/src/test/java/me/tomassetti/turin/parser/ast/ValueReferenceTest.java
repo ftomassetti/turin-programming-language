@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast;
 
+import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
@@ -33,6 +34,7 @@ public class ValueReferenceTest {
         List<ValueReference> valueReferences = turinFile.findAll(ValueReference.class);
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         TypeUsage type = valueReferences.get(0).calcType(resolver);
         assertEquals(BasicTypeUsageNode.UINT, type);
     }
@@ -48,6 +50,7 @@ public class ValueReferenceTest {
         List<ValueReference> valueReferences = turinFile.findAll(ValueReference.class);
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         TypeUsage type = valueReferences.get(0).calcType(resolver);
         assertEquals(new ArrayTypeUsage(ReferenceTypeUsage.STRING), type);
     }
@@ -63,6 +66,7 @@ public class ValueReferenceTest {
         List<ValueReference> valueReferences = turinFile.findAll(ValueReference.class);
         assertEquals(1, valueReferences.size());
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         TypeUsage type = valueReferences.get(0).calcType(resolver);
         assertTrue(type.isPrimitive());
         assertTrue(type.asPrimitiveTypeUsage().isInt());

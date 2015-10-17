@@ -421,7 +421,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
 
     private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, SymbolResolver resolver) {
         return getDirectMethods().stream().filter((m)->m.getName().equals(name))
-                .filter((m) -> m.getParameters().stream().map((p) -> p.calcType(resolver).jvmType(resolver)).collect(Collectors.toList())
+                .filter((m) -> m.getParameters().stream().map((p) -> p.calcType().jvmType(resolver)).collect(Collectors.toList())
                         .equals(paramTypes.stream().map((p) -> p.jvmType(resolver)).collect(Collectors.toList())))
                 .count() > 0;
     }

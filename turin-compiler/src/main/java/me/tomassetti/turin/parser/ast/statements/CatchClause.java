@@ -31,8 +31,8 @@ public class CatchClause extends Node implements Symbol {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        return new ReferenceTypeUsage(exceptionType.resolve(resolver));
+    public TypeUsage calcType() {
+        return new ReferenceTypeUsage(exceptionType.resolve(symbolResolver()));
     }
 
     public CatchClause(TypeIdentifier exceptionType, String variableName, BlockStatement body) {

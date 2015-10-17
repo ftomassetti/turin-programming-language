@@ -144,7 +144,7 @@ public class CompilationOfPush {
             ValueReference valueReference = (ValueReference) expr;
             Optional<Integer> index = compilation.getLocalVarsSymbolTable().findIndex(valueReference.getName());
             if (index.isPresent()) {
-                TypeUsage type = compilation.getLocalVarsSymbolTable().findDeclaration(valueReference.getName()).get().calcType(compilation.getResolver());
+                TypeUsage type = compilation.getLocalVarsSymbolTable().findDeclaration(valueReference.getName()).get().calcType();
                 return new PushLocalVar(loadTypeForTypeUsage(type), index.get());
             } else if (compilation.getLocalVarsSymbolTable().hasAlias(valueReference.getName())) {
                 return compilation.getLocalVarsSymbolTable().getAlias(valueReference.getName());

@@ -10,7 +10,7 @@ import me.tomassetti.turin.typesystem.TypeUsage;
 import java.util.List;
 
 public abstract class Expression extends Node {
-    public abstract TypeUsage calcType(SymbolResolver resolver);
+    public abstract TypeUsage calcType();
 
     /**
      * When the expression corresponds to something invokable this method find which Jvm method corresponds to the call

@@ -47,7 +47,7 @@ public class IntLiteral extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         return PrimitiveTypeUsage.INT;
     }
 

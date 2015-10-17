@@ -53,10 +53,10 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
+    public TypeUsage calcType() {
+        TypeDefinition typeDefinition = typeDefinition(symbolResolver());
 
-        TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
+        TypeUsage fieldType = typeDefinition.getFieldType(field, true, symbolResolver());
         return fieldType;
     }
 

@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
+import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
@@ -32,6 +33,14 @@ public abstract class Node implements Symbol {
     @Override
     public Node asNode() {
         return this;
+    }
+
+    ///
+    /// Resolver
+    ///
+
+    protected SymbolResolver symbolResolver() {
+        return ResolverRegistry.INSTANCE.requireResolver(this);
     }
 
     ///
@@ -118,8 +127,12 @@ public abstract class Node implements Symbol {
     /// Typing
     ///
 
-    public TypeUsage calcType(SymbolResolver resolver) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    public final TypeUsage calcType(SymbolResolver resolver) {
+        return calcType();
+    }
+
+    public TypeUsage calcType() {
+        return calcType(symbolResolver());
     }
 
     ///

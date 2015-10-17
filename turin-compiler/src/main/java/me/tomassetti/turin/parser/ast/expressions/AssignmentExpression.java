@@ -51,7 +51,7 @@ public class AssignmentExpression extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        return getTarget().calcType(resolver);
+    public TypeUsage calcType() {
+        return getTarget().calcType();
     }
 }

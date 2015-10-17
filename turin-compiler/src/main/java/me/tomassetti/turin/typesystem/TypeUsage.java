@@ -103,7 +103,7 @@ public interface TypeUsage extends Symbol {
 
     <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams);
 
-    default TypeUsage calcType(SymbolResolver resolver) {
+    default TypeUsage calcType() {
         throw new UnsupportedOperationException();
     }
 

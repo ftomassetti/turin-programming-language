@@ -17,7 +17,7 @@ public class NotOperation extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         return PrimitiveTypeUsage.BOOLEAN;
     }
 

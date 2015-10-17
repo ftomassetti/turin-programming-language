@@ -81,7 +81,7 @@ public class Property extends Node {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType() {
         return typeUsage;
     }
 

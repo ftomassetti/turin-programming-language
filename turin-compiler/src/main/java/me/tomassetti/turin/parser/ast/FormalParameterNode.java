@@ -66,7 +66,7 @@ public class FormalParameterNode extends Node implements Symbol, FormalParameter
         }
 
         @Override
-        public TypeUsageNode calcType(SymbolResolver resolver) {
+        public TypeUsageNode calcType() {
             throw new UnsupportedOperationException();
         }
     }
@@ -100,7 +100,7 @@ public class FormalParameterNode extends Node implements Symbol, FormalParameter
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType() {
         return type;
     }
 

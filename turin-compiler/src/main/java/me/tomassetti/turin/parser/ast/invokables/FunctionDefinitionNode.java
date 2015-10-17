@@ -52,7 +52,7 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
         return functionReferenceTypeUsage;
     }

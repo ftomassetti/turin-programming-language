@@ -47,7 +47,7 @@ public class ShortLiteral extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         return PrimitiveTypeUsage.SHORT;
     }
 

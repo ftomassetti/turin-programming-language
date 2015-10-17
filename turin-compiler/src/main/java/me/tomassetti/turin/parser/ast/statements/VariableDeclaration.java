@@ -42,9 +42,9 @@ public class VariableDeclaration extends Statement implements Symbol {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         if (type == null) {
-            return value.calcType(resolver);
+            return value.calcType();
         } else {
             return getType();
         }

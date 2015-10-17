@@ -13,7 +13,7 @@ import java.util.Collections;
 public class ReflectionBasedField extends Node {
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
     }
 

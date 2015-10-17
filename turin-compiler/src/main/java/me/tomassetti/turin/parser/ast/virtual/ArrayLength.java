@@ -24,7 +24,7 @@ public class ArrayLength extends Node {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         return PrimitiveTypeUsage.INT;
     }
 }

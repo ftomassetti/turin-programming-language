@@ -49,7 +49,7 @@ public class RelationFieldDefinition extends Node {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         if (cardinality == Cardinality.SINGLE) {
             List<TypeUsage> typeParams = new ArrayList<>(getParentOfType(RelationDefinition.class).getTypeParameters());
             ReferenceTypeUsage res = new ReferenceTypeUsage(

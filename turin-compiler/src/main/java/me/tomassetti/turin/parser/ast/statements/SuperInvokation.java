@@ -48,7 +48,7 @@ public class SuperInvokation extends Invokable {
 
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType() {
         throw new UnsupportedOperationException();
     }
 

@@ -91,13 +91,13 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
+    public TypeUsage calcType() {
         if (precalculatedType != null) {
             return precalculatedType;
         }
-        Optional<Symbol> declaration = resolver.findSymbol(name, this);
+        Optional<Symbol> declaration = symbolResolver().findSymbol(name, this);
         if (declaration.isPresent()) {
-            return declaration.get().calcType(resolver);
+            return declaration.get().calcType();
         } else {
             throw new UnsolvedSymbolException(this);
         }

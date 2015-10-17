@@ -1,6 +1,5 @@
 package me.tomassetti.turin.parser.ast;
 
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -15,7 +14,7 @@ public class Placeholder extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType() {
         Node parent = getParent();
         while (parent != null) {
             if (parent instanceof PropertyDefinition) {

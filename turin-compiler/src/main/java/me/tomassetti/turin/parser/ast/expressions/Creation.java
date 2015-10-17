@@ -84,7 +84,7 @@ public class Creation extends Invokable {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType() {
         return type;
     }
 

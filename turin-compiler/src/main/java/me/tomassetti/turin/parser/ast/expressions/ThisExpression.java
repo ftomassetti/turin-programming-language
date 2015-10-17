@@ -25,14 +25,14 @@ public class ThisExpression extends Expression {
     }
 
     @Override
-    public ReferenceTypeUsage calcType(SymbolResolver resolver) {
+    public ReferenceTypeUsage calcType() {
         TurinTypeDefinition turinTypeDefinition = getParentOfType(TurinTypeDefinition.class);
         return new ReferenceTypeUsage(turinTypeDefinition);
     }
 
     @Override
     public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
-        TypeDefinition typeDefinition = calcType(resolver).getTypeDefinition(resolver);
+        TypeDefinition typeDefinition = calcType().getTypeDefinition(resolver);
         return typeDefinition.canFieldBeAssigned(field, resolver);
     }
 }

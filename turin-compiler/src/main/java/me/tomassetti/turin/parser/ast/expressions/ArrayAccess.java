@@ -33,8 +33,8 @@ public class ArrayAccess extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        TypeUsage arrayType = array.calcType(resolver);
+    public TypeUsage calcType() {
+        TypeUsage arrayType = array.calcType();
         if (arrayType.isArray()) {
             return arrayType.asArrayTypeUsage().getComponentType();
         } else {

@@ -32,8 +32,8 @@ public class AccessEndpoint extends Expression {
     }
 
     @Override
-    public TypeUsage calcType(SymbolResolver resolver) {
-        return relationField.calcType(resolver);
+    public TypeUsage calcType() {
+        return relationField.calcType();
     }
 
     public RelationDefinition getRelationDefinition() {

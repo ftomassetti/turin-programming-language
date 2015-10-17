@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public interface Symbol {
 
-    TypeUsage calcType(SymbolResolver resolver);
+    TypeUsage calcType();
 
     /**
      * Is this symbol an AST node?

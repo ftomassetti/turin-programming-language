@@ -26,7 +26,7 @@ public class RelationSubset extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
+    public TypeUsageNode calcType() {
         throw new UnsupportedOperationException();
     }
 }
