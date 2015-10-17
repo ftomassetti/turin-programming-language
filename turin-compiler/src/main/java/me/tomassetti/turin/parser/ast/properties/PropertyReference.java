@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class PropertyReference extends Node {
         return ImmutableList.of();
     }
 
-    public TypeUsageNode getType(SymbolResolver resolver) {
+    public TypeUsage getType(SymbolResolver resolver) {
         Optional<PropertyDefinition> propertyDefinition = resolver.findDefinition(this);
         if (propertyDefinition.isPresent()) {
             return propertyDefinition.get().getType();

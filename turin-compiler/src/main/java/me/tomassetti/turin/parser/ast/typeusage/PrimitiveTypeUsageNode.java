@@ -1,16 +1,9 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import com.google.common.collect.ImmutableList;
-import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
-import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Usage of a primitive type.
@@ -22,15 +15,17 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
 
     private String name;
 
-    public static PrimitiveTypeUsageNode BOOLEAN = new PrimitiveTypeUsageNode("boolean");
-    public static PrimitiveTypeUsageNode CHAR = new PrimitiveTypeUsageNode("char");
-    public static PrimitiveTypeUsageNode LONG = new PrimitiveTypeUsageNode("long");
-    public static PrimitiveTypeUsageNode INT = new PrimitiveTypeUsageNode("int");
-    public static PrimitiveTypeUsageNode SHORT = new PrimitiveTypeUsageNode("short");
-    public static PrimitiveTypeUsageNode BYTE = new PrimitiveTypeUsageNode("byte");
-    public static PrimitiveTypeUsageNode DOUBLE = new PrimitiveTypeUsageNode("double");
-    public static PrimitiveTypeUsageNode FLOAT = new PrimitiveTypeUsageNode("float");
-    public static List<PrimitiveTypeUsageNode> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
+    public static PrimitiveTypeUsageNode createBoolean() {
+        return new PrimitiveTypeUsageNode("boolean");
+    }
+
+    public static PrimitiveTypeUsageNode createInt() {
+        return new PrimitiveTypeUsageNode("int");
+    }
+
+    public static PrimitiveTypeUsageNode createFloat() {
+        return new PrimitiveTypeUsageNode("float");
+    }
 
     private PrimitiveTypeUsageNode(String name) {
         super(PrimitiveTypeUsage.getByName(name));
@@ -65,15 +60,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     public int hashCode() {
         int result = name.hashCode();
         return result;
-    }
-
-    public static boolean isPrimitiveTypeName(String typeName) {
-        for (PrimitiveTypeUsageNode primitiveTypeUsage : ALL) {
-            if (primitiveTypeUsage.name.equals(typeName)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -116,7 +102,7 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     public boolean isBoolean() {
-        return this == PrimitiveTypeUsageNode.BOOLEAN;
+        return typeUsage().asPrimitiveTypeUsage().isBoolean();
     }
 
     @Override

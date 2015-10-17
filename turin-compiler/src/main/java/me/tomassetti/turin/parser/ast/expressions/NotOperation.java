@@ -5,6 +5,8 @@ import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class NotOperation extends Expression {
     private Expression value;
@@ -15,8 +17,8 @@ public class NotOperation extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsageNode.BOOLEAN;
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return PrimitiveTypeUsage.BOOLEAN;
     }
 
     public Expression getValue() {

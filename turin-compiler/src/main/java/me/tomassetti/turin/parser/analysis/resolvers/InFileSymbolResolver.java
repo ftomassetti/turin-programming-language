@@ -78,7 +78,7 @@ public class InFileSymbolResolver implements SymbolResolver {
 
     @Override
     public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
-        if (PrimitiveTypeUsageNode.isPrimitiveTypeName(typeName)){
+        if (PrimitiveTypeUsage.isPrimitiveTypeName(typeName)){
             return Optional.of(PrimitiveTypeUsage.getByName(typeName));
         }
         // note that this check has to come after the check for primitive types

@@ -6,6 +6,8 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class DoubleLiteral extends Expression {
 
@@ -45,8 +47,8 @@ public class DoubleLiteral extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsageNode.DOUBLE;
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return PrimitiveTypeUsage.DOUBLE;
     }
 
     public double getValue() {

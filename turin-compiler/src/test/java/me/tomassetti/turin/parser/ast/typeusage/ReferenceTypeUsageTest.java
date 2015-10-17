@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
+import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -22,11 +23,12 @@ public class ReferenceTypeUsageTest {
 
     private PropertyReference nameRef;
     private PropertyDefinition ageProperty;
+    private TurinFile turinFile;
 
     @Before
     public void setup() {
         // define AST
-        TurinFile turinFile = new TurinFile();
+        turinFile = new TurinFile();
 
         NamespaceDefinition namespaceDefinition = new NamespaceDefinition("manga");
 
@@ -51,6 +53,7 @@ public class ReferenceTypeUsageTest {
     @Test
     public void javaType() {
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         assertEquals("Ljava/lang/String;", nameRef.getType(resolver).jvmType(resolver).getSignature());
         assertEquals("I", ageProperty.getType().jvmType(resolver).getSignature());
     }

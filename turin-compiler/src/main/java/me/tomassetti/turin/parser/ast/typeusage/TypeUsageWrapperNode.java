@@ -17,14 +17,21 @@ import java.util.Map;
 
 abstract class TypeUsageWrapperNode extends TypeUsageNode {
 
-    private TypeUsage typeUsage;
+    protected TypeUsage typeUsage;
 
-    public final TypeUsage typeUsage() {
+    public TypeUsage typeUsage() {
+        if (typeUsage == null) {
+            throw new IllegalStateException();
+        }
         return typeUsage;
     }
 
     public TypeUsageWrapperNode(TypeUsage typeUsage) {
         this.typeUsage = typeUsage;
+    }
+
+    public TypeUsageWrapperNode() {
+        this.typeUsage = null;
     }
 
     @Override

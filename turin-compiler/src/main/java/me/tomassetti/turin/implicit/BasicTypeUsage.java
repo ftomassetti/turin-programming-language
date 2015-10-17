@@ -18,19 +18,19 @@ import java.util.Optional;
  */
 public class BasicTypeUsage extends TypeUsageNode {
 
-    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsageNode.BYTE);
-    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsageNode.SHORT);
-    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsageNode.INT);
-    public static BasicTypeUsage ULONG = new BasicTypeUsage("ulong", PrimitiveTypeUsageNode.LONG);
-    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsageNode.FLOAT);
-    public static BasicTypeUsage UDOUBLE = new BasicTypeUsage("udouble", PrimitiveTypeUsageNode.DOUBLE);
+    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsage.BYTE);
+    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsage.SHORT);
+    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsage.INT);
+    public static BasicTypeUsage ULONG = new BasicTypeUsage("ulong", PrimitiveTypeUsage.LONG);
+    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsage.FLOAT);
+    public static BasicTypeUsage UDOUBLE = new BasicTypeUsage("udouble", PrimitiveTypeUsage.DOUBLE);
 
     private static ImmutableList<BasicTypeUsage> BASIC_TYPES = ImmutableList.of(UBYTE, USHORT, UINT, ULONG, UFLOAT, UDOUBLE);
 
     private String name;
-    private PrimitiveTypeUsageNode correspondingPrimitiveTypeUsage;
+    private PrimitiveTypeUsage correspondingPrimitiveTypeUsage;
 
-    private BasicTypeUsage(String name, PrimitiveTypeUsageNode correspondingPrimitiveTypeUsage) {
+    private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage) {
         this.name = name;
         this.correspondingPrimitiveTypeUsage = correspondingPrimitiveTypeUsage;
     }

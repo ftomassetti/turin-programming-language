@@ -6,6 +6,8 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.PrimitiveTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class LongLiteral extends Expression {
 
@@ -45,8 +47,8 @@ public class LongLiteral extends Expression {
     }
 
     @Override
-    public TypeUsageNode calcType(SymbolResolver resolver) {
-        return PrimitiveTypeUsageNode.LONG;
+    public TypeUsage calcType(SymbolResolver resolver) {
+        return PrimitiveTypeUsage.LONG;
     }
 
     public long getValue() {

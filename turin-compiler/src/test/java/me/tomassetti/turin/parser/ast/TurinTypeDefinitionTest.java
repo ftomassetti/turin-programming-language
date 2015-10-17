@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.jvm.JvmConstructorDefinition;
+import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -68,7 +69,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.createFloat(), Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -87,7 +88,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.createFloat(), Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -103,7 +104,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.createFloat(), Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -122,7 +123,7 @@ public class TurinTypeDefinitionTest {
         NamespaceDefinition namespace = new NamespaceDefinition("me.tomassetti");
         turinFile.setNameSpace(namespace);
         TurinTypeDefinition typeDefinition = new TurinTypeDefinition("MyType");
-        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.FLOAT, Optional.empty(), Optional.empty(), Collections.emptyList());
+        PropertyDefinition propertyDefinition = new PropertyDefinition("coefficient", PrimitiveTypeUsageNode.createFloat(), Optional.empty(), Optional.empty(), Collections.emptyList());
         typeDefinition.add(propertyDefinition);
         turinFile.add(typeDefinition);
 
@@ -164,6 +165,7 @@ public class TurinTypeDefinitionTest {
     public void defineMethodHashCode() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/common_methods.to"));
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         assertEquals(false, turinFile.getTopTypeDefinition("A").get().defineMethodHashCode(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("B").get().defineMethodHashCode(resolver));
         assertEquals(true, turinFile.getTopTypeDefinition("C").get().defineMethodHashCode(resolver));
@@ -175,6 +177,7 @@ public class TurinTypeDefinitionTest {
     public void defineMethodEquals() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/common_methods.to"));
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         assertEquals(false, turinFile.getTopTypeDefinition("A").get().defineMethodEquals(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("B").get().defineMethodEquals(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("C").get().defineMethodEquals(resolver));

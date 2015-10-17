@@ -42,10 +42,10 @@ public class ParamUtilsTest {
     private ActualParam u1 = new ActualParam(new IntLiteral(3));
     private ActualParam u2 = new ActualParam(new IntLiteral(4));
 
-    private FormalParameterNode fd1 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fd1", Optional.of(new IntLiteral(1)));
-    private FormalParameterNode fd2 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fd2", Optional.of(new IntLiteral(1)));
-    private FormalParameterNode fn1 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fn1");
-    private FormalParameterNode fn2 = new FormalParameterNode(PrimitiveTypeUsageNode.INT, "fn2");
+    private FormalParameterNode fd1 = new FormalParameterNode(PrimitiveTypeUsageNode.createInt(), "fd1", Optional.of(new IntLiteral(1)));
+    private FormalParameterNode fd2 = new FormalParameterNode(PrimitiveTypeUsageNode.createInt(), "fd2", Optional.of(new IntLiteral(1)));
+    private FormalParameterNode fn1 = new FormalParameterNode(PrimitiveTypeUsageNode.createInt(), "fn1");
+    private FormalParameterNode fn2 = new FormalParameterNode(PrimitiveTypeUsageNode.createInt(), "fn2");
 
     @Test
     public void verifyOrderOnlyOneNamedParam() {
@@ -95,8 +95,8 @@ public class ParamUtilsTest {
 
     @Test
     public void testGetterNameBoolean() {
-        assertEquals("isFoo", ParamUtils.getterName(new FormalParameterNode(PrimitiveTypeUsageNode.BOOLEAN, "foo"), DUMMY_RESOLVER));
-        assertEquals("isA", ParamUtils.getterName(new FormalParameterNode(PrimitiveTypeUsageNode.BOOLEAN, "a"), DUMMY_RESOLVER));
+        assertEquals("isFoo", ParamUtils.getterName(new FormalParameterNode(PrimitiveTypeUsageNode.createBoolean(), "foo"), DUMMY_RESOLVER));
+        assertEquals("isA", ParamUtils.getterName(new FormalParameterNode(PrimitiveTypeUsageNode.createBoolean(), "a"), DUMMY_RESOLVER));
     }
 
     @Test
