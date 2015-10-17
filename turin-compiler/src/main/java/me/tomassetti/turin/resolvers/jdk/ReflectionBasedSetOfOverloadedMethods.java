@@ -25,7 +25,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
 
     @Override
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this));
+        return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods));
     }
 
     public ReflectionBasedSetOfOverloadedMethods(List<Method> methods, Node instance) {
@@ -68,7 +68,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
-            Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods, this);
+            Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods);
             return Optional.of(ReflectionBasedMethodResolution.formalParameters(method.get(), Collections.emptyMap()));
         }
         throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());

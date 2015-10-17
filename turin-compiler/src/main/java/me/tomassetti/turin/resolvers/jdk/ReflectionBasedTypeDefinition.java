@@ -23,13 +23,12 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
+class ReflectionBasedTypeDefinition implements TypeDefinition {
 
     private Class<?> clazz;
     private List<TypeUsage> typeParameters = new LinkedList<>();
 
     public ReflectionBasedTypeDefinition(Class<?> clazz) {
-        super(clazz.getCanonicalName());
         this.clazz = clazz;
     }
 
@@ -37,7 +36,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
         typeParameters.add(typeUsage);
     }
 
-    private static TypeUsage typeFor(List<Method> methods, Node parentToAssign) {
+    private static TypeUsage typeFor(List<Method> methods) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -49,10 +48,10 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
         if (methods.size() != 1) {
             throw new UnsupportedOperationException();
         }
-        return typeFor(methods.get(0), parentToAssign);
+        return typeFor(methods.get(0));
     }
 
-    private static TypeUsage typeFor(Method method, Node parentToAssign) {
+    private static TypeUsage typeFor(Method method) {
         List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
         FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
         return functionReferenceTypeUsage;
@@ -64,11 +63,6 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
 
     private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
         return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap());
-    }
-
-    @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        return super.findFormalParametersFor(invokable, resolver);
     }
 
     @Override
@@ -130,7 +124,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
     @Override
     public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
         Constructor constructor = ReflectionBasedMethodResolution.findConstructorAmongActualParams(
-                actualParams, resolver, Arrays.asList(clazz.getConstructors()), this);
+                actualParams, resolver, Arrays.asList(clazz.getConstructors()));
         return Optional.of(toInternalConstructorDefinition(constructor));
     }
 
@@ -153,7 +147,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
 
     @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods()), this));
+        return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods())));
     }
 
     @Override
@@ -167,7 +161,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
                     argsTypes.add(actualParam.getValue().calcType().jvmType());
                 }
             }
-            return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()), this);
+            return ReflectionBasedMethodResolution.findConstructorAmong(argsTypes, resolver, Arrays.asList(clazz.getConstructors()));
         } catch (RuntimeException e){
             throw new RuntimeException("Resolving constructor call on " + clazz.getCanonicalName(), e);
         }
@@ -180,7 +174,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
 
     @Override
     public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        Optional<Method> res = ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()), this);
+        Optional<Method> res = ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()));
         if (res.isPresent()) {
             return Optional.of(toInternalMethodDefinition(res.get()));
         } else {
@@ -235,7 +229,7 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
             }
         }
         if (!methods.isEmpty()) {
-            return ReflectionBasedTypeDefinition.typeFor(methods, this);
+            return ReflectionBasedTypeDefinition.typeFor(methods);
         }
 
         // TODO consider inherited fields and methods
@@ -286,8 +280,8 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public Iterable<Node> getChildren() {
-        return Collections.emptyList();
+    public TypeUsage calcType() {
+        return new ReferenceTypeUsage(this);
     }
 
     @Override
@@ -326,5 +320,10 @@ class ReflectionBasedTypeDefinition extends TypeDefinitionNode {
             rbsoom.setParent(instance);
             return rbsoom;
         }
+    }
+
+    @Override
+    public String getName() {
+        return this.getQualifiedName();
     }
 }

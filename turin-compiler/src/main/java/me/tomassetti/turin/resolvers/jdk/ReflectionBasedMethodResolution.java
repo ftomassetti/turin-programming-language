@@ -114,49 +114,49 @@ class ReflectionBasedMethodResolution {
         return new TypeVariableUsage(genericDeclaration, typeVariable.getName(), bounds);
     }
 
-    public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
+    public static JvmConstructorDefinition findConstructorAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<Constructor> constructors) {
         List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m)->new MethodOrConstructor(m)).collect(Collectors.toList());
-        MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, "constructor");
+        MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, "constructor");
         if (methodOrConstructor == null) {
             throw new RuntimeException("unresolved constructor for " + argsTypes);
         }
         return ReflectionTypeDefinitionFactory.toConstructorDefinition(methodOrConstructor.constructor);
     }
 
-    public static Constructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<Constructor> constructors, Node context) {
+    public static Constructor findConstructorAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<Constructor> constructors) {
         List<MethodOrConstructor> methodOrConstructors = constructors.stream().map((m)->new MethodOrConstructor(m)).collect(Collectors.toList());
-        MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, "constructor");
+        MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, "constructor");
         if (methodOrConstructor == null) {
             throw new RuntimeException("unresolved constructor for " + argsTypes);
         }
         return methodOrConstructor.constructor;
     }
 
-    public static Method findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
+    public static Method findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods) {
         List<MethodOrConstructor> methodOrConstructors = methods.stream()
                 .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                 .filter((m) -> m.getName().equals(name))
                 .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-        MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, context, name);
+        MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, name);
         if (methodOrConstructor == null) {
             throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
         }
         return methodOrConstructor.method;
     }
 
-    public static Optional<Method> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods, Node context) {
+    public static Optional<Method> findMethodAmongActualParams(String name, List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods) {
         List<MethodOrConstructor> methodOrConstructors = methods.stream()
                 .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
                 .filter((m) -> m.getName().equals(name))
                 .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-        MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, context, name);
+        MethodOrConstructor methodOrConstructor = findMethodAmongActualParams(argsTypes, resolver, methodOrConstructors, name);
         if (methodOrConstructor == null) {
             return Optional.empty();
         }
         return Optional.of(methodOrConstructor.method);
     }
 
-    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {
+    private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, String desc) {
         List<MethodOrConstructor> suitableMethods = new ArrayList<>();
         for (MethodOrConstructor method : methods) {
             if (method.getParameterCount() == argsTypes.size()) {
@@ -179,11 +179,11 @@ class ReflectionBasedMethodResolution {
         } else if (suitableMethods.size() == 1) {
             return suitableMethods.get(0);
         } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(context, desc, argsTypes), argsTypes, resolver);
+            return findMostSpecific(suitableMethods, new AmbiguousCallException(null, desc, argsTypes), argsTypes, resolver);
         }
     }
 
-    private static MethodOrConstructor findMethodAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, Node context, String desc) {
+    private static MethodOrConstructor findMethodAmongActualParams(List<ActualParam> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, String desc) {
         List<MethodOrConstructor> suitableMethods = new ArrayList<>();
         for (MethodOrConstructor method : methods) {
             if (method.getParameterCount() == argsTypes.size()) {
@@ -207,7 +207,7 @@ class ReflectionBasedMethodResolution {
             return suitableMethods.get(0);
         } else {
             return findMostSpecific(suitableMethods,
-                    new AmbiguousCallException(context, argsTypes, desc),
+                    new AmbiguousCallException(null, argsTypes, desc),
                     argsTypes.stream().map((ap)->ap.getValue().calcType().jvmType()).collect(Collectors.toList()),
                     resolver);
         }
