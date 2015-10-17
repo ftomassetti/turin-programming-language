@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.ReferenceTypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
         if (fieldName.equals("length")) {
             return new ArrayLength(instance);
         }
