@@ -35,11 +35,6 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final JvmTypeCategory toJvmTypeCategory(SymbolResolver resolver) {
-        return typeUsage().toJvmTypeCategory(resolver);
-    }
-
-    @Override
     public final boolean isReferenceTypeUsage() {
         return typeUsage().isReferenceTypeUsage();
     }

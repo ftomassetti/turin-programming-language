@@ -28,7 +28,7 @@ public class CompilationOfStatements {
         if (statement instanceof VariableDeclaration) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
             int pos = compilation.getLocalVarsSymbolTable().add(variableDeclaration.getName(), variableDeclaration);
-            JvmTypeCategory typeCategory = variableDeclaration.varType(compilation.getResolver()).toJvmTypeCategory(compilation.getResolver());
+            JvmTypeCategory typeCategory = variableDeclaration.varType(compilation.getResolver()).toJvmTypeCategory();
             return new ComposedBytecodeSequence(ImmutableList.of(
                     compilation.getPushUtils().pushExpression(variableDeclaration.getValue()),
                     new LocalVarAssignmentBS(pos, typeCategory)));
