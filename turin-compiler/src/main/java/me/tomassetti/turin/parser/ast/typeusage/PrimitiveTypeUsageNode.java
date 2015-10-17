@@ -21,57 +21,21 @@ import java.util.Optional;
 public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
 
     private String name;
-    private JvmType jvmType;
-    private List<PrimitiveTypeUsageNode> promotionsTypes;
 
-    public static PrimitiveTypeUsageNode BOOLEAN = new PrimitiveTypeUsageNode("boolean", new JvmType("Z"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Boolean.class)));
-    public static PrimitiveTypeUsageNode CHAR = new PrimitiveTypeUsageNode("char",  new JvmType("C"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Character.class)));
-    public static PrimitiveTypeUsageNode LONG = new PrimitiveTypeUsageNode("long",  new JvmType("J"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Long.class)));
-    public static PrimitiveTypeUsageNode INT = new PrimitiveTypeUsageNode("int",  new JvmType("I"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Integer.class)),
-            ImmutableList.of(LONG));
-    public static PrimitiveTypeUsageNode SHORT = new PrimitiveTypeUsageNode("short",  new JvmType("S"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Short.class)),
-            ImmutableList.of(INT, LONG));
-    public static PrimitiveTypeUsageNode BYTE = new PrimitiveTypeUsageNode("byte",  new JvmType("B"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Byte.class)),
-            ImmutableList.of(SHORT, INT, LONG));
-    public static PrimitiveTypeUsageNode DOUBLE = new PrimitiveTypeUsageNode("double",  new JvmType("D"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Double.class)));
-    public static PrimitiveTypeUsageNode FLOAT = new PrimitiveTypeUsageNode("float",  new JvmType("F"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Float.class)),
-            ImmutableList.of(DOUBLE));
+    public static PrimitiveTypeUsageNode BOOLEAN = new PrimitiveTypeUsageNode("boolean");
+    public static PrimitiveTypeUsageNode CHAR = new PrimitiveTypeUsageNode("char");
+    public static PrimitiveTypeUsageNode LONG = new PrimitiveTypeUsageNode("long");
+    public static PrimitiveTypeUsageNode INT = new PrimitiveTypeUsageNode("int");
+    public static PrimitiveTypeUsageNode SHORT = new PrimitiveTypeUsageNode("short");
+    public static PrimitiveTypeUsageNode BYTE = new PrimitiveTypeUsageNode("byte");
+    public static PrimitiveTypeUsageNode DOUBLE = new PrimitiveTypeUsageNode("double");
+    public static PrimitiveTypeUsageNode FLOAT = new PrimitiveTypeUsageNode("float");
     public static List<PrimitiveTypeUsageNode> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
-    public static Optional<PrimitiveTypeUsageNode> findByJvmType(JvmType jvmType) {
-        for (PrimitiveTypeUsageNode primitiveTypeUsage : ALL) {
-            if (primitiveTypeUsage.jvmType.equals(jvmType)) {
-                return Optional.of(primitiveTypeUsage);
-            }
-        }
-        return Optional.empty();
-    }
-
-    public TypeUsage getBoxType() {
-        return boxType;
-    }
-
-    private PrimitiveTypeUsageNode(String name, JvmType jvmType, TypeUsage boxType, List<PrimitiveTypeUsageNode> promotionsTypes) {
+    private PrimitiveTypeUsageNode(String name) {
         super(PrimitiveTypeUsage.getByName(name));
         this.name = name;
-        this.jvmType = jvmType;
-        this.boxType = boxType;
-        this.promotionsTypes = promotionsTypes;
     }
-
-    private PrimitiveTypeUsageNode(String name, JvmType jvmType, TypeUsage boxType) {
-        this(name, jvmType, boxType, Collections.emptyList());
-    }
-
-    private TypeUsage boxType;
 
     @Override
     public Iterable<Node> getChildren() {
@@ -101,7 +65,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     public String toString() {
         return "PrimitiveTypeUsage{" +
                 "name='" + name + '\'' +
-                ", jvmType=" + jvmType +
                 '}';
     }
 
@@ -112,7 +75,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
 
         PrimitiveTypeUsageNode that = (PrimitiveTypeUsageNode) o;
 
-        if (!jvmType.equals(that.jvmType)) return false;
         if (!name.equals(that.name)) return false;
 
         return true;
@@ -121,7 +83,6 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + jvmType.hashCode();
         return result;
     }
 
@@ -136,41 +97,41 @@ public class PrimitiveTypeUsageNode extends TypeUsageWrapperNode {
 
     @Override
     public TypeUsageNode copy() {
-        PrimitiveTypeUsageNode copy = new PrimitiveTypeUsageNode(this.name, this.jvmType, this.boxType, promotionsTypes);
+        PrimitiveTypeUsageNode copy = new PrimitiveTypeUsageNode(this.name);
         copy.parent = this.parent;
         return copy;
     }
 
     public boolean isLong() {
-        return this == PrimitiveTypeUsageNode.LONG;
+        return typeUsage().asPrimitiveTypeUsage().isLong();
     }
 
     public boolean isFloat() {
-        return this == PrimitiveTypeUsageNode.FLOAT;
+        return typeUsage().asPrimitiveTypeUsage().isFloat();
     }
 
     public boolean isDouble() {
-        return this == PrimitiveTypeUsageNode.DOUBLE;
+        return typeUsage().asPrimitiveTypeUsage().isDouble();
     }
 
     public boolean isStoredInInt() {
-        return jvmType.isStoredInInt();
+        return typeUsage().asPrimitiveTypeUsage().isStoredInInt();
     }
 
     public boolean isInt() {
-        return this == INT;
+        return typeUsage().asPrimitiveTypeUsage().isInt();
     }
 
     public boolean isShort() {
-        return this == PrimitiveTypeUsageNode.SHORT;
+        return typeUsage().asPrimitiveTypeUsage().isShort();
     }
 
     public boolean isChar() {
-        return this == PrimitiveTypeUsageNode.CHAR;
+        return typeUsage().asPrimitiveTypeUsage().isChar();
     }
 
     public boolean isByte() {
-        return this == PrimitiveTypeUsageNode.BYTE;
+        return typeUsage().asPrimitiveTypeUsage().isByte();
     }
 
     public boolean isBoolean() {

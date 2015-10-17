@@ -41,7 +41,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     public static TypeUsage fromJvmType(JvmType jvmType, SymbolResolver resolver) {
-        Optional<PrimitiveTypeUsageNode> primitive = PrimitiveTypeUsageNode.findByJvmType(jvmType);
+        Optional<PrimitiveTypeUsage> primitive = PrimitiveTypeUsage.findByJvmType(jvmType);
         if (primitive.isPresent()) {
             return primitive.get();
         }

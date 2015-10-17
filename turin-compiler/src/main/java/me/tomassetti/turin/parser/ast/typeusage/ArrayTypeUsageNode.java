@@ -1,26 +1,16 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import com.google.common.collect.ImmutableList;
-import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 import me.tomassetti.turin.typesystem.ArrayTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
 
 public class ArrayTypeUsageNode extends TypeUsageWrapperNode {
 
     private TypeUsageNode componentTypeNode;
-    private TypeUsage componentType;
 
     public ArrayTypeUsageNode(TypeUsageNode componentType) {
         super(new ArrayTypeUsage(componentType));
         this.componentTypeNode = componentType;
-        this.componentType = componentTypeNode.typeUsage();
-    }
-
-    public TypeUsageNode getComponentTypeNode() {
-        return componentTypeNode;
     }
 
     @Override
