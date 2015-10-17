@@ -2,7 +2,7 @@ package me.tomassetti.turin.compiler;
 
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.classloading.TurinClassLoader;
-import me.tomassetti.turin.implicit.BasicTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
 import me.tomassetti.turin.parser.ast.NamespaceDefinition;
@@ -32,7 +32,7 @@ public class CompilerOnAstTest extends AbstractCompilerTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsage intType = BasicTypeUsage.UINT;
+        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 

@@ -1,6 +1,5 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import me.tomassetti.turin.implicit.BasicTypeUsage;
 import me.tomassetti.turin.parser.analysis.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.parser.analysis.resolvers.ResolverRegistry;
 import me.tomassetti.turin.parser.analysis.resolvers.jdk.JdkTypeResolver;
@@ -35,7 +34,7 @@ public class ReferenceTypeUsageTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsage intType = BasicTypeUsage.UINT;
+        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 

@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
-import me.tomassetti.turin.implicit.BasicTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.*;
 import me.tomassetti.turin.parser.ast.expressions.literals.IntLiteral;
@@ -33,7 +33,7 @@ public class ParseTreeToAstTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsage intType = BasicTypeUsage.UINT;
+        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 
@@ -58,7 +58,7 @@ public class ParseTreeToAstTest {
         turinFile.setNameSpace(namespaceDefinition);
 
         ReferenceTypeUsageNode stringType = new ReferenceTypeUsageNode("String");
-        BasicTypeUsage intType = BasicTypeUsage.UINT;
+        BasicTypeUsageNode intType = BasicTypeUsageNode.UINT;
 
         PropertyDefinition nameProperty = new PropertyDefinition("name", stringType, Optional.empty(), Optional.empty(), Collections.emptyList());
 

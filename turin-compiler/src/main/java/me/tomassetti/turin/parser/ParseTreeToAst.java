@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
-import me.tomassetti.turin.implicit.BasicTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
 import me.tomassetti.turin.parser.ast.expressions.*;
@@ -305,7 +305,7 @@ class ParseTreeToAst {
         } else if (type.primitiveType != null) {
             return TypeUsageNode.wrap(PrimitiveTypeUsage.getByName(type.primitiveType.getText()));
         } else if (type.basicType != null) {
-            return BasicTypeUsage.getByName(type.basicType.getText());
+            return BasicTypeUsageNode.getByName(type.basicType.getText());
         } else if (type.arrayBase != null) {
             return new ArrayTypeUsageNode(toAst(type.arrayBase));
         } else {

@@ -7,7 +7,7 @@ import me.tomassetti.bytecode_generation.pushop.*;
 import me.tomassetti.bytecode_generation.returnop.ReturnFalseBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnTrueBS;
 import me.tomassetti.jvm.*;
-import me.tomassetti.turin.implicit.BasicTypeUsage;
+import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.resolvers.SymbolResolver;
@@ -36,9 +36,9 @@ public class CompilationOfGeneratedMethods {
     }
 
     private void enforceConstraint(Property property, MethodVisitor mv, BytecodeSequence getValue) {
-        if (property.getTypeUsage().sameType(BasicTypeUsage.UINT, compilation.getResolver())
-                || property.getTypeUsage().sameType(BasicTypeUsage.UBYTE, compilation.getResolver())
-                || property.getTypeUsage().sameType(BasicTypeUsage.USHORT, compilation.getResolver())) {
+        if (property.getTypeUsage().sameType(BasicTypeUsageNode.UINT, compilation.getResolver())
+                || property.getTypeUsage().sameType(BasicTypeUsageNode.UBYTE, compilation.getResolver())
+                || property.getTypeUsage().sameType(BasicTypeUsageNode.USHORT, compilation.getResolver())) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -49,7 +49,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().sameType(BasicTypeUsage.ULONG, compilation.getResolver())) {
+        } else if (property.getTypeUsage().sameType(BasicTypeUsageNode.ULONG, compilation.getResolver())) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -64,7 +64,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().equals(BasicTypeUsage.UFLOAT)) {
+        } else if (property.getTypeUsage().equals(BasicTypeUsageNode.UFLOAT)) {
             getValue.operate(mv);
             Label label = new Label();
 
@@ -80,7 +80,7 @@ public class CompilationOfGeneratedMethods {
             new ThrowBS(instantiateException).operate(mv);
 
             mv.visitLabel(label);
-        } else if (property.getTypeUsage().equals(BasicTypeUsage.UDOUBLE)) {
+        } else if (property.getTypeUsage().equals(BasicTypeUsageNode.UDOUBLE)) {
             getValue.operate(mv);
             Label label = new Label();
 
