@@ -40,7 +40,7 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         throw new UnsupportedOperationException();
     }
 

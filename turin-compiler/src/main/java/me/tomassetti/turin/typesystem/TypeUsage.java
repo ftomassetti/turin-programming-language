@@ -107,6 +107,10 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    boolean sameType(TypeUsage other, SymbolResolver resolver);
+    default boolean sameType(TypeUsage other, SymbolResolver resolver) {
+        return sameType(other);
+    }
+
+    boolean sameType(TypeUsage other);
 
 }

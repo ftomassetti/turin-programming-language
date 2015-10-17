@@ -89,11 +89,11 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         if (!other.isArray()) {
             return false;
         }
-        return this.getComponentType().sameType(other.asArrayTypeUsage().getComponentType(), resolver);
+        return this.getComponentType().sameType(other.asArrayTypeUsage().getComponentType());
     }
 
     @Override

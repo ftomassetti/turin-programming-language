@@ -124,4 +124,9 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
         return typeUsage().sameType(other, resolver);
     }
 
+    @Override
+    public boolean sameType(TypeUsage other) {
+        return typeUsage().sameType(other);
+    }
+
 }

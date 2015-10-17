@@ -53,7 +53,7 @@ public class BasicTypeUsage extends TypeUsageNode {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         return other == this;
     }
 

@@ -70,7 +70,7 @@ public class TypeVariableUsage implements TypeUsage {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         /*if (!other.isTypeVariable()) {
             return false;
         }

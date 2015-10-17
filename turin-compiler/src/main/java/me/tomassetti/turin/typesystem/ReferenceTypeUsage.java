@@ -161,7 +161,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         if (!other.isReferenceTypeUsage()) {
             return false;
         }

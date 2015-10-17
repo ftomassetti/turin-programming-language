@@ -236,7 +236,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         if (!other.isPrimitive()) {
             return false;
         }

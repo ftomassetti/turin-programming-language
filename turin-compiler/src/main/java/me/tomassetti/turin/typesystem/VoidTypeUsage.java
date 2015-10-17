@@ -24,7 +24,7 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         return other.isVoid();
     }
 

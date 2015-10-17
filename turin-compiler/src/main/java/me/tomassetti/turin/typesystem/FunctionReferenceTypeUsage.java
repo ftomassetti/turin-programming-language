@@ -56,7 +56,7 @@ public class FunctionReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean sameType(TypeUsage other, SymbolResolver resolver) {
+    public boolean sameType(TypeUsage other) {
         throw new UnsupportedOperationException();
     }
 
