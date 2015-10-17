@@ -42,78 +42,6 @@ public abstract class TypeDefinitionNode extends Node implements me.tomassetti.t
     }
 
     //
-    // Typing
-    //
-
-    @Override
-    public JvmType jvmType() {
-        return new JvmType(JvmNameUtils.canonicalToDescriptor(getQualifiedName()));
-    }
-
-    //
-    // Constructors
-    //
-
-    @Override
-    public final boolean hasManyConstructors(SymbolResolver resolver) {
-        return getConstructors(resolver).size() > 1;
-    }
-
-    @Override
-    public final List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
-        return getConstructor(actualParams, resolver).getFormalParameters();
-    }
-
-    @Override
-    public final Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams, SymbolResolver resolver) {
-        Optional<InternalConstructorDefinition> res = findConstructor(actualParams, resolver);
-        if (res.isPresent()) {
-            return Optional.of(res.get().getJvmConstructorDefinition());
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public final InternalConstructorDefinition getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
-        Optional<InternalConstructorDefinition> constructor = findConstructor(actualParams, resolver);
-        if (constructor.isPresent()) {
-            return constructor.get();
-        } else {
-            throw new UnsolvedConstructorException(getQualifiedName(), actualParams);
-        }
-    }
-
-    //
-    // Methods
-    //
-
-    @Override
-    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
-    }
-
-    @Override
-    public final List<? extends FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return getMethod(methodName, actualParams, resolver, staticContext).getFormalParameters();
-    }
-
-    @Override
-    public final boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return findMethod(methodName, actualParams, resolver, staticContext).isPresent();
-    }
-
-    @Override
-    public final InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        Optional<InternalMethodDefinition> method = findMethod(methodName, actualParams, resolver, staticContext);
-        if (method.isPresent()) {
-            return method.get();
-        } else {
-            throw new UnsolvedMethodException(getQualifiedName(), methodName, actualParams);
-        }
-    }
-
-    //
     // Fields
     //
 
@@ -147,28 +75,5 @@ public abstract class TypeDefinitionNode extends Node implements me.tomassetti.t
             collectVisibleRelations(context.getParent(), relations, resolver);
         }
     }
-
-    @Override
-    public final boolean hasField(QualifiedName fieldName, boolean staticContext, SymbolResolver resolver) {
-        if (!fieldName.isSimpleName()) {
-            String firstName = fieldName.firstSegment();
-            if (!hasField(firstName, staticContext)) {
-                return false;
-            }
-            Symbol field = getField(firstName, resolver);
-            TypeUsage typeUsage = field.calcType();
-            if (typeUsage.isReferenceTypeUsage()) {
-                TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition();
-                return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
-            } else {
-                return false;
-            }
-        }
-        return hasField(fieldName.getName(), staticContext);
-    }
-
-    //
-    // Hierarchy
-    //
 
 }
