@@ -19,9 +19,47 @@ import java.util.Optional;
 
 public interface TypeDefinition extends Symbol, Named {
 
+    ///
+    /// Naming
+    ///
+
     String getQualifiedName();
 
+    ///
+    /// Hierarchy
+    ///
+
+    List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
+
+    TypeDefinition getSuperclass(SymbolResolver resolver);
+
+    ///
+    /// Type
+    ///
+
+    boolean isInterface();
+
+    boolean isClass();
+
     JvmType jvmType();
+
+    ///
+    /// Fields
+    ///
+
+    TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
+
+    Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
+
+    boolean hasField(String name, boolean staticContext);
+
+    boolean hasField(QualifiedName fieldName, boolean staticContext, SymbolResolver resolver);
+
+    boolean canFieldBeAssigned(String field, SymbolResolver resolver);
+
+    ///
+    /// Constructors
+    ///
 
     JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
@@ -37,6 +75,10 @@ public interface TypeDefinition extends Symbol, Named {
 
     List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver);
 
+    ///
+    /// Methods
+    ///
+
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
 
     boolean isMethodOverloaded(String methodName, SymbolResolver resolver);
@@ -51,23 +93,9 @@ public interface TypeDefinition extends Symbol, Named {
 
     InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
 
-    TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
-
-    Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
-
-    boolean hasField(String name, boolean staticContext);
-
-    boolean hasField(QualifiedName fieldName, boolean staticContext, SymbolResolver resolver);
-
-    boolean canFieldBeAssigned(String field, SymbolResolver resolver);
-
-    List<ReferenceTypeUsage> getAllAncestors(SymbolResolver resolver);
-
-    boolean isInterface();
-
-    boolean isClass();
-
-    TypeDefinition getSuperclass(SymbolResolver resolver);
+    ///
+    /// Misc
+    ///
 
     <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams);
 }
