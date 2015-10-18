@@ -284,7 +284,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance) {
         throw new UnsupportedOperationException();
     }
 

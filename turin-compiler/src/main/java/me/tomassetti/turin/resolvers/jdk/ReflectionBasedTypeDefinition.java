@@ -291,7 +291,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Node getFieldOnInstance(String fieldName, Node instance) {
         return internalGetField(fieldName, instance);
     }
 
