@@ -299,7 +299,10 @@ public class JavassistTypeDefinition implements TypeDefinition {
             }
         });
         if (methods.size() != 1) {
-            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(methods.stream().map((m)->typeFor(m, resolver)).collect(Collectors.toList()), methods);
+            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(
+                    methods.stream().map((m)->typeFor(m, resolver)).collect(Collectors.toList()),
+                    methods,
+                    resolver);
             return overloadedFunctionReferenceTypeUsage;
         }
         return typeFor(methods.get(0), resolver);

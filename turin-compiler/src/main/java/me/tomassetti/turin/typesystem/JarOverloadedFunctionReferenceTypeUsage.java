@@ -21,12 +21,16 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     private List<CtMethod> ctMethods;
     private String methodName;
     private boolean staticContext;
+    private SymbolResolver resolver;
 
-    public JarOverloadedFunctionReferenceTypeUsage(List<FunctionReferenceTypeUsage> alternatives, List<CtMethod> ctMethods) {
+    public JarOverloadedFunctionReferenceTypeUsage(List<FunctionReferenceTypeUsage> alternatives,
+                                                   List<CtMethod> ctMethods,
+                                                   SymbolResolver resolver) {
         super(alternatives);
         if (alternatives.size() != ctMethods.size()) {
             throw new IllegalArgumentException();
         }
+        this.resolver = resolver;
         methodName = ctMethods.get(0).getName();
         staticContext = Modifier.isStatic(ctMethods.get(0).getModifiers());
         for (CtMethod method : ctMethods) {
