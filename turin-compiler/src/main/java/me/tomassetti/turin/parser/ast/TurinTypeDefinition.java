@@ -295,8 +295,8 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public TypeUsageNode getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
-        for (Property property : getAllProperties(resolver)) {
+    public TypeUsageNode getFieldType(String fieldName, boolean staticContext) {
+        for (Property property : getAllProperties(symbolResolver())) {
             if (property.getName().equals(fieldName)) {
                 return property.getTypeUsage();
             }

@@ -254,12 +254,12 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver) {
+    public TypeUsage getFieldType(String fieldName, boolean staticContext) {
         for (CtField field : ctClass.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
                     try {
-                        return JavassistTypeDefinitionFactory.toTypeUsage(field.getType(), resolver);
+                        return JavassistTypeDefinitionFactory.toTypeUsage(field.getType(), symbolResolver);
                     } catch (NotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -276,7 +276,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return typeFor(methods, resolver);
+            return typeFor(methods, symbolResolver);
         }
 
         // TODO consider inherited fields and methods

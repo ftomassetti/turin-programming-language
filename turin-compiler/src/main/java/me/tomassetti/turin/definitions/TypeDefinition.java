@@ -56,7 +56,7 @@ public interface TypeDefinition extends Symbol, Named {
     /// Fields
     ///
 
-    TypeUsage getFieldType(String fieldName, boolean staticContext, SymbolResolver resolver);
+    TypeUsage getFieldType(String fieldName, boolean staticContext);
 
     Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver);
 

@@ -304,7 +304,7 @@ public class CompilationOfPush {
                             .asReferenceTypeUsage()
                             .getTypeDefinition();
                     String internalClassName = JvmNameUtils.canonicalToInternal(typeDefinition.getQualifiedName());
-                    String descriptor = typeDefinition.getFieldType(instanceFieldAccess.getField(), false, compilation.getResolver())
+                    String descriptor = typeDefinition.getFieldType(instanceFieldAccess.getField(), false)
                             .jvmType()
                             .getDescriptor();
                     mv.visitFieldInsn(Opcodes.PUTFIELD, internalClassName, instanceFieldAccess.getField(), descriptor);

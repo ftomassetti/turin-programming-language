@@ -56,7 +56,7 @@ public class StaticFieldAccess extends Expression {
     public TypeUsage calcType() {
         TypeDefinition typeDefinition = typeDefinition(symbolResolver());
 
-        TypeUsage fieldType = typeDefinition.getFieldType(field, true, symbolResolver());
+        TypeUsage fieldType = typeDefinition.getFieldType(field, true);
         return fieldType;
     }
 
@@ -96,7 +96,7 @@ public class StaticFieldAccess extends Expression {
 
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
-        TypeUsage fieldType = typeDefinition.getFieldType(field, true, resolver);
+        TypeUsage fieldType = typeDefinition.getFieldType(field, true);
         return new JvmFieldDefinition(typeDefinition.getQualifiedName().replaceAll("\\.", "/"), field, fieldType.jvmType().getSignature(), true);
     }
 }
