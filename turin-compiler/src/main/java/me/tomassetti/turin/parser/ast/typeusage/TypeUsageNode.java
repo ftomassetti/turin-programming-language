@@ -44,9 +44,14 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         };
     }
 
-    public class TypeVariableData {
+    public static class TypeVariableData {
         private TypeVariableUsage.GenericDeclaration genericDeclaration;
         private List<? extends TypeUsage> bounds;
+
+        public TypeVariableData(TypeVariableUsage.GenericDeclaration genericDeclaration, List<? extends TypeUsage> bounds) {
+            this.genericDeclaration = genericDeclaration;
+            this.bounds = bounds;
+        }
 
         public TypeVariableUsage.GenericDeclaration getGenericDeclaration() {
             return genericDeclaration;

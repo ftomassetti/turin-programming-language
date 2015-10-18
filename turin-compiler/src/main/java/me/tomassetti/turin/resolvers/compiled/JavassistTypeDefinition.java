@@ -2,6 +2,7 @@ package me.tomassetti.turin.resolvers.compiled;
 
 import javassist.*;
 import javassist.bytecode.*;
+import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
@@ -165,9 +166,33 @@ public class JavassistTypeDefinition implements TypeDefinition {
         }
     }
 
+    private Map<String, TypeUsageNode.TypeVariableData> getVisibleTypeVariables(CtClass ctClass) {
+        Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = new HashMap<>();
+        if (ctClass.getGenericSignature() != null) {
+            try {
+                SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
+                for (SignatureAttribute.TypeParameter typeParameter : classSignature.getParameters()) {
+                    TypeVariableUsage.GenericDeclaration genericDeclaration = null;
+                    List<? extends TypeUsage> bounds = Collections.emptyList();
+                    TypeUsageNode.TypeVariableData typeVariableData = new TypeUsageNode.TypeVariableData(genericDeclaration, bounds);
+                    visibleTypeVariables.put(typeParameter.getName(), typeVariableData);
+                }
+            } catch (BadBytecode badBytecode) {
+                throw new RuntimeException(badBytecode);
+            }
+        }
+        return visibleTypeVariables;
+    }
+
+    private Map<String, TypeUsageNode.TypeVariableData> getVisibleTypeVariables(CtMethod method) {
+        CtClass ctClass = method.getDeclaringClass();
+        Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = getVisibleTypeVariables(ctClass);
+        return visibleTypeVariables;
+    }
+
     private InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod, SymbolResolver resolver) {
         try {
-            Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = new HashMap<>();
+            Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = getVisibleTypeVariables(ctMethod);
             TypeUsage returnType = toTypeUsage(ctMethod.getReturnType(), resolver);
             if (ctMethod.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(ctMethod.getGenericSignature());
@@ -352,17 +377,33 @@ public class JavassistTypeDefinition implements TypeDefinition {
         }
     }
 
-    private static JvmType toJvmType(SignatureAttribute.Type type) {
+    private static JvmType toJvmType(SignatureAttribute.Type type, Map<String, TypeUsageNode.TypeVariableData> visibleGenericTypes) {
         if (type.jvmTypeName().equals("void")) {
             return JvmType.VOID;
+        } else if (PrimitiveTypeUsage.isPrimitiveTypeName(type.jvmTypeName())) {
+            return PrimitiveTypeUsage.getByName(type.jvmTypeName()).jvmType();
         } else {
-            return new JvmType(type.jvmTypeName());
+            if (visibleGenericTypes.keySet().contains(type.jvmTypeName())) {
+                throw new UnsupportedOperationException();
+            }
+
+            // remove generic parameters
+            String signature = type.jvmTypeName();
+            int index = signature.indexOf('<');
+            if (index != -1) {
+                signature = signature.substring(0, index);
+            }
+            return new JvmType("L" + JvmNameUtils.canonicalToInternal(signature) + ";");
         }
 
     }
 
     private static TypeUsage toTypeUsage(SignatureAttribute.Type type, SymbolResolver resolver, Map<String, TypeUsageNode.TypeVariableData> visibleGenericTypes) {
-        return TypeUsageNode.fromJvmType(toJvmType(type), resolver, visibleGenericTypes);
+        if (visibleGenericTypes.keySet().contains(type.jvmTypeName())) {
+            TypeUsageNode.TypeVariableData typeVariableData = visibleGenericTypes.get(type.jvmTypeName());
+            return new TypeVariableUsage(typeVariableData.getGenericDeclaration(), type.jvmTypeName(), typeVariableData.getBounds());
+        }
+        return TypeUsageNode.fromJvmType(toJvmType(type, visibleGenericTypes), resolver, visibleGenericTypes);
     }
 
     @Override
