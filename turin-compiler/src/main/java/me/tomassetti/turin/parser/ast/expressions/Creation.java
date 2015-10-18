@@ -89,9 +89,7 @@ public class Creation extends Invokable {
     }
 
     public JvmConstructorDefinition jvmDefinition(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).resolveConstructorCall(resolver, originalParams);
+        return getTypeDefinition(resolver).resolveConstructorCall(originalParams);
     }
-
-
 
 }

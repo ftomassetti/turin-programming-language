@@ -104,7 +104,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
         if (classpathElements.containsKey(typeName)) {
             try {
                 CtClass ctClass = classpathElements.get(typeName).toCtClass();
-                return Optional.of(new JavassistTypeDefinition(ctClass, new InFileSymbolResolver(this)));
+                return Optional.of(new JavassistTypeDefinition(ctClass, new InFileSymbolResolver(this.root())));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -28,9 +28,11 @@ public class ReflectionTypeDefinitionFactory {
 
     private static class ReflectionSymbolResolver implements SymbolResolver {
 
+        private JdkTypeResolver typeResolver = JdkTypeResolver.getInstance();
+
         @Override
         public SymbolResolver getParent() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         @Override
@@ -45,7 +47,7 @@ public class ReflectionTypeDefinitionFactory {
 
         @Override
         public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
-            throw new UnsupportedOperationException();
+            return typeResolver.resolveAbsoluteTypeName(typeName);
         }
 
         @Override

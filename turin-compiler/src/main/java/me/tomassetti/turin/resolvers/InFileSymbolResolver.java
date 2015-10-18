@@ -30,6 +30,14 @@ public class InFileSymbolResolver implements SymbolResolver {
 
     private TypeResolver typeResolver;
 
+    @Override
+    public String toString() {
+        return "InFileSymbolResolver{" +
+                "typeResolver=" + typeResolver +
+                ", parent=" + parent +
+                '}';
+    }
+
     private SymbolResolver parent = null;
 
     @Override

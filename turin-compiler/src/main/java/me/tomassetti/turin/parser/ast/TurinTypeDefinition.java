@@ -278,14 +278,14 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(List<ActualParam> actualParams) {
         // all named parameters should be after the named ones
         if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
-        ensureIsInitialized(resolver);
-        Optional<InternalConstructorDefinition> constructor = constructors.stream().filter((c)->c.match(resolver, actualParams)).findFirst();
+        ensureIsInitialized(symbolResolver());
+        Optional<InternalConstructorDefinition> constructor = constructors.stream().filter((c)->c.match(symbolResolver(), actualParams)).findFirst();
 
         if (!constructor.isPresent()){
             throw new UnsolvedConstructorException(getQualifiedName(), actualParams);

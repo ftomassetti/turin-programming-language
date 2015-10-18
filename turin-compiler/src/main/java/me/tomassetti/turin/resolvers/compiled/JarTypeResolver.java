@@ -2,6 +2,7 @@ package me.tomassetti.turin.resolvers.compiled;
 
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
+import me.tomassetti.turin.resolvers.TypeResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,23 @@ import java.util.jar.JarFile;
 public class JarTypeResolver extends AbstractCompiledTypeResolver<JarClasspathElement> {
 
     protected File file;
+
+    @Override
+    public String toString() {
+        return "JarTypeResolver{" +
+                "file=" + file +
+                '}';
+    }
+
+    private TypeResolver root;
+
+    public TypeResolver root() {
+        return root;
+    }
+
+    public void setRoot(TypeResolver root) {
+        this.root = root;
+    }
 
     /**
      * Note that it adds itself in the global ClassPool.

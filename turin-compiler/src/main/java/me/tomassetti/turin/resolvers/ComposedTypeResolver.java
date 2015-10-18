@@ -12,6 +12,7 @@ public class ComposedTypeResolver implements TypeResolver {
 
     public ComposedTypeResolver(List<TypeResolver> elements) {
         this.elements = elements;
+        this.elements.forEach((e)->e.setRoot(ComposedTypeResolver.this));
     }
 
     @Override
@@ -23,6 +24,16 @@ public class ComposedTypeResolver implements TypeResolver {
             }
         }
         return Optional.empty();
+    }
+
+    private TypeResolver root;
+
+    public TypeResolver root() {
+        return root;
+    }
+
+    public void setRoot(TypeResolver root) {
+        this.root = root;
     }
 
     @Override

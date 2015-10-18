@@ -15,6 +15,16 @@ public class JdkTypeResolver implements TypeResolver {
 
     }
 
+    private TypeResolver root;
+
+    public TypeResolver root() {
+        return root;
+    }
+
+    public void setRoot(TypeResolver root) {
+        this.root = root;
+    }
+
     public static JdkTypeResolver getInstance() {
         return INSTANCE;
     }

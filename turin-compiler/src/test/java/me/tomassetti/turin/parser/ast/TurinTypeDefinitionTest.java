@@ -42,8 +42,9 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, Collections.emptyList());
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(Collections.emptyList());
         assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
         assertEquals("()V", constructor.getDescriptor());
@@ -58,9 +59,10 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
         ActualParam p0 = new ActualParam(new BooleanLiteral(false));
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(ImmutableList.of(p0));
     }
 
     @Test
@@ -74,9 +76,10 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
         ActualParam p0 = new ActualParam(new FloatLiteral(0.0f));
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(ImmutableList.of(p0));
         assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
         assertEquals("(F)V", constructor.getDescriptor());
@@ -93,9 +96,10 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
         ActualParam p0 = new ActualParam(new BooleanLiteral(false));
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(ImmutableList.of(p0));
     }
 
     @Test(expected = UnsolvedConstructorException.class)
@@ -109,9 +113,10 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
         ActualParam p0 = new ActualParam("coefficient", new BooleanLiteral(false));
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(ImmutableList.of(p0));
         assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
         assertEquals("()V", constructor.getDescriptor());
@@ -128,9 +133,10 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
         ActualParam p0 = new ActualParam("coefficient", new FloatLiteral(0.0f));
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(ImmutableList.of(p0));
         assertEquals("me/tomassetti/MyType", constructor.getOwnerInternalName());
         assertEquals("<init>", constructor.getName());
         assertEquals("(F)V", constructor.getDescriptor());
@@ -145,15 +151,17 @@ public class TurinTypeDefinitionTest {
         turinFile.add(typeDefinition);
 
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
 
         ActualParam p0 = new ActualParam("zzz", new FloatLiteral(0.0f));
-        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(resolver, ImmutableList.of(p0));
+        JvmConstructorDefinition constructor = typeDefinition.resolveConstructorCall(ImmutableList.of(p0));
     }
 
     @Test
     public void defineMethodToString() throws IOException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/common_methods.to"));
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
         assertEquals(true, turinFile.getTopTypeDefinition("A").get().defineMethodToString(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("B").get().defineMethodToString(resolver));
         assertEquals(false, turinFile.getTopTypeDefinition("C").get().defineMethodToString(resolver));

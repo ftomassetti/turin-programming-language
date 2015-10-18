@@ -2,6 +2,7 @@ package me.tomassetti.turin.resolvers.compiled;
 
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
+import me.tomassetti.turin.resolvers.TypeResolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +24,16 @@ public class DirClassesTypeResolver extends AbstractCompiledTypeResolver<DirClas
         this.dir = dir;
         explore(dir);
         ClassPoolFactory.INSTANCE.addClassesDir(new CompiledClassPath());
+    }
+
+    private TypeResolver root;
+
+    public TypeResolver root() {
+        return root;
+    }
+
+    public void setRoot(TypeResolver root) {
+        this.root = root;
     }
 
     private void explore(File file) {

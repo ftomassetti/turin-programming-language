@@ -227,7 +227,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(List<ActualParam> actualParams) {
         // if this is the compiled version of a turin type we have to handle default parameters
         if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
             try {

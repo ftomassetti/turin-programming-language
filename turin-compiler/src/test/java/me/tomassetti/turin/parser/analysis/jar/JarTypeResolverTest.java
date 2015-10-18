@@ -77,7 +77,7 @@ public class JarTypeResolverTest {
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
         SymbolResolver resolver = new InFileSymbolResolver(jarTypeResolver);
         Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
-        JvmConstructorDefinition constructor = typeDefinition.get().resolveConstructorCall(resolver, Collections.emptyList());
+        JvmConstructorDefinition constructor = typeDefinition.get().resolveConstructorCall(Collections.emptyList());
         assertEquals("com/github/javaparser/ast/CompilationUnit", constructor.getOwnerInternalName());
         assertEquals("()V", constructor.getDescriptor());
         assertEquals("<init>", constructor.getName());

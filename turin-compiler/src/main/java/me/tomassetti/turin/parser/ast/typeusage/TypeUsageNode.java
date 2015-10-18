@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast.typeusage;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.jvm.JvmTypeCategory;
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -58,7 +59,11 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         } else if (signature.startsWith("L") && signature.endsWith(";")) {
             String typeName = signature.substring(1, signature.length() - 1);
             typeName = typeName.replaceAll("/", ".");
-            return new ReferenceTypeUsage(resolver.findTypeDefinitionIn(typeName, null, resolver).get());
+            Optional<TypeDefinition> typeDefinition = resolver.findTypeDefinitionIn(typeName, null, resolver);
+            if (!typeDefinition.isPresent()) {
+                throw new RuntimeException("Unable to find definition of type " + typeName + " using " + resolver);
+            }
+            return new ReferenceTypeUsage(typeDefinition.get());
         } else {
             throw new UnsupportedOperationException(signature);
         }

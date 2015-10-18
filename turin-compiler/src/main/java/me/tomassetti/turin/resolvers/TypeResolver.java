@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface TypeResolver {
 
+    public TypeResolver root();
+    public void setRoot(TypeResolver root);
+
     public Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName);
     public Optional<FunctionDefinitionNode> resolveAbsoluteFunctionName(String typeName);
 

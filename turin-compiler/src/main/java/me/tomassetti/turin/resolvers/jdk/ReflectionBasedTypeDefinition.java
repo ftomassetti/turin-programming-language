@@ -150,7 +150,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams) {
+    public JvmConstructorDefinition resolveConstructorCall(List<ActualParam> actualParams) {
         try {
             List<JvmType> argsTypes = new ArrayList<>();
             for (ActualParam actualParam : actualParams) {

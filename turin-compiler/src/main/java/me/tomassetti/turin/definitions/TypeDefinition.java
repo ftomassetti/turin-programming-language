@@ -85,7 +85,7 @@ public interface TypeDefinition extends Symbol, Named {
     /// Constructors
     ///
 
-    JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
+    JvmConstructorDefinition resolveConstructorCall(List<ActualParam> actualParams);
 
     default boolean hasManyConstructors() {
         return getConstructors().size() > 1;
