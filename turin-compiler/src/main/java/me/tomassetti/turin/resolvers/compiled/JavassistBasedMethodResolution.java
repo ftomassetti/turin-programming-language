@@ -7,7 +7,6 @@ import javassist.NotFoundException;
 import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
@@ -15,6 +14,7 @@ import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -116,7 +116,7 @@ public class JavassistBasedMethodResolution {
             if (method.getParameterCount() == argsTypes.size()) {
                 boolean match = true;
                 for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver);
+                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver, Collections.emptyMap());
                     TypeUsage formalType = JavassistTypeDefinitionFactory.toTypeUsage(method.getParameterType(i), resolver);
                     if (!actualType.canBeAssignedTo(formalType, resolver)) {
                         match = false;

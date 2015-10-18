@@ -113,6 +113,7 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         BlockStatement body = (BlockStatement) foo2.getBody();
         Statement lastStatement = body.getStatements().get(body.getStatements().size() - 1);
         ReturnStatement returnStatement = (ReturnStatement)lastStatement;
+        // Probably JavaAssistTypeDefinition already replaced Type Variables
         TypeUsage returnedValue = returnStatement.getValue().calcType();
         assertTrue(returnedValue.isReferenceTypeUsage());
         assertEquals("relations.Node", returnedValue.asReferenceTypeUsage().getQualifiedName());
@@ -155,5 +156,5 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         Object res4 = foo4.getMethod("invoke", new Class[]{}).invoke(null);
         assertEquals(ImmutableList.of(nodeA), res4);
     }
-    
+
 }

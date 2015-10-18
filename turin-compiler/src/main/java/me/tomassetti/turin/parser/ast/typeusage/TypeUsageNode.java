@@ -8,10 +8,7 @@ import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
-import me.tomassetti.turin.typesystem.ArrayTypeUsage;
-import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
-import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.typesystem.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +44,20 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         };
     }
 
-    public static TypeUsage fromJvmType(JvmType jvmType, SymbolResolver resolver) {
+    public class TypeVariableData {
+        private TypeVariableUsage.GenericDeclaration genericDeclaration;
+        private List<? extends TypeUsage> bounds;
+
+        public TypeVariableUsage.GenericDeclaration getGenericDeclaration() {
+            return genericDeclaration;
+        }
+
+        public List<? extends TypeUsage> getBounds() {
+            return bounds;
+        }
+    }
+
+    public static TypeUsage fromJvmType(JvmType jvmType, SymbolResolver resolver, Map<String, TypeVariableData> visibleGenericTypes) {
         Optional<PrimitiveTypeUsage> primitive = PrimitiveTypeUsage.findByJvmType(jvmType);
         if (primitive.isPresent()) {
             return primitive.get();
@@ -55,7 +65,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
         String signature = jvmType.getSignature();
         if (signature.startsWith("[")) {
             JvmType componentType = new JvmType(signature.substring(1));
-            return new ArrayTypeUsage(fromJvmType(componentType, resolver));
+            return new ArrayTypeUsage(fromJvmType(componentType, resolver, visibleGenericTypes));
         } else if (signature.startsWith("L") && signature.endsWith(";")) {
             String typeName = signature.substring(1, signature.length() - 1);
             typeName = typeName.replaceAll("/", ".");
@@ -64,8 +74,16 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
                 throw new RuntimeException("Unable to find definition of type " + typeName + " using " + resolver);
             }
             return new ReferenceTypeUsage(typeDefinition.get());
+        } else if (signature.equals("V")) {
+            return new VoidTypeUsage();
         } else {
-            throw new UnsupportedOperationException(signature);
+            for (String typeVariableName : visibleGenericTypes.keySet()) {
+                if (typeVariableName.equals(signature)) {
+                    TypeVariableData typeVariableData = visibleGenericTypes.get(typeVariableName);
+                    return new TypeVariableUsage(typeVariableData.genericDeclaration, typeVariableName, typeVariableData.getBounds());
+                }
+            }
+            throw new UnsupportedOperationException("Signature="+signature+", type="+jvmType.getClass());
         }
     }
 

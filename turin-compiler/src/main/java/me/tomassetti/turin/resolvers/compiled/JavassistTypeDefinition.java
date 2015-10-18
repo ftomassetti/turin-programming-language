@@ -16,6 +16,7 @@ import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.*;
+import org.objectweb.asm.signature.SignatureReader;
 import turin.compilation.DefaultParam;
 
 import java.lang.reflect.InvocationTargetException;
@@ -146,7 +147,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
             throw new RuntimeException(e);
         }
         for (DefaultParamData defaultParamData : defaultParamDatas) {
-            TypeUsage paramType = TypeUsageNode.fromJvmType(new JvmType(defaultParamData.signature), resolver);
+            TypeUsage paramType = TypeUsageNode.fromJvmType(new JvmType(defaultParamData.signature), resolver, Collections.emptyMap());
             formalParameters.add(new FormalParameterSymbol(paramType, defaultParamData.name, true));
         }
         return formalParameters;
@@ -166,10 +167,18 @@ public class JavassistTypeDefinition implements TypeDefinition {
 
     private InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod, SymbolResolver resolver) {
         try {
+            Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = new HashMap<>();
+            TypeUsage returnType = toTypeUsage(ctMethod.getReturnType(), resolver);
+            if (ctMethod.getGenericSignature() != null) {
+                SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(ctMethod.getGenericSignature());
+                returnType = toTypeUsage(methodSignature.getReturnType(), resolver, visibleTypeVariables);
+            }
             return new InternalMethodDefinition(ctMethod.getName(), formalParameters(ctMethod, resolver),
-                    toTypeUsage(ctMethod.getReturnType(), resolver), JavassistTypeDefinitionFactory.toMethodDefinition(ctMethod));
+                    returnType, JavassistTypeDefinitionFactory.toMethodDefinition(ctMethod));
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
+        } catch (BadBytecode badBytecode) {
+            throw new RuntimeException(badBytecode);
         }
     }
 
@@ -311,8 +320,8 @@ public class JavassistTypeDefinition implements TypeDefinition {
             if (method.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
-                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver)).collect(Collectors.toList());
-                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType(), resolver));
+                List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver, Collections.emptyMap())).collect(Collectors.toList());
+                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType(), resolver, Collections.emptyMap()));
                 return functionReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
@@ -343,8 +352,17 @@ public class JavassistTypeDefinition implements TypeDefinition {
         }
     }
 
-    private static TypeUsage toTypeUsage(SignatureAttribute.Type type, SymbolResolver resolver) {
-        return TypeUsageNode.fromJvmType(new JvmType(type.jvmTypeName()), resolver);
+    private static JvmType toJvmType(SignatureAttribute.Type type) {
+        if (type.jvmTypeName().equals("void")) {
+            return JvmType.VOID;
+        } else {
+            return new JvmType(type.jvmTypeName());
+        }
+
+    }
+
+    private static TypeUsage toTypeUsage(SignatureAttribute.Type type, SymbolResolver resolver, Map<String, TypeUsageNode.TypeVariableData> visibleGenericTypes) {
+        return TypeUsageNode.fromJvmType(toJvmType(type), resolver, visibleGenericTypes);
     }
 
     @Override
@@ -399,7 +417,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
             for (SignatureAttribute.TypeArgument typeArgument : genericClassType.getTypeArguments()) {
                 SignatureAttribute.Type t = typeArgument.getType();
                 referenceTypeUsage.getTypeParameterValues().add(classSignature.getParameters()[i].getName(),
-                        toTypeUsage(t, resolver));
+                        toTypeUsage(t, resolver, Collections.emptyMap()));
                 i++;
             }
             return referenceTypeUsage;
