@@ -181,7 +181,7 @@ public class CompilationOfGeneratedMethods {
                 throw new IllegalStateException();
             }
             TypeDefinition baseTypeDefinition = baseType.asReferenceTypeUsage().getTypeDefinition();
-            if (baseTypeDefinition.hasManyConstructors(compilation.getResolver())) {
+            if (baseTypeDefinition.hasManyConstructors()) {
                 throw new IllegalStateException();
             }
             superConstructor = baseTypeDefinition.getConstructors().get(0);

@@ -513,9 +513,9 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams) {
         for (InternalConstructorDefinition constructor : constructors) {
-            if (constructor.match(resolver, actualParams)) {
+            if (constructor.match(symbolResolver(), actualParams)) {
                 return Optional.of(constructor);
             }
         }

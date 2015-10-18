@@ -87,7 +87,7 @@ public interface TypeDefinition extends Symbol, Named {
 
     JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
-    default boolean hasManyConstructors(SymbolResolver resolver) {
+    default boolean hasManyConstructors() {
         return getConstructors().size() > 1;
     }
 
@@ -96,7 +96,7 @@ public interface TypeDefinition extends Symbol, Named {
     }
 
     default Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams, SymbolResolver resolver) {
-        Optional<InternalConstructorDefinition> res = findConstructor(actualParams, resolver);
+        Optional<InternalConstructorDefinition> res = findConstructor(actualParams);
         if (res.isPresent()) {
             return Optional.of(res.get().getJvmConstructorDefinition());
         } else {
@@ -105,7 +105,7 @@ public interface TypeDefinition extends Symbol, Named {
     }
 
     default InternalConstructorDefinition getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
-        Optional<InternalConstructorDefinition> constructor = findConstructor(actualParams, resolver);
+        Optional<InternalConstructorDefinition> constructor = findConstructor(actualParams);
         if (constructor.isPresent()) {
             return constructor.get();
         } else {
@@ -113,7 +113,7 @@ public interface TypeDefinition extends Symbol, Named {
         }
     }
 
-    Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
+    Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams);
 
     List<InternalConstructorDefinition> getConstructors();
 

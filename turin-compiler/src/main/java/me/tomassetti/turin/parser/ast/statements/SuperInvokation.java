@@ -32,7 +32,7 @@ public class SuperInvokation extends Invokable {
 
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
-        return getTurinTypeDefinition().hasManyConstructors(resolver);
+        return getTurinTypeDefinition().hasManyConstructors();
     }
 
     @Override

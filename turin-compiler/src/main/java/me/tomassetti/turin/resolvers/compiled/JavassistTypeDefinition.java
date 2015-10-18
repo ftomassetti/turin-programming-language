@@ -453,7 +453,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams) {
         // if this is the compiled version of a turin type we have to handle default parameters
         if (ctClass.getConstructors().length == 1 && hasDefaultParamAnnotation(ctClass.getConstructors()[0])) {
             return Optional.of(toInternalConstructorDefinition(ctClass.getConstructors()[0], resolver));
