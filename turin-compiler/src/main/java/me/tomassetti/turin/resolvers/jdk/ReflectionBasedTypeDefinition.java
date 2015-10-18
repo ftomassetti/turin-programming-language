@@ -97,7 +97,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
+    public boolean canFieldBeAssigned(String field) {
         return true;
     }
 

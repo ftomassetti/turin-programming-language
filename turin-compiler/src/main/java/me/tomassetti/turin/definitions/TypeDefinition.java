@@ -79,7 +79,7 @@ public interface TypeDefinition extends Symbol, Named {
         return hasField(fieldName.getName(), staticContext);
     }
 
-    boolean canFieldBeAssigned(String field, SymbolResolver resolver);
+    boolean canFieldBeAssigned(String field);
 
     ///
     /// Constructors

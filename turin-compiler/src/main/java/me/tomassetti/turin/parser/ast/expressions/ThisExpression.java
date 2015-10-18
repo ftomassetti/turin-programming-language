@@ -33,6 +33,6 @@ public class ThisExpression extends Expression {
     @Override
     public boolean canFieldBeAssigned(String field, SymbolResolver resolver) {
         TypeDefinition typeDefinition = calcType().getTypeDefinition();
-        return typeDefinition.canFieldBeAssigned(field, resolver);
+        return typeDefinition.canFieldBeAssigned(field);
     }
 }
