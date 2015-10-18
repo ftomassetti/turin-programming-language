@@ -130,11 +130,11 @@ public interface TypeDefinition extends Symbol, Named {
     }
 
     default boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return findMethod(methodName, actualParams, resolver, staticContext).isPresent();
+        return findMethod(methodName, actualParams, staticContext).isPresent();
     }
 
     default InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        Optional<InternalMethodDefinition> method = findMethod(methodName, actualParams, resolver, staticContext);
+        Optional<InternalMethodDefinition> method = findMethod(methodName, actualParams, staticContext);
         if (method.isPresent()) {
             return method.get();
         } else {
@@ -144,9 +144,9 @@ public interface TypeDefinition extends Symbol, Named {
 
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
 
-    boolean isMethodOverloaded(String methodName, SymbolResolver resolver);
+    boolean isMethodOverloaded(String methodName);
 
-    Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
+    Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, boolean staticContext);
 
     ///
     /// Misc

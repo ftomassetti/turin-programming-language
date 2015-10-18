@@ -62,7 +62,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
+    public boolean isMethodOverloaded(String methodName) {
         return Arrays.stream(ctClass.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
     }
 
@@ -153,7 +153,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         List<CtMethod> candidates = Arrays.asList(ctClass.getMethods());
         Optional<CtMethod> method = JavassistBasedMethodResolution.findMethodAmongActualParams(methodName,
                 actualParams, resolver, staticContext, candidates);

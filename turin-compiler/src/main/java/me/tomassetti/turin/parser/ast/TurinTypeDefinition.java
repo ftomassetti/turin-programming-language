@@ -328,23 +328,23 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName, SymbolResolver resolver) {
-        ensureIsInitialized(resolver);
+    public boolean isMethodOverloaded(String methodName) {
+        ensureIsInitialized(symbolResolver());
         return methodsByName.get(methodName).size() > 1;
     }
 
     @Override
-    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams,boolean staticContext) {
         // all named parameters should be after the named ones
         if (!ParamUtils.verifyOrder(actualParams)) {
             throw new IllegalArgumentException("Named params should all be grouped after the positional ones");
         }
 
-        ensureIsInitialized(resolver);
+        ensureIsInitialized(symbolResolver());
         if (!methodsByName.containsKey(methodName)) {
             return Optional.empty();
         }
-        Optional<InternalMethodDefinition> method = methodsByName.get(methodName).stream().filter((m)->m.match(resolver, actualParams)).findFirst();
+        Optional<InternalMethodDefinition> method = methodsByName.get(methodName).stream().filter((m)->m.match(symbolResolver(), actualParams)).findFirst();
         return method;
     }
 
