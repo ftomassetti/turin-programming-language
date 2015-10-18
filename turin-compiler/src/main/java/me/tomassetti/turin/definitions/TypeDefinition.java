@@ -92,7 +92,7 @@ public interface TypeDefinition extends Symbol, Named {
     }
 
     default List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
-        return getConstructor(actualParams, resolver).getFormalParameters();
+        return getConstructor(actualParams).getFormalParameters();
     }
 
     default Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams, SymbolResolver resolver) {
@@ -104,7 +104,7 @@ public interface TypeDefinition extends Symbol, Named {
         }
     }
 
-    default InternalConstructorDefinition getConstructor(List<ActualParam> actualParams, SymbolResolver resolver) {
+    default InternalConstructorDefinition getConstructor(List<ActualParam> actualParams) {
         Optional<InternalConstructorDefinition> constructor = findConstructor(actualParams);
         if (constructor.isPresent()) {
             return constructor.get();

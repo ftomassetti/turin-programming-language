@@ -1,5 +1,6 @@
 package me.tomassetti.turin.parser.ast;
 
+import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * Definition of a reference type (a Class, an Interface or an Enum) OR one of the basic types of Turin (like UInt).
  */
-public abstract class TypeDefinitionNode extends Node implements me.tomassetti.turin.definitions.TypeDefinition {
+public abstract class TypeDefinitionNode extends Node implements TypeDefinition {
     protected String name;
 
     public TypeDefinitionNode(String name) {
