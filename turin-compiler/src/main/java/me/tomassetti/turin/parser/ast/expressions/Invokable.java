@@ -139,7 +139,7 @@ public abstract class Invokable extends Expression {
             }
             TypeUsage actualParamType = param.getValue().calcType();
             TypeUsage formalParamType = formalParams.get(i).getType();
-            if (!actualParamType.canBeAssignedTo(formalParamType, resolver)){
+            if (!actualParamType.canBeAssignedTo(formalParamType)){
                 throw new UnsolvedInvokableException(this);
             }
             paramsAssigned.put(formalParams.get(i).getName(), param);
@@ -155,7 +155,7 @@ public abstract class Invokable extends Expression {
             if (!validNames.containsKey(param.getName())) {
                 throw new IllegalArgumentException("Unknown param " + param.getName());
             }
-            if (!param.getValue().calcType().canBeAssignedTo(validNames.get(param.getName()).getType(), resolver)){
+            if (!param.getValue().calcType().canBeAssignedTo(validNames.get(param.getName()).getType())){
                 throw new UnsolvedInvokableException(this);
             }
             paramsAssigned.put(param.getName(), param);

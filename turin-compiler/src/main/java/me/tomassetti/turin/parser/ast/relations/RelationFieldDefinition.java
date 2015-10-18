@@ -26,7 +26,7 @@ public class RelationFieldDefinition extends Node {
             throw new UnsupportedOperationException();
         }
         ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
-        return referenceTypeUsage.canBeAssignedTo(type, resolver);
+        return referenceTypeUsage.canBeAssignedTo(type);
     }
 
     public RelationDefinition getRelationDefinition() {

@@ -71,7 +71,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, boolean staticContext) {
         return getTypeDefinition().findMethodFor(methodName, argsTypes, staticContext);
     }
 
@@ -95,7 +95,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type) {
         if (!type.isReferenceTypeUsage()) {
             return false;
         }
@@ -104,7 +104,7 @@ public class ReferenceTypeUsage implements TypeUsage {
             return true;
         }
         for (TypeUsage ancestor : this.getAllAncestors()) {
-            if (ancestor.canBeAssignedTo(type, resolver)) {
+            if (ancestor.canBeAssignedTo(type)) {
                 return true;
             }
         }
@@ -122,7 +122,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException();
     }
 
@@ -138,10 +138,10 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition();
         TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, staticContext);
-        return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
+        return typeUsage.replaceTypeVariables(typeParamsMap());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+    public boolean isMethodOverloaded(String methodName) {
         return getTypeDefinition().isMethodOverloaded(methodName);
     }
 
@@ -172,7 +172,7 @@ public class ReferenceTypeUsage implements TypeUsage {
         return getQualifiedName().equals(other.asReferenceTypeUsage().getQualifiedName());
     }
 
-    public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
+    public Map<String, TypeUsage> typeParamsMap() {
         return getTypeDefinition().associatedTypeParametersToName(typeParams);
     }
 

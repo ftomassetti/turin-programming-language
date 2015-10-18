@@ -46,7 +46,7 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+    public boolean isMethodOverloaded(String methodName) {
         return false;
     }
 
@@ -66,12 +66,12 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type) {
         return false;
     }
 
@@ -81,12 +81,12 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 

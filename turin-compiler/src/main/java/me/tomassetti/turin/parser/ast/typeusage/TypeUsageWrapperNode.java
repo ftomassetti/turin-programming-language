@@ -68,8 +68,8 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return typeUsage().findMethodFor(name, argsTypes, resolver, staticContext);
+    public final JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
+        return typeUsage().findMethodFor(name, argsTypes, staticContext);
     }
 
     @Override
@@ -88,13 +88,13 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
-        return typeUsage().returnTypeWhenInvokedWith(actualParams, resolver);
+    public final TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+        return typeUsage().returnTypeWhenInvokedWith(actualParams);
     }
 
     @Override
-    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return typeUsage().returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
+        return typeUsage().returnTypeWhenInvokedWith(methodName, actualParams, staticContext);
     }
 
     @Override
@@ -118,8 +118,8 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
-        return typeUsage().canBeAssignedTo(type, resolver);
+    public final boolean canBeAssignedTo(TypeUsage type) {
+        return typeUsage().canBeAssignedTo(type);
     }
 
     @Override
@@ -128,8 +128,8 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
-        return typeUsage().isMethodOverloaded(resolver, methodName);
+    public final boolean isMethodOverloaded(String methodName) {
+        return typeUsage().isMethodOverloaded(methodName);
     }
 
     @Override

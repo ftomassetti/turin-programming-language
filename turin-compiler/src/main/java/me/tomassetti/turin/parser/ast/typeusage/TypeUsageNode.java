@@ -112,12 +112,12 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
     @Override
-    public boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver) {
+    public boolean canBeAssignedTo(TypeUsage type) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
@@ -150,7 +150,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
      * If this is something invokable and can be invoked with the given arguments which type would be return?
      */
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
@@ -158,7 +158,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
      * If this has an invokable name with the given methodName and the given arguments which type would be return?
      */
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

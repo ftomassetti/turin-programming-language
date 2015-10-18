@@ -164,7 +164,7 @@ class ReflectionBasedMethodResolution {
                 for (int i = 0; i < argsTypes.size(); i++) {
                     TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver.getRoot(), Collections.emptyMap());
                     TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i), resolver);
-                    if (!actualType.canBeAssignedTo(formalType, resolver)) {
+                    if (!actualType.canBeAssignedTo(formalType)) {
                         match = false;
                     }
                 }
@@ -191,7 +191,7 @@ class ReflectionBasedMethodResolution {
                 for (int i = 0; i < argsTypes.size(); i++) {
                     TypeUsage actualType = argsTypes.get(i).getValue().calcType();
                     TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i), resolver);
-                    if (!actualType.canBeAssignedTo(formalType, resolver)) {
+                    if (!actualType.canBeAssignedTo(formalType)) {
                         match = false;
                     }
                 }
@@ -271,7 +271,7 @@ class ReflectionBasedMethodResolution {
         ReflectionBasedTypeDefinition secondDef = new ReflectionBasedTypeDefinition(secondType, resolver);
         TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
         TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
-        return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);
+        return firstTypeUsage.canBeAssignedTo(secondTypeUsage) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage);
     }
 
 }

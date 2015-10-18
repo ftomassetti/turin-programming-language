@@ -41,7 +41,7 @@ public abstract class InternalInvokableDefinition {
             String getterName = ParamUtils.getterName(formalParameter, resolver);
             if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), false)) {
                 TypeUsage res = typeDefinition.returnTypeWhenInvokedWith(getterName, Collections.emptyList(), false);
-                if (!res.canBeAssignedTo(formalParameter.getType(), resolver)){
+                if (!res.canBeAssignedTo(formalParameter.getType())){
                     return Optional.of("the given value has a getter '" + getterName + "' with incompatible type");
                 }
             } else {
@@ -66,7 +66,7 @@ public abstract class InternalInvokableDefinition {
         }
         int i = 0;
         for (ActualParam param : unnamedParams) {
-            if (!param.getValue().calcType().canBeAssignedTo(formalParameters.get(i).getType(), resolver)){
+            if (!param.getValue().calcType().canBeAssignedTo(formalParameters.get(i).getType())){
                 return Optional.of("TODO");
             }
             paramsAssigned.add(formalParameters.get(i).getName());
@@ -82,7 +82,7 @@ public abstract class InternalInvokableDefinition {
             if (!validNames.containsKey(param.getName())) {
                 return Optional.of("Unknown param " + param.getName());
             }
-            if (!param.getValue().calcType().canBeAssignedTo(validNames.get(param.getName()).getType(), resolver)){
+            if (!param.getValue().calcType().canBeAssignedTo(validNames.get(param.getName()).getType())){
                 return Optional.of("TODO");
             }
             paramsAssigned.add(param.getName());

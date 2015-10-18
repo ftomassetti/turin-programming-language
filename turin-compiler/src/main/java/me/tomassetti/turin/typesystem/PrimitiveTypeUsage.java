@@ -59,9 +59,17 @@ public class PrimitiveTypeUsage implements TypeUsage {
             ImmutableList.of(DOUBLE));
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
+    private boolean isBoxType(TypeUsage other) {
+        return other.isReferenceTypeUsage() && other.asReferenceTypeUsage().getQualifiedName().equals(boxTypeClazz.getCanonicalName());
+    }
+
+    private boolean isObject(TypeUsage other) {
+        return other.isReferenceTypeUsage() && other.asReferenceTypeUsage().getQualifiedName().equals(Object.class.getCanonicalName());
+    }
+
     @Override
-    public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
-        if (other.sameType(getBoxType(resolver)) || other.sameType(ReferenceTypeUsage.OBJECT(resolver))) {
+    public boolean canBeAssignedTo(TypeUsage other) {
+        if (isBoxType(other) || isObject(other)) {
             return true;
         }
         if (!other.isPrimitive()) {
@@ -105,7 +113,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 
@@ -176,17 +184,17 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
+    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isMethodOverloaded(SymbolResolver resolver, String methodName) {
+    public boolean isMethodOverloaded(String methodName) {
         return false;
     }
 

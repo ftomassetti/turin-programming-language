@@ -2,7 +2,6 @@ package me.tomassetti.turin.typesystem;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -57,9 +56,9 @@ public interface TypeUsage extends Symbol {
 
     JvmType jvmType();
     
-    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
+    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
 
-    boolean canBeAssignedTo(TypeUsage type, SymbolResolver resolver);
+    boolean canBeAssignedTo(TypeUsage type);
 
     ///
     /// Fields
@@ -72,11 +71,11 @@ public interface TypeUsage extends Symbol {
     ///
 
 
-    TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver);
+    TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams);
 
-    TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext);
+    TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext);
 
-    boolean isMethodOverloaded(SymbolResolver resolver, String methodName);
+    boolean isMethodOverloaded(String methodName);
 
     default boolean isOverloaded() {
         return false;

@@ -61,7 +61,7 @@ public class FunctionCall extends Invokable {
 
     @Override
     public TypeUsage calcType() {
-        return function.calcType().returnTypeWhenInvokedWith(actualParams, symbolResolver());
+        return function.calcType().returnTypeWhenInvokedWith(actualParams);
     }
 
     @Override
