@@ -128,7 +128,7 @@ public class ReferenceTypeUsage implements TypeUsage {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
             TypeDefinition typeDefinition = getTypeDefinition();
-            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), resolver, functionCall.isStatic()));
+            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), functionCall.isStatic()));
         } else {
             throw new UnsupportedOperationException();
         }

@@ -122,18 +122,18 @@ public interface TypeDefinition extends Symbol, Named {
     ///
 
     default TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return getMethod(methodName, actualParams, resolver, staticContext).getReturnType();
+        return getMethod(methodName, actualParams, staticContext).getReturnType();
     }
 
-    default List<? extends FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return getMethod(methodName, actualParams, resolver, staticContext).getFormalParameters();
+    default List<? extends FormalParameter> getMethodParams(String methodName, List<ActualParam> actualParams, boolean staticContext) {
+        return getMethod(methodName, actualParams, staticContext).getFormalParameters();
     }
 
     default boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         return findMethod(methodName, actualParams, staticContext).isPresent();
     }
 
-    default InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    default InternalMethodDefinition getMethod(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         Optional<InternalMethodDefinition> method = findMethod(methodName, actualParams, staticContext);
         if (method.isPresent()) {
             return method.get();
