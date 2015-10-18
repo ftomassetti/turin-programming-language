@@ -55,7 +55,7 @@ public class Program extends Node implements Named, Symbol {
         if (o == null || getClass() != o.getClass()) return false;
 
         Program program = (Program) o;
-        
+
         if (!name.equals(program.name)) return false;
         if (!statement.equals(program.statement)) return false;
 

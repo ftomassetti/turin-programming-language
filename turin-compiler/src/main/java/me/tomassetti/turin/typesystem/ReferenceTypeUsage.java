@@ -127,7 +127,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
             TypeDefinition typeDefinition = getTypeDefinition();

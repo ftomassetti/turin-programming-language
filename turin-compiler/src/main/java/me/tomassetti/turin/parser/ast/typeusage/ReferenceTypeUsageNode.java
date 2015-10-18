@@ -116,8 +116,8 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        return typeUsage().asReferenceTypeUsage().findFormalParametersFor(invokable, resolver);
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+        return typeUsage().asReferenceTypeUsage().findFormalParametersFor(invokable);
     }
 
     @Override

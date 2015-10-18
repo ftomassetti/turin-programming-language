@@ -3,7 +3,6 @@ package me.tomassetti.turin.typesystem;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -83,7 +82,7 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
