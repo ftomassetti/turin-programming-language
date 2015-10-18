@@ -1,12 +1,20 @@
 package me.tomassetti.turin.compiler.relations;
 
 import com.google.common.collect.ImmutableList;
+import jdk.nashorn.internal.ir.Block;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.classloading.TurinClassLoader;
 import me.tomassetti.turin.compiler.AbstractCompilerTest;
 import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.TurinFile;
+import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
+import me.tomassetti.turin.parser.ast.statements.BlockStatement;
+import me.tomassetti.turin.parser.ast.statements.ReturnStatement;
+import me.tomassetti.turin.parser.ast.statements.Statement;
+import me.tomassetti.turin.resolvers.ResolverRegistry;
+import me.tomassetti.turin.resolvers.SymbolResolver;
+import me.tomassetti.turin.typesystem.TypeUsage;
 import org.junit.Test;
 import turin.relations.OneToManyRelation;
 
@@ -86,6 +94,30 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         assertEquals("relations.Relation_Ast", classDefinitions.get(2).getName());
     }*/
 
+    /**
+     * We verify if we can handle correctly the type parameters present in the relation endpoints.
+     * @throws IOException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Test
+    public void relationsReturnCorrectType() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/relation_usage.to"));
+        SymbolResolver resolver = getResolverFor(turinFile);
+        ResolverRegistry.INSTANCE.record(turinFile, resolver);
+
+        FunctionDefinitionNode foo2 = turinFile.getTopLevelFunctionDefinitions().get(1);
+        assertEquals("foo2", foo2.getName());
+        BlockStatement body = (BlockStatement) foo2.getBody();
+        Statement lastStatement = body.getStatements().get(body.getStatements().size() - 1);
+        ReturnStatement returnStatement = (ReturnStatement)lastStatement;
+        TypeUsage returnedValue = returnStatement.getValue().calcType();
+        assertTrue(returnedValue.isReferenceTypeUsage());
+        assertEquals("relations.Node", returnedValue.asReferenceTypeUsage().getQualifiedName());
+    }
+
     @Test
     public void relationUsage() throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/relations/relation_usage.to"));
@@ -123,6 +155,5 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         Object res4 = foo4.getMethod("invoke", new Class[]{}).invoke(null);
         assertEquals(ImmutableList.of(nodeA), res4);
     }
-
-
+    
 }
