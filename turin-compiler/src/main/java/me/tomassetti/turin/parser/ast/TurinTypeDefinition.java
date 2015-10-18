@@ -129,9 +129,9 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
         }
     }
 
-    public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
+    public List<InternalConstructorDefinition> getConstructors() {
         if (constructors == null) {
-            initializeConstructors(resolver);
+            initializeConstructors(symbolResolver());
         }
         return constructors;
     }
@@ -149,7 +149,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     private void initializeImplicitConstructor(SymbolResolver resolver) {
         List<? extends FormalParameter> inheritedParams = Collections.emptyList();
         if (getBaseType().isPresent()) {
-            List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition().getConstructors(resolver);
+            List<InternalConstructorDefinition> constructors = getBaseType().get().asReferenceTypeUsage().getTypeDefinition().getConstructors();
             if (constructors.size() != 1) {
                 throw new UnsupportedOperationException();
             }

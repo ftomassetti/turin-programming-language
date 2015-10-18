@@ -8,7 +8,6 @@ import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorExcepti
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Named;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -89,7 +88,7 @@ public interface TypeDefinition extends Symbol, Named {
     JvmConstructorDefinition resolveConstructorCall(SymbolResolver resolver, List<ActualParam> actualParams);
 
     default boolean hasManyConstructors(SymbolResolver resolver) {
-        return getConstructors(resolver).size() > 1;
+        return getConstructors().size() > 1;
     }
 
     default List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
@@ -116,7 +115,7 @@ public interface TypeDefinition extends Symbol, Named {
 
     Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams, SymbolResolver resolver);
 
-    List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver);
+    List<InternalConstructorDefinition> getConstructors();
 
     ///
     /// Methods

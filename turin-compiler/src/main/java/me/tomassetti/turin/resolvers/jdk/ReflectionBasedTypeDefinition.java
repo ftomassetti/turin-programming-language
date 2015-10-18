@@ -87,7 +87,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
+    public List<InternalConstructorDefinition> getConstructors() {
         return Arrays.stream(clazz.getConstructors())
                 .map((c) -> toInternalConstructorDefinition(c))
                 .collect(Collectors.toList());

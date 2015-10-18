@@ -10,8 +10,6 @@ import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinitionNode;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -29,10 +27,10 @@ import java.util.stream.Collectors;
 public class JavassistTypeDefinition implements TypeDefinition {
 
     private CtClass ctClass;
-    private SymbolResolver symbolResolver;
+    private SymbolResolver resolver;
 
-    public JavassistTypeDefinition(CtClass ctClass, SymbolResolver symbolResolver) {
-        this.symbolResolver = symbolResolver;
+    public JavassistTypeDefinition(CtClass ctClass, SymbolResolver resolver) {
+        this.resolver = resolver;
         if (ctClass.isPrimitive()) {
             throw new IllegalArgumentException();
         }
@@ -48,7 +46,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public List<InternalConstructorDefinition> getConstructors(SymbolResolver resolver) {
+    public List<InternalConstructorDefinition> getConstructors() {
         return Arrays.stream(ctClass.getConstructors())
                 .map((c) -> toInternalConstructorDefinition(c, resolver))
                 .collect(Collectors.toList());
@@ -260,7 +258,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
                     try {
-                        return JavassistTypeDefinitionFactory.toTypeUsage(field.getType(), symbolResolver);
+                        return JavassistTypeDefinitionFactory.toTypeUsage(field.getType(), resolver);
                     } catch (NotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -277,7 +275,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return typeFor(methods, symbolResolver);
+            return typeFor(methods, resolver);
         }
 
         // TODO consider inherited fields and methods
@@ -356,14 +354,14 @@ public class JavassistTypeDefinition implements TypeDefinition {
                 SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(ctClass.getGenericSignature());
                 List<ReferenceTypeUsage> ancestors = new ArrayList<>();
                 if (ctClass.getSuperclass() != null) {
-                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass(), symbolResolver);
+                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(ctClass.getSuperclass(), classSignature.getSuperClass(), resolver);
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors());
                 }
                 int i = 0;
                 for (CtClass interfaze : ctClass.getInterfaces()) {
                     SignatureAttribute.ClassType genericInterfaze = classSignature.getInterfaces()[i];
-                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze, symbolResolver);
+                    ReferenceTypeUsage superTypeDefinition = toReferenceTypeUsage(interfaze, genericInterfaze, resolver);
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors());
                     i++;
@@ -372,13 +370,13 @@ public class JavassistTypeDefinition implements TypeDefinition {
             } else {
                 List<ReferenceTypeUsage> ancestors = new ArrayList<>();
                 if (ctClass.getSuperclass() != null) {
-                    ReferenceTypeUsage superTypeDefinition = toTypeUsage(ctClass.getSuperclass(), symbolResolver).asReferenceTypeUsage();
+                    ReferenceTypeUsage superTypeDefinition = toTypeUsage(ctClass.getSuperclass(), resolver).asReferenceTypeUsage();
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors());
                 }
                 int i = 0;
                 for (CtClass interfaze : ctClass.getInterfaces()) {
-                    ReferenceTypeUsage superTypeDefinition = toTypeUsage(interfaze, symbolResolver).asReferenceTypeUsage();
+                    ReferenceTypeUsage superTypeDefinition = toTypeUsage(interfaze, resolver).asReferenceTypeUsage();
                     ancestors.add(superTypeDefinition);
                     ancestors.addAll(superTypeDefinition.getAllAncestors());
                     i++;
@@ -395,7 +393,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     private ReferenceTypeUsage toReferenceTypeUsage(CtClass clazz, SignatureAttribute.ClassType genericClassType, SymbolResolver resolver) {
         try {
             SignatureAttribute.ClassSignature classSignature = SignatureAttribute.toClassSignature(clazz.getGenericSignature());
-            TypeDefinition typeDefinition = new JavassistTypeDefinition(clazz, symbolResolver);
+            TypeDefinition typeDefinition = new JavassistTypeDefinition(clazz, this.resolver);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             int i=0;
             for (SignatureAttribute.TypeArgument typeArgument : genericClassType.getTypeArguments()) {

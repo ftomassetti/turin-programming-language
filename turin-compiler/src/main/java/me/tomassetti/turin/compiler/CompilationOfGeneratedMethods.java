@@ -184,7 +184,7 @@ public class CompilationOfGeneratedMethods {
             if (baseTypeDefinition.hasManyConstructors(compilation.getResolver())) {
                 throw new IllegalStateException();
             }
-            superConstructor = baseTypeDefinition.getConstructors(compilation.getResolver()).get(0);
+            superConstructor = baseTypeDefinition.getConstructors().get(0);
         }
 
         SymbolResolver resolver = compilation.getResolver();
