@@ -63,7 +63,7 @@ public final class ParamUtils {
         for (FormalParameter formalParameter : formalParameters) {
             String getterName = getterName(formalParameter, resolver);
             InstanceMethodInvokation instanceMethodInvokation = new InstanceMethodInvokation(value, getterName, Collections.emptyList());
-            if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), resolver, false)) {
+            if (typeDefinition.hasMethodFor(getterName, Collections.emptyList(), false)) {
                 if (formalParameter.hasDefaultValue()) {
                     List<ActualParam> params = new ArrayList<>();
                     params.add(new ActualParam(new StringLiteral(formalParameter.getName())));

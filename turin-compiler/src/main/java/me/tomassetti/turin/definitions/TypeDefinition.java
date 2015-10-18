@@ -129,7 +129,7 @@ public interface TypeDefinition extends Symbol, Named {
         return getMethod(methodName, actualParams, staticContext).getFormalParameters();
     }
 
-    default boolean hasMethodFor(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    default boolean hasMethodFor(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         return findMethod(methodName, actualParams, staticContext).isPresent();
     }
 
