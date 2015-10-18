@@ -16,4 +16,14 @@ public class VoidTypeUsageTest {
         assertEquals(false, new VoidTypeUsage().isPrimitive());
     }
 
+    @Test
+    public void testIsReferenceTypeUsage() {
+        assertEquals(false, new VoidTypeUsage().isReferenceTypeUsage());
+    }
+
+    @Test
+    public void testIsVoid() {
+        assertEquals(true, new VoidTypeUsage().isVoid());
+    }
+
 }

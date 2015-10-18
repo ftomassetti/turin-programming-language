@@ -19,6 +19,11 @@ public class ArrayTypeUsage implements TypeUsage {
         return true;
     }
 
+    @Override
+    public boolean isReference() {
+        return true;
+    }
+
     private TypeUsage componentType;
 
     public ArrayTypeUsage(TypeUsage componentType) {

@@ -31,9 +31,79 @@ public class ArrayTypeUsageTest {
 
     @Test
     public void testIsPrimitive() {
-        assertEquals(false, arrayOfBoolean.isArray());
-        assertEquals(false, arrayOfString.isArray());
-        assertEquals(false, arrayOfArrayOfString.isArray());
+        assertEquals(false, arrayOfBoolean.isPrimitive());
+        assertEquals(false, arrayOfString.isPrimitive());
+        assertEquals(false, arrayOfArrayOfString.isPrimitive());
+    }
+
+    @Test
+    public void testIsReferenceTypeUsage() {
+        assertEquals(false, arrayOfBoolean.isReferenceTypeUsage());
+        assertEquals(false, arrayOfString.isReferenceTypeUsage());
+        assertEquals(false, arrayOfArrayOfString.isReferenceTypeUsage());
+    }
+
+    @Test
+    public void testIsVoid() {
+        assertEquals(false, arrayOfBoolean.isVoid());
+        assertEquals(false, arrayOfString.isVoid());
+        assertEquals(false, arrayOfArrayOfString.isVoid());
+    }
+
+    @Test
+    public void testAsReferenceTypeUsage() {
+        int exceptions = 0;
+        try {
+            arrayOfBoolean.asReferenceTypeUsage();
+        } catch (UnsupportedOperationException uoe) {
+            exceptions++;
+        }
+        try {
+            arrayOfString.asReferenceTypeUsage();
+        } catch (UnsupportedOperationException uoe) {
+            exceptions++;
+        }
+        try {
+            arrayOfArrayOfString.asReferenceTypeUsage();
+        } catch (UnsupportedOperationException uoe) {
+            exceptions++;
+        }
+        assertEquals(3, exceptions);
+    }
+
+    @Test
+    public void testAsArrayTypeUsage() {
+        assertEquals(arrayOfBoolean, arrayOfBoolean.asArrayTypeUsage());
+        assertEquals(arrayOfString, arrayOfString.asArrayTypeUsage());
+        assertEquals(arrayOfArrayOfString, arrayOfArrayOfString.asArrayTypeUsage());
+    }
+
+    @Test
+    public void testAsPrimitiveTypeUsage() {
+        int exceptions = 0;
+        try {
+            arrayOfBoolean.asPrimitiveTypeUsage();
+        } catch (UnsupportedOperationException uoe) {
+            exceptions++;
+        }
+        try {
+            arrayOfString.asPrimitiveTypeUsage();
+        } catch (UnsupportedOperationException uoe) {
+            exceptions++;
+        }
+        try {
+            arrayOfArrayOfString.asPrimitiveTypeUsage();
+        } catch (UnsupportedOperationException uoe) {
+            exceptions++;
+        }
+        assertEquals(3, exceptions);
+    }
+
+    @Test
+    public void testIsReference() {
+        assertEquals(true, arrayOfBoolean.isReference());
+        assertEquals(true, arrayOfString.isReference());
+        assertEquals(true, arrayOfArrayOfString.isReference());
     }
 
 }
