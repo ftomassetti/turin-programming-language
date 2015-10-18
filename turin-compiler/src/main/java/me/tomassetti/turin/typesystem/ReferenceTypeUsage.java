@@ -71,7 +71,6 @@ public class ReferenceTypeUsage implements TypeUsage {
         return getTypeDefinition().findMethodFor(methodName, argsTypes, resolver, staticContext);
     }
 
-
     @Override
     public JvmType jvmType() {
         return getTypeDefinition().jvmType();
@@ -170,7 +169,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     public Map<String, TypeUsage> typeParamsMap(SymbolResolver resolver) {
-        return getTypeDefinition().associatedTypeParametersToName(resolver, typeParams);
+        return getTypeDefinition().associatedTypeParametersToName(typeParams);
     }
 
     public class TypeParameterValues {

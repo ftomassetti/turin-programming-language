@@ -488,7 +488,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams) {
+    public <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(List<T> typeParams) {
         if (typeParams.isEmpty()) {
             return Collections.emptyMap();
         }

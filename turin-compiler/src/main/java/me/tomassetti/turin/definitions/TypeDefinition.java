@@ -152,5 +152,5 @@ public interface TypeDefinition extends Symbol, Named {
     /// Misc
     ///
 
-    <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(SymbolResolver resolver, List<T> typeParams);
+    <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(List<T> typeParams);
 }
