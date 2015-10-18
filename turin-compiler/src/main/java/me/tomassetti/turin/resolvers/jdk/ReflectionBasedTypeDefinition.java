@@ -8,7 +8,6 @@ import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;

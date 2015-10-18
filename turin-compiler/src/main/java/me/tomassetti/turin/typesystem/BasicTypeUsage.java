@@ -76,7 +76,7 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
         throw new UnsupportedOperationException();
     }
 

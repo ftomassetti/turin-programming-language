@@ -61,7 +61,7 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
         if (fieldName.equals("length")) {
             return new ArrayLength(instance);
         }

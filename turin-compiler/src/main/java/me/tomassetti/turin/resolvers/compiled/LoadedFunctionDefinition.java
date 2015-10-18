@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 
 import java.util.List;
 
+// TODO it should not be a Node
 public class LoadedFunctionDefinition extends FunctionDefinitionNode {
 
     private String qualifiedName;

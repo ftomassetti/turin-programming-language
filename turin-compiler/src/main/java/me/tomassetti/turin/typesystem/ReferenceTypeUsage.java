@@ -114,7 +114,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
         return getTypeDefinition().getFieldOnInstance(fieldName, instance);
     }
 

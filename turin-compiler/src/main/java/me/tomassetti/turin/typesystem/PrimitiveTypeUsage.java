@@ -171,18 +171,18 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
-        return null;
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams, SymbolResolver resolver) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

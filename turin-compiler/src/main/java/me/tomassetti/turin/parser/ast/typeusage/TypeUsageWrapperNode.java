@@ -123,8 +123,8 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
-        return typeUsage().getFieldOnInstance(fieldName, instance, resolver);
+    public final Symbol getFieldOnInstance(String fieldName, Symbol instance) {
+        return typeUsage().getFieldOnInstance(fieldName, instance);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class ReflectionBasedField implements Symbol {
     @Override
     public Symbol getField(String fieldName) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
-        return fieldType.getFieldOnInstance(fieldName, this, symbolResolver);
+        return fieldType.getFieldOnInstance(fieldName, this);
     }
 
     @Override
