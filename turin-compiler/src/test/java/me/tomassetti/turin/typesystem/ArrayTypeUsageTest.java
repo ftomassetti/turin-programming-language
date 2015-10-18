@@ -29,4 +29,11 @@ public class ArrayTypeUsageTest {
         assertEquals(true, arrayOfArrayOfString.isArray());
     }
 
+    @Test
+    public void testIsPrimitive() {
+        assertEquals(false, arrayOfBoolean.isArray());
+        assertEquals(false, arrayOfString.isArray());
+        assertEquals(false, arrayOfArrayOfString.isArray());
+    }
+
 }

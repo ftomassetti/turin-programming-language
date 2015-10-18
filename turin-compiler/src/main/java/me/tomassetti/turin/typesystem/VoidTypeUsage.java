@@ -19,6 +19,21 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
+    public String toString() {
+        return "VoidTypeUsage{}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof VoidTypeUsage;
+    }
+
+    @Override
+    public int hashCode() {
+        return 127;
+    }
+
+    @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         return this;
     }
