@@ -58,7 +58,7 @@ public interface TypeDefinition extends Symbol, Named {
 
     TypeUsage getFieldType(String fieldName, boolean staticContext);
 
-    Node getFieldOnInstance(String fieldName, Node instance);
+    Symbol getFieldOnInstance(String fieldName, Symbol instance);
 
     boolean hasField(String name, boolean staticContext);
 

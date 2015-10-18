@@ -10,6 +10,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,7 +114,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
         return getTypeDefinition().getFieldOnInstance(fieldName, instance);
     }
 

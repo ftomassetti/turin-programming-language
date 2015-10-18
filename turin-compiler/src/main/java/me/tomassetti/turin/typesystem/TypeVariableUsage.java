@@ -5,6 +5,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,7 @@ public class TypeVariableUsage implements TypeUsage {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

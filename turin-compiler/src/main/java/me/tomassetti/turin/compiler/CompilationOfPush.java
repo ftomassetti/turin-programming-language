@@ -70,20 +70,20 @@ public class CompilationOfPush {
     BytecodeSequence push(Symbol symbol) {
         if (symbol.isNode()) {
             return push(symbol.asNode());
+        } else if (symbol instanceof ReflectionBasedField) {
+            ReflectionBasedField reflectionBaseField = (ReflectionBasedField) symbol;
+            if (reflectionBaseField.isStatic()) {
+                return new PushStaticField(reflectionBaseField.toJvmField(compilation.getResolver()));
+            } else {
+                throw new UnsupportedOperationException();
+            }
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
     BytecodeSequence push(Node node) {
-        if (node instanceof ReflectionBasedField) {
-            ReflectionBasedField reflectionBaseField = (ReflectionBasedField) node;
-            if (reflectionBaseField.isStatic()) {
-                return new PushStaticField(reflectionBaseField.toJvmField(compilation.getResolver()));
-            } else {
-                throw new UnsupportedOperationException();
-            }
-        } else if (node instanceof Property) {
+        if (node instanceof Property) {
             Property property = (Property) node;
             JvmFieldDefinition field = new JvmFieldDefinition(compilation.getInternalClassName(), property.fieldName(), property.getTypeUsage().jvmType().getDescriptor(), false);
             return new PushInstanceField(field);

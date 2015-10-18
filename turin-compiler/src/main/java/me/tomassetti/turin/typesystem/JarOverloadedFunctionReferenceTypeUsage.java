@@ -8,6 +8,7 @@ import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.compiled.JavassistBasedMethodResolution;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
         throw new UnsupportedOperationException();
     }
 

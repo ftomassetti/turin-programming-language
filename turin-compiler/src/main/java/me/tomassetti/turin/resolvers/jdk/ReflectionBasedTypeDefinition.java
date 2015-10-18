@@ -12,6 +12,7 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
@@ -284,24 +285,23 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Node getField(String fieldName) {
+    public Symbol getField(String fieldName) {
         return internalGetField(fieldName, null);
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
         return internalGetField(fieldName, instance);
     }
 
     /**
      * Instance null means get static fields.
      */
-    private Node internalGetField(String fieldName, Node instance) {
+    private Symbol internalGetField(String fieldName, Symbol instance) {
         boolean isStatic = instance == null;
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName) && Modifier.isStatic(field.getModifiers()) == isStatic) {
                 ReflectionBasedField rbf = new ReflectionBasedField(field, symbolResolver);
-                rbf.setParent(instance);
                 return rbf;
             }
         }
@@ -316,7 +316,6 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
             throw new UnsolvedSymbolException(fieldName);
         } else {
             ReflectionBasedSetOfOverloadedMethods rbsoom = new ReflectionBasedSetOfOverloadedMethods(matchingMethods, instance, symbolResolver);
-            rbsoom.setParent(instance);
             return rbsoom;
         }
     }

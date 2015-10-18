@@ -9,6 +9,7 @@ import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -21,7 +22,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
 
     private List<Method> methods;
     private boolean isStatic;
-    private Node instance;
+    private Symbol instance;
     private String name;
 
     @Override
@@ -31,7 +32,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
 
     private SymbolResolver symbolResolver;
 
-    public ReflectionBasedSetOfOverloadedMethods(List<Method> methods, Node instance, SymbolResolver symbolResolver) {
+    public ReflectionBasedSetOfOverloadedMethods(List<Method> methods, Symbol instance, SymbolResolver symbolResolver) {
         this.symbolResolver = symbolResolver;
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
@@ -50,7 +51,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
         this.instance = instance;
     }
 
-    public Node getInstance() {
+    public Symbol getInstance() {
         return instance;
     }
 

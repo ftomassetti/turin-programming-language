@@ -8,6 +8,7 @@ import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Collections;
 import java.util.List;
@@ -170,7 +171,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance, SymbolResolver resolver) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance, SymbolResolver resolver) {
         return null;
     }
 

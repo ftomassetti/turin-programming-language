@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.ast.expressions.relations.AccessEndpoint;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
+import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +34,7 @@ public abstract class TypeDefinitionNode extends Node implements me.tomassetti.t
     //
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
         for (RelationDefinition relationDefinition : getVisibleRelations(symbolResolver())) {
             for (RelationFieldDefinition field : relationDefinition.getFieldsApplicableTo(this, symbolResolver())) {
                 if (field.getName().equals(fieldName)) {

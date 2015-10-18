@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 
-public class ReflectionBasedField extends Node {
+public class ReflectionBasedField implements Symbol {
 
     @Override
     public TypeUsage calcType() {
@@ -53,11 +53,6 @@ public class ReflectionBasedField extends Node {
     public ReflectionBasedField(Field field, SymbolResolver symbolResolver) {
         this.field = field;
         this.symbolResolver = symbolResolver;
-    }
-
-    @Override
-    public Iterable<Node> getChildren() {
-        return Collections.emptyList();
     }
 
     public boolean isStatic() {

@@ -16,6 +16,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.*;
 import turin.compilation.DefaultParam;
 
@@ -284,7 +285,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Node getFieldOnInstance(String fieldName, Node instance) {
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
         throw new UnsupportedOperationException();
     }
 

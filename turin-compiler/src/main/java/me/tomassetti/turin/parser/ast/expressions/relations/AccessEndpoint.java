@@ -4,14 +4,16 @@ import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.relations.RelationDefinition;
 import me.tomassetti.turin.parser.ast.relations.RelationFieldDefinition;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
+// This is a Symbol, not a Node
 public class AccessEndpoint extends Expression {
 
-    private Node instance;
+    private Symbol instance;
     private RelationFieldDefinition relationField;
 
-    public Node getInstance() {
+    public Symbol getInstance() {
         return instance;
     }
 
@@ -19,7 +21,7 @@ public class AccessEndpoint extends Expression {
         return relationField;
     }
 
-    public AccessEndpoint(Node instance, RelationFieldDefinition relationField) {
+    public AccessEndpoint(Symbol instance, RelationFieldDefinition relationField) {
         this.instance = instance;
         this.relationField = relationField;
     }
