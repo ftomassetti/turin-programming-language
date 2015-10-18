@@ -2,13 +2,11 @@ package me.tomassetti.turin.resolvers.jdk;
 
 import me.tomassetti.jvm.JvmFieldDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
 
 public class ReflectionBasedField implements Symbol {
 
@@ -20,7 +18,7 @@ public class ReflectionBasedField implements Symbol {
     @Override
     public Symbol getField(String fieldName) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType(), symbolResolver);
-        return fieldType.getFieldOnInstance(fieldName, this);
+        return fieldType.getInstanceField(fieldName, this);
     }
 
     @Override

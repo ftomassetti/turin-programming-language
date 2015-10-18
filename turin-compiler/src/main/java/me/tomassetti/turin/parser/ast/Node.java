@@ -174,7 +174,7 @@ public abstract class Node implements Symbol {
      * This is intended in a broad way: everything that can be accessed with a dot.
      */
     public Symbol getField(String fieldName) {
-        return calcType().getFieldOnInstance(fieldName, this);
+        return calcType().getInstanceField(fieldName, this);
     }
 
     ///

@@ -67,7 +67,7 @@ public interface TypeUsage extends Symbol {
     ///
 
     /**
-     * The corresponging JVM Type.
+     * The corresponding JVM Type.
      */
     JvmType jvmType();
 
@@ -75,7 +75,13 @@ public interface TypeUsage extends Symbol {
     /// Fields
     ///
 
-    Symbol getFieldOnInstance(String fieldName, Symbol instance);
+    default boolean hasInstanceField(String fieldName, Symbol instance) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
+    default Symbol getInstanceField(String fieldName, Symbol instance) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 
     ///
     /// Methods

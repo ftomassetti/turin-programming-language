@@ -98,7 +98,7 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
+    public Symbol getInstanceField(String fieldName, Symbol instance) {
         throw new UnsupportedOperationException();
     }
 

@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class ArrayTypeUsage implements TypeUsage {
 
+    private static String LENGTH_FIELD_NAME = "length";
+
     private TypeUsage componentType;
 
     public ArrayTypeUsage(TypeUsage componentType) {
@@ -74,12 +76,22 @@ public class ArrayTypeUsage implements TypeUsage {
     ///
 
     @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
-        if (fieldName.equals("length")) {
-            return new ArrayLength(instance);
-        }
-        throw new UnsupportedOperationException();
+    public boolean hasInstanceField(String fieldName, Symbol instance) {
+        return fieldName.equals(LENGTH_FIELD_NAME);
     }
+
+    @Override
+    public Symbol getInstanceField(String fieldName, Symbol instance) {
+        if (fieldName.equals(LENGTH_FIELD_NAME)) {
+            return new ArrayLength(instance);
+        } else {
+            throw new IllegalArgumentException("An array has no field named " + fieldName);
+        }
+    }
+
+    ///
+    /// Methods
+    ///
 
     @Override
     public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {

@@ -3,6 +3,8 @@ package me.tomassetti.turin.typesystem;
 import me.tomassetti.turin.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
+import me.tomassetti.turin.symbols.Symbol;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -111,6 +113,53 @@ public class ArrayTypeUsageTest {
         assertEquals("[Z", arrayOfBoolean.jvmType().getSignature());
         assertEquals("[Ljava/lang/String;", arrayOfString.jvmType().getSignature());
         assertEquals("[[Ljava/lang/String;", arrayOfArrayOfString.jvmType().getSignature());
+    }
+
+    @Test
+    public void testHasInstanceField() {
+        Symbol instance = EasyMock.createMock(Symbol.class);
+        EasyMock.replay(instance);
+        assertEquals(true, arrayOfBoolean.hasInstanceField("length", instance));
+        assertEquals(true, arrayOfString.hasInstanceField("length", instance));
+        assertEquals(true, arrayOfArrayOfString.hasInstanceField("length", instance));
+        assertEquals(false, arrayOfBoolean.hasInstanceField("foo", instance));
+        assertEquals(false, arrayOfString.hasInstanceField("foo", instance));
+        assertEquals(false, arrayOfArrayOfString.hasInstanceField("foo", instance));
+        EasyMock.verify(instance);
+    }
+
+    @Test
+    public void testGasInstanceFieldLength() {
+        Symbol instance = EasyMock.createMock(Symbol.class);
+        EasyMock.replay(instance);
+        assertTrue(arrayOfBoolean.getInstanceField("length", instance).calcType().sameType(PrimitiveTypeUsage.INT));
+        assertTrue(arrayOfString.getInstanceField("length", instance).calcType().sameType(PrimitiveTypeUsage.INT));
+        assertTrue(arrayOfArrayOfString.getInstanceField("length", instance).calcType().sameType(PrimitiveTypeUsage.INT));
+        EasyMock.verify(instance);
+    }
+
+    @Test
+    public void testGasInstanceFieldUnexisting() {
+        Symbol instance = EasyMock.createMock(Symbol.class);
+        EasyMock.replay(instance);
+        int exceptions = 0;
+        try {
+            arrayOfBoolean.getInstanceField("foo", instance);
+        } catch (IllegalArgumentException uoe) {
+            exceptions++;
+        }
+        try {
+            arrayOfString.getInstanceField("foo", instance);
+        } catch (IllegalArgumentException uoe) {
+            exceptions++;
+        }
+        try {
+            arrayOfArrayOfString.getInstanceField("foo", instance);
+        } catch (IllegalArgumentException uoe) {
+            exceptions++;
+        }
+        assertEquals(3, exceptions);
+        EasyMock.verify(instance);
     }
 
 }
