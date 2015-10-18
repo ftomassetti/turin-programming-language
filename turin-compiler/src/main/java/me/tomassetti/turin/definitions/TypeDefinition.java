@@ -91,11 +91,11 @@ public interface TypeDefinition extends Symbol, Named {
         return getConstructors().size() > 1;
     }
 
-    default List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams, SymbolResolver resolver) {
+    default List<? extends FormalParameter> getConstructorParams(List<ActualParam> actualParams) {
         return getConstructor(actualParams).getFormalParameters();
     }
 
-    default Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams, SymbolResolver resolver) {
+    default Optional<JvmConstructorDefinition> findConstructorDefinition(List<ActualParam> actualParams) {
         Optional<InternalConstructorDefinition> res = findConstructor(actualParams);
         if (res.isPresent()) {
             return Optional.of(res.get().getJvmConstructorDefinition());

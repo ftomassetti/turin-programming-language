@@ -60,7 +60,7 @@ public class Creation extends Invokable {
 
     @Override
     protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
-        return getTypeDefinition(resolver).getConstructorParams(actualParams, resolver);
+        return getTypeDefinition(resolver).getConstructorParams(actualParams);
     }
 
     public Creation(TypeUsageNode type, List<ActualParam> actualParams) {

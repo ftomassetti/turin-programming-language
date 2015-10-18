@@ -65,7 +65,7 @@ public class StaticFieldAccess extends Expression {
         TypeDefinition typeDefinition = typeDefinition(symbolResolver());
 
         if (invokable instanceof Creation) {
-            return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), symbolResolver()));
+            return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams()));
         } else if (invokable instanceof FunctionCall) {
             return Optional.of(typeDefinition.getMethodParams(field, invokable.getActualParams(), symbolResolver(), true));
         } else {
