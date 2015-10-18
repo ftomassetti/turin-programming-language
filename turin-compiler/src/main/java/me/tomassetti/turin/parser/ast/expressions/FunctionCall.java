@@ -81,10 +81,10 @@ public class FunctionCall extends Invokable {
         throw new UnsupportedOperationException(function.getClass().getCanonicalName());
     }
 
-    public boolean isStatic(SymbolResolver resolver) {
+    public boolean isStatic() {
         Symbol f = function;
         if (f instanceof ValueReference) {
-            f = ((ValueReference) function).resolve(resolver);
+            f = ((ValueReference) function).resolve(symbolResolver());
         }
         if (f instanceof FieldAccess) {
             return false;
