@@ -71,7 +71,7 @@ public class FunctionCall extends Invokable {
 
     @Override
     protected List<? extends FormalParameter> formalParameters(SymbolResolver resolver) {
-        return function.findFormalParametersFor(this, resolver).get();
+        return function.findFormalParametersFor(this).get();
     }
 
     public String getName() {

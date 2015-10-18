@@ -1,6 +1,5 @@
 package me.tomassetti.turin.symbols;
 
-import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
@@ -40,7 +39,7 @@ public interface Symbol {
         }
     }
 
-    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         throw new UnsupportedOperationException();
     }
 }

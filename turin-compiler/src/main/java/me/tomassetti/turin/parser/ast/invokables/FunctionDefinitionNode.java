@@ -58,7 +58,7 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         return Optional.of(parameters);
     }
 

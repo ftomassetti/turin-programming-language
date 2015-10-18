@@ -74,12 +74,12 @@ public class FieldAccess extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         if (invokable instanceof Creation) {
             //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
             throw new UnsupportedOperationException();
         } else if (invokable instanceof FunctionCall) {
-            return subject.calcType().findFormalParametersFor(invokable, resolver);
+            return subject.calcType().findFormalParametersFor(invokable, symbolResolver());
         } else {
             throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         }

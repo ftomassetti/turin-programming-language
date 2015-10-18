@@ -166,7 +166,7 @@ public abstract class Node implements Symbol {
         }
     }
 
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

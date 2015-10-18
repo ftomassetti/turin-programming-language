@@ -315,7 +315,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
             // TODO improve the error returned
             throw new UnsolvedSymbolException(fieldName);
         } else {
-            ReflectionBasedSetOfOverloadedMethods rbsoom = new ReflectionBasedSetOfOverloadedMethods(matchingMethods, instance);
+            ReflectionBasedSetOfOverloadedMethods rbsoom = new ReflectionBasedSetOfOverloadedMethods(matchingMethods, instance, symbolResolver);
             rbsoom.setParent(instance);
             return rbsoom;
         }

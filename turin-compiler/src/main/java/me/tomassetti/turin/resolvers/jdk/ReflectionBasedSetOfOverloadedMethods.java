@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+// TODO it should not be a Node
 public class ReflectionBasedSetOfOverloadedMethods extends Expression {
 
     private List<Method> methods;
@@ -28,7 +29,10 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
         return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods));
     }
 
-    public ReflectionBasedSetOfOverloadedMethods(List<Method> methods, Node instance) {
+    private SymbolResolver symbolResolver;
+
+    public ReflectionBasedSetOfOverloadedMethods(List<Method> methods, Node instance, SymbolResolver symbolResolver) {
+        this.symbolResolver = symbolResolver;
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -65,11 +69,11 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
-            Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods);
-            return Optional.of(ReflectionBasedMethodResolution.formalParameters(method.get(), Collections.emptyMap(), resolver));
+            Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), symbolResolver, functionCall.isStatic(symbolResolver), methods);
+            return Optional.of(ReflectionBasedMethodResolution.formalParameters(method.get(), Collections.emptyMap(), symbolResolver));
         }
         throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         // return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this));

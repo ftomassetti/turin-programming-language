@@ -61,13 +61,13 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable, SymbolResolver resolver) {
-        TypeDefinition typeDefinition = typeDefinition(resolver);
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+        TypeDefinition typeDefinition = typeDefinition(symbolResolver());
 
         if (invokable instanceof Creation) {
-            return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
+            return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), symbolResolver()));
         } else if (invokable instanceof FunctionCall) {
-            return Optional.of(typeDefinition.getMethodParams(field, invokable.getActualParams(), resolver, true));
+            return Optional.of(typeDefinition.getMethodParams(field, invokable.getActualParams(), symbolResolver(), true));
         } else {
             throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         }
