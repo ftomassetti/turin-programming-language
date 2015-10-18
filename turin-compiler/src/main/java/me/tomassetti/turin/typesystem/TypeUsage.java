@@ -30,6 +30,10 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
+    /**
+     * Can this be seen as a ReferenceTypeUsage?
+     * In other words: is this a reference to a class, an interface or an enum?
+     */
     default boolean isReferenceTypeUsage() {
         return false;
     }
@@ -50,15 +54,22 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Is this a reference type? Arrays or references to classes, interfaces and enums are references.
+     * Primitive types or void are not.
+     */
+    default boolean isReference() {
+        return false;
+    }
+
     ///
     /// JVM
     ///
 
+    /**
+     * The corresponging JVM Type.
+     */
     JvmType jvmType();
-    
-    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
-
-    boolean canBeAssignedTo(TypeUsage type);
 
     ///
     /// Fields
@@ -69,7 +80,6 @@ public interface TypeUsage extends Symbol {
     ///
     /// Methods
     ///
-
 
     TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams);
 
@@ -85,13 +95,13 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
+    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
+
     ///
     /// Misc
     ///
 
-    default boolean isReference() {
-        return false;
-    }
+    boolean canBeAssignedTo(TypeUsage type);
 
     <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams);
 
