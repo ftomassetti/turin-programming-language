@@ -61,7 +61,7 @@ public interface TypeDefinition extends Symbol, Named {
 
     boolean hasField(String name, boolean staticContext);
 
-    default boolean hasField(QualifiedName fieldName, boolean staticContext, SymbolResolver resolver) {
+    default boolean hasField(QualifiedName fieldName, boolean staticContext) {
         if (!fieldName.isSimpleName()) {
             String firstName = fieldName.firstSegment();
             if (!hasField(firstName, staticContext)) {
@@ -71,7 +71,7 @@ public interface TypeDefinition extends Symbol, Named {
             TypeUsage typeUsage = field.calcType();
             if (typeUsage.isReferenceTypeUsage()) {
                 TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition();
-                return typeOfFirstField.hasField(fieldName.rest(), true, resolver) || typeOfFirstField.hasField(fieldName.rest(), false, resolver);
+                return typeOfFirstField.hasField(fieldName.rest(), true) || typeOfFirstField.hasField(fieldName.rest(), false);
             } else {
                 return false;
             }
