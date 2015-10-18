@@ -1,20 +1,16 @@
 package me.tomassetti.turin.resolvers.jdk;
 
-import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
-import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.TypeDefinitionNode;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
@@ -28,16 +24,18 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
 
     private Class<?> clazz;
     private List<TypeUsage> typeParameters = new LinkedList<>();
+    private SymbolResolver symbolResolver;
 
-    public ReflectionBasedTypeDefinition(Class<?> clazz) {
+    public ReflectionBasedTypeDefinition(Class<?> clazz, SymbolResolver symbolResolver) {
         this.clazz = clazz;
+        this.symbolResolver = symbolResolver;
     }
 
     public void addTypeParameter(TypeUsage typeUsage) {
         typeParameters.add(typeUsage);
     }
 
-    private static TypeUsage typeFor(List<Method> methods) {
+    private static TypeUsage typeFor(List<Method> methods, SymbolResolver resolver) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -49,21 +47,21 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
         if (methods.size() != 1) {
             throw new UnsupportedOperationException();
         }
-        return typeFor(methods.get(0));
+        return typeFor(methods.get(0), resolver);
     }
 
-    private static TypeUsage typeFor(Method method) {
-        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt)).collect(Collectors.toList());
-        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType()));
+    private static TypeUsage typeFor(Method method, SymbolResolver resolver) {
+        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt, resolver)).collect(Collectors.toList());
+        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType(), resolver));
         return functionReferenceTypeUsage;
     }
 
-    private static TypeUsage toTypeUsage(Type type) {
-        return ReflectionBasedMethodResolution.toTypeUsage(type, Collections.emptyMap());
+    private static TypeUsage toTypeUsage(Type type, SymbolResolver resolver) {
+        return ReflectionBasedMethodResolution.toTypeUsage(type, Collections.emptyMap(), resolver);
     }
 
-    private static TypeUsage toTypeUsage(TypeVariable typeVariable) {
-        return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap());
+    private static TypeUsage toTypeUsage(TypeVariable typeVariable, SymbolResolver resolver) {
+        return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap(), resolver);
     }
 
     @Override
@@ -184,16 +182,16 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     private InternalMethodDefinition toInternalMethodDefinition(Method method) {
-        return new InternalMethodDefinition(method.getName(), formalParameters(method), toTypeUsage(method.getGenericReturnType()),
+        return new InternalMethodDefinition(method.getName(), formalParameters(method), toTypeUsage(method.getGenericReturnType(), symbolResolver),
                 ReflectionTypeDefinitionFactory.toMethodDefinition(method));
     }
 
     private List<FormalParameterSymbol> formalParameters(Constructor constructor) {
-        return ReflectionBasedMethodResolution.formalParameters(constructor);
+        return ReflectionBasedMethodResolution.formalParameters(constructor, symbolResolver);
     }
 
     private List<FormalParameterSymbol> formalParameters(Method method) {
-        return ReflectionBasedMethodResolution.formalParameters(method, getTypeVariables());
+        return ReflectionBasedMethodResolution.formalParameters(method, getTypeVariables(), symbolResolver);
     }
 
     // Type parameters should be part of the usage
@@ -230,7 +228,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return ReflectionBasedTypeDefinition.typeFor(methods);
+            return ReflectionBasedTypeDefinition.typeFor(methods, symbolResolver);
         }
 
         // TODO consider inherited fields and methods
@@ -267,14 +265,14 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     private ReferenceTypeUsage toReferenceTypeUsage(Class<?> clazz, Type type) {
-        TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz);
+        TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition(clazz, symbolResolver);
         ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType)type;
             for (int tp=0;tp<clazz.getTypeParameters().length;tp++) {
                 TypeVariable<? extends Class<?>> typeVariable = clazz.getTypeParameters()[tp];
                 Type parameterType = parameterizedType.getActualTypeArguments()[tp];
-                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), toTypeUsage(parameterType));
+                referenceTypeUsage.getTypeParameterValues().add(typeVariable.getName(), toTypeUsage(parameterType, symbolResolver));
             }
         }
         return referenceTypeUsage;
@@ -286,7 +284,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Node getField(String fieldName, SymbolResolver resolver) {
+    public Node getField(String fieldName) {
         return internalGetField(fieldName, null);
     }
 
@@ -302,7 +300,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
         boolean isStatic = instance == null;
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName) && Modifier.isStatic(field.getModifiers()) == isStatic) {
-                ReflectionBasedField rbf = new ReflectionBasedField(field);
+                ReflectionBasedField rbf = new ReflectionBasedField(field, symbolResolver);
                 rbf.setParent(instance);
                 return rbf;
             }

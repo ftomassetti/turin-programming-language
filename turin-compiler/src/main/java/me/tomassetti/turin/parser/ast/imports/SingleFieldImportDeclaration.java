@@ -52,7 +52,7 @@ public class SingleFieldImportDeclaration extends ImportDeclaration {
         TypeDefinition typeDefinition = resolver.getTypeDefinitionIn(canonicalTypeName, this);
 
         if (typeDefinition.hasField(fieldsPath, true, resolver)) {
-            importedValueCache = typeDefinition.getField(fieldsPath, resolver);
+            importedValueCache = typeDefinition.getField(fieldsPath);
         }
     }
 

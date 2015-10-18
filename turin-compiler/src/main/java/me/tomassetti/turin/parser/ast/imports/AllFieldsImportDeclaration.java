@@ -49,7 +49,7 @@ public class AllFieldsImportDeclaration extends ImportDeclaration {
     public Optional<Symbol> findAmongImported(String name, SymbolResolver resolver) {
         lookForTypeDefinition(resolver);
         if (typeDefinitionCache.isPresent() && typeDefinitionCache.get().hasField(name, true)) {
-            return Optional.of(typeDefinitionCache.get().getField(QualifiedName.create(name), resolver));
+            return Optional.of(typeDefinitionCache.get().getField(QualifiedName.create(name)));
         } else {
             return Optional.empty();
         }

@@ -18,9 +18,9 @@ public class ReflectionBasedField extends Node {
     }
 
     @Override
-    public Symbol getField(String fieldName, SymbolResolver resolver) {
+    public Symbol getField(String fieldName) {
         TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
-        return fieldType.getFieldOnInstance(fieldName, this, resolver);
+        return fieldType.getFieldOnInstance(fieldName, this, symbolResolver);
     }
 
     @Override
@@ -48,9 +48,11 @@ public class ReflectionBasedField extends Node {
     }
 
     private Field field;
+    private SymbolResolver symbolResolver;
 
-    public ReflectionBasedField(Field field) {
+    public ReflectionBasedField(Field field, SymbolResolver symbolResolver) {
         this.field = field;
+        this.symbolResolver = symbolResolver;
     }
 
     @Override

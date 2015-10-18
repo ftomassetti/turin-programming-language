@@ -27,16 +27,16 @@ public interface Symbol {
         throw new UnsupportedOperationException();
     }
 
-    default Symbol getField(String fieldName, SymbolResolver resolver) {
-        throw new UnsupportedOperationException();
+    default Symbol getField(String fieldName) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    default Symbol getField(QualifiedName fieldsPath, SymbolResolver resolver) {
+    default Symbol getField(QualifiedName fieldsPath) {
         if (fieldsPath.isSimpleName()) {
-            return getField(fieldsPath.getName(), resolver);
+            return getField(fieldsPath.getName());
         } else {
-            Symbol next = getField(fieldsPath.firstSegment(), resolver);
-            return next.getField(fieldsPath.rest(), resolver);
+            Symbol next = getField(fieldsPath.firstSegment());
+            return next.getField(fieldsPath.rest());
         }
     }
 

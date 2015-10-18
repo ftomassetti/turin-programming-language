@@ -116,27 +116,39 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public static TypeUsage toTypeUsage(Class<?> type) {
+        return toTypeUsage(type, new ReflectionSymbolResolver());
+    }
+
+    public static TypeUsage toTypeUsage(Class<?> type, SymbolResolver resolver) {
         if (type.isArray()) {
-            return new ArrayTypeUsage(toTypeUsage(type.getComponentType()));
+            return new ArrayTypeUsage(toTypeUsage(type.getComponentType(), resolver));
         } else if (type.isPrimitive()) {
             return PrimitiveTypeUsage.getByName(type.getName());
         } else {
-            return new ReferenceTypeUsage(getInstance().getTypeDefinition(type));
+            return new ReferenceTypeUsage(getInstance().getTypeDefinition(type, resolver));
         }
     }
 
+    public TypeDefinition getTypeDefinition(Class<?> clazz, SymbolResolver resolver) {
+        return getTypeDefinition(clazz, Collections.emptyList(), resolver);
+    }
+
     public TypeDefinition getTypeDefinition(Class<?> clazz) {
-        return getTypeDefinition(clazz, Collections.emptyList());
+        return getTypeDefinition(clazz, Collections.emptyList(), new ReflectionSymbolResolver());
     }
 
     public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
+        return getTypeDefinition(clazz, typeParams, new ReflectionSymbolResolver());
+    }
+
+    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams, SymbolResolver resolver) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
         }
         if (clazz.isPrimitive()) {
             throw new IllegalArgumentException();
         }
-        ReflectionBasedTypeDefinition type = new ReflectionBasedTypeDefinition(clazz);
+        ReflectionBasedTypeDefinition type = new ReflectionBasedTypeDefinition(clazz, resolver);
         for (TypeUsage typeUsage : typeParams) {
             type.addTypeParameter(typeUsage);
         }
@@ -144,12 +156,16 @@ public class ReflectionTypeDefinitionFactory {
     }
 
     public Optional<TypeDefinition> findTypeDefinition(String typeName) {
+        return findTypeDefinition(typeName, new ReflectionSymbolResolver());
+    }
+
+    public Optional<TypeDefinition> findTypeDefinition(String typeName, SymbolResolver resolver) {
         if (!typeName.startsWith("java.") && !typeName.startsWith("javax.")) {
             return Optional.empty();
         }
         try {
             Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass(typeName);
-            return Optional.of(getTypeDefinition(clazz));
+            return Optional.of(getTypeDefinition(clazz, resolver));
         } catch (ClassNotFoundException e) {
            return Optional.empty();
         }

@@ -69,7 +69,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
             Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), resolver, functionCall.isStatic(resolver), methods);
-            return Optional.of(ReflectionBasedMethodResolution.formalParameters(method.get(), Collections.emptyMap()));
+            return Optional.of(ReflectionBasedMethodResolution.formalParameters(method.get(), Collections.emptyMap(), resolver));
         }
         throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         // return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods, this));

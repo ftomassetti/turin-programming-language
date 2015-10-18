@@ -86,8 +86,8 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public Symbol getField(String fieldName, SymbolResolver resolver) {
-        return resolve(resolver).getField(fieldName, resolver);
+    public Symbol getField(String fieldName) {
+        return resolve(symbolResolver()).getField(fieldName);
     }
 
     @Override

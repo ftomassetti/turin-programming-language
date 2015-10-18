@@ -46,27 +46,27 @@ class ReflectionBasedMethodResolution {
         }
     }
 
-    public static List<FormalParameterSymbol> formalParameters(Constructor constructor) {
+    public static List<FormalParameterSymbol> formalParameters(Constructor constructor, SymbolResolver resolver) {
         List<FormalParameterSymbol> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : constructor.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameterSymbol(toTypeUsage(type, Collections.emptyMap()), constructor.getParameters()[i].getName()));
+            formalParameters.add(new FormalParameterSymbol(toTypeUsage(type, Collections.emptyMap(), resolver), constructor.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;
     }
 
-    public static List<FormalParameterSymbol> formalParameters(Method method, Map<String, TypeUsage> typeVariables) {
+    public static List<FormalParameterSymbol> formalParameters(Method method, Map<String, TypeUsage> typeVariables, SymbolResolver resolver) {
         List<FormalParameterSymbol> formalParameters = new ArrayList<>();
         int i=0;
         for (Type type : method.getGenericParameterTypes()) {
-            formalParameters.add(new FormalParameterSymbol(toTypeUsage(type, typeVariables), method.getParameters()[i].getName()));
+            formalParameters.add(new FormalParameterSymbol(toTypeUsage(type, typeVariables, resolver), method.getParameters()[i].getName()));
             i++;
         }
         return formalParameters;
     }
 
-    public static TypeUsage toTypeUsage(Type type, Map<String, TypeUsage> typeVariables) {
+    public static TypeUsage toTypeUsage(Type type, Map<String, TypeUsage> typeVariables, SymbolResolver resolver) {
         if (type instanceof Class) {
             Class clazz = (Class)type;
             if (clazz.getCanonicalName().equals(void.class.getCanonicalName())) {
@@ -76,27 +76,27 @@ class ReflectionBasedMethodResolution {
                 return PrimitiveTypeUsage.getByName(clazz.getName());
             }
             if (clazz.isArray()) {
-                return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType(), typeVariables));
+                return new ArrayTypeUsage(toTypeUsage(clazz.getComponentType(), typeVariables, resolver));
             }
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type);
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) type, resolver);
             ReferenceTypeUsage referenceTypeUsage = new ReferenceTypeUsage(typeDefinition);
             return referenceTypeUsage;
         } else if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType());
-            List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt, typeVariables)).collect(Collectors.toList());
+            TypeDefinition typeDefinition = new ReflectionBasedTypeDefinition((Class) parameterizedType.getRawType(), resolver);
+            List<TypeUsage> typeParams = Arrays.stream(parameterizedType.getActualTypeArguments()).map((pt) -> toTypeUsage(pt, typeVariables, resolver)).collect(Collectors.toList());
             return new ReferenceTypeUsage(typeDefinition, typeParams);
         } else if (type instanceof TypeVariable) {
             TypeVariable typeVariable = (TypeVariable)type;
-            return toTypeUsage(typeVariable, typeVariables);
+            return toTypeUsage(typeVariable, typeVariables, resolver);
         } else {
             throw new UnsupportedOperationException(type.getClass().getCanonicalName());
         }
     }
 
-    public static TypeUsage toTypeUsage(TypeVariable typeVariable, Map<String, TypeUsage> typeVariables) {
+    public static TypeUsage toTypeUsage(TypeVariable typeVariable, Map<String, TypeUsage> typeVariables, SymbolResolver resolver) {
         TypeVariableUsage.GenericDeclaration genericDeclaration = null;
-        List<TypeUsage> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b, typeVariables)).collect(Collectors.toList());
+        List<TypeUsage> bounds = Arrays.stream(typeVariable.getBounds()).map((b)->toTypeUsage(b, typeVariables, resolver)).collect(Collectors.toList());
         if (typeVariable.getGenericDeclaration() instanceof Class) {
             if (typeVariables.containsKey(typeVariable.getName())) {
                 return typeVariables.get(typeVariable.getName());
@@ -267,8 +267,8 @@ class ReflectionBasedMethodResolution {
             return false;
         }
         // TODO consider generic parameters?
-        ReflectionBasedTypeDefinition firstDef = new ReflectionBasedTypeDefinition(firstType);
-        ReflectionBasedTypeDefinition secondDef = new ReflectionBasedTypeDefinition(secondType);
+        ReflectionBasedTypeDefinition firstDef = new ReflectionBasedTypeDefinition(firstType, resolver);
+        ReflectionBasedTypeDefinition secondDef = new ReflectionBasedTypeDefinition(secondType, resolver);
         TypeUsage firstTypeUsage = new ReferenceTypeUsage(firstDef);
         TypeUsage secondTypeUsage = new ReferenceTypeUsage(secondDef);
         return firstTypeUsage.canBeAssignedTo(secondTypeUsage, resolver) && !secondTypeUsage.canBeAssignedTo(firstTypeUsage, resolver);

@@ -68,7 +68,7 @@ public interface TypeDefinition extends Symbol, Named {
             if (!hasField(firstName, staticContext)) {
                 return false;
             }
-            Symbol field = getField(firstName, resolver);
+            Symbol field = getField(firstName);
             TypeUsage typeUsage = field.calcType();
             if (typeUsage.isReferenceTypeUsage()) {
                 TypeDefinition typeOfFirstField = typeUsage.asReferenceTypeUsage().getTypeDefinition();

@@ -62,7 +62,7 @@ public class InstanceFieldAccess extends Expression {
 
     @Override
     public TypeUsage calcType() {
-        return subject.getField(field, symbolResolver()).calcType();
+        return subject.getField(field).calcType();
     }
 
     @Override
