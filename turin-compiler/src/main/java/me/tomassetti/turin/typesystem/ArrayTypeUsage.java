@@ -14,16 +14,6 @@ import java.util.Map;
 
 public class ArrayTypeUsage implements TypeUsage {
 
-    @Override
-    public boolean isArray() {
-        return true;
-    }
-
-    @Override
-    public boolean isReference() {
-        return true;
-    }
-
     private TypeUsage componentType;
 
     public ArrayTypeUsage(TypeUsage componentType) {
@@ -35,13 +25,60 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmType jvmType() {
-        return new JvmType("[" + componentType.jvmType().getSignature());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArrayTypeUsage that = (ArrayTypeUsage) o;
+
+        if (!componentType.equals(that.componentType)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return componentType.hashCode();
+    }
+
+    ///
+    /// Relation with other types
+    ///
+
+    @Override
+    public boolean isArray() {
+        return true;
+    }
+
+    @Override
+    public boolean isReference() {
+        return true;
     }
 
     @Override
     public ArrayTypeUsage asArrayTypeUsage() {
         return this;
+    }
+
+    ///
+    /// JVM
+    ///
+
+    @Override
+    public JvmType jvmType() {
+        return new JvmType("[" + componentType.jvmType().getSignature());
+    }
+
+    ///
+    /// Fields
+    ///
+
+    @Override
+    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
+        if (fieldName.equals("length")) {
+            return new ArrayLength(instance);
+        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -63,14 +100,6 @@ public class ArrayTypeUsage implements TypeUsage {
         return "ArrayTypeUsage{" +
                 "componentType=" + componentType +
                 '}';
-    }
-
-    @Override
-    public Symbol getFieldOnInstance(String fieldName, Symbol instance) {
-        if (fieldName.equals("length")) {
-            return new ArrayLength(instance);
-        }
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -99,23 +128,6 @@ public class ArrayTypeUsage implements TypeUsage {
             return false;
         }
         return this.getComponentType().sameType(other.asArrayTypeUsage().getComponentType());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ArrayTypeUsage that = (ArrayTypeUsage) o;
-
-        if (!componentType.equals(that.componentType)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return componentType.hashCode();
     }
 
 }

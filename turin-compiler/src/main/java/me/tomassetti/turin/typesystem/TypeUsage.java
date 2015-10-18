@@ -19,7 +19,7 @@ import java.util.Optional;
 public interface TypeUsage extends Symbol {
 
     ///
-    /// Subclassing
+    /// Relation with other types
     ///
 
     default boolean isArray() {

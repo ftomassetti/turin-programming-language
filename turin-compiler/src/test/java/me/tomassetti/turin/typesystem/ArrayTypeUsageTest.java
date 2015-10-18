@@ -106,4 +106,11 @@ public class ArrayTypeUsageTest {
         assertEquals(true, arrayOfArrayOfString.isReference());
     }
 
+    @Test
+    public void testJvmType() {
+        assertEquals("[Z", arrayOfBoolean.jvmType().getSignature());
+        assertEquals("[Ljava/lang/String;", arrayOfString.jvmType().getSignature());
+        assertEquals("[[Ljava/lang/String;", arrayOfArrayOfString.jvmType().getSignature());
+    }
+
 }
