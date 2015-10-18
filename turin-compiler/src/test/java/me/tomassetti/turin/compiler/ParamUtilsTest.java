@@ -102,9 +102,10 @@ public class ParamUtilsTest {
 
     @Test
     public void testGetterNameNotBoolean() {
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Boolean.class)), "foo"), DUMMY_RESOLVER));
-        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING, "foo"), DUMMY_RESOLVER));
-        assertEquals("getA", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING, "a"), DUMMY_RESOLVER));
+        SymbolResolver resolver = new ComposedSymbolResolver(Collections.emptyList());
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Boolean.class, resolver)), "foo"), DUMMY_RESOLVER));
+        assertEquals("getFoo", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING(resolver), "foo"), DUMMY_RESOLVER));
+        assertEquals("getA", ParamUtils.getterName(new FormalParameterSymbol(ReferenceTypeUsage.STRING(resolver), "a"), DUMMY_RESOLVER));
     }
 
     @Test

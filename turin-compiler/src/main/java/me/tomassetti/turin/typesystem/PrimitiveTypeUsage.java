@@ -38,30 +38,30 @@ public class PrimitiveTypeUsage implements TypeUsage {
     }
 
     public static PrimitiveTypeUsage BOOLEAN = new PrimitiveTypeUsage("boolean", new JvmType("Z"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Boolean.class)));
+            Boolean.class);
     public static PrimitiveTypeUsage CHAR = new PrimitiveTypeUsage("char",  new JvmType("C"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Character.class)));
+            Character.class);
     public static PrimitiveTypeUsage LONG = new PrimitiveTypeUsage("long",  new JvmType("J"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Long.class)));
+            Long.class);
     public static PrimitiveTypeUsage INT = new PrimitiveTypeUsage("int",  new JvmType("I"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Integer.class)),
+            Integer.class,
             ImmutableList.of(LONG));
     public static PrimitiveTypeUsage SHORT = new PrimitiveTypeUsage("short",  new JvmType("S"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Short.class)),
+            Short.class,
             ImmutableList.of(INT, LONG));
     public static PrimitiveTypeUsage BYTE = new PrimitiveTypeUsage("byte",  new JvmType("B"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Byte.class)),
+            Byte.class,
             ImmutableList.of(SHORT, INT, LONG));
     public static PrimitiveTypeUsage DOUBLE = new PrimitiveTypeUsage("double",  new JvmType("D"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Double.class)));
+            Double.class);
     public static PrimitiveTypeUsage FLOAT = new PrimitiveTypeUsage("float",  new JvmType("F"),
-            new ReferenceTypeUsage(ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Float.class)),
+            Float.class,
             ImmutableList.of(DOUBLE));
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     @Override
     public boolean canBeAssignedTo(TypeUsage other, SymbolResolver resolver) {
-        if (other.sameType(boxType) || other.sameType(ReferenceTypeUsage.OBJECT)) {
+        if (other.sameType(getBoxType(resolver)) || other.sameType(ReferenceTypeUsage.OBJECT(resolver))) {
             return true;
         }
         if (!other.isPrimitive()) {
@@ -82,22 +82,22 @@ public class PrimitiveTypeUsage implements TypeUsage {
         return Optional.empty();
     }
 
-    public TypeUsage getBoxType() {
-        return boxType;
+    public TypeUsage getBoxType(SymbolResolver resolver) {
+        return new ReferenceTypeUsage(new ReflectionTypeDefinitionFactory().getTypeDefinition(boxTypeClazz, resolver));
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType, List<PrimitiveTypeUsage> promotionsTypes) {
+    private PrimitiveTypeUsage(String name, JvmType jvmType, Class<?> boxTypeClazz, List<PrimitiveTypeUsage> promotionsTypes) {
         this.name = name;
         this.jvmType = jvmType;
-        this.boxType = boxType;
+        this.boxTypeClazz = boxTypeClazz;
         this.promotionsTypes = promotionsTypes;
     }
 
-    private PrimitiveTypeUsage(String name, JvmType jvmType, TypeUsage boxType) {
-        this(name, jvmType, boxType, Collections.emptyList());
+    private PrimitiveTypeUsage(String name, JvmType jvmType, Class<?> boxTypeClazz) {
+        this(name, jvmType, boxTypeClazz, Collections.emptyList());
     }
 
-    private TypeUsage boxType;
+    private Class<?> boxTypeClazz;
 
     @Override
     public JvmType jvmType() {

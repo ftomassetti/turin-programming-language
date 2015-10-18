@@ -49,7 +49,7 @@ public class JdkTypeResolver implements TypeResolver {
         if (!JvmNameUtils.isValidQualifiedName(typeName)) {
             throw new IllegalArgumentException(typeName);
         }
-        return ReflectionTypeDefinitionFactory.getInstance().findTypeDefinition(typeName);
+        return ReflectionTypeDefinitionFactory.getInstance().findTypeDefinition(typeName, symbolResolver());
     }
 
     @Override

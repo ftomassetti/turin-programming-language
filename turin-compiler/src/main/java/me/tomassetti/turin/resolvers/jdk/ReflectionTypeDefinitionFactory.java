@@ -26,51 +26,6 @@ import java.util.stream.Collectors;
 
 public class ReflectionTypeDefinitionFactory {
 
-    private static class ReflectionSymbolResolver implements SymbolResolver {
-
-        private JdkTypeResolver typeResolver = JdkTypeResolver.getInstance();
-
-        @Override
-        public SymbolResolver getParent() {
-            return null;
-        }
-
-        @Override
-        public void setParent(SymbolResolver parent) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<PropertyDefinition> findDefinition(PropertyReference propertyReference) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<TypeDefinition> findTypeDefinitionIn(String typeName, Node context, SymbolResolver resolver) {
-            return typeResolver.resolveAbsoluteTypeName(typeName);
-        }
-
-        @Override
-        public Optional<TypeUsage> findTypeUsageIn(String typeName, Node context, SymbolResolver resolver) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<Symbol> findSymbol(String name, Node context) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean existPackage(String packageName) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     private static final ReflectionTypeDefinitionFactory INSTANCE = new ReflectionTypeDefinitionFactory();
 
     public static ReflectionTypeDefinitionFactory getInstance() {
@@ -117,10 +72,6 @@ public class ReflectionTypeDefinitionFactory {
         return "(" + String.join("", paramTypesSignatures) + ")" + calcSignature(method.getReturnType());
     }
 
-    public static TypeUsage toTypeUsage(Class<?> type) {
-        return toTypeUsage(type, new ReflectionSymbolResolver());
-    }
-
     public static TypeUsage toTypeUsage(Class<?> type, SymbolResolver resolver) {
         if (type.isArray()) {
             return new ArrayTypeUsage(toTypeUsage(type.getComponentType(), resolver));
@@ -135,14 +86,6 @@ public class ReflectionTypeDefinitionFactory {
         return getTypeDefinition(clazz, Collections.emptyList(), resolver);
     }
 
-    public TypeDefinition getTypeDefinition(Class<?> clazz) {
-        return getTypeDefinition(clazz, Collections.emptyList(), new ReflectionSymbolResolver());
-    }
-
-    public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams) {
-        return getTypeDefinition(clazz, typeParams, new ReflectionSymbolResolver());
-    }
-
     public TypeDefinition getTypeDefinition(Class<?> clazz, List<TypeUsage> typeParams, SymbolResolver resolver) {
         if (clazz.isArray()) {
             throw new IllegalArgumentException();
@@ -155,10 +98,6 @@ public class ReflectionTypeDefinitionFactory {
             type.addTypeParameter(typeUsage);
         }
         return type;
-    }
-
-    public Optional<TypeDefinition> findTypeDefinition(String typeName) {
-        return findTypeDefinition(typeName, new ReflectionSymbolResolver());
     }
 
     public Optional<TypeDefinition> findTypeDefinition(String typeName, SymbolResolver resolver) {

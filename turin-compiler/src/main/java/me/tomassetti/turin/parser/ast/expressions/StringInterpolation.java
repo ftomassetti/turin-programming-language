@@ -44,7 +44,7 @@ public class StringInterpolation extends Expression {
 
     @Override
     public TypeUsage calcType() {
-        return ReferenceTypeUsage.STRING;
+        return ReferenceTypeUsage.STRING(symbolResolver());
     }
 
     /**

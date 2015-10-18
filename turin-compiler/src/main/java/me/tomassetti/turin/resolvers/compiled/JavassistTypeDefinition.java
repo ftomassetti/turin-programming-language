@@ -250,7 +250,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
         try {
             return JavassistTypeDefinitionFactory.toMethodDefinition(
                     JavassistBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(ctClass.getMethods())),

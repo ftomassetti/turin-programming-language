@@ -61,7 +61,7 @@ public class ThrowStatement extends Statement {
             return false;
         } else {
             if (exceptionType.asReferenceTypeUsage().canBeAssignedTo(new ReferenceTypeUsage(
-                    ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Exception.class)), resolver)) {
+                    ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Exception.class, resolver)), resolver)) {
                 return true;
             } else {
                 errorCollector.recordSemanticError(exception.getPosition(), ERR_MESSAGE);

@@ -20,10 +20,14 @@ import java.util.stream.Collectors;
  */
 public class ReferenceTypeUsage implements TypeUsage {
 
-    public static final ReferenceTypeUsage OBJECT = new ReferenceTypeUsage(
-            ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class));
-    public static final ReferenceTypeUsage STRING = new ReferenceTypeUsage(
-            ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class));
+    public static final ReferenceTypeUsage OBJECT(SymbolResolver resolver) {
+        return new ReferenceTypeUsage(
+                ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class, resolver));
+    }
+    public static final ReferenceTypeUsage STRING(SymbolResolver resolver) {
+        return new ReferenceTypeUsage(
+                ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class, resolver));
+    }
     private List<TypeUsage> typeParams;
     private TypeParameterValues typeParameterValues = new TypeParameterValues();
     private TypeDefinition cachedTypeDefinition;
@@ -68,7 +72,7 @@ public class ReferenceTypeUsage implements TypeUsage {
 
     @Override
     public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return getTypeDefinition().findMethodFor(methodName, argsTypes, resolver, staticContext);
+        return getTypeDefinition().findMethodFor(methodName, argsTypes, staticContext);
     }
 
     @Override
@@ -136,7 +140,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition();
-        TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, resolver, staticContext);
+        TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap(resolver));
     }
 

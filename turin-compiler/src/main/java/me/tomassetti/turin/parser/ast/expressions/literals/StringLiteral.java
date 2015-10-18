@@ -6,9 +6,6 @@ import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
-/**
- * Created by federico on 29/08/15.
- */
 public class StringLiteral extends Expression {
 
     private String value;
@@ -53,6 +50,6 @@ public class StringLiteral extends Expression {
 
     @Override
     public TypeUsage calcType() {
-        return ReferenceTypeUsage.STRING;
+        return ReferenceTypeUsage.STRING(symbolResolver());
     }
 }

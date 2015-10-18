@@ -21,7 +21,7 @@ public class ReflectionBasedTypeDefinitionTest {
     @Test
     public void getAllAncestorsOfString(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class, resolver);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors();
         assertEquals(4, ancestors.size());
         Set<String> names = ancestors.stream().map((a)->a.asReferenceTypeUsage().getQualifiedName()).collect(Collectors.toSet());
@@ -40,7 +40,7 @@ public class ReflectionBasedTypeDefinitionTest {
     @Test
     public void getAllAncestorsOfObject(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class, resolver);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors();
         assertEquals(0, ancestors.size());
     }
@@ -48,20 +48,22 @@ public class ReflectionBasedTypeDefinitionTest {
     @Test
     public void getAllAncestorsOfSerializable(){
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class, resolver);
         List<ReferenceTypeUsage> ancestors = typeDefinition.getAllAncestors();
         assertEquals(0, ancestors.size());
     }
 
     @Test
     public void isInterfaceNegativeCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class, resolver);
         assertEquals(false, typeDefinition.isInterface());
     }
 
     @Test
     public void isInterfacePositiveCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
+        SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class, resolver);
         assertEquals(true, typeDefinition.isInterface());
     }
 

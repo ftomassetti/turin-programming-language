@@ -65,7 +65,7 @@ public class JarTypeResolverTest {
         JarTypeResolver jarTypeResolver = new JarTypeResolver(jarFile);
         SymbolResolver resolver = new InFileSymbolResolver(jarTypeResolver);
         Optional<TypeDefinition> typeDefinition = jarTypeResolver.resolveAbsoluteTypeName("com.github.javaparser.ast.CompilationUnit");
-        JvmMethodDefinition method = typeDefinition.get().findMethodFor("getComments", Collections.emptyList(), resolver, false);
+        JvmMethodDefinition method = typeDefinition.get().findMethodFor("getComments", Collections.emptyList(), false);
         assertEquals("com/github/javaparser/ast/CompilationUnit", method.getOwnerInternalName());
         assertEquals("()Ljava/util/List;", method.getDescriptor());
         assertEquals("getComments", method.getName());

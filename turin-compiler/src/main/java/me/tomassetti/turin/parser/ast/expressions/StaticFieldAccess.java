@@ -77,7 +77,7 @@ public class StaticFieldAccess extends Expression {
     public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
 
-        return typeDefinition.findMethodFor(field, argsTypes, resolver, staticContext);
+        return typeDefinition.findMethodFor(field, argsTypes, staticContext);
     }
 
     private TypeDefinition typeDefinitionCache;

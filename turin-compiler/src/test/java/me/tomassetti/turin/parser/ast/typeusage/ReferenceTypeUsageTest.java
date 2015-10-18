@@ -1,6 +1,7 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.resolvers.ComposedSymbolResolver;
 import me.tomassetti.turin.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.resolvers.ResolverRegistry;
 import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
@@ -60,14 +61,16 @@ public class ReferenceTypeUsageTest {
 
     @Test
     public void isInterfaceNegativeCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class);
+        SymbolResolver resolver = new ComposedSymbolResolver(Collections.emptyList());
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(String.class, resolver);
         ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
         assertEquals(false, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }
 
     @Test
     public void isInterfacePositiveCase() {
-        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class);
+        SymbolResolver resolver = new ComposedSymbolResolver(Collections.emptyList());
+        TypeDefinition typeDefinition = ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(List.class, resolver);
         ReferenceTypeUsage typeUsage = new ReferenceTypeUsage(typeDefinition);
         assertEquals(true, typeUsage.isInterface(new InFileSymbolResolver(JdkTypeResolver.getInstance())));
     }

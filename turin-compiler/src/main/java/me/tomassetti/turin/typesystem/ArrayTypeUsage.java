@@ -49,7 +49,7 @@ public class ArrayTypeUsage implements TypeUsage {
         if (type.isArray()) {
             return componentType.equals(type.asArrayTypeUsage().getComponentType());
         } else {
-            return type.equals(ReferenceTypeUsage.OBJECT);
+            return type.equals(ReferenceTypeUsage.OBJECT(resolver));
         }
     }
 

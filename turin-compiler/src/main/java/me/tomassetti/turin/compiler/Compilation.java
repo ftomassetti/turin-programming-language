@@ -10,6 +10,7 @@ import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.Property;
+import me.tomassetti.turin.resolvers.ResolverRegistry;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
@@ -493,8 +494,12 @@ public class Compilation {
     }
 
     void appendToStringBuilder(Expression piece, List<BytecodeSequence> elements) {
+        // this is because many String Literal are created during compilation and are detached
+        if (piece.getRoot() == piece) {
+            ResolverRegistry.INSTANCE.record(piece, resolver);
+        }
         TypeUsage pieceType = piece.calcType();
-        if (pieceType.sameType(ReferenceTypeUsage.STRING)) {
+        if (pieceType.sameType(ReferenceTypeUsage.STRING(resolver))) {
             elements.add(pushUtils.pushExpression(piece));
             elements.add(new MethodInvocationBS(new JvmMethodDefinition("java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false, false)));
         } else if (pieceType.isReference()) {

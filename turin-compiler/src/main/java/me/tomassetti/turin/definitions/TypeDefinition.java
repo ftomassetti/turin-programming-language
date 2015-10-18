@@ -6,7 +6,6 @@ import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedConstructorException;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
-import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Named;
 import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -121,7 +120,7 @@ public interface TypeDefinition extends Symbol, Named {
     /// Methods
     ///
 
-    default TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+    default TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         return getMethod(methodName, actualParams, staticContext).getReturnType();
     }
 
@@ -142,7 +141,7 @@ public interface TypeDefinition extends Symbol, Named {
         }
     }
 
-    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext);
+    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
 
     boolean isMethodOverloaded(String methodName);
 

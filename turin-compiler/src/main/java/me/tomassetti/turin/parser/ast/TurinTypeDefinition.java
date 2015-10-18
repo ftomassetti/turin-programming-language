@@ -226,13 +226,13 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> actualParams, SymbolResolver resolver, boolean staticContext) {
-        ensureIsInitialized(resolver);
+    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> actualParams, boolean staticContext) {
+        ensureIsInitialized(symbolResolver());
         List<InternalMethodDefinition> methods = methodsByName.get(methodName);
         if (methods.size() == 0) {
             throw new IllegalArgumentException("No method found with name " + methodName);
         } else if (methods.size() == 1) {
-            if (methods.get(0).matchJvmTypes(resolver, actualParams)) {
+            if (methods.get(0).matchJvmTypes(symbolResolver(), actualParams)) {
                 return methods.get(0).getJvmMethodDefinition();
             } else {
                 throw new IllegalArgumentException("No method found with name " + methodName + " which matches " + actualParams);
@@ -312,7 +312,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
             res.addAll(getBaseType().get().asReferenceTypeUsage().getAllAncestors());
             return res;
         }
-        return ImmutableList.of(ReferenceTypeUsage.OBJECT);
+        return ImmutableList.of(ReferenceTypeUsage.OBJECT(symbolResolver()));
     }
 
     @Override
@@ -416,7 +416,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
      * Does it override the equals method defined in Object?
      */
     public boolean defineMethodEquals(SymbolResolver resolver) {
-        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT), resolver);
+        return isDefiningMethod("equals", ImmutableList.of(ReferenceTypeUsage.OBJECT(resolver)), resolver);
     }
 
     private boolean isDefiningMethod(String name, List<TypeUsage> paramTypes, SymbolResolver resolver) {
@@ -504,7 +504,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
         if (this.baseType.isPresent()) {
             return this.baseType.get().asReferenceTypeUsage().getTypeDefinition();
         }
-        return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class);
+        return ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Object.class, symbolResolver());
     }
 
     @Override

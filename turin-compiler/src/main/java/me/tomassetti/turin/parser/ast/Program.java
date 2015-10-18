@@ -18,6 +18,9 @@ public class Program extends Node implements Named, Symbol {
     private String paramName;
 
     public FormalParameterSymbol getFormalParameter() {
+        if (formalParameter == null) {
+            formalParameter = new FormalParameterSymbol(new ArrayTypeUsage(ReferenceTypeUsage.STRING(symbolResolver())), paramName);
+        }
         return formalParameter;
     }
 
@@ -29,7 +32,7 @@ public class Program extends Node implements Named, Symbol {
         this.name = name;
         this.statement = statement;
         this.statement.setParent(this);
-        this.formalParameter = new FormalParameterSymbol(new ArrayTypeUsage(ReferenceTypeUsage.STRING), paramName);
+        this.formalParameter = null;
         this.paramName = paramName;
     }
 
@@ -52,8 +55,7 @@ public class Program extends Node implements Named, Symbol {
         if (o == null || getClass() != o.getClass()) return false;
 
         Program program = (Program) o;
-
-        if (!formalParameter.equals(program.formalParameter)) return false;
+        
         if (!name.equals(program.name)) return false;
         if (!statement.equals(program.statement)) return false;
 
@@ -79,8 +81,8 @@ public class Program extends Node implements Named, Symbol {
 
     @Override
     public Optional<Symbol> findSymbol(String name, SymbolResolver resolver) {
-        if (name.equals(formalParameter.getName())) {
-            return Optional.of(formalParameter);
+        if (name.equals(paramName)) {
+            return Optional.of(getFormalParameter());
         }
         return super.findSymbol(name, resolver);
     }

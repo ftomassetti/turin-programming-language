@@ -14,12 +14,12 @@ public class ReflectionBasedField implements Symbol {
 
     @Override
     public TypeUsage calcType() {
-        return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
+        return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType(), symbolResolver);
     }
 
     @Override
     public Symbol getField(String fieldName) {
-        TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
+        TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType(), symbolResolver);
         return fieldType.getFieldOnInstance(fieldName, this);
     }
 
@@ -60,8 +60,8 @@ public class ReflectionBasedField implements Symbol {
     }
 
     public JvmFieldDefinition toJvmField(SymbolResolver resolver) {
-        TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
-        TypeUsage ownerType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getDeclaringClass());
+        TypeUsage fieldType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getType(), symbolResolver);
+        TypeUsage ownerType = ReflectionTypeDefinitionFactory.toTypeUsage(field.getDeclaringClass(), symbolResolver);
         return new JvmFieldDefinition(ownerType.jvmType().getInternalName(), field.getName(), fieldType.jvmType().getSignature(), true);
     }
 }

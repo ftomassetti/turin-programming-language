@@ -148,7 +148,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
         return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, Arrays.asList(clazz.getMethods())));
     }
 
@@ -217,7 +217,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
         for (Field field : clazz.getFields()) {
             if (field.getName().equals(fieldName)) {
                 if (Modifier.isStatic(field.getModifiers()) == staticContext) {
-                    return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType());
+                    return ReflectionTypeDefinitionFactory.toTypeUsage(field.getType(), resolver);
                 }
             }
         }

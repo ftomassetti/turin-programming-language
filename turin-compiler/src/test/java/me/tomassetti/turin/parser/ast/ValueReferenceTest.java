@@ -52,7 +52,7 @@ public class ValueReferenceTest {
         SymbolResolver resolver = new InFileSymbolResolver(JdkTypeResolver.getInstance());
         ResolverRegistry.INSTANCE.record(turinFile, resolver);
         TypeUsage type = valueReferences.get(0).calcType();
-        assertEquals(new ArrayTypeUsage(ReferenceTypeUsage.STRING), type);
+        assertTrue(new ArrayTypeUsage(ReferenceTypeUsage.STRING(resolver)).sameType(type));
     }
 
     @Test

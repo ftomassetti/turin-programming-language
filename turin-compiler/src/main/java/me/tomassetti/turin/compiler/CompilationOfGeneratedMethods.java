@@ -307,7 +307,7 @@ public class CompilationOfGeneratedMethods {
                 new MethodInvocationBS(new JvmMethodDefinition("java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false, true))
             );
             String propertyBoxedType = property.getTypeUsage().isPrimitive() ?
-                      property.getTypeUsage().asPrimitiveTypeUsage().getBoxType().jvmType().getInternalName()
+                      property.getTypeUsage().asPrimitiveTypeUsage().getBoxType(compilation.getResolver()).jvmType().getInternalName()
                     : property.getTypeUsage().jvmType().getInternalName();
             BytecodeSequence assignPropertyFromMap = new ComposedBytecodeSequence(
                     PushThis.getInstance(),
