@@ -52,15 +52,13 @@ public class RelationFieldDefinition extends Node {
     public TypeUsage calcType() {
         if (cardinality == Cardinality.SINGLE) {
             List<TypeUsage> typeParams = new ArrayList<>(getParentOfType(RelationDefinition.class).getTypeParameters());
-            ReferenceTypeUsage res = new ReferenceTypeUsage(
-                    ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceSingleEndpoint.class, typeParams),
-                    typeParams);
+            TypeDefinition referenceSingleEndpointTD = symbolResolver().getTypeDefinitionIn(Relation.ReferenceSingleEndpoint.class.getCanonicalName(), this);
+            ReferenceTypeUsage res = new ReferenceTypeUsage(referenceSingleEndpointTD, typeParams);
             return res;
         } else if (cardinality == Cardinality.MANY) {
             List<TypeUsage> typeParams = new ArrayList<>(getParentOfType(RelationDefinition.class).getTypeParameters());
-            ReferenceTypeUsage res = new ReferenceTypeUsage(
-                    ReflectionTypeDefinitionFactory.getInstance().getTypeDefinition(Relation.ReferenceMultipleEndpoint.class, typeParams),
-                    typeParams);
+            TypeDefinition referenceMultipleEndpointTD = symbolResolver().getTypeDefinitionIn(Relation.ReferenceMultipleEndpoint.class.getCanonicalName(), this);
+            ReferenceTypeUsage res = new ReferenceTypeUsage(referenceMultipleEndpointTD, typeParams);
             return res;
         } else {
             throw new UnsupportedOperationException();

@@ -27,6 +27,9 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     private SymbolResolver resolver;
 
     public ReflectionBasedTypeDefinition(Class<?> clazz, SymbolResolver resolver) {
+        if (!clazz.getCanonicalName().startsWith("java.") && !clazz.getCanonicalName().startsWith("javax.")) {
+            throw new IllegalArgumentException(clazz.getCanonicalName());
+        }
         this.clazz = clazz;
         this.resolver = resolver;
     }
