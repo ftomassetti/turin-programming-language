@@ -52,6 +52,7 @@ public class InFileSymbolResolver implements SymbolResolver {
 
     public InFileSymbolResolver(TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
+        this.typeResolver.setSymbolResolver(this);
     }
 
     @Override

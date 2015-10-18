@@ -14,4 +14,7 @@ public interface TypeResolver {
     public Optional<FunctionDefinitionNode> resolveAbsoluteFunctionName(String typeName);
 
     boolean existPackage(String packageName);
+
+    SymbolResolver symbolResolver();
+    void setSymbolResolver(SymbolResolver symbolResolver);
 }

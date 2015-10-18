@@ -2,6 +2,7 @@ package me.tomassetti.turin.resolvers.jdk;
 
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 
@@ -13,6 +14,20 @@ public class JdkTypeResolver implements TypeResolver {
 
     private JdkTypeResolver() {
 
+    }
+
+    protected SymbolResolver symbolResolver;
+
+    public SymbolResolver symbolResolver() {
+        if (this.root() == this) {
+            return symbolResolver.getRoot();
+        }
+        return this.root().symbolResolver().getRoot();
+    }
+
+    @Override
+    public void setSymbolResolver(SymbolResolver symbolResolver) {
+        this.symbolResolver = symbolResolver;
     }
 
     private TypeResolver root;

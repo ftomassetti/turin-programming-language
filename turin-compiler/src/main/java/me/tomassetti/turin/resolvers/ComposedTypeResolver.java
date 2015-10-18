@@ -15,6 +15,30 @@ public class ComposedTypeResolver implements TypeResolver {
         this.elements.forEach((e)->e.setRoot(ComposedTypeResolver.this));
     }
 
+    protected SymbolResolver symbolResolver;
+
+    public SymbolResolver symbolResolver() {
+        SymbolResolver symbolResolver;
+        if (this.root() == this || this.root() == null) {
+            symbolResolver = this.symbolResolver;
+        } else {
+            symbolResolver = this.root().symbolResolver();
+        }
+        if (symbolResolver == null) {
+            TypeResolver typeResolver = this.root();
+            if (typeResolver == null) {
+                typeResolver = this;
+            }
+            return new InFileSymbolResolver(typeResolver);
+        }
+        return symbolResolver.getRoot();
+    }
+
+    @Override
+    public void setSymbolResolver(SymbolResolver symbolResolver) {
+        this.symbolResolver = symbolResolver;
+    }
+
     @Override
     public Optional<TypeDefinition> resolveAbsoluteTypeName(String typeName) {
         for (TypeResolver element : elements) {

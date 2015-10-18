@@ -9,6 +9,7 @@ import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.InFileSymbolResolver;
+import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.TypeResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
@@ -25,6 +26,30 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
     protected Map<String, CE> classpathElements = new HashMap<>();
     protected Map<String, CE> functionElements = new HashMap<>();
     protected Set<String> packages = new HashSet<>();
+
+    protected SymbolResolver symbolResolver;
+
+    public SymbolResolver symbolResolver() {
+        SymbolResolver symbolResolver;
+        if (this.root() == this || this.root() == null) {
+            symbolResolver = this.symbolResolver;
+        } else {
+            symbolResolver = this.root().symbolResolver();
+        }
+        if (symbolResolver == null) {
+            TypeResolver typeResolver = this.root();
+            if (typeResolver == null) {
+                typeResolver = this;
+            }
+            return new InFileSymbolResolver(typeResolver);
+        }
+        return symbolResolver.getRoot();
+    }
+
+    @Override
+    public void setSymbolResolver(SymbolResolver symbolResolver) {
+        this.symbolResolver = symbolResolver;
+    }
 
     @Override
     public boolean existPackage(String packageName) {
@@ -104,7 +129,7 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
         if (classpathElements.containsKey(typeName)) {
             try {
                 CtClass ctClass = classpathElements.get(typeName).toCtClass();
-                return Optional.of(new JavassistTypeDefinition(ctClass, new InFileSymbolResolver(this.root())));
+                return Optional.of(new JavassistTypeDefinition(ctClass, symbolResolver()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -130,12 +155,12 @@ public abstract class AbstractCompiledTypeResolver<CE extends ClasspathElement> 
                 CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
                 LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
 
-                TypeUsage returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType(), new InFileSymbolResolver(this));
+                TypeUsage returnType = JavassistTypeDefinitionFactory.toTypeUsage(invokeMethod.getReturnType(), symbolResolver());
                 List<FormalParameterNode> formalParameters = new ArrayList<>();
 
                 int i=0;
                 for (CtClass paramType : invokeMethod.getParameterTypes()) {
-                    TypeUsage type =JavassistTypeDefinitionFactory.toTypeUsage(paramType, new InFileSymbolResolver(this));
+                    TypeUsage type =JavassistTypeDefinitionFactory.toTypeUsage(paramType, symbolResolver());
                     String paramName = attr.variableName(i);
                     formalParameters.add(new FormalParameterNode(TypeUsageNode.wrap(type), paramName));
                     i++;
