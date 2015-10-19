@@ -9,15 +9,7 @@ import java.util.Optional;
 /**
  * This is a type which represents something invokable.
  */
-public interface InvokableTypeUsage extends TypeUsage {
-
-    default boolean isInvokable() {
-        return true;
-    }
-
-    default InvokableTypeUsage asInvokable() {
-        return this;
-    }
+public interface InvokableType {
 
     TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams);
 

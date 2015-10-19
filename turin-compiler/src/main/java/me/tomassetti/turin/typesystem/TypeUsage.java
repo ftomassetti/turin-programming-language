@@ -3,13 +3,10 @@ package me.tomassetti.turin.typesystem;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * The usage of a type. It can be every sort of type (void, primitive, reference, etc.)
@@ -66,7 +63,7 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
-    default InvokableTypeUsage asInvokable() {
+    default InvokableType asInvokable() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName() + ": " + this);
     }
 

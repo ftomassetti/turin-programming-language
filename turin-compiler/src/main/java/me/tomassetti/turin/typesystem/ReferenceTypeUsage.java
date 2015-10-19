@@ -6,7 +6,6 @@ import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.Invokable;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * It could represent also a reference to a Type Variable.
  */
-public class ReferenceTypeUsage implements InvokableTypeUsage {
+public class ReferenceTypeUsage implements TypeUsage {
 
     public static final ReferenceTypeUsage OBJECT(SymbolResolver resolver) {
         return new ReferenceTypeUsage(
@@ -139,29 +138,34 @@ public class ReferenceTypeUsage implements InvokableTypeUsage {
     }
 
     @Override
-    public InvokableTypeUsage asInvokable() {
-        return this;
+    public InvokableType asInvokable() {
+        return new AsConstructor();
     }
 
-    @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
-        return this;
-    }
+    class AsConstructor implements InvokableType {
 
-    @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(List<ActualParam> actualParams) {
-        Optional<InternalConstructorDefinition> constructor = getTypeDefinition().findConstructor(actualParams);
-        if (constructor.isPresent()) {
-            return Optional.of(constructor.get().getFormalParameters());
-        } else {
-            return Optional.empty();
+        @Override
+        public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+            return ReferenceTypeUsage.this;
+        }
+
+        @Override
+        public Optional<List<? extends FormalParameter>> findFormalParametersFor(List<ActualParam> actualParams) {
+            Optional<InternalConstructorDefinition> constructor = getTypeDefinition().findConstructor(actualParams);
+            if (constructor.isPresent()) {
+                return Optional.of(constructor.get().getFormalParameters());
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        @Override
+        public boolean isOverloaded() {
+            return getTypeDefinition().hasManyConstructors();
         }
     }
 
-    @Override
-    public boolean isOverloaded() {
-        return getTypeDefinition().hasManyConstructors();
-    }
+
 
     @Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
