@@ -64,11 +64,6 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         throw new UnsupportedOperationException();
     }

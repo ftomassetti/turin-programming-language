@@ -62,6 +62,14 @@ public interface TypeUsage extends Symbol {
         return false;
     }
 
+    default boolean isInvokable() {
+        return false;
+    }
+
+    default InvokableTypeUsage asInvokable() {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
     ///
     /// JVM
     ///
@@ -87,15 +95,9 @@ public interface TypeUsage extends Symbol {
     /// Methods
     ///
 
-    TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams);
-
     TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext);
 
     boolean isMethodOverloaded(String methodName);
-
-    default boolean isOverloaded() {
-        return false;
-    }
 
     default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());

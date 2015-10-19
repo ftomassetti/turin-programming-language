@@ -122,11 +122,6 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;

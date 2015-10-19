@@ -10,7 +10,7 @@ import me.tomassetti.turin.symbols.Symbol;
 import java.util.List;
 import java.util.Map;
 
-public class FunctionReferenceTypeUsage implements TypeUsage {
+public class FunctionReferenceTypeUsage implements InvokableTypeUsage {
 
     private List<? extends TypeUsage> parameterTypes;
     private TypeUsage returnType;
@@ -28,11 +28,6 @@ public class FunctionReferenceTypeUsage implements TypeUsage {
     }
 
     public TypeUsage getReturnType() {
-        return returnType;
-    }
-
-    @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
         return returnType;
     }
 
@@ -81,4 +76,13 @@ public class FunctionReferenceTypeUsage implements TypeUsage {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+        return returnType;
+    }
+
+    @Override
+    public boolean isOverloaded() {
+        return false;
+    }
 }

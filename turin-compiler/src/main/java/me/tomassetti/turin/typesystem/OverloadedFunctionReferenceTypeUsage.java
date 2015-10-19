@@ -2,7 +2,7 @@ package me.tomassetti.turin.typesystem;
 
 import java.util.List;
 
-public abstract class OverloadedFunctionReferenceTypeUsage implements TypeUsage {
+public abstract class OverloadedFunctionReferenceTypeUsage implements InvokableTypeUsage {
 
     protected List<FunctionReferenceTypeUsage> alternatives;
 

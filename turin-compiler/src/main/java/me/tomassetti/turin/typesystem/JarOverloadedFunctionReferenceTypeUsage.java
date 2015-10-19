@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage
-{
+public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage {
 
     private List<CtMethod> ctMethods;
     private String methodName;
@@ -65,6 +64,11 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
             throw new RuntimeException();
         }
         return alternatives.get(index).returnTypeWhenInvokedWith(actualParams);
+    }
+
+    @Override
+    public boolean isOverloaded() {
+        return true;
     }
 
     @Override
