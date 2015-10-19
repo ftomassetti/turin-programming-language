@@ -1,11 +1,8 @@
 package me.tomassetti.turin.typesystem;
 
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -101,6 +98,8 @@ public interface TypeUsage extends Symbol {
     /// Misc
     ///
 
+    boolean sameType(TypeUsage other);
+
     boolean canBeAssignedTo(TypeUsage type);
 
     <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams);
@@ -113,6 +112,5 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    boolean sameType(TypeUsage other);
 
 }

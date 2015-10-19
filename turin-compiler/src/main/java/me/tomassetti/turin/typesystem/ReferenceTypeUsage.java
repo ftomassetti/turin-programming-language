@@ -165,13 +165,6 @@ public class ReferenceTypeUsage implements TypeUsage {
         }
     }
 
-    /*@Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        TypeDefinition typeDefinition = getTypeDefinition();
-        TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, staticContext);
-        return typeUsage.replaceTypeVariables(typeParamsMap());
-    }*/
-
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         if (this.typeParams.size() == 0) {

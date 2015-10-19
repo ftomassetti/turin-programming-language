@@ -1,7 +1,6 @@
 package me.tomassetti.turin.typesystem;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
-import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.FormalParameter;
 

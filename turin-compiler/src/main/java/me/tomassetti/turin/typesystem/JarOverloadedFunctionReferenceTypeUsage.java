@@ -6,7 +6,6 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.compiled.JavassistBasedMethodResolution;
-import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
 

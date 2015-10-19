@@ -4,7 +4,6 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.AmbiguousCallException;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.resolvers.SymbolResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +12,6 @@ import java.util.stream.Collectors;
 
 public class MethodResolutionLogic {
 
-    /*public static Method findMethodAmong(String name, List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext, List<Method> methods) {
-        List<MethodOrConstructor> methodOrConstructors = methods.stream()
-                .filter((m) -> Modifier.isStatic(m.getModifiers()) == staticContext)
-                .filter((m) -> m.getName().equals(name))
-                .map((m) -> new MethodOrConstructor(m)).collect(Collectors.toList());
-        MethodOrConstructor methodOrConstructor = findMethodAmong(argsTypes, resolver, methodOrConstructors, name);
-        if (methodOrConstructor == null) {
-            throw new RuntimeException("unresolved method " + name + " for " + argsTypes);
-        }
-        return methodOrConstructor.method;
-    }*/
-
-    // kept
     public static Optional<InternalMethodDefinition> findMethodAmongActualParams(List<ActualParam> argsTypes, List<InternalMethodDefinition> candidates) {
         List<InternalMethodDefinition> suitableMethods = new ArrayList<>();
         for (InternalMethodDefinition method : candidates) {
@@ -55,34 +41,6 @@ public class MethodResolutionLogic {
         }
     }
 
-    /*private static MethodOrConstructor findMethodAmong(List<JvmType> argsTypes, SymbolResolver resolver, List<MethodOrConstructor> methods, String desc) {
-        List<MethodOrConstructor> suitableMethods = new ArrayList<>();
-        for (MethodOrConstructor method : methods) {
-            if (method.getParameterCount() == argsTypes.size()) {
-                boolean match = true;
-                for (int i = 0; i < argsTypes.size(); i++) {
-                    TypeUsage actualType = TypeUsageNode.fromJvmType(argsTypes.get(i), resolver.getRoot(), Collections.emptyMap());
-                    TypeUsage formalType = ReflectionTypeDefinitionFactory.toTypeUsage(method.getParameterType(i), resolver);
-                    if (!actualType.canBeAssignedTo(formalType)) {
-                        match = false;
-                    }
-                }
-                if (match) {
-                    suitableMethods.add(method);
-                }
-            }
-        }
-
-        if (suitableMethods.size() == 0) {
-            return null;
-        } else if (suitableMethods.size() == 1) {
-            return suitableMethods.get(0);
-        } else {
-            return findMostSpecific(suitableMethods, new AmbiguousCallException(null, desc, argsTypes), argsTypes, resolver);
-        }
-    }*/
-
-    // kept
     private static InternalMethodDefinition findMostSpecific(List<InternalMethodDefinition> methods, AmbiguousCallException exceptionToThrow,
                                                         List<JvmType> argsTypes) {
         InternalMethodDefinition winningMethod = methods.get(0);
@@ -98,7 +56,6 @@ public class MethodResolutionLogic {
         return winningMethod;
     }
 
-    // kept
     private static boolean isTheFirstMoreSpecific(InternalMethodDefinition first, InternalMethodDefinition second,
                                                   List<JvmType> argsTypes) {
         boolean atLeastOneParamIsMoreSpecific = false;
@@ -118,7 +75,6 @@ public class MethodResolutionLogic {
         return atLeastOneParamIsMoreSpecific;
     }
 
-    // kept
     private static boolean isTheFirstMoreSpecific(TypeUsage firstType, TypeUsage secondType, JvmType targetType) {
         boolean firstIsPrimitive = firstType.isPrimitive();
         boolean secondIsPrimitive = secondType.isPrimitive();
