@@ -190,11 +190,6 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return getTypeDefinition().isMethodOverloaded(methodName);
-    }
-
-    @Override
     public boolean sameType(TypeUsage other) {
         if (!other.isReferenceTypeUsage()) {
             return false;
@@ -259,5 +254,10 @@ public class ReferenceTypeUsage implements TypeUsage {
                     ", names=" + names +
                     '}';
         }
+    }
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        return getTypeDefinition().getMethod(method, staticContext);
     }
 }

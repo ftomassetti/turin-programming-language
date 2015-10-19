@@ -7,6 +7,7 @@ import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The usage of a type. It can be every sort of type (void, primitive, reference, etc.)
@@ -92,14 +93,29 @@ public interface TypeUsage extends Symbol {
     /// Methods
     ///
 
-    // TODO: return a type representing the method instead
-    TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext);
+    default Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 
     // TODO: return a type representing the method instead
-    boolean isMethodOverloaded(String methodName);
+    default TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
+        Optional<InvokableType> res = getMethod(methodName, staticContext);
+        if (res.isPresent()) {
+            return res.get().returnTypeWhenInvokedWith(actualParams);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
 
     // TODO: return a type representing the method instead
-    JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
+    //default boolean isMethodOverloaded(String methodName) {
+    //    throw new UnsupportedOperationException();
+    //}
+
+    // TODO: return a type representing the method instead
+    default JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
+        throw new UnsupportedOperationException();
+    }
 
     ///
     /// Misc

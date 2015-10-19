@@ -8,11 +8,13 @@ import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
+import me.tomassetti.turin.parser.ast.MethodSetAsInvokableType;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.InvokableType;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -325,5 +327,18 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     @Override
     public String getName() {
         return clazz.getName();
+    }
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        Set<InternalMethodDefinition> methods = Arrays.stream(clazz.getMethods())
+                .filter((m)->m.getName().equals(method) && Modifier.isStatic(m.getModifiers()) == staticContext)
+                .map((m)->toInternalMethodDefinition(m))
+                .collect(Collectors.toSet());
+        if (methods.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new MethodSetAsInvokableType(methods));
+        }
     }
 }

@@ -35,11 +35,6 @@ public class FunctionReferenceTypeUsage implements TypeUsage, InvokableType {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return false;
-    }
-
-    @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException();
     }

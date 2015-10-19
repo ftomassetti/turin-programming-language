@@ -188,11 +188,6 @@ public class PrimitiveTypeUsage implements TypeUsage {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return false;
-    }
-
     public boolean isLong() {
         return this == PrimitiveTypeUsage.LONG;
     }

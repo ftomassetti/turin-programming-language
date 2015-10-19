@@ -120,11 +120,6 @@ public class ArrayTypeUsage implements TypeUsage {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return false;
-    }
-
-    @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException();
     }

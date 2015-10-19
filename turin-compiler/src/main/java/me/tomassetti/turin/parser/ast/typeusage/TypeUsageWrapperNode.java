@@ -4,17 +4,20 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
-import me.tomassetti.turin.typesystem.ArrayTypeUsage;
-import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
-import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.TypeUsage;
+import me.tomassetti.turin.typesystem.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 abstract class TypeUsageWrapperNode extends TypeUsageNode {
 
     protected TypeUsage typeUsage;
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        return typeUsage().getMethod(method, staticContext);
+    }
 
     @Override
     public String toString() {
@@ -113,11 +116,6 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     @Override
     public final Symbol getInstanceField(String fieldName, Symbol instance) {
         return typeUsage().getInstanceField(fieldName, instance);
-    }
-
-    @Override
-    public final boolean isMethodOverloaded(String methodName) {
-        return typeUsage().isMethodOverloaded(methodName);
     }
 
     @Override

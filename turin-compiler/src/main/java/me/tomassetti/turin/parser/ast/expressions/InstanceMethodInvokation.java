@@ -58,7 +58,7 @@ public class InstanceMethodInvokation extends Invokable {
 
     @Override
     public boolean isOnOverloaded(SymbolResolver resolver) {
-        return subject.calcType().isMethodOverloaded(methodName);
+        return subject.calcType().getMethod(methodName, false).get().isOverloaded();
     }
 
     @Override

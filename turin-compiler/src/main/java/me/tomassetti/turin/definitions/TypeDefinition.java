@@ -11,6 +11,7 @@ import me.tomassetti.turin.parser.ast.QualifiedName;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.InvokableType;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -152,4 +153,8 @@ public interface TypeDefinition extends Symbol, Named {
     ///
 
     <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(List<T> typeParams);
+
+    default Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
 }

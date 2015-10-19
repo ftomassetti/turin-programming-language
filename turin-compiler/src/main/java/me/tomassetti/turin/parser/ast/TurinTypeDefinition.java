@@ -24,6 +24,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.InvokableType;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -514,6 +515,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
 
     @Override
     public Optional<InternalConstructorDefinition> findConstructor(List<ActualParam> actualParams) {
+        ensureIsInitialized(symbolResolver());
         for (InternalConstructorDefinition constructor : constructors) {
             if (constructor.match(symbolResolver(), actualParams)) {
                 return Optional.of(constructor);
@@ -521,4 +523,21 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
         }
         return Optional.empty();
     }
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        ensureIsInitialized(symbolResolver());
+        Set<InternalMethodDefinition> methods = Collections.emptySet();
+        if (methodsByName.containsKey(method)) {
+            methods = methodsByName.get(method).stream()
+                    .filter((m) -> m.getJvmMethodDefinition().isStatic() == staticContext)
+                    .collect(Collectors.toSet());
+        }
+        if (methods.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new MethodSetAsInvokableType(methods));
+        }
+    }
+
 }

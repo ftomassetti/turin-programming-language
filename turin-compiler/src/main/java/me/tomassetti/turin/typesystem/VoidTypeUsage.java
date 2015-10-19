@@ -68,9 +68,4 @@ public class VoidTypeUsage implements TypeUsage {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return false;
-    }
-
 }
