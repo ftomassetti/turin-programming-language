@@ -72,17 +72,17 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
+    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public JvmType jvmType() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 

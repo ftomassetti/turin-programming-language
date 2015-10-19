@@ -71,11 +71,6 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String methodName, List<JvmType> argsTypes, boolean staticContext) {
-        return getTypeDefinition().findMethodFor(methodName, argsTypes, staticContext);
-    }
-
-    @Override
     public JvmType jvmType() {
         return getTypeDefinition().jvmType();
     }
@@ -157,6 +152,11 @@ public class ReferenceTypeUsage implements TypeUsage {
             } else {
                 return Optional.empty();
             }
+        }
+
+        @Override
+        public JvmMethodDefinition findMethodFor(List<ActualParam> actualParams) {
+            throw new UnsupportedOperationException();
         }
 
         @Override

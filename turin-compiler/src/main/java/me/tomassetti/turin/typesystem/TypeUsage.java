@@ -97,16 +97,6 @@ public interface TypeUsage extends Symbol {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 
-    // TODO: return a type representing the method instead
-    //default boolean isMethodOverloaded(String methodName) {
-    //    throw new UnsupportedOperationException();
-    //}
-
-    // TODO: return a type representing the method instead
-    default JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
     ///
     /// Misc
     ///

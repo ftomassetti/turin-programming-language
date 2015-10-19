@@ -12,6 +12,7 @@ import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class StaticFieldAccess extends Expression {
 
@@ -75,8 +76,10 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
         TypeDefinition typeDefinition = typeDefinition(resolver);
+
+        List<JvmType> argsTypes = actualParams.stream().map((ap)->ap.getValue().calcType().jvmType()).collect(Collectors.toList());
 
         return typeDefinition.findMethodFor(field, argsTypes, staticContext);
     }

@@ -85,11 +85,6 @@ public class TypeVariableUsage implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         throw new UnsupportedOperationException();
     }

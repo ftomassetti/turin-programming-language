@@ -60,11 +60,6 @@ public class FunctionReferenceTypeUsage implements TypeUsage, InvokableType {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         return false;
     }
@@ -82,5 +77,10 @@ public class FunctionReferenceTypeUsage implements TypeUsage, InvokableType {
     @Override
     public boolean isOverloaded() {
         return false;
+    }
+
+    @Override
+    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes) {
+        throw new UnsupportedOperationException();
     }
 }

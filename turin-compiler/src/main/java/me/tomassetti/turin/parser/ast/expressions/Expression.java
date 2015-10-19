@@ -15,7 +15,7 @@ public abstract class Expression extends Node {
      * When the expression corresponds to something invokable this method find which Jvm method corresponds to the call
      * with the given parameters.
      */
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException("On " + this.getClass().getCanonicalName());
     }
 

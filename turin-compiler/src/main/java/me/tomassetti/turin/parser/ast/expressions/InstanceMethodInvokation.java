@@ -52,8 +52,12 @@ public class InstanceMethodInvokation extends Invokable {
     }
 
     public JvmMethodDefinition findJvmDefinition(SymbolResolver resolver) {
-        List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType()).collect(Collectors.toList());
-        return subject.calcType().findMethodFor(methodName, paramTypes, false);
+        List<ActualParam> paramTypes = getActualParamValuesInOrder().stream().map((e) -> {
+            ActualParam ap = new ActualParam (e);
+            ap.setParent(InstanceMethodInvokation.this);
+            return ap;
+        }).collect(Collectors.toList());
+        return subject.calcType().getMethod(methodName, false).get().findMethodFor(paramTypes);
     }
 
     @Override

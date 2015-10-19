@@ -15,6 +15,7 @@ import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ValueReference extends Expression {
 
@@ -31,11 +32,12 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        List<JvmType> argsTypes = actualParams.stream().map((ap)->ap.getValue().calcType().jvmType()).collect(Collectors.toList());
         Optional<Symbol> declaration = resolver.findSymbol(name, this);
         if (declaration.isPresent()) {
             if (declaration.get() instanceof Expression) {
-                return ((Expression) declaration.get()).findMethodFor(argsTypes, resolver, staticContext);
+                return ((Expression) declaration.get()).findMethodFor(actualParams, resolver, staticContext);
             } else if (declaration.get() instanceof FunctionDefinitionNode) {
                 FunctionDefinitionNode functionDefinition = (FunctionDefinitionNode)declaration.get();
                 if (functionDefinition.match(argsTypes, resolver)) {

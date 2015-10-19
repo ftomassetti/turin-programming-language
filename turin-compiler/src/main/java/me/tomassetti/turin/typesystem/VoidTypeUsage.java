@@ -49,11 +49,6 @@ public class VoidTypeUsage implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         return false;
     }

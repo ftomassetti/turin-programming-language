@@ -112,11 +112,6 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
-
-    @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }

@@ -71,7 +71,7 @@ public class InstanceFieldAccess extends Expression {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext) {
         throw new UnsupportedOperationException();
     }
 

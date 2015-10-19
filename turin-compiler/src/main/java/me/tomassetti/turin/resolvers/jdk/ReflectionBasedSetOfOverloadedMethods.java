@@ -2,6 +2,7 @@ package me.tomassetti.turin.resolvers.jdk;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
@@ -16,6 +17,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // TODO it should not be a Node
 public class ReflectionBasedSetOfOverloadedMethods extends Expression {
@@ -26,7 +28,8 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     private String name;
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
+    public JvmMethodDefinition findMethodFor(List<ActualParam> actualParams, SymbolResolver resolver, boolean staticContext) {
+        List<JvmType> argsTypes = actualParams.stream().map((ap)->ap.getValue().calcType().jvmType()).collect(Collectors.toList());
         return ReflectionTypeDefinitionFactory.toMethodDefinition(ReflectionBasedMethodResolution.findMethodAmong(name, argsTypes, resolver, staticContext, methods));
     }
 

@@ -69,11 +69,6 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        return typeUsage().findMethodFor(name, argsTypes, staticContext);
-    }
-
-    @Override
     public final boolean isArray() {
         return typeUsage().isArray();
     }

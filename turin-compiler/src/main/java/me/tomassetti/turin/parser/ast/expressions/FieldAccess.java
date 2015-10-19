@@ -59,8 +59,8 @@ public class FieldAccess extends Expression {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<JvmType> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return subject.calcType().findMethodFor(this.field, argsTypes, staticContext);
+    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext) {
+        return subject.calcType().getMethod(this.field, staticContext).get().findMethodFor(argsTypes);
     }
 
     @Override

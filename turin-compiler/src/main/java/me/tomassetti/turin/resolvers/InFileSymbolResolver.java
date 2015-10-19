@@ -6,6 +6,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.expressions.StaticFieldAccess;
@@ -111,8 +112,12 @@ public class InFileSymbolResolver implements SymbolResolver {
 
     @Override
     public Optional<JvmMethodDefinition> findJvmDefinition(FunctionCall functionCall) {
-        List<JvmType> argsTypes = functionCall.getActualParamValuesInOrder().stream()
-                .map((ap) -> ap.calcType().jvmType())
+        List<ActualParam> argsTypes = functionCall.getActualParamValuesInOrder().stream()
+                .map((e) -> {
+                    ActualParam ap = new ActualParam (e);
+                    ap.setParent(functionCall);
+                    return ap;
+                })
                 .collect(Collectors.toList());
         Expression function = functionCall.getFunction();
         boolean staticContext = function.isType(this) || (function instanceof StaticFieldAccess);

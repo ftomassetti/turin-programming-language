@@ -112,11 +112,6 @@ public class PrimitiveTypeUsage implements TypeUsage {
         return jvmType;
     }
 
-    @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * In Turin all type names are capitalized, this is true also for primitive types.
      */

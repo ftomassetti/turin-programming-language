@@ -94,11 +94,6 @@ public class ArrayTypeUsage implements TypeUsage {
     ///
 
     @Override
-    public JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         if (type.isArray()) {
             return componentType.equals(type.asArrayTypeUsage().getComponentType());
