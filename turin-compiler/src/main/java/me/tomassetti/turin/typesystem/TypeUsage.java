@@ -67,7 +67,7 @@ public interface TypeUsage extends Symbol {
     }
 
     default InvokableTypeUsage asInvokable() {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName() + ": " + this);
     }
 
     ///
@@ -95,14 +95,13 @@ public interface TypeUsage extends Symbol {
     /// Methods
     ///
 
+    // TODO: return a type representing the method instead
     TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext);
 
+    // TODO: return a type representing the method instead
     boolean isMethodOverloaded(String methodName);
 
-    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
-
+    // TODO: return a type representing the method instead
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
 
     ///

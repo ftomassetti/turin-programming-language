@@ -79,7 +79,7 @@ public class FieldAccess extends Expression {
             //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
             throw new UnsupportedOperationException();
         } else if (invokable instanceof FunctionCall) {
-            return subject.calcType().findFormalParametersFor(invokable);
+            return subject.calcType().asInvokable().findFormalParametersFor(invokable.getActualParams());
         } else {
             throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         }

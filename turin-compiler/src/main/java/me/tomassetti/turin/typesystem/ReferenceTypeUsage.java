@@ -2,6 +2,7 @@ package me.tomassetti.turin.typesystem;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * It could represent also a reference to a Type Variable.
  */
-public class ReferenceTypeUsage implements TypeUsage {
+public class ReferenceTypeUsage implements InvokableTypeUsage {
 
     public static final ReferenceTypeUsage OBJECT(SymbolResolver resolver) {
         return new ReferenceTypeUsage(
@@ -130,6 +131,36 @@ public class ReferenceTypeUsage implements TypeUsage {
         } else {
             throw new UnsupportedOperationException();
         }
+    }
+
+    @Override
+    public boolean isInvokable() {
+        return true;
+    }
+
+    @Override
+    public InvokableTypeUsage asInvokable() {
+        return this;
+    }
+
+    @Override
+    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+        return this;
+    }
+
+    @Override
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(List<ActualParam> actualParams) {
+        Optional<InternalConstructorDefinition> constructor = getTypeDefinition().findConstructor(actualParams);
+        if (constructor.isPresent()) {
+            return Optional.of(constructor.get().getFormalParameters());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean isOverloaded() {
+        return getTypeDefinition().hasManyConstructors();
     }
 
     @Override
