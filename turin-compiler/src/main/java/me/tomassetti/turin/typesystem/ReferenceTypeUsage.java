@@ -165,14 +165,12 @@ public class ReferenceTypeUsage implements TypeUsage {
         }
     }
 
-
-
-    @Override
+    /*@Override
     public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         TypeDefinition typeDefinition = getTypeDefinition();
         TypeUsage typeUsage = typeDefinition.returnTypeWhenInvokedWith(methodName, actualParams, staticContext);
         return typeUsage.replaceTypeVariables(typeParamsMap());
-    }
+    }*/
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
@@ -258,6 +256,6 @@ public class ReferenceTypeUsage implements TypeUsage {
 
     @Override
     public Optional<InvokableType> getMethod(String method, boolean staticContext) {
-        return getTypeDefinition().getMethod(method, staticContext);
+        return getTypeDefinition().getMethod(method, staticContext, typeParamsMap());
     }
 }

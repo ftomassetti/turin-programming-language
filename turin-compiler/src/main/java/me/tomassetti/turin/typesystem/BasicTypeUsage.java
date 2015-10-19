@@ -76,11 +76,6 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String toString() {
         return "BasicTypeUsage{" +
                 "name='" + name + '\'' +

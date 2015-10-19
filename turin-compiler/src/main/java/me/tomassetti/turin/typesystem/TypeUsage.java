@@ -98,16 +98,6 @@ public interface TypeUsage extends Symbol {
     }
 
     // TODO: return a type representing the method instead
-    default TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        Optional<InvokableType> res = getMethod(methodName, staticContext);
-        if (res.isPresent()) {
-            return res.get().returnTypeWhenInvokedWith(actualParams);
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    // TODO: return a type representing the method instead
     //default boolean isMethodOverloaded(String methodName) {
     //    throw new UnsupportedOperationException();
     //}

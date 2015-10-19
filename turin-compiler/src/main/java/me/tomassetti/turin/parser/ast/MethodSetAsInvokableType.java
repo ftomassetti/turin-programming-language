@@ -3,21 +3,24 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.typesystem.InvokableType;
+import me.tomassetti.turin.typesystem.MethodResolutionLogic;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MethodSetAsInvokableType implements InvokableType {
     private Set<InternalMethodDefinition> methodDefinitions;
+    private Map<String, TypeUsage> typeParams;
 
-    public MethodSetAsInvokableType(Set<InternalMethodDefinition> methodDefinitions) {
+    public MethodSetAsInvokableType(Set<InternalMethodDefinition> methodDefinitions, Map<String, TypeUsage> typeParams) {
         this.methodDefinitions = methodDefinitions;
+        this.typeParams = typeParams;
     }
 
     @Override
     public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
-        throw new UnsupportedOperationException();
+        Optional<InternalMethodDefinition> method = MethodResolutionLogic.findMethodAmongActualParams(actualParams, new ArrayList<>(methodDefinitions));
+        return method.get().getReturnType().replaceTypeVariables(typeParams);
     }
 
     @Override

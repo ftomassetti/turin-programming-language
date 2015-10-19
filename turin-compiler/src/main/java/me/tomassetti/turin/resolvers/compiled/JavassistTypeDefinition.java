@@ -10,6 +10,7 @@ import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.parser.ast.MethodSetAsInvokableType;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.typeusage.*;
@@ -521,5 +522,18 @@ public class JavassistTypeDefinition implements TypeDefinition {
         CtConstructor constructor = JavassistBasedMethodResolution.findConstructorAmongActualParams(
                 actualParams, resolver, Arrays.asList(ctClass.getConstructors()));
         return Optional.of(toInternalConstructorDefinition(constructor, resolver));
+    }
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
+        Set<InternalMethodDefinition> methods = Arrays.stream(ctClass.getMethods())
+                .filter((m)->m.getName().equals(method) && Modifier.isStatic(m.getModifiers()) == staticContext)
+                .map((m)->toInternalMethodDefinition(m, resolver))
+                .collect(Collectors.toSet());
+        if (methods.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(new MethodSetAsInvokableType(methods, typeParams));
+        }
     }
 }

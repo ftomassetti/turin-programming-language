@@ -99,9 +99,4 @@ public class TypeVariableUsage implements TypeUsage {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
 }

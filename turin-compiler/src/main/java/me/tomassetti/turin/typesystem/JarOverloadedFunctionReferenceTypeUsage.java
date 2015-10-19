@@ -72,11 +72,6 @@ public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionR
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
         throw new UnsupportedOperationException();
     }

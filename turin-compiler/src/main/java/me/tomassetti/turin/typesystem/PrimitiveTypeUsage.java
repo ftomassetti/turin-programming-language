@@ -183,11 +183,6 @@ public class PrimitiveTypeUsage implements TypeUsage {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public TypeUsageNode returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        throw new UnsupportedOperationException();
-    }
-
     public boolean isLong() {
         return this == PrimitiveTypeUsage.LONG;
     }

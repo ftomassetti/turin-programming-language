@@ -525,7 +525,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    public Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
         ensureIsInitialized(symbolResolver());
         Set<InternalMethodDefinition> methods = Collections.emptySet();
         if (methodsByName.containsKey(method)) {
@@ -536,7 +536,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
         if (methods.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(new MethodSetAsInvokableType(methods));
+            return Optional.of(new MethodSetAsInvokableType(methods, typeParams));
         }
     }
 

@@ -89,11 +89,6 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     }
 
     @Override
-    public final TypeUsage returnTypeWhenInvokedWith(String methodName, List<ActualParam> actualParams, boolean staticContext) {
-        return typeUsage().returnTypeWhenInvokedWith(methodName, actualParams, staticContext);
-    }
-
-    @Override
     public final boolean isVoid() {
         return typeUsage().isVoid();
     }

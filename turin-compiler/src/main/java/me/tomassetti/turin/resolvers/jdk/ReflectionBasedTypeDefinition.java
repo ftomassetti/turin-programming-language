@@ -330,7 +330,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    public Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
         Set<InternalMethodDefinition> methods = Arrays.stream(clazz.getMethods())
                 .filter((m)->m.getName().equals(method) && Modifier.isStatic(m.getModifiers()) == staticContext)
                 .map((m)->toInternalMethodDefinition(m))
@@ -338,7 +338,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
         if (methods.isEmpty()) {
             return Optional.empty();
         } else {
-            return Optional.of(new MethodSetAsInvokableType(methods));
+            return Optional.of(new MethodSetAsInvokableType(methods, typeParams));
         }
     }
 }
