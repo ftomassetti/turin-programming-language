@@ -11,7 +11,7 @@ import java.util.Optional;
  * used in the AST or in class files. This represents the abstract type while TypeUsageNode
  * represent a single specific usage of a type in the AST.
  */
-public interface TypeUsage extends Symbol {
+public interface TypeUsage {
 
     ///
     /// Relation with other types
@@ -104,13 +104,8 @@ public interface TypeUsage extends Symbol {
 
     <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams);
 
-    default TypeUsage calcType() {
-        throw new UnsupportedOperationException();
-    }
-
     default String describe() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
-
 
 }

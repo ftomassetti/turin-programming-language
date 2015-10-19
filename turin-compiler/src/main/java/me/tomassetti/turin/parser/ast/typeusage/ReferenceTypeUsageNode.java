@@ -116,11 +116,6 @@ public class ReferenceTypeUsageNode extends TypeUsageWrapperNode {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
-        return typeUsage().asReferenceTypeUsage().findFormalParametersFor(invokable);
-    }
-
-    @Override
     public TypeUsageNode copy() {
         ReferenceTypeUsageNode copy = new ReferenceTypeUsageNode(name);
         copy.parent = this.parent;

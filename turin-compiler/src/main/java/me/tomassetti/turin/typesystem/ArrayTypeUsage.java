@@ -5,6 +5,7 @@ import me.tomassetti.turin.parser.ast.virtual.ArrayLength;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class ArrayTypeUsage implements TypeUsage {
 
@@ -88,6 +89,15 @@ public class ArrayTypeUsage implements TypeUsage {
     ///
 
     @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        return Optional.empty();
+    }
+
+    ///
+    /// Misc
+    ///
+
+    @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         if (type.isArray()) {
             return componentType.equals(type.asArrayTypeUsage().getComponentType());
@@ -105,7 +115,7 @@ public class ArrayTypeUsage implements TypeUsage {
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        throw new UnsupportedOperationException();
+        return this;
     }
 
     @Override
@@ -116,4 +126,8 @@ public class ArrayTypeUsage implements TypeUsage {
         return this.getComponentType().sameType(other.asArrayTypeUsage().getComponentType());
     }
 
+    @Override
+    public String describe() {
+        return "array of " + getComponentType().describe();
+    }
 }

@@ -117,17 +117,6 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
-        if (invokable instanceof FunctionCall) {
-            FunctionCall functionCall = (FunctionCall)invokable;
-            TypeDefinition typeDefinition = getTypeDefinition();
-            return Optional.of(typeDefinition.getMethodParams(functionCall.getName(), invokable.getActualParams(), functionCall.isStatic()));
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    @Override
     public boolean isInvokable() {
         return true;
     }
@@ -250,5 +239,10 @@ public class ReferenceTypeUsage implements TypeUsage {
     @Override
     public Optional<InvokableType> getMethod(String method, boolean staticContext) {
         return getTypeDefinition().getMethod(method, staticContext, typeParamsMap());
+    }
+
+    @Override
+    public String describe() {
+        return getQualifiedName();
     }
 }
