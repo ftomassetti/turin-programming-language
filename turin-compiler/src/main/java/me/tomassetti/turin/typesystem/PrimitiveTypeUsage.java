@@ -81,7 +81,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
         if (!other.isPrimitive()) {
             return false;
         }
-        if (other instanceof BasicTypeUsage) {
+        if (other instanceof UnsignedPrimitiveTypeUsage) {
             return false;
         }
         if (promotionsTypes.contains(other)) {
@@ -232,7 +232,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
         if (!other.isPrimitive()) {
             return false;
         }
-        if (other instanceof BasicTypeUsage) {
+        if (other instanceof UnsignedPrimitiveTypeUsage) {
             return false;
         }
         return getName().equals(other.asPrimitiveTypeUsage().getName());

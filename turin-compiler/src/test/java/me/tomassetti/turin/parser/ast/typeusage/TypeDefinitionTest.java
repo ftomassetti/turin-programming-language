@@ -8,7 +8,7 @@ import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
-import me.tomassetti.turin.typesystem.BasicTypeUsage;
+import me.tomassetti.turin.typesystem.UnsignedPrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.junit.Before;
@@ -65,7 +65,7 @@ public class TypeDefinitionTest {
 
         assertEquals("age", mangaCharacter.getDirectProperties(resolver).get(1).getName());
         TypeUsage actualType = mangaCharacter.getDirectProperties(resolver).get(1).getTypeUsage();
-        assertTrue(actualType.sameType(BasicTypeUsage.UINT));
+        assertTrue(actualType.sameType(UnsignedPrimitiveTypeUsage.UINT));
     }
 
     @Test

@@ -13,31 +13,31 @@ import java.util.Optional;
  * NOTE: Being a Node we could need to have separate instances for each occurrence, so that each one can have a proper
  *       parent.
  */
-public class BasicTypeUsage implements TypeUsage {
+public class UnsignedPrimitiveTypeUsage implements TypeUsage {
 
-    public static BasicTypeUsage ULONG = new BasicTypeUsage("ulong", PrimitiveTypeUsage.LONG);
-    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsage.INT,
+    public static UnsignedPrimitiveTypeUsage ULONG = new UnsignedPrimitiveTypeUsage("ulong", PrimitiveTypeUsage.LONG);
+    public static UnsignedPrimitiveTypeUsage UINT = new UnsignedPrimitiveTypeUsage("uint", PrimitiveTypeUsage.INT,
             ImmutableList.of(ULONG));
-    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsage.SHORT,
+    public static UnsignedPrimitiveTypeUsage USHORT = new UnsignedPrimitiveTypeUsage("ushort", PrimitiveTypeUsage.SHORT,
             ImmutableList.of(UINT, ULONG));
-    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsage.BYTE,
+    public static UnsignedPrimitiveTypeUsage UBYTE = new UnsignedPrimitiveTypeUsage("ubyte", PrimitiveTypeUsage.BYTE,
             ImmutableList.of(USHORT, UINT, ULONG));
-    public static BasicTypeUsage UDOUBLE = new BasicTypeUsage("udouble", PrimitiveTypeUsage.DOUBLE);
-    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsage.FLOAT,
+    public static UnsignedPrimitiveTypeUsage UDOUBLE = new UnsignedPrimitiveTypeUsage("udouble", PrimitiveTypeUsage.DOUBLE);
+    public static UnsignedPrimitiveTypeUsage UFLOAT = new UnsignedPrimitiveTypeUsage("ufloat", PrimitiveTypeUsage.FLOAT,
             ImmutableList.of(UDOUBLE));
 
-    public static ImmutableList<BasicTypeUsage> ALL = ImmutableList.of(UBYTE, USHORT, UINT, ULONG, UFLOAT, UDOUBLE);
+    public static ImmutableList<UnsignedPrimitiveTypeUsage> ALL = ImmutableList.of(UBYTE, USHORT, UINT, ULONG, UFLOAT, UDOUBLE);
 
     private String name;
     private PrimitiveTypeUsage correspondingPrimitiveTypeUsage;
-    private List<BasicTypeUsage> promotionTypes;
+    private List<UnsignedPrimitiveTypeUsage> promotionTypes;
 
-    private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage) {
+    private UnsignedPrimitiveTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage) {
         this(name, correspondingPrimitiveTypeUsage, Collections.emptyList());
     }
 
-    private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage,
-                           List<BasicTypeUsage> promotionTypes) {
+    private UnsignedPrimitiveTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage,
+                                       List<UnsignedPrimitiveTypeUsage> promotionTypes) {
         this.name = name;
         this.correspondingPrimitiveTypeUsage = correspondingPrimitiveTypeUsage;
         this.promotionTypes = promotionTypes;
@@ -55,7 +55,7 @@ public class BasicTypeUsage implements TypeUsage {
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        return null;
+        return this;
     }
 
     @Override
@@ -83,8 +83,8 @@ public class BasicTypeUsage implements TypeUsage {
                 '}';
     }
 
-    public static Optional<BasicTypeUsage> findByName(String typeName) {
-        for (BasicTypeUsage basicTypeUsage : ALL) {
+    public static Optional<UnsignedPrimitiveTypeUsage> findByName(String typeName) {
+        for (UnsignedPrimitiveTypeUsage basicTypeUsage : ALL) {
             if (basicTypeUsage.name.equals(typeName)) {
                 return Optional.of(basicTypeUsage);
             }
@@ -92,8 +92,8 @@ public class BasicTypeUsage implements TypeUsage {
         return Optional.empty();
     }
 
-    public static BasicTypeUsage getByName(String typeName) {
-        for (BasicTypeUsage basicTypeUsage : ALL) {
+    public static UnsignedPrimitiveTypeUsage getByName(String typeName) {
+        for (UnsignedPrimitiveTypeUsage basicTypeUsage : ALL) {
             if (basicTypeUsage.name.equals(typeName)) {
                 return basicTypeUsage;
             }

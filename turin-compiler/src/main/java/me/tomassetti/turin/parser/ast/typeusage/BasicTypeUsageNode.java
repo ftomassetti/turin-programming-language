@@ -1,7 +1,7 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.typesystem.BasicTypeUsage;
+import me.tomassetti.turin.typesystem.UnsignedPrimitiveTypeUsage;
 
 import java.util.Collections;
 
@@ -12,7 +12,7 @@ import java.util.Collections;
 public class BasicTypeUsageNode extends TypeUsageWrapperNode {
 
     public BasicTypeUsageNode(String name) {
-        super(BasicTypeUsage.getByName(name));
+        super(UnsignedPrimitiveTypeUsage.getByName(name));
     }
 
     @Override

@@ -2,7 +2,6 @@ package me.tomassetti.turin.resolvers;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
-import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.ast.Node;
@@ -15,7 +14,7 @@ import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
 import me.tomassetti.turin.parser.ast.properties.PropertyReference;
 import me.tomassetti.turin.symbols.Symbol;
-import me.tomassetti.turin.typesystem.BasicTypeUsage;
+import me.tomassetti.turin.typesystem.UnsignedPrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
@@ -96,7 +95,7 @@ public class InFileSymbolResolver implements SymbolResolver {
         }
 
         // Note that our Turin basic types could shadow other types
-        Optional<BasicTypeUsage> basicType = BasicTypeUsage.findByName(typeName);
+        Optional<UnsignedPrimitiveTypeUsage> basicType = UnsignedPrimitiveTypeUsage.findByName(typeName);
         if (basicType.isPresent()) {
             return Optional.of(basicType.get());
         }

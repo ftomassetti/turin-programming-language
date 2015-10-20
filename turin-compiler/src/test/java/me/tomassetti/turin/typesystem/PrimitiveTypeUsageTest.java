@@ -1,5 +1,6 @@
 package me.tomassetti.turin.typesystem;
 
+import com.google.common.collect.ImmutableMap;
 import me.tomassetti.turin.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
@@ -8,6 +9,8 @@ import me.tomassetti.turin.symbols.Symbol;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Collections;
 
 import static org.junit.Assert.*;
 
@@ -160,7 +163,7 @@ public class PrimitiveTypeUsageTest {
             for (int j=0; j<PrimitiveTypeUsage.ALL.size(); j++) {
                 assertEquals(i == j, PrimitiveTypeUsage.ALL.get(i).sameType(PrimitiveTypeUsage.ALL.get(j)));
             }
-            for (BasicTypeUsage btu : BasicTypeUsage.ALL) {
+            for (UnsignedPrimitiveTypeUsage btu : UnsignedPrimitiveTypeUsage.ALL) {
                 assertFalse(PrimitiveTypeUsage.ALL.get(i).describe() + " sameType as " + btu.describe(),
                         PrimitiveTypeUsage.ALL.get(i).sameType(btu));
             }
@@ -172,7 +175,7 @@ public class PrimitiveTypeUsageTest {
     @Test
     public void testCanBeAssignedTo() {
         for (PrimitiveTypeUsage ptu : PrimitiveTypeUsage.ALL) {
-            for (BasicTypeUsage btu : BasicTypeUsage.ALL) {
+            for (UnsignedPrimitiveTypeUsage btu : UnsignedPrimitiveTypeUsage.ALL) {
                 assertFalse(ptu.describe() + " can be assigned to " + btu.describe(), ptu.canBeAssignedTo(btu));
             }
         }
@@ -264,21 +267,24 @@ public class PrimitiveTypeUsageTest {
         assertEquals(true, PrimitiveTypeUsage.DOUBLE.canBeAssignedTo(doubleBoxType));
     }
 
-    /*@Test
+    @Test
     public void testReplaceTypeVariables() {
-        assertEquals(arrayOfBoolean, arrayOfBoolean.replaceTypeVariables(Collections.emptyMap()));
-        assertEquals(arrayOfString, arrayOfString.replaceTypeVariables(Collections.emptyMap()));
-        assertEquals(arrayOfArrayOfString, arrayOfArrayOfString.replaceTypeVariables(Collections.emptyMap()));
-        assertEquals(arrayOfBoolean, arrayOfBoolean.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
-        assertEquals(arrayOfString, arrayOfString.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
-        assertEquals(arrayOfArrayOfString, arrayOfArrayOfString.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
+        for (PrimitiveTypeUsage ptu : PrimitiveTypeUsage.ALL) {
+            assertTrue(ptu == ptu.replaceTypeVariables(Collections.emptyMap()));
+            assertTrue(ptu == ptu.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
+        }
     }
 
     @Test
     public void testDescribe() {
-        assertEquals("array of boolean", arrayOfBoolean.describe());
-        assertEquals("array of java.lang.String", arrayOfString.describe());
-        assertEquals("array of array of java.lang.String", arrayOfArrayOfString.describe());
-    }*/
+        assertEquals("boolean", PrimitiveTypeUsage.BOOLEAN.describe());
+        assertEquals("char", PrimitiveTypeUsage.CHAR.describe());
+        assertEquals("byte", PrimitiveTypeUsage.BYTE.describe());
+        assertEquals("short", PrimitiveTypeUsage.SHORT.describe());
+        assertEquals("int", PrimitiveTypeUsage.INT.describe());
+        assertEquals("long", PrimitiveTypeUsage.LONG.describe());
+        assertEquals("float", PrimitiveTypeUsage.FLOAT.describe());
+        assertEquals("double", PrimitiveTypeUsage.DOUBLE.describe());
+    }
 
 }
