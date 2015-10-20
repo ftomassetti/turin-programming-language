@@ -64,11 +64,6 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return Arrays.stream(ctClass.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
-    }
-
-    @Override
     public String getName() {
         return ctClass.getSimpleName();
     }

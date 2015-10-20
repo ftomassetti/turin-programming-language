@@ -329,12 +329,6 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        ensureIsInitialized(symbolResolver());
-        return methodsByName.get(methodName).size() > 1;
-    }
-
-    @Override
     public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams,boolean staticContext) {
         // all named parameters should be after the named ones
         if (!ParamUtils.verifyOrder(actualParams)) {

@@ -144,8 +144,6 @@ public interface TypeDefinition extends Symbol, Named {
 
     JvmMethodDefinition findMethodFor(String name, List<JvmType> argsTypes, boolean staticContext);
 
-    boolean isMethodOverloaded(String methodName);
-
     Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, boolean staticContext);
 
     ///

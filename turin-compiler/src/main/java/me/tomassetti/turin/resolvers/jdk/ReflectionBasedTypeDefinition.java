@@ -172,11 +172,6 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public boolean isMethodOverloaded(String methodName) {
-        return Arrays.stream(clazz.getMethods()).filter((m)->m.getName().equals(methodName)).count() > 1;
-    }
-
-    @Override
     public Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, boolean staticContext) {
         Optional<Method> res = ReflectionBasedMethodResolution.findMethodAmongActualParams(methodName, actualParams, resolver, staticContext, Arrays.asList(clazz.getMethods()));
         if (res.isPresent()) {
