@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.symbols.Symbol;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,21 +15,32 @@ import java.util.Optional;
  */
 public class BasicTypeUsage implements TypeUsage {
 
-    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsage.BYTE);
-    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsage.SHORT);
-    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsage.INT);
     public static BasicTypeUsage ULONG = new BasicTypeUsage("ulong", PrimitiveTypeUsage.LONG);
-    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsage.FLOAT);
+    public static BasicTypeUsage UINT = new BasicTypeUsage("uint", PrimitiveTypeUsage.INT,
+            ImmutableList.of(ULONG));
+    public static BasicTypeUsage USHORT = new BasicTypeUsage("ushort", PrimitiveTypeUsage.SHORT,
+            ImmutableList.of(UINT, ULONG));
+    public static BasicTypeUsage UBYTE = new BasicTypeUsage("ubyte", PrimitiveTypeUsage.BYTE,
+            ImmutableList.of(USHORT, UINT, ULONG));
     public static BasicTypeUsage UDOUBLE = new BasicTypeUsage("udouble", PrimitiveTypeUsage.DOUBLE);
+    public static BasicTypeUsage UFLOAT = new BasicTypeUsage("ufloat", PrimitiveTypeUsage.FLOAT,
+            ImmutableList.of(UDOUBLE));
 
-    private static ImmutableList<BasicTypeUsage> BASIC_TYPES = ImmutableList.of(UBYTE, USHORT, UINT, ULONG, UFLOAT, UDOUBLE);
+    public static ImmutableList<BasicTypeUsage> ALL = ImmutableList.of(UBYTE, USHORT, UINT, ULONG, UFLOAT, UDOUBLE);
 
     private String name;
     private PrimitiveTypeUsage correspondingPrimitiveTypeUsage;
+    private List<BasicTypeUsage> promotionTypes;
 
     private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage) {
+        this(name, correspondingPrimitiveTypeUsage, Collections.emptyList());
+    }
+
+    private BasicTypeUsage(String name, PrimitiveTypeUsage correspondingPrimitiveTypeUsage,
+                           List<BasicTypeUsage> promotionTypes) {
         this.name = name;
         this.correspondingPrimitiveTypeUsage = correspondingPrimitiveTypeUsage;
+        this.promotionTypes = promotionTypes;
     }
 
     @Override
@@ -57,12 +70,9 @@ public class BasicTypeUsage implements TypeUsage {
 
     @Override
     public boolean canBeAssignedTo(TypeUsage type) {
-        return false;
-    }
-
-    @Override
-    public Symbol getInstanceField(String fieldName, Symbol instance) {
-        throw new UnsupportedOperationException();
+        return asPrimitiveTypeUsage().canBeAssignedTo(type)
+                || this == type
+                || promotionTypes.contains(type);
     }
 
     @Override
@@ -74,7 +84,7 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     public static Optional<BasicTypeUsage> findByName(String typeName) {
-        for (BasicTypeUsage basicTypeUsage : BASIC_TYPES) {
+        for (BasicTypeUsage basicTypeUsage : ALL) {
             if (basicTypeUsage.name.equals(typeName)) {
                 return Optional.of(basicTypeUsage);
             }
@@ -83,7 +93,7 @@ public class BasicTypeUsage implements TypeUsage {
     }
 
     public static BasicTypeUsage getByName(String typeName) {
-        for (BasicTypeUsage basicTypeUsage : BASIC_TYPES) {
+        for (BasicTypeUsage basicTypeUsage : ALL) {
             if (basicTypeUsage.name.equals(typeName)) {
                 return basicTypeUsage;
             }
@@ -91,4 +101,31 @@ public class BasicTypeUsage implements TypeUsage {
         throw new IllegalArgumentException(typeName);
     }
 
+    ///
+    /// Fields
+    ///
+
+    @Override
+    public boolean hasInstanceField(String fieldName, Symbol instance) {
+        return false;
+    }
+
+    @Override
+    public Symbol getInstanceField(String fieldName, Symbol instance) {
+        throw new IllegalArgumentException("A " + describe() + " has no field named " + fieldName);
+    }
+
+    @Override
+    public String describe() {
+        return name;
+    }
+
+    ///
+    /// Methods
+    ///
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        return Optional.empty();
+    }
 }

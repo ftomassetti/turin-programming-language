@@ -56,7 +56,17 @@ public class PrimitiveTypeUsage implements TypeUsage {
     public static List<PrimitiveTypeUsage> ALL = ImmutableList.of(BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE);
 
     private boolean isBoxType(TypeUsage other) {
-        return other.isReferenceTypeUsage() && other.asReferenceTypeUsage().getQualifiedName().equals(boxTypeClazz.getCanonicalName());
+        boolean isMyBoxType = other.isReferenceTypeUsage() && other.asReferenceTypeUsage().getQualifiedName().equals(boxTypeClazz.getCanonicalName());
+        if (isMyBoxType) {
+            return true;
+        }
+        // It could be a box type for a tyoe can be promoted to
+        for (PrimitiveTypeUsage promotionType : promotionsTypes) {
+            if (promotionType.isBoxType(other)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isObject(TypeUsage other) {
@@ -69,6 +79,9 @@ public class PrimitiveTypeUsage implements TypeUsage {
             return true;
         }
         if (!other.isPrimitive()) {
+            return false;
+        }
+        if (other instanceof BasicTypeUsage) {
             return false;
         }
         if (promotionsTypes.contains(other)) {
@@ -169,11 +182,6 @@ public class PrimitiveTypeUsage implements TypeUsage {
         return this;
     }
 
-    @Override
-    public Symbol getInstanceField(String fieldName, Symbol instance) {
-        throw new UnsupportedOperationException();
-    }
-
     public boolean isLong() {
         return this == PrimitiveTypeUsage.LONG;
     }
@@ -224,7 +232,33 @@ public class PrimitiveTypeUsage implements TypeUsage {
         if (!other.isPrimitive()) {
             return false;
         }
+        if (other instanceof BasicTypeUsage) {
+            return false;
+        }
         return getName().equals(other.asPrimitiveTypeUsage().getName());
     }
 
+    ///
+    /// Fields
+    ///
+
+    @Override
+    public boolean hasInstanceField(String fieldName, Symbol instance) {
+        return false;
+    }
+
+    @Override
+    public Symbol getInstanceField(String fieldName, Symbol instance) {
+        throw new IllegalArgumentException("A " + describe() + " has no field named " + fieldName);
+    }
+
+    ///
+    /// Methods
+    ///
+
+
+    @Override
+    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+        return Optional.empty();
+    }
 }
