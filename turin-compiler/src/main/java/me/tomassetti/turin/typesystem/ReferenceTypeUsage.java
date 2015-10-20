@@ -3,6 +3,8 @@ package me.tomassetti.turin.typesystem;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
+import me.tomassetti.turin.definitions.InternalInvokableDefinition;
+import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
@@ -134,18 +136,8 @@ public class ReferenceTypeUsage implements TypeUsage {
         }
 
         @Override
-        public Optional<List<? extends FormalParameter>> findFormalParametersFor(List<ActualParam> actualParams) {
-            Optional<InternalConstructorDefinition> constructor = getTypeDefinition().findConstructor(actualParams);
-            if (constructor.isPresent()) {
-                return Optional.of(constructor.get().getFormalParameters());
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        @Override
-        public JvmMethodDefinition findMethodFor(List<ActualParam> actualParams) {
-            throw new UnsupportedOperationException();
+        public Optional<InternalConstructorDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
+            return getTypeDefinition().findConstructor(actualParams);
         }
 
         @Override

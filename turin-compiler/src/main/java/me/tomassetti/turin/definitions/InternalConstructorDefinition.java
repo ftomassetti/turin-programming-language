@@ -18,4 +18,23 @@ public class InternalConstructorDefinition extends InternalInvokableDefinition {
         this.jvmConstructorDefinition = jvmConstructorDefinition;
     }
 
+    @Override
+    public InternalConstructorDefinition asConstructor() {
+        return this;
+    }
+
+    @Override
+    public InternalMethodDefinition asMethod() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isConstructor() {
+        return true;
+    }
+
+    @Override
+    public boolean isMethod() {
+        return false;
+    }
 }

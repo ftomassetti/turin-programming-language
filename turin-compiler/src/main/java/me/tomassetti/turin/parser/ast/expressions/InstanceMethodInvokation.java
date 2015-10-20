@@ -57,7 +57,9 @@ public class InstanceMethodInvokation extends Invokable {
             ap.setParent(InstanceMethodInvokation.this);
             return ap;
         }).collect(Collectors.toList());
-        return subject.calcType().getMethod(methodName, false).get().findMethodFor(paramTypes);
+        return subject.calcType().getMethod(methodName, false).get().
+                internalInvokableDefinitionFor(paramTypes).get().
+                asMethod().getJvmMethodDefinition();
     }
 
     @Override

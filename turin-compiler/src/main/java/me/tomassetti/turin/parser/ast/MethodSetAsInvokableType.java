@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.definitions.InternalInvokableDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.typesystem.InvokableType;
@@ -31,8 +32,9 @@ public class MethodSetAsInvokableType implements InvokableType {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<ActualParam> actualParams) {
+    public Optional<InternalMethodDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
         Optional<InternalMethodDefinition> method = MethodResolutionLogic.findMethodAmongActualParams(actualParams, new ArrayList<>(methodDefinitions));
-        return method.get().getJvmMethodDefinition();
+        return method;
     }
+
 }

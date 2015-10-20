@@ -30,4 +30,24 @@ public class InternalMethodDefinition extends InternalInvokableDefinition {
     public TypeUsage getReturnType() {
         return returnType;
     }
+
+    @Override
+    public InternalConstructorDefinition asConstructor() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InternalMethodDefinition asMethod() {
+        return this;
+    }
+
+    @Override
+    public boolean isConstructor() {
+        return false;
+    }
+
+    @Override
+    public boolean isMethod() {
+        return true;
+    }
 }

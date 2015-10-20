@@ -1,12 +1,13 @@
 package me.tomassetti.turin.typesystem;
 
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.definitions.InternalInvokableDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A reference to something that has a first goal to be invoked.
@@ -81,7 +82,7 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes) {
+    public Optional<InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException();
     }
 }

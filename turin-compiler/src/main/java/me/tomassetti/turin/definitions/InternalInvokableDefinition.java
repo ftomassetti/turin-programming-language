@@ -125,4 +125,12 @@ public abstract class InternalInvokableDefinition {
     public boolean hasDefaultParams() {
         return getFormalParameters().stream().filter((p)->p.hasDefaultValue()).findFirst().isPresent();
     }
+
+    public abstract InternalConstructorDefinition asConstructor();
+
+    public abstract InternalMethodDefinition asMethod();
+
+    public abstract boolean isConstructor();
+
+    public abstract boolean isMethod();
 }

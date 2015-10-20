@@ -2,7 +2,6 @@ package me.tomassetti.turin.parser.ast.expressions;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.jvm.JvmMethodDefinition;
-import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
@@ -60,7 +59,9 @@ public class FieldAccess extends Expression {
 
     @Override
     public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes, SymbolResolver resolver, boolean staticContext) {
-        return subject.calcType().getMethod(this.field, staticContext).get().findMethodFor(argsTypes);
+        return subject.calcType().getMethod(this.field, staticContext).get()
+                .internalInvokableDefinitionFor(argsTypes).get()
+                .asMethod().getJvmMethodDefinition();
     }
 
     @Override
@@ -79,7 +80,8 @@ public class FieldAccess extends Expression {
             //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
             throw new UnsupportedOperationException();
         } else if (invokable instanceof FunctionCall) {
-            return subject.calcType().asInvokable().findFormalParametersFor(invokable.getActualParams());
+            return subject.calcType().asInvokable().internalInvokableDefinitionFor(invokable.getActualParams()).map(
+                    (iid) -> iid.getFormalParameters());
         } else {
             throw new UnsupportedOperationException(invokable.getClass().getCanonicalName());
         }

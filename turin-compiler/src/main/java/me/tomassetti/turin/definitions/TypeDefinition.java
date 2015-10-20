@@ -146,13 +146,14 @@ public interface TypeDefinition extends Symbol, Named {
 
     Optional<InternalMethodDefinition> findMethod(String methodName, List<ActualParam> actualParams, boolean staticContext);
 
+    default Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> stringTypeUsageMap) {
+        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
+    }
+
     ///
     /// Misc
     ///
 
     <T extends TypeUsage> Map<String, TypeUsage> associatedTypeParametersToName(List<T> typeParams);
 
-    default Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> stringTypeUsageMap) {
-        throw new UnsupportedOperationException(this.getClass().getCanonicalName());
-    }
 }

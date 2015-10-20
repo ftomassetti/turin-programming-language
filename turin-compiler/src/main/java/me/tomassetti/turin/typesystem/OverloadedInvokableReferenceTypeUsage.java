@@ -4,6 +4,7 @@ import javassist.CtMethod;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
+import me.tomassetti.turin.definitions.InternalInvokableDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.compiled.JavassistBasedMethodResolution;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
@@ -13,6 +14,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class OverloadedInvokableReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage {
 
@@ -71,7 +73,7 @@ public class OverloadedInvokableReferenceTypeUsage extends OverloadedFunctionRef
     }
 
     @Override
-    public JvmMethodDefinition findMethodFor(List<ActualParam> argsTypes) {
+    public Optional<InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
         throw new UnsupportedOperationException();
     }
 
