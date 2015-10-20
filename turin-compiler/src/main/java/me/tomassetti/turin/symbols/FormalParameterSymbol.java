@@ -2,6 +2,8 @@ package me.tomassetti.turin.symbols;
 
 import me.tomassetti.turin.typesystem.TypeUsage;
 
+import java.util.Map;
+
 public class FormalParameterSymbol implements FormalParameter {
 
     private String name;
@@ -67,5 +69,10 @@ public class FormalParameterSymbol implements FormalParameter {
     @Override
     public TypeUsage calcType() {
         return typeUsage;
+    }
+
+    @Override
+    public FormalParameter apply(Map<String, TypeUsage> typeParams) {
+        return new FormalParameterSymbol(typeUsage.replaceTypeVariables(typeParams), name, defaultValue);
     }
 }

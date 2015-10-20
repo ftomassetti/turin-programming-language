@@ -40,7 +40,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
         typeParameters.add(typeUsage);
     }
 
-    private static TypeUsage typeFor(List<Method> methods, SymbolResolver resolver) {
+    private TypeUsage typeFor(List<Method> methods, SymbolResolver resolver) {
         if (methods.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -55,18 +55,13 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
         return typeFor(methods.get(0), resolver);
     }
 
-    private static TypeUsage typeFor(Method method, SymbolResolver resolver) {
-        List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt, resolver)).collect(Collectors.toList());
-        InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType(), resolver));
+    private TypeUsage typeFor(Method method, SymbolResolver resolver) {
+        InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(toInternalMethodDefinition(method));
         return invokableReferenceTypeUsage;
     }
 
     private static TypeUsage toTypeUsage(Type type, SymbolResolver resolver) {
         return ReflectionBasedMethodResolution.toTypeUsage(type, Collections.emptyMap(), resolver);
-    }
-
-    private static TypeUsage toTypeUsage(TypeVariable typeVariable, SymbolResolver resolver) {
-        return ReflectionBasedMethodResolution.toTypeUsage(typeVariable, Collections.emptyMap(), resolver);
     }
 
     @Override
@@ -134,7 +129,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
 
     private InternalConstructorDefinition toInternalConstructorDefinition(Constructor<?> constructor) {
         JvmConstructorDefinition jvmConstructorDefinition = ReflectionTypeDefinitionFactory.toConstructorDefinition(constructor);
-        return new InternalConstructorDefinition(formalParameters(constructor), jvmConstructorDefinition);
+        return new InternalConstructorDefinition(new ReferenceTypeUsage(this), formalParameters(constructor), jvmConstructorDefinition);
     }
 
     @Override
@@ -228,7 +223,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
             }
         }
         if (!methods.isEmpty()) {
-            return ReflectionBasedTypeDefinition.typeFor(methods, resolver);
+            return this.typeFor(methods, resolver);
         }
 
         // TODO consider inherited fields and methods

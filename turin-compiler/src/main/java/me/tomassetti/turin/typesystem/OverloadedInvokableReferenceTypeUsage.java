@@ -50,7 +50,12 @@ public class OverloadedInvokableReferenceTypeUsage extends OverloadedFunctionRef
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
+    public boolean isOverloaded() {
+        return true;
+    }
+
+    @Override
+    public Optional<InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
         List<JvmType> argsTypes = new ArrayList<>();
         for (ActualParam actualParam : actualParams) {
             if (actualParam.isNamed()) {
@@ -64,17 +69,7 @@ public class OverloadedInvokableReferenceTypeUsage extends OverloadedFunctionRef
         if (index == -1) {
             throw new RuntimeException();
         }
-        return alternatives.get(index).returnTypeWhenInvokedWith(actualParams);
-    }
-
-    @Override
-    public boolean isOverloaded() {
-        return true;
-    }
-
-    @Override
-    public Optional<InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
-        throw new UnsupportedOperationException();
+        return alternatives.get(index).internalInvokableDefinitionFor(actualParams);
     }
 
     @Override

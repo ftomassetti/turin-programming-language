@@ -200,7 +200,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
             paramSignatures.add("Ljava/util/Map;");
         }
         JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
-        constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
+        constructors.add(new InternalConstructorDefinition(new ReferenceTypeUsage(this), allParams, constructorDefinition));
     }
 
     private void initializeExplicitConstructor(TurinTypeContructorDefinitionNode constructor, SymbolResolver resolver) {
@@ -214,7 +214,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
             paramSignatures.add("Ljava/util/Map;");
         }
         JvmConstructorDefinition constructorDefinition = new JvmConstructorDefinition(jvmType().getInternalName(), "(" + String.join("", paramSignatures) + ")V");
-        constructors.add(new InternalConstructorDefinition(allParams, constructorDefinition));
+        constructors.add(new InternalConstructorDefinition(new ReferenceTypeUsage(this), allParams, constructorDefinition));
     }
 
     private void ensureIsInitialized(SymbolResolver resolver) {

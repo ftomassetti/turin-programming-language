@@ -133,4 +133,8 @@ public abstract class InternalInvokableDefinition {
     public abstract boolean isConstructor();
 
     public abstract boolean isMethod();
+
+    public abstract TypeUsage getReturnType();
+
+    public abstract InternalInvokableDefinition apply(Map<String, TypeUsage> typeParams);
 }

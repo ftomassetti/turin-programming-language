@@ -3,6 +3,8 @@ package me.tomassetti.turin.parser.ast.invokables;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.definitions.InternalInvokableDefinition;
+import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Named;
@@ -53,8 +55,12 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
 
     @Override
     public TypeUsage calcType() {
-        InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(parameters.stream().map((fp)->fp.getType()).collect(Collectors.toList()), returnType);
+        InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(internalInvokableDefinition());
         return invokableReferenceTypeUsage;
+    }
+
+    private InternalInvokableDefinition internalInvokableDefinition() {
+        return new InternalMethodDefinition(INVOKE_METHOD_NAME, parameters, returnType, jvmMethodDefinition(symbolResolver()));
     }
 
     @Override

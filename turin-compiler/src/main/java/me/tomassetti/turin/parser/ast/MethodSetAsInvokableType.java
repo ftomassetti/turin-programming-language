@@ -1,8 +1,5 @@
 package me.tomassetti.turin.parser.ast;
 
-import me.tomassetti.jvm.JvmMethodDefinition;
-import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.definitions.InternalInvokableDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.typesystem.InvokableType;
@@ -21,12 +18,6 @@ public class MethodSetAsInvokableType implements InvokableType {
     }
 
     @Override
-    public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
-        Optional<InternalMethodDefinition> method = MethodResolutionLogic.findMethodAmongActualParams(actualParams, new ArrayList<>(methodDefinitions));
-        return method.get().getReturnType().replaceTypeVariables(typeParams);
-    }
-
-    @Override
     public boolean isOverloaded() {
         return methodDefinitions.size() > 1;
     }
@@ -34,6 +25,7 @@ public class MethodSetAsInvokableType implements InvokableType {
     @Override
     public Optional<InternalMethodDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
         Optional<InternalMethodDefinition> method = MethodResolutionLogic.findMethodAmongActualParams(actualParams, new ArrayList<>(methodDefinitions));
+        method = method.map((imd)->imd.apply(typeParams));
         return method;
     }
 

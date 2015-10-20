@@ -57,7 +57,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     private InternalConstructorDefinition toInternalConstructorDefinition(CtConstructor constructor, SymbolResolver resolver) {
         try {
             JvmConstructorDefinition jvmConstructorDefinition = JavassistTypeDefinitionFactory.toConstructorDefinition(constructor);
-            return new InternalConstructorDefinition(formalParameters(constructor, resolver), jvmConstructorDefinition);
+            return new InternalConstructorDefinition(toTypeUsage(constructor.getDeclaringClass(), resolver), formalParameters(constructor, resolver), jvmConstructorDefinition);
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -161,7 +161,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
         }
     }
 
-    private Map<String, TypeUsageNode.TypeVariableData> getVisibleTypeVariables(CtClass ctClass) {
+    private static Map<String, TypeUsageNode.TypeVariableData> getVisibleTypeVariables(CtClass ctClass) {
         Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = new HashMap<>();
         if (ctClass.getGenericSignature() != null) {
             try {
@@ -179,13 +179,13 @@ public class JavassistTypeDefinition implements TypeDefinition {
         return visibleTypeVariables;
     }
 
-    private Map<String, TypeUsageNode.TypeVariableData> getVisibleTypeVariables(CtMethod method) {
+    private static Map<String, TypeUsageNode.TypeVariableData> getVisibleTypeVariables(CtMethod method) {
         CtClass ctClass = method.getDeclaringClass();
         Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = getVisibleTypeVariables(ctClass);
         return visibleTypeVariables;
     }
 
-    private InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod, SymbolResolver resolver) {
+    private static InternalMethodDefinition toInternalMethodDefinition(CtMethod ctMethod, SymbolResolver resolver) {
         try {
             Map<String, TypeUsageNode.TypeVariableData> visibleTypeVariables = getVisibleTypeVariables(ctMethod);
             TypeUsage returnType = toTypeUsage(ctMethod.getReturnType(), resolver);
@@ -222,7 +222,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
         }
     }
 
-    private List<FormalParameterSymbol> formalParameters(CtMethod method, SymbolResolver resolver) {
+    private static List<FormalParameterSymbol> formalParameters(CtMethod method, SymbolResolver resolver) {
         try {
             List<FormalParameterSymbol> formalParameters = new ArrayList<>();
             MethodInfo methodInfo = method.getMethodInfo();
@@ -341,12 +341,14 @@ public class JavassistTypeDefinition implements TypeDefinition {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
                 List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver, Collections.emptyMap())).collect(Collectors.toList());
-                InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType(), resolver, Collections.emptyMap()));
+                InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(
+                        toInternalMethodDefinition(method, resolver));
                 return invokableReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
                 List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver)).collect(Collectors.toList());
-                InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType(), resolver));
+                InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(
+                        toInternalMethodDefinition(method, resolver));
                 return invokableReferenceTypeUsage;
             }
         } catch (BadBytecode badBytecode) {

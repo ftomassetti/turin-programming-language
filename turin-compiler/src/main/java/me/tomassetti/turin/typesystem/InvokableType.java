@@ -11,7 +11,8 @@ import java.util.Optional;
  */
 public interface InvokableType {
 
-    TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams);
-    boolean isOverloaded();
     Optional<? extends InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams);
+
+    boolean isOverloaded();
+
 }

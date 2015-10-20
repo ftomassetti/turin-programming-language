@@ -3,12 +3,11 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
+import me.tomassetti.turin.typesystem.TypeUsage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class FormalParameterNode extends Node implements Symbol, FormalParameter {
 
@@ -111,5 +110,10 @@ public class FormalParameterNode extends Node implements Symbol, FormalParameter
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public FormalParameter apply(Map<String, TypeUsage> typeParams) {
+        return new FormalParameterSymbol(type.replaceTypeVariables(typeParams), name, defaultValue.isPresent());
     }
 }

@@ -131,11 +131,6 @@ public class ReferenceTypeUsage implements TypeUsage {
     class AsConstructor implements InvokableType {
 
         @Override
-        public TypeUsage returnTypeWhenInvokedWith(List<ActualParam> actualParams) {
-            return ReferenceTypeUsage.this;
-        }
-
-        @Override
         public Optional<InternalConstructorDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
             return getTypeDefinition().findConstructor(actualParams);
         }

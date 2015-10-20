@@ -8,6 +8,7 @@ import me.tomassetti.turin.compiler.AbstractCompilerTest;
 import me.tomassetti.turin.compiler.Compiler;
 import me.tomassetti.turin.parser.Parser;
 import me.tomassetti.turin.parser.ast.TurinFile;
+import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.ReturnStatement;
@@ -114,9 +115,10 @@ public class RelationsCompilationTest extends AbstractCompilerTest {
         Statement lastStatement = body.getStatements().get(body.getStatements().size() - 1);
         ReturnStatement returnStatement = (ReturnStatement)lastStatement;
         // Probably JavaAssistTypeDefinition already replaced Type Variables
-        TypeUsage returnedValue = returnStatement.getValue().calcType();
-        assertTrue(returnedValue.isReferenceTypeUsage());
-        assertEquals("relations.Node", returnedValue.asReferenceTypeUsage().getQualifiedName());
+        Expression returnedValue = returnStatement.getValue();
+        TypeUsage returnedValueType = returnedValue.calcType();
+        assertTrue(returnedValueType.isReferenceTypeUsage());
+        assertEquals("relations.Node", returnedValueType.asReferenceTypeUsage().getQualifiedName());
     }
 
     @Test
