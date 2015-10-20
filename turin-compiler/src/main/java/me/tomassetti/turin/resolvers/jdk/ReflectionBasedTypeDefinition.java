@@ -13,7 +13,7 @@ import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
-import me.tomassetti.turin.typesystem.FunctionReferenceTypeUsage;
+import me.tomassetti.turin.typesystem.InvokableReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.InvokableType;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
@@ -57,8 +57,8 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
 
     private static TypeUsage typeFor(Method method, SymbolResolver resolver) {
         List<TypeUsage> paramTypes = Arrays.stream(method.getGenericParameterTypes()).map((pt)->toTypeUsage(pt, resolver)).collect(Collectors.toList());
-        FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType(), resolver));
-        return functionReferenceTypeUsage;
+        InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(paramTypes, toTypeUsage(method.getGenericReturnType(), resolver));
+        return invokableReferenceTypeUsage;
     }
 
     private static TypeUsage toTypeUsage(Type type, SymbolResolver resolver) {

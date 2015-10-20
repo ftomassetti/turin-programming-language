@@ -14,16 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JarOverloadedFunctionReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage {
+public class OverloadedInvokableReferenceTypeUsage extends OverloadedFunctionReferenceTypeUsage {
 
     private List<CtMethod> ctMethods;
     private String methodName;
     private boolean staticContext;
     private SymbolResolver resolver;
 
-    public JarOverloadedFunctionReferenceTypeUsage(List<FunctionReferenceTypeUsage> alternatives,
-                                                   List<CtMethod> ctMethods,
-                                                   SymbolResolver resolver) {
+    public OverloadedInvokableReferenceTypeUsage(List<InvokableReferenceTypeUsage> alternatives,
+                                                 List<CtMethod> ctMethods,
+                                                 SymbolResolver resolver) {
         super(alternatives);
         if (alternatives.size() != ctMethods.size()) {
             throw new IllegalArgumentException();

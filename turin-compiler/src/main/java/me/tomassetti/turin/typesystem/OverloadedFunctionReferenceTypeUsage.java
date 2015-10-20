@@ -4,9 +4,9 @@ import java.util.List;
 
 public abstract class OverloadedFunctionReferenceTypeUsage implements TypeUsage, InvokableType {
 
-    protected List<FunctionReferenceTypeUsage> alternatives;
+    protected List<InvokableReferenceTypeUsage> alternatives;
 
-    OverloadedFunctionReferenceTypeUsage(List<FunctionReferenceTypeUsage> alternatives) {
+    OverloadedFunctionReferenceTypeUsage(List<InvokableReferenceTypeUsage> alternatives) {
         if (alternatives.size() < 2) {
             throw new IllegalArgumentException();
         }

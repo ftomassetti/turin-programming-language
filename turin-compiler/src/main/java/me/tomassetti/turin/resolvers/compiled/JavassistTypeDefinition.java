@@ -18,7 +18,6 @@ import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.*;
-import org.objectweb.asm.signature.SignatureReader;
 import turin.compilation.DefaultParam;
 
 import java.lang.reflect.InvocationTargetException;
@@ -332,7 +331,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
             }
         });
         if (methods.size() != 1) {
-            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new JarOverloadedFunctionReferenceTypeUsage(
+            OverloadedFunctionReferenceTypeUsage overloadedFunctionReferenceTypeUsage = new OverloadedInvokableReferenceTypeUsage(
                     methods.stream().map((m)->typeFor(m, resolver)).collect(Collectors.toList()),
                     methods,
                     resolver);
@@ -341,19 +340,19 @@ public class JavassistTypeDefinition implements TypeDefinition {
         return typeFor(methods.get(0), resolver);
     }
 
-    private static FunctionReferenceTypeUsage typeFor(CtMethod method, SymbolResolver resolver) {
+    private static InvokableReferenceTypeUsage typeFor(CtMethod method, SymbolResolver resolver) {
         try {
             if (method.getGenericSignature() != null) {
                 SignatureAttribute.MethodSignature methodSignature = SignatureAttribute.toMethodSignature(method.getGenericSignature());
                 SignatureAttribute.Type[] parameterTypes = methodSignature.getParameterTypes();
                 List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver, Collections.emptyMap())).collect(Collectors.toList());
-                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType(), resolver, Collections.emptyMap()));
-                return functionReferenceTypeUsage;
+                InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(paramTypes, toTypeUsage(methodSignature.getReturnType(), resolver, Collections.emptyMap()));
+                return invokableReferenceTypeUsage;
             } else {
                 CtClass[] parameterTypes = method.getParameterTypes();
                 List<TypeUsage> paramTypes = Arrays.stream(parameterTypes).map((pt) -> toTypeUsage(pt, resolver)).collect(Collectors.toList());
-                FunctionReferenceTypeUsage functionReferenceTypeUsage = new FunctionReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType(), resolver));
-                return functionReferenceTypeUsage;
+                InvokableReferenceTypeUsage invokableReferenceTypeUsage = new InvokableReferenceTypeUsage(paramTypes, toTypeUsage(method.getReturnType(), resolver));
+                return invokableReferenceTypeUsage;
             }
         } catch (BadBytecode badBytecode) {
             throw new RuntimeException(badBytecode);
