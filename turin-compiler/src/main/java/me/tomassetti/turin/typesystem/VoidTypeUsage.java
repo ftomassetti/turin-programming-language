@@ -52,4 +52,8 @@ public class VoidTypeUsage implements TypeUsage {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public String describe() {
+        return "void";
+    }
 }

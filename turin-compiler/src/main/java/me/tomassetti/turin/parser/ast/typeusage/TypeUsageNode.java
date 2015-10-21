@@ -1,12 +1,10 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.jvm.JvmTypeCategory;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.*;
 
@@ -85,7 +83,7 @@ public abstract class TypeUsageNode extends Node implements TypeUsage {
             for (String typeVariableName : visibleGenericTypes.keySet()) {
                 if (typeVariableName.equals(signature)) {
                     TypeVariableData typeVariableData = visibleGenericTypes.get(typeVariableName);
-                    return new TypeVariableUsage(typeVariableData.genericDeclaration, typeVariableName, typeVariableData.getBounds());
+                    return new ConcreteTypeVariableUsage(typeVariableData.genericDeclaration, typeVariableName, typeVariableData.getBounds());
                 }
             }
             throw new UnsupportedOperationException("Signature="+signature+", type="+jvmType.getClass());

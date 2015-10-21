@@ -1,22 +1,8 @@
 package me.tomassetti.turin.typesystem;
 
-import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.symbols.Symbol;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class TypeVariableUsage implements TypeUsage {
-
-    @Override
-    public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        if (typeParams.containsKey(name)) {
-            return typeParams.get(name);
-        } else {
-            return this;
-        }
-    }
+public interface TypeVariableUsage extends TypeUsage {
 
     public static class GenericDeclaration {
 
@@ -53,41 +39,33 @@ public class TypeVariableUsage implements TypeUsage {
         public static GenericDeclaration onConstructor(String className, String constructorSignature) {
             return new GenericDeclaration(className, null, constructorSignature);
         }
-    }
 
-    private String name;
-    private List<TypeUsage> bounds;
-    private GenericDeclaration genericDeclaration;
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof GenericDeclaration)) return false;
 
-    public TypeVariableUsage(GenericDeclaration genericDeclaration, String name, List<? extends TypeUsage> bounds) {
-        this.name = name;
-        this.genericDeclaration = genericDeclaration;
-        this.bounds = new ArrayList<>(bounds);
-    }
+            GenericDeclaration that = (GenericDeclaration) o;
 
-    @Override
-    public boolean sameType(TypeUsage other) {
-        /*if (!other.isTypeVariable()) {
-            return false;
+            if (className != null ? !className.equals(that.className) : that.className != null) return false;
+            if (constructorSignature != null ? !constructorSignature.equals(that.constructorSignature) : that.constructorSignature != null)
+                return false;
+            if (methodSignature != null ? !methodSignature.equals(that.methodSignature) : that.methodSignature != null)
+                return false;
+
+            return true;
         }
 
-        return this.getName()*/
-        throw new UnsupportedOperationException();
+        @Override
+        public int hashCode() {
+            int result = className != null ? className.hashCode() : 0;
+            result = 31 * result + (methodSignature != null ? methodSignature.hashCode() : 0);
+            result = 31 * result + (constructorSignature != null ? constructorSignature.hashCode() : 0);
+            return result;
+        }
     }
 
-    @Override
-    public JvmType jvmType() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean canBeAssignedTo(TypeUsage type) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Symbol getInstanceField(String fieldName, Symbol instance) {
-        throw new UnsupportedOperationException();
-    }
-
+    String getName();
+    GenericDeclaration getGenericDeclaration();
+    List<TypeUsage> getBounds();
 }

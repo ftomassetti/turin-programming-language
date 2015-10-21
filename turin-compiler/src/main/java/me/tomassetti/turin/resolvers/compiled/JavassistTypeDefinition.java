@@ -398,7 +398,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     private static TypeUsage toTypeUsage(SignatureAttribute.Type type, SymbolResolver resolver, Map<String, TypeUsageNode.TypeVariableData> visibleGenericTypes) {
         if (visibleGenericTypes.keySet().contains(type.jvmTypeName())) {
             TypeUsageNode.TypeVariableData typeVariableData = visibleGenericTypes.get(type.jvmTypeName());
-            return new TypeVariableUsage(typeVariableData.getGenericDeclaration(), type.jvmTypeName(), typeVariableData.getBounds());
+            return new ConcreteTypeVariableUsage(typeVariableData.getGenericDeclaration(), type.jvmTypeName(), typeVariableData.getBounds());
         }
         return TypeUsageNode.fromJvmType(toJvmType(type, visibleGenericTypes), resolver, visibleGenericTypes);
     }

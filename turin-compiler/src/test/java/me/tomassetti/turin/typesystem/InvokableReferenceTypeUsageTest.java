@@ -6,7 +6,6 @@ import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalInvokableDefinition;
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.resolvers.InFileSymbolResolver;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.JdkTypeResolver;
@@ -17,8 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class InvokableReferenceTypeUsageTest {
@@ -27,6 +24,8 @@ public class InvokableReferenceTypeUsageTest {
     private InvokableReferenceTypeUsage invokableB;
     private InvokableReferenceTypeUsage invokableC;
     private InvokableReferenceTypeUsage invokableD;
+    private InvokableReferenceTypeUsage invokableSameAsA;
+    private InvokableReferenceTypeUsage invokableSameAsD;
     private ReferenceTypeUsage string;
     private ReferenceTypeUsage object;
 
@@ -49,19 +48,31 @@ public class InvokableReferenceTypeUsageTest {
                         new FormalParameterSymbol(PrimitiveTypeUsage.BOOLEAN, "flag")),
                 new VoidTypeUsage(),
                 new JvmMethodDefinition("a/b/MyClass", "foo", "(Z)V", true, false));
-        invokableB = new InvokableReferenceTypeUsage(internalA);
+        invokableB = new InvokableReferenceTypeUsage(internalB);
         InternalInvokableDefinition internalC = new InternalMethodDefinition(
                 "bar",
                 ImmutableList.of(),
-                new TypeVariableUsage(TypeVariableUsage.GenericDeclaration.onClass("a.b.MyClass"), "A", Collections.emptyList()),
+                new ConcreteTypeVariableUsage(TypeVariableUsage.GenericDeclaration.onClass("a.b.MyClass"), "A", Collections.emptyList()),
                 // where A is a Type Variable
-                new JvmMethodDefinition("a/b/MyClass", "bar", "()A", false, true));
-        invokableC = new InvokableReferenceTypeUsage(internalA);
+                new JvmMethodDefinition("a/b/MyClass", "internalC", "()A", false, true));
+        invokableC = new InvokableReferenceTypeUsage(internalC);
         InternalInvokableDefinition internalD = new InternalConstructorDefinition(
                 string,
                 ImmutableList.of(),
                 new JvmConstructorDefinition("a/b/MyClass", "()V"));
-        invokableD = new InvokableReferenceTypeUsage(internalA);
+        invokableD = new InvokableReferenceTypeUsage(internalD);
+        InternalInvokableDefinition internalSameAsA = new InternalConstructorDefinition(
+                string,
+                ImmutableList.of(
+                        new FormalParameterSymbol(PrimitiveTypeUsage.INT, "n"),
+                        new FormalParameterSymbol(object, "what")),
+                new JvmConstructorDefinition("a/b/AnotherClass", "(ILjava/lang/Object;)Ljava/lang/String;"));
+        invokableSameAsA = new InvokableReferenceTypeUsage(internalSameAsA);
+        InternalInvokableDefinition internalSameAsD = new InternalConstructorDefinition(
+                string,
+                ImmutableList.of(),
+                new JvmConstructorDefinition("a/b/AnotherClass", "()V"));
+        invokableSameAsD = new InvokableReferenceTypeUsage(internalSameAsD);
     }
 
     @Test
@@ -275,30 +286,39 @@ public class InvokableReferenceTypeUsageTest {
         assertFalse(invokableC.getMethod("foo", true).isPresent());
         assertFalse(invokableD.getMethod("foo", true).isPresent());
     }
-/*
-    @Test
-    public void testSameType() {
-        assertEquals(true, arrayOfBoolean.sameType(arrayOfBoolean));
-        assertEquals(false, arrayOfBoolean.sameType(arrayOfString));
-        assertEquals(false, arrayOfBoolean.sameType(arrayOfArrayOfString));
-        assertEquals(false, arrayOfBoolean.sameType(PrimitiveTypeUsage.BOOLEAN));
-        assertEquals(false, arrayOfBoolean.sameType(string));
-        assertEquals(false, arrayOfBoolean.sameType(object));
-        assertEquals(false, arrayOfString.sameType(arrayOfBoolean));
-        assertEquals(true, arrayOfString.sameType(arrayOfString));
-        assertEquals(false, arrayOfString.sameType(arrayOfArrayOfString));
-        assertEquals(false, arrayOfString.sameType(PrimitiveTypeUsage.BOOLEAN));
-        assertEquals(false, arrayOfString.sameType(string));
-        assertEquals(false, arrayOfString.sameType(object));
-        assertEquals(false, arrayOfArrayOfString.sameType(arrayOfBoolean));
-        assertEquals(false, arrayOfArrayOfString.sameType(arrayOfString));
-        assertEquals(true, arrayOfArrayOfString.sameType(arrayOfArrayOfString));
-        assertEquals(false, arrayOfArrayOfString.sameType(PrimitiveTypeUsage.BOOLEAN));
-        assertEquals(false, arrayOfArrayOfString.sameType(string));
-        assertEquals(false, arrayOfArrayOfString.sameType(object));
-    }
 
     @Test
+    public void testSameType() {
+        assertEquals(true, invokableA.sameType(invokableA));
+        assertEquals(false, invokableA.sameType(invokableB));
+        assertEquals(false, invokableA.sameType(invokableC));
+        assertEquals(false, invokableA.sameType(invokableD));
+        assertEquals(true, invokableA.sameType(invokableSameAsA));
+        assertEquals(false, invokableA.sameType(invokableSameAsD));
+
+        assertEquals(false, invokableB.sameType(invokableA));
+        assertEquals(true, invokableB.sameType(invokableB));
+        assertEquals(false, invokableB.sameType(invokableC));
+        assertEquals(false, invokableB.sameType(invokableD));
+        assertEquals(false, invokableB.sameType(invokableSameAsA));
+        assertEquals(false, invokableB.sameType(invokableSameAsD));
+
+        assertEquals(false, invokableC.sameType(invokableA));
+        assertEquals(false, invokableC.sameType(invokableB));
+        assertEquals(true, invokableC.sameType(invokableC));
+        assertEquals(false, invokableC.sameType(invokableD));
+        assertEquals(false, invokableC.sameType(invokableSameAsA));
+        assertEquals(false, invokableC.sameType(invokableSameAsD));
+
+        assertEquals(false, invokableD.sameType(invokableA));
+        assertEquals(false, invokableD.sameType(invokableB));
+        assertEquals(false, invokableD.sameType(invokableC));
+        assertEquals(true, invokableD.sameType(invokableD));
+        assertEquals(false, invokableD.sameType(invokableSameAsA));
+        assertEquals(true, invokableD.sameType(invokableSameAsD));
+    }
+
+    /*@Test
     public void testCanBeAssignedTo() {
         assertEquals(true, arrayOfBoolean.canBeAssignedTo(arrayOfBoolean));
         assertEquals(false, arrayOfBoolean.canBeAssignedTo(arrayOfString));

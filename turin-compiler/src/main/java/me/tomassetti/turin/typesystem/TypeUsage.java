@@ -37,6 +37,10 @@ public interface TypeUsage {
         return false;
     }
 
+    default boolean isTypeVariable() {
+        return false;
+    }
+
     default ReferenceTypeUsage asReferenceTypeUsage() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
@@ -46,6 +50,10 @@ public interface TypeUsage {
     }
 
     default PrimitiveTypeUsage asPrimitiveTypeUsage() {
+        throw new UnsupportedOperationException();
+    }
+
+    default TypeVariableUsage asTypeVariableUsage() {
         throw new UnsupportedOperationException();
     }
 

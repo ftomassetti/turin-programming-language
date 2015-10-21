@@ -34,7 +34,25 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
      */
     @Override
     public boolean sameType(TypeUsage other) {
-        throw new UnsupportedOperationException();
+        if (!other.isInvokable()) {
+            return false;
+        }
+        if (!(other instanceof InvokableReferenceTypeUsage)) {
+            return false;
+        }
+        InvokableReferenceTypeUsage otherInvokable = (InvokableReferenceTypeUsage)other;
+        if (this.internalInvokableDefinition.getFormalParameters().size() !=
+                otherInvokable.internalInvokableDefinition.getFormalParameters().size()) {
+            return false;
+        }
+        for (int i=0; i<this.internalInvokableDefinition.getFormalParameters().size(); i++) {
+            if (!this.internalInvokableDefinition.getFormalParameters().get(i).getType().sameType(
+                    otherInvokable.internalInvokableDefinition.getFormalParameters().get(i).getType())) {
+                return false;
+            }
+        }
+        return this.internalInvokableDefinition.getReturnType().sameType(
+                otherInvokable.internalInvokableDefinition.getReturnType());
     }
 
     @Override
