@@ -11,6 +11,7 @@ import me.tomassetti.turin.typesystem.InvokableType;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InstanceMethodInvokation extends Invokable {
@@ -61,9 +62,13 @@ public class InstanceMethodInvokation extends Invokable {
             ap.setParent(InstanceMethodInvokation.this);
             return ap;
         }).collect(Collectors.toList());
-        return subject.calcType().getMethod(methodName, false).get().
-                internalInvokableDefinitionFor(paramTypes).get().
-                asMethod().getJvmMethodDefinition();
+        TypeUsage subjectType = subject.calcType();
+        Optional<InvokableType> method = subjectType.getMethod(methodName, false);
+        Optional<? extends InternalInvokableDefinition> invokableDefinition = method.get().internalInvokableDefinitionFor(paramTypes);
+        if (!invokableDefinition.isPresent()) {
+            throw new IllegalStateException("Unable to retrieve the JVM definition: " + method.get().getClass().getCanonicalName());
+        }
+        return invokableDefinition.get().asMethod().getJvmMethodDefinition();
     }
 
     @Override

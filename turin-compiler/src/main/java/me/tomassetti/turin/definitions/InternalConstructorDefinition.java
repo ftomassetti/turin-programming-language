@@ -57,4 +57,33 @@ public class InternalConstructorDefinition extends InternalInvokableDefinition {
         return new InternalConstructorDefinition(returnType.replaceTypeVariables(typeParams),
                 formalParametersReplaced, jvmConstructorDefinition);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof InternalConstructorDefinition)) return false;
+
+        InternalConstructorDefinition that = (InternalConstructorDefinition) o;
+
+        if (!jvmConstructorDefinition.equals(that.jvmConstructorDefinition)) return false;
+        if (!returnType.equals(that.returnType)) return false;
+        if (!getFormalParameters().equals(that.getFormalParameters())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = jvmConstructorDefinition.hashCode();
+        result = 31 * result + returnType.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "InternalConstructorDefinition{" +
+                "jvmConstructorDefinition=" + jvmConstructorDefinition +
+                ", returnType=" + returnType +
+                '}';
+    }
 }

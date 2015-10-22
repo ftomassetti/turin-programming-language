@@ -63,4 +63,36 @@ public class InternalMethodDefinition extends InternalInvokableDefinition {
     public boolean isMethod() {
         return true;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof InternalMethodDefinition)) return false;
+
+        InternalMethodDefinition that = (InternalMethodDefinition) o;
+
+        if (!jvmMethodDefinition.equals(that.jvmMethodDefinition)) return false;
+        if (!methodName.equals(that.methodName)) return false;
+        if (!returnType.equals(that.returnType)) return false;
+        if (!getFormalParameters().equals(that.getFormalParameters())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = methodName.hashCode();
+        result = 31 * result + jvmMethodDefinition.hashCode();
+        result = 31 * result + returnType.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "InternalMethodDefinition{" +
+                "methodName='" + methodName + '\'' +
+                ", jvmMethodDefinition=" + jvmMethodDefinition +
+                ", returnType=" + returnType +
+                '}';
+    }
 }

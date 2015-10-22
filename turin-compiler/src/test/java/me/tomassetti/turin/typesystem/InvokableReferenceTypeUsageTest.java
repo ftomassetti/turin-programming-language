@@ -1,6 +1,7 @@
 package me.tomassetti.turin.typesystem;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import me.tomassetti.jvm.JvmConstructorDefinition;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
@@ -16,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 public class InvokableReferenceTypeUsageTest {
@@ -59,7 +62,7 @@ public class InvokableReferenceTypeUsageTest {
         InternalInvokableDefinition internalD = new InternalConstructorDefinition(
                 string,
                 ImmutableList.of(),
-                new JvmConstructorDefinition("a/b/MyClass", "()V"));
+                new JvmConstructorDefinition("a/b/MyClass", "()Ljava/lang/string;"));
         invokableD = new InvokableReferenceTypeUsage(internalD);
         InternalInvokableDefinition internalSameAsA = new InternalConstructorDefinition(
                 string,
@@ -318,44 +321,65 @@ public class InvokableReferenceTypeUsageTest {
         assertEquals(true, invokableD.sameType(invokableSameAsD));
     }
 
-    /*@Test
+    @Test
     public void testCanBeAssignedTo() {
-        assertEquals(true, arrayOfBoolean.canBeAssignedTo(arrayOfBoolean));
-        assertEquals(false, arrayOfBoolean.canBeAssignedTo(arrayOfString));
-        assertEquals(false, arrayOfBoolean.canBeAssignedTo(arrayOfArrayOfString));
-        assertEquals(false, arrayOfBoolean.canBeAssignedTo(PrimitiveTypeUsage.BOOLEAN));
-        assertEquals(false, arrayOfBoolean.canBeAssignedTo(string));
-        assertEquals(true, arrayOfBoolean.canBeAssignedTo(object));
-        assertEquals(false, arrayOfString.canBeAssignedTo(arrayOfBoolean));
-        assertEquals(true, arrayOfString.canBeAssignedTo(arrayOfString));
-        assertEquals(false, arrayOfString.canBeAssignedTo(arrayOfArrayOfString));
-        assertEquals(false, arrayOfString.canBeAssignedTo(PrimitiveTypeUsage.BOOLEAN));
-        assertEquals(false, arrayOfString.canBeAssignedTo(string));
-        assertEquals(true, arrayOfString.canBeAssignedTo(object));
-        assertEquals(false, arrayOfArrayOfString.canBeAssignedTo(arrayOfBoolean));
-        assertEquals(false, arrayOfArrayOfString.canBeAssignedTo(arrayOfString));
-        assertEquals(true, arrayOfArrayOfString.canBeAssignedTo(arrayOfArrayOfString));
-        assertEquals(false, arrayOfArrayOfString.canBeAssignedTo(PrimitiveTypeUsage.BOOLEAN));
-        assertEquals(false, arrayOfArrayOfString.canBeAssignedTo(string));
-        assertEquals(true, arrayOfArrayOfString.canBeAssignedTo(object));
+        assertFalse(invokableA.canBeAssignedTo(invokableA));
+        assertFalse(invokableA.canBeAssignedTo(invokableB));
+        assertFalse(invokableA.canBeAssignedTo(invokableC));
+        assertFalse(invokableA.canBeAssignedTo(invokableD));
+        assertFalse(invokableA.canBeAssignedTo(object));
+        assertFalse(invokableA.canBeAssignedTo(string));
+
+        assertFalse(invokableB.canBeAssignedTo(invokableA));
+        assertFalse(invokableB.canBeAssignedTo(invokableB));
+        assertFalse(invokableB.canBeAssignedTo(invokableC));
+        assertFalse(invokableB.canBeAssignedTo(invokableD));
+        assertFalse(invokableB.canBeAssignedTo(object));
+        assertFalse(invokableB.canBeAssignedTo(string));
+
+        assertFalse(invokableC.canBeAssignedTo(invokableA));
+        assertFalse(invokableC.canBeAssignedTo(invokableB));
+        assertFalse(invokableC.canBeAssignedTo(invokableC));
+        assertFalse(invokableC.canBeAssignedTo(invokableD));
+        assertFalse(invokableC.canBeAssignedTo(object));
+        assertFalse(invokableC.canBeAssignedTo(string));
+
+        assertFalse(invokableD.canBeAssignedTo(invokableA));
+        assertFalse(invokableD.canBeAssignedTo(invokableB));
+        assertFalse(invokableD.canBeAssignedTo(invokableC));
+        assertFalse(invokableD.canBeAssignedTo(invokableD));
+        assertFalse(invokableD.canBeAssignedTo(object));
+        assertFalse(invokableD.canBeAssignedTo(string));
     }
 
     @Test
     public void testReplaceTypeVariables() {
-        assertEquals(arrayOfBoolean, arrayOfBoolean.replaceTypeVariables(Collections.emptyMap()));
-        assertEquals(arrayOfString, arrayOfString.replaceTypeVariables(Collections.emptyMap()));
-        assertEquals(arrayOfArrayOfString, arrayOfArrayOfString.replaceTypeVariables(Collections.emptyMap()));
-        assertEquals(arrayOfBoolean, arrayOfBoolean.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
-        assertEquals(arrayOfString, arrayOfString.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
-        assertEquals(arrayOfArrayOfString, arrayOfArrayOfString.replaceTypeVariables(ImmutableMap.of("A", string, "B", object)));
+        Map<String, TypeUsage> typeParams = ImmutableMap.of("A", string, "B", object);
+        assertEquals(invokableA, invokableA.replaceTypeVariables(Collections.emptyMap()));
+        assertEquals(invokableA, invokableA.replaceTypeVariables(typeParams));
+        assertEquals(invokableB, invokableB.replaceTypeVariables(Collections.emptyMap()));
+        assertEquals(invokableB, invokableB.replaceTypeVariables(typeParams));
+        assertEquals(invokableC, invokableC.replaceTypeVariables(Collections.emptyMap()));
+        assertNotEquals(invokableC, invokableC.replaceTypeVariables(typeParams));
+        TypeUsage invokableCReplaced = invokableC.replaceTypeVariables(typeParams);
+        InternalInvokableDefinition internalCReplaced = new InternalMethodDefinition(
+                "bar",
+                ImmutableList.of(),
+                string,
+                // where A is a Type Variable
+                new JvmMethodDefinition("a/b/MyClass", "internalC", "()A", false, true));
+        assertEquals(new InvokableReferenceTypeUsage(internalCReplaced), invokableCReplaced);
+        assertEquals(invokableD, invokableD.replaceTypeVariables(Collections.emptyMap()));
+        assertEquals(invokableD, invokableD.replaceTypeVariables(typeParams));
     }
 
     @Test
     public void testDescribe() {
-        assertEquals("array of boolean", arrayOfBoolean.describe());
-        assertEquals("array of java.lang.String", arrayOfString.describe());
-        assertEquals("array of array of java.lang.String", arrayOfArrayOfString.describe());
-    }*/
+        assertEquals("(int, java.lang.Object) -> java.lang.String", invokableA.describe());
+        assertEquals("(boolean) -> void", invokableB.describe());
+        assertEquals("() -> type variable A", invokableC.describe());
+        assertEquals("() -> java.lang.String", invokableD.describe());
+    }
 
     //Optional<? extends InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams);
 

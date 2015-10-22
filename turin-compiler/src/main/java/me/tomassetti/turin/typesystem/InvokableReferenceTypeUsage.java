@@ -1,8 +1,11 @@
 package me.tomassetti.turin.typesystem;
 
 import me.tomassetti.jvm.JvmType;
+import me.tomassetti.turin.definitions.InternalConstructorDefinition;
 import me.tomassetti.turin.definitions.InternalInvokableDefinition;
+import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
+import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.List;
@@ -21,8 +24,32 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
 
     @Override
     public <T extends TypeUsage> TypeUsage replaceTypeVariables(Map<String, T> typeParams) {
-        throw new UnsupportedOperationException();
-    }
+        if (typeParams.isEmpty()) {
+            return this;
+        }
+        List<FormalParameterSymbol> replacedParams = internalInvokableDefinition
+                .getFormalParameters()
+                .stream()
+                .map((fp) -> new FormalParameterSymbol(
+                        fp.getType().replaceTypeVariables(typeParams),
+                        fp.getName(),
+                        fp.hasDefaultValue()))
+                .collect(Collectors.toList());
+        if (internalInvokableDefinition.isMethod()) {
+            return new InvokableReferenceTypeUsage(new InternalMethodDefinition(
+                    internalInvokableDefinition.asMethod().getMethodName(),
+                    replacedParams,
+                    internalInvokableDefinition.getReturnType().replaceTypeVariables(typeParams),
+                    internalInvokableDefinition.asMethod().getJvmMethodDefinition()));
+        } else if (internalInvokableDefinition.isConstructor()) {
+            return new InvokableReferenceTypeUsage(new InternalConstructorDefinition(
+                    internalInvokableDefinition.getReturnType().replaceTypeVariables(typeParams),
+                    replacedParams,
+                    internalInvokableDefinition.asConstructor().getJvmConstructorDefinition()));
+        } else {
+            throw new UnsupportedOperationException();
+        }
+     }
 
     public InvokableReferenceTypeUsage(InternalInvokableDefinition internalInvokableDefinition) {
         this.internalInvokableDefinition = internalInvokableDefinition;
@@ -85,6 +112,9 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
         return Optional.empty();
     }
 
+    /**
+     * It cannot be assigned to anything because it is not possible to store a reference to it.
+     */
     @Override
     public boolean canBeAssignedTo(TypeUsage type) {
         return false;
@@ -102,15 +132,32 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
 
     @Override
     public String describe() {
-        if (internalInvokableDefinition.isMethod()) {
-            return internalInvokableDefinition.asMethod().getMethodName() + "(" +
-                    String.join(", " , internalInvokableDefinition.getFormalParameters().stream().map((fp)->fp.getType().describe()).collect(Collectors.toList())) + ") -> " +
-                    internalInvokableDefinition.getReturnType().describe();
-        } else if (internalInvokableDefinition.isConstructor()) {
-            return internalInvokableDefinition.asConstructor().getReturnType().describe() + "(" +
-                    String.join(", " , internalInvokableDefinition.getFormalParameters().stream().map((fp)->fp.getType().describe()).collect(Collectors.toList()));
-        } else {
-            throw new UnsupportedOperationException();
-        }
+        return  "(" +
+                String.join(", " , internalInvokableDefinition.getFormalParameters().stream().map((fp)->fp.getType().describe()).collect(Collectors.toList())) + ") -> " +
+                internalInvokableDefinition.getReturnType().describe();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof InvokableReferenceTypeUsage)) return false;
+
+        InvokableReferenceTypeUsage that = (InvokableReferenceTypeUsage) o;
+
+        if (!internalInvokableDefinition.equals(that.internalInvokableDefinition)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return internalInvokableDefinition.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "InvokableReferenceTypeUsage{" +
+                "internalInvokableDefinition=" + internalInvokableDefinition +
+                '}';
     }
 }
