@@ -383,6 +383,12 @@ public class InvokableReferenceTypeUsageTest {
 
     //Optional<? extends InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams);
 
-    //boolean isOverloaded();
+    @Test
+    public void testIsOverloaded() {
+        assertFalse(invokableA.isOverloaded());
+        assertFalse(invokableB.isOverloaded());
+        assertFalse(invokableC.isOverloaded());
+        assertFalse(invokableD.isOverloaded());
+    }
 
 }
