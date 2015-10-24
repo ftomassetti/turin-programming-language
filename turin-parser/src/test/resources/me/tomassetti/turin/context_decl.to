@@ -1,5 +1,8 @@
 namespace a
 
+context int a
+context String b
+
 program Foo(String[] args) {
     context (a=1, b="foo") {
         val zut = context.a

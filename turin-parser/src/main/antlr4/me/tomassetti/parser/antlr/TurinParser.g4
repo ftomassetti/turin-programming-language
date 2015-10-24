@@ -21,7 +21,14 @@ fileMember:
     | topLevelFunctionDeclaration
     | typeDeclaration
     | relation
+    | contextDeclaration
     | program;
+
+//
+// Context
+//
+
+contextDeclaration: CONTEXT_KW type=typeUsage name=VALUE_ID;
 
 //
 // Base
@@ -161,14 +168,14 @@ placeholderNameUsage:
 thisReference:
     THIS_KW;
 
-contextual:
-    CONTEXTU_KW DOT field=VALUE_ID;
+contextAccess:
+    CONTEXT_KW DOT field=VALUE_ID;
 
 basicExpression:
     booleanLiteral | stringLiteral | interpolatedStringLiteral
     | byteLiteral | shortLiteral | intLiteral | longLiteral
     | floatLiteral | doubleLiteral
-    | contextual
+    | contextAccess
     | valueReference | parenExpression | staticFieldReference
     | placeholderUsage | placeholderNameUsage
     | thisReference;
@@ -275,14 +282,14 @@ assignment:
 contextAssignment:
     name=VALUE_ID ASSIGNMENT value=expression;
 
-contextDecl:
+contextScope:
     CONTEXT_KW LPAREN (assignments+=contextAssignment (commaNl assignments+=contextAssignment)*) RPAREN LBRACKET nls
     (statements += statement)*
     RBRACKET nls;
 
 statement:
     varDecl | expressionStmt | returnStmt | ifStmt | throwStmt | tryCatchStmt
-    | contextDecl;
+    | contextScope;
 //
 
 formalParam:
