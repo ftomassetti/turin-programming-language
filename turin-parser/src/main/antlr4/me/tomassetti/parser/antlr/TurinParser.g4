@@ -161,10 +161,14 @@ placeholderNameUsage:
 thisReference:
     THIS_KW;
 
+contextual:
+    CONTEXTU_KW DOT field=VALUE_ID;
+
 basicExpression:
     booleanLiteral | stringLiteral | interpolatedStringLiteral
     | byteLiteral | shortLiteral | intLiteral | longLiteral
     | floatLiteral | doubleLiteral
+    | contextual
     | valueReference | parenExpression | staticFieldReference
     | placeholderUsage | placeholderNameUsage
     | thisReference;
@@ -268,8 +272,17 @@ tryCatchStmt:
 assignment:
     target=expression ASSIGNMENT value=expression;
 
+contextAssignment:
+    name=VALUE_ID ASSIGNMENT value=expression;
+
+contextDecl:
+    CONTEXT_KW LPAREN (assignments+=contextAssignment (commaNl assignments+=contextAssignment)*) RPAREN LBRACKET nls
+    (statements += statement)*
+    RBRACKET nls;
+
 statement:
-    varDecl | expressionStmt | returnStmt | ifStmt | throwStmt | tryCatchStmt;
+    varDecl | expressionStmt | returnStmt | ifStmt | throwStmt | tryCatchStmt
+    | contextDecl;
 //
 
 formalParam:

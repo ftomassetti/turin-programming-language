@@ -43,6 +43,7 @@ TYPE_KW             : 'type';
 RELATION_KW         : 'relation';
 ONE_KW              : 'one';
 MANY_KW             : 'many';
+CONTEXT_KW          : 'context';
 
 SUBSET_KW           : F_SUBSET;
 OF_KW               : F_OF;
