@@ -2,19 +2,24 @@ package me.tomassetti.turin.compiler;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
+import me.tomassetti.bytecode_generation.pushop.PushStaticField;
 import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.jvm.*;
+import me.tomassetti.turin.definitions.ContextDefinition;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.statements.*;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
+import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import turin.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CompilationOfStatements {
@@ -66,9 +71,53 @@ public class CompilationOfStatements {
         } else if (statement instanceof TryCatchStatement) {
             TryCatchStatement tryCatchStatement = (TryCatchStatement) statement;
             return compile(tryCatchStatement);
+        } else if (statement instanceof ContextScope) {
+            return compile((ContextScope)statement);
         } else {
             throw new UnsupportedOperationException(statement.toString());
         }
+    }
+
+    BytecodeSequence compile(ContextScope contextScope) {
+        // TODO catch exceptions and be sure they go over the leave context
+        //      same thing for the returns
+        return new BytecodeSequence() {
+            @Override
+            public void operate(MethodVisitor mv) {
+                Label start = new Label();
+                Label end = new Label();
+
+                mv.visitLabel(start);
+
+                for (ContextAssignment assignment : contextScope.getAssignments()) {
+                    ContextDefinition contextSymbol = assignment.contextSymbol().get();
+                    // We need to get the INSTANCE field
+                    JvmFieldDefinition fieldDefinition = new JvmFieldDefinition(
+                            JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()),
+                            "INSTANCE",
+                            "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()) + ";",
+                            true);
+                    new PushStaticField(fieldDefinition).operate(mv);
+                    // and then call enterContext
+                    // push the parameter
+                    CompilationOfStatements.this.compilation.getPushUtils().pushExpression(assignment.getContextValue());
+                    JvmMethodDefinition enterContext = new JvmMethodDefinition(
+                            JvmNameUtils.internalName(Context.class),
+                            "enterContext",
+                            "(Ljava/lang/Object;)V",
+                            false, false
+                    );
+                    new MethodInvocationBS(enterContext).operate(mv);
+                }
+
+                contextScope.getStatements().forEach((s)->compile(s).operate(mv));
+
+                mv.visitLabel(end);
+
+                for (ContextAssignment assignment : contextScope.getAssignments()) {
+                }
+            }
+        };
     }
 
     BytecodeSequence compile(TryCatchStatement tryCatchStatement) {

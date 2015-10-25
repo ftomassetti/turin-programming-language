@@ -10,7 +10,7 @@ import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.Property;
-import me.tomassetti.turin.parser.ast.context.ContextDeclaration;
+import me.tomassetti.turin.parser.ast.context.ContextDefinitionNode;
 import me.tomassetti.turin.resolvers.ResolverRegistry;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -86,19 +86,19 @@ public class Compilation {
                 classFileDefinitions.addAll(compile((FunctionDefinitionNode) node, turinFile.getNamespaceDefinition()));
             } else if (node instanceof RelationDefinition) {
                 classFileDefinitions.addAll(compile((RelationDefinition) node, turinFile.getNamespaceDefinition()));
-            } else if (node instanceof ContextDeclaration) {
-                classFileDefinitions.addAll(compile((ContextDeclaration) node, turinFile.getNamespaceDefinition()));
+            } else if (node instanceof ContextDefinitionNode) {
+                classFileDefinitions.addAll(compile((ContextDefinitionNode) node, turinFile.getNamespaceDefinition()));
             }
         }
 
         return classFileDefinitions;
     }
 
-    private Collection<? extends ClassFileDefinition> compile(ContextDeclaration contextDeclaration, NamespaceDefinition namespaceDefinition) {
-        String canonicalClassName = namespaceDefinition.getName() + "." + ContextDeclaration.CLASS_PREFIX + contextDeclaration.getName();
+    private Collection<? extends ClassFileDefinition> compile(ContextDefinitionNode contextDefinition, NamespaceDefinition namespaceDefinition) {
+        String canonicalClassName = namespaceDefinition.getName() + "." + ContextDefinitionNode.CLASS_PREFIX + contextDefinition.getName();
         String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
         String contextInternalName = JvmNameUtils.internalName(Context.class);
-        String classSignature = "L" + contextInternalName + "<" + contextDeclaration.getType().typeUsage().jvmType().getSignature() + ">;";
+        String classSignature = "L" + contextInternalName + "<" + contextDefinition.getType().typeUsage().jvmType().getSignature() + ">;";
 
         // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
         cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);

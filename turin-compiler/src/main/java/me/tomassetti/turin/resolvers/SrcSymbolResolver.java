@@ -1,9 +1,11 @@
 package me.tomassetti.turin.resolvers;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.definitions.ContextDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
 import me.tomassetti.turin.parser.ast.*;
+import me.tomassetti.turin.parser.ast.context.ContextDefinitionNode;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
 import me.tomassetti.turin.parser.ast.properties.PropertyDefinition;
@@ -24,6 +26,7 @@ public class SrcSymbolResolver implements SymbolResolver {
     private Map<String, PropertyDefinition> propertyDefinitions;
     private Map<String, Program> programsDefinitions;
     private Map<String, FunctionDefinitionNode> functionDefinitions;
+    private Map<String, ContextDefinitionNode> contextDefinitions;
 
     private SymbolResolver parent = null;
 
@@ -42,6 +45,7 @@ public class SrcSymbolResolver implements SymbolResolver {
         this.propertyDefinitions = new HashMap<>();
         this.programsDefinitions = new HashMap<>();
         this.functionDefinitions = new HashMap<>();
+        this.contextDefinitions = new HashMap<>();
         for (TurinFile turinFile : turinFiles) {
             for (TypeDefinitionNode typeDefinition : turinFile.getTopLevelTypeDefinitions()) {
                 packages.add(typeDefinition.contextName());
@@ -58,6 +62,10 @@ public class SrcSymbolResolver implements SymbolResolver {
             for (FunctionDefinitionNode functionDefinition : turinFile.getTopLevelFunctionDefinitions()) {
                 packages.add(functionDefinition.contextName());
                 functionDefinitions.put(functionDefinition.getQualifiedName(), functionDefinition);
+            }
+            for (ContextDefinitionNode contextDefinition : turinFile.getTopLevelContextDefinitions()) {
+                packages.add(contextDefinition.contextName());
+                contextDefinitions.put(contextDefinition.getQualifiedName(), contextDefinition);
             }
         }
     }
@@ -114,6 +122,15 @@ public class SrcSymbolResolver implements SymbolResolver {
     @Override
     public boolean existPackage(String packageName) {
         return packages.contains(packageName);
+    }
+
+    @Override
+    public Optional<ContextDefinition> findContextSymbol(String contextName, Node context) {
+        if (contextDefinitions.containsKey(contextName)) {
+            return Optional.of(contextDefinitions.get(contextName));
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

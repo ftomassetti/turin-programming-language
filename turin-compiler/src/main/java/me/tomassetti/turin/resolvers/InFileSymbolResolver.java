@@ -3,8 +3,10 @@ package me.tomassetti.turin.resolvers;
 import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmNameUtils;
 import me.tomassetti.turin.compiler.errorhandling.SemanticErrorException;
+import me.tomassetti.turin.definitions.ContextDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.ast.Node;
+import me.tomassetti.turin.parser.ast.context.ContextDefinitionNode;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
@@ -143,6 +145,50 @@ public class InFileSymbolResolver implements SymbolResolver {
     @Override
     public boolean existPackage(String packageName) {
         return typeResolver.existPackage(packageName);
+    }
+
+    @Override
+    public Optional<ContextDefinition> findContextSymbol(String contextName, Node context) {
+        return findContextSymbolHelper(contextName, context, null);
+    }
+
+    public Optional<ContextDefinition> findContextSymbolHelper(String contextName, Node context, Node previousContext) {
+        if (!JvmNameUtils.isValidQualifiedName(contextName)) {
+            throw new IllegalArgumentException(contextName);
+        }
+        if (context == null) {
+            return Optional.empty();
+        }
+        for (Node child : context.getChildren()) {
+            if (child instanceof ContextDefinitionNode) {
+                ContextDefinitionNode contextDefinition = (ContextDefinitionNode)child;
+                if (contextDefinition.getName().equals(contextName)
+                        || contextDefinition.getQualifiedName().equals(contextName)) {
+                    return Optional.of(contextDefinition);
+                }
+            } else if (child instanceof ImportDeclaration) {
+                // this is necessary to avoid infinite recursion
+                if (child != previousContext) {
+                    ImportDeclaration importDeclaration = (ImportDeclaration) child;
+                    Optional<Symbol> resolvedNode = importDeclaration.findAmongImported(contextName, this.getRoot());
+                    if (resolvedNode.isPresent()) {
+                        if (resolvedNode.get() instanceof ContextDefinition) {
+                            return Optional.of((ContextDefinition) resolvedNode.get());
+                        } else {
+                            throw new SemanticErrorException(context, "" + contextName + " is not a context");
+                        }
+                    }
+                }
+            }
+        }
+        if (!context.contextName().isEmpty()) {
+            String qName = context.contextName() + "." + contextName;
+            Optional<ContextDefinition>  partial = getRoot().findContextSymbol(qName, null);
+            if (partial.isPresent()) {
+                return partial;
+            }
+        }
+        return findContextSymbolHelper(contextName, context.getParent(), context);
     }
 
     private Optional<TypeDefinition> findTypeDefinitionInHelper(String typeName, Node context,

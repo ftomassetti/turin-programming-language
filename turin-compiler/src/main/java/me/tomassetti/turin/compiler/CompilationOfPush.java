@@ -8,6 +8,7 @@ import me.tomassetti.bytecode_generation.logicalop.LogicalNotBS;
 import me.tomassetti.bytecode_generation.logicalop.LogicalOrBS;
 import me.tomassetti.bytecode_generation.pushop.*;
 import me.tomassetti.jvm.*;
+import me.tomassetti.turin.definitions.ContextDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.Property;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedMethodException;
@@ -25,6 +26,7 @@ import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import turin.context.Context;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -263,9 +265,35 @@ public class CompilationOfPush {
             return compile(superInvokation);
         } else if (expr instanceof RelationSubset) {
             throw new UnsupportedOperationException();
+        } else if (expr instanceof ContextAccess) {
+            return compile((ContextAccess)expr);
         } else {
             throw new UnsupportedOperationException(expr.getClass().getCanonicalName());
         }
+    }
+
+    BytecodeSequence compile(ContextAccess contextAccess) {
+        return new BytecodeSequence() {
+            @Override
+            public void operate(MethodVisitor mv) {
+                ContextDefinition contextSymbol = contextAccess.contextSymbol().get();
+                // We need to get the INSTANCE field
+                JvmFieldDefinition fieldDefinition = new JvmFieldDefinition(
+                        JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()),
+                        "INSTANCE",
+                        "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()) + ";",
+                        true);
+                new PushStaticField(fieldDefinition).operate(mv);
+                // and then call enterContext
+                JvmMethodDefinition enterContext = new JvmMethodDefinition(
+                        JvmNameUtils.internalName(Context.class),
+                        "exitContext",
+                        "()Ljava/util/Optional;",
+                        false, false
+                );
+                new MethodInvocationBS(enterContext).operate(mv);
+            }
+        };
     }
 
     BytecodeSequence compile(SuperInvokation superInvokation) {

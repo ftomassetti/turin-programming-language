@@ -1,6 +1,7 @@
 package me.tomassetti.turin.resolvers;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.definitions.ContextDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
@@ -100,6 +101,17 @@ public class ComposedSymbolResolver implements SymbolResolver {
             }
         }
         return false;
+    }
+
+    @Override
+    public Optional<ContextDefinition> findContextSymbol(String contextName, Node context) {
+        for (SymbolResolver element : elements) {
+            Optional<ContextDefinition> res = element.findContextSymbol(contextName, context);
+            if (res.isPresent()) {
+                return res;
+            }
+        }
+        return Optional.empty();
     }
 
 }

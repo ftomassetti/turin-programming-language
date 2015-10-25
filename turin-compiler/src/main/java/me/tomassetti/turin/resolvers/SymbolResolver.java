@@ -1,6 +1,7 @@
 package me.tomassetti.turin.resolvers;
 
 import me.tomassetti.jvm.JvmMethodDefinition;
+import me.tomassetti.turin.definitions.ContextDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.parser.analysis.exceptions.UnsolvedSymbolException;
 import me.tomassetti.turin.parser.ast.Node;
@@ -80,4 +81,6 @@ public interface SymbolResolver {
     Optional<Symbol> findSymbol(String name, Node context);
 
     boolean existPackage(String packageName);
+
+    Optional<ContextDefinition> findContextSymbol(String contextName, Node context);
 }

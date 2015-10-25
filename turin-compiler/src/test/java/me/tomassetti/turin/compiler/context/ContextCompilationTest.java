@@ -11,7 +11,9 @@ import org.junit.Test;
 import turin.context.Context;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -58,6 +60,25 @@ public class ContextCompilationTest extends AbstractCompilerTest {
         assertTrue(ModifierSet.isStatic(contextB.getField("INSTANCE").getModifiers()));
         assertTrue(ModifierSet.isPublic(contextB.getField("INSTANCE").getModifiers()));
         assertTrue(ModifierSet.isFinal(contextB.getField("INSTANCE").getModifiers()));
+    }
+
+    @Test
+    public void contextUsage() throws IOException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/context/context_usage.to"));
+
+        // generate bytecode
+        Compiler.Options options = new Compiler.Options();
+        Compiler instance = new Compiler(getResolverFor(turinFile), options);
+        List<ClassFileDefinition> classDefinitions = instance.compile(turinFile, new MyErrorCollector());
+        assertEquals(3, classDefinitions.size());
+
+        TurinClassLoader classLoader = new TurinClassLoader();
+        Class contextClass = classLoader.addClass(classDefinitions.get(0));
+        Class worldNameInCtxClass = classLoader.addClass(classDefinitions.get(1));
+        Class worldNameNoCtxClass = classLoader.addClass(classDefinitions.get(2));
+
+        assertEquals(Optional.of("Earth"), worldNameInCtxClass.getDeclaredMethod("invoke", new Class[]{}).invoke(null));
+        assertEquals(Optional.empty(), worldNameNoCtxClass.getDeclaredMethod("invoke", new Class[]{}).invoke(null));
     }
 
 }

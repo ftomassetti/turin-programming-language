@@ -1,0 +1,14 @@
+namespace a
+
+import java.util.Optional
+
+context String worldName
+
+Optional[String] worldNameInCtx() {
+    context (worldName="Earth") {
+        return context.worldName
+    }
+}
+
+Optional[String] worldNameNoCtx() = context.worldName
+

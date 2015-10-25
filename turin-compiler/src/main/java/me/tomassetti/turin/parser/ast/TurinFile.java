@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.definitions.TypeDefinition;
-import me.tomassetti.turin.parser.ast.context.ContextDeclaration;
+import me.tomassetti.turin.parser.ast.context.ContextDefinitionNode;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
@@ -19,6 +19,7 @@ public class TurinFile extends Node {
     private NamespaceDefinition namespaceDefinition;
     private List<Node> topNodes = new ArrayList<>();
     private List<ImportDeclaration> imports = new ArrayList<>();
+    private ContextDefinitionNode[] topLevelContextDefinitions;
 
     public void add(PropertyDefinition propertyDefinition) {
         topNodes.add(propertyDefinition);
@@ -178,8 +179,12 @@ public class TurinFile extends Node {
         relationDefinition.parent = this;
     }
 
-    public void add(ContextDeclaration contextDeclaration) {
-        topNodes.add(contextDeclaration);
-        contextDeclaration.parent = this;
+    public void add(ContextDefinitionNode contextDefinition) {
+        topNodes.add(contextDefinition);
+        contextDefinition.parent = this;
+    }
+
+    public List<ContextDefinitionNode> getTopLevelContextDefinitions() {
+        return topNodes.stream().filter((n)-> (n instanceof ContextDefinitionNode)).map((n) -> (ContextDefinitionNode)n).collect(Collectors.toList());
     }
 }

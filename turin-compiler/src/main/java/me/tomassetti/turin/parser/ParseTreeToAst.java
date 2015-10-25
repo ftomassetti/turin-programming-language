@@ -2,7 +2,7 @@ package me.tomassetti.turin.parser;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
-import me.tomassetti.turin.parser.ast.context.ContextDeclaration;
+import me.tomassetti.turin.parser.ast.context.ContextDefinitionNode;
 import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
@@ -22,7 +22,6 @@ import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import turin.context.Context;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -65,8 +64,8 @@ class ParseTreeToAst {
                 turinFile.add((FunctionDefinitionNode)memberNode);
             } else if (memberNode instanceof RelationDefinition) {
                 turinFile.add((RelationDefinition) memberNode);
-            } else if (memberNode instanceof ContextDeclaration) {
-                turinFile.add((ContextDeclaration) memberNode);
+            } else if (memberNode instanceof ContextDefinitionNode) {
+                turinFile.add((ContextDefinitionNode) memberNode);
             } else {
                 throw new UnsupportedOperationException(memberNode.getClass().getCanonicalName());
             }
@@ -145,10 +144,10 @@ class ParseTreeToAst {
         }
     }
 
-    private ContextDeclaration toAst(TurinParser.ContextDeclarationContext ctx) {
-        ContextDeclaration contextDeclaration = new ContextDeclaration(ctx.name.getText(), toAst(ctx.type));
-        getPositionFrom(contextDeclaration, ctx);
-        return contextDeclaration;
+    private ContextDefinitionNode toAst(TurinParser.ContextDeclarationContext ctx) {
+        ContextDefinitionNode contextDefinition = new ContextDefinitionNode(ctx.name.getText(), toAst(ctx.type));
+        getPositionFrom(contextDefinition, ctx);
+        return contextDefinition;
     }
 
     private RelationDefinition toAst(TurinParser.RelationContext ctx) {
@@ -348,9 +347,26 @@ class ParseTreeToAst {
             return toAst(stmtCtx.throwStmt());
         } else if (stmtCtx.tryCatchStmt() != null) {
             return toAst(stmtCtx.tryCatchStmt());
+        } else if (stmtCtx.contextScope() != null) {
+            return toAst(stmtCtx.contextScope());
         } else {
             throw new UnsupportedOperationException(stmtCtx.getText());
         }
+    }
+
+    private ContextScope toAst(TurinParser.ContextScopeContext ctx) {
+        ContextScope contextScope = new ContextScope(
+                ctx.assignments.stream().map((a)->toAst(a)).collect(Collectors.toList()),
+                ctx.statements.stream().map((s)->toAst(s)).collect(Collectors.toList())
+        );
+        getPositionFrom(contextScope, ctx);
+        return contextScope;
+    }
+
+    private ContextAssignment toAst(TurinParser.ContextAssignmentContext ctx) {
+        ContextAssignment ctxAssignment = new ContextAssignment(ctx.name.getText(), toAst(ctx.expression()));
+        getPositionFrom(ctxAssignment, ctx);
+        return ctxAssignment;
     }
 
     private Expression toAst(TurinParser.AssignmentContext ctx) {
@@ -523,9 +539,17 @@ class ParseTreeToAst {
             ThisExpression thisExpression = new ThisExpression();
             getPositionFrom(thisExpression, exprCtx.thisReference());
             return thisExpression;
+        } else if (exprCtx.contextAccess() != null) {
+            return toAst(exprCtx.contextAccess());
         } else {
             throw new UnsupportedOperationException(exprCtx.getText());
         }
+    }
+
+    private ContextAccess toAst(TurinParser.ContextAccessContext ctx) {
+        ContextAccess contextAccess = new ContextAccess(ctx.field.getText());
+        getPositionFrom(contextAccess, ctx);
+        return contextAccess;
     }
 
     private Expression toAst(TurinParser.PlaceholderUsageContext ctx) {
