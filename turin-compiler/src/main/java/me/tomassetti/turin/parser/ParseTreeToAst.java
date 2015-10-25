@@ -2,6 +2,7 @@ package me.tomassetti.turin.parser;
 
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.parser.antlr.TurinParser;
+import me.tomassetti.turin.parser.ast.context.ContextDeclaration;
 import me.tomassetti.turin.parser.ast.typeusage.BasicTypeUsageNode;
 import me.tomassetti.turin.parser.ast.*;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
@@ -21,6 +22,7 @@ import me.tomassetti.turin.parser.ast.typeusage.*;
 import me.tomassetti.turin.typesystem.PrimitiveTypeUsage;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import turin.context.Context;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -62,7 +64,9 @@ class ParseTreeToAst {
             } else if (memberNode instanceof FunctionDefinitionNode) {
                 turinFile.add((FunctionDefinitionNode)memberNode);
             } else if (memberNode instanceof RelationDefinition) {
-                turinFile.add((RelationDefinition)memberNode);
+                turinFile.add((RelationDefinition) memberNode);
+            } else if (memberNode instanceof ContextDeclaration) {
+                turinFile.add((ContextDeclaration) memberNode);
             } else {
                 throw new UnsupportedOperationException(memberNode.getClass().getCanonicalName());
             }
@@ -134,9 +138,17 @@ class ParseTreeToAst {
             return toAst(ctx.topLevelFunctionDeclaration());
         } else if (ctx.relation() != null) {
             return toAst(ctx.relation());
+        } else if (ctx.contextDeclaration() != null) {
+            return toAst(ctx.contextDeclaration());
         } else {
             throw new UnsupportedOperationException(ctx.getClass().getCanonicalName());
         }
+    }
+
+    private ContextDeclaration toAst(TurinParser.ContextDeclarationContext ctx) {
+        ContextDeclaration contextDeclaration = new ContextDeclaration(ctx.name.getText(), toAst(ctx.type));
+        getPositionFrom(contextDeclaration, ctx);
+        return contextDeclaration;
     }
 
     private RelationDefinition toAst(TurinParser.RelationContext ctx) {

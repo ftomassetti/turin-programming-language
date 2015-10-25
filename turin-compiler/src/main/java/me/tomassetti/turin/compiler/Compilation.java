@@ -10,6 +10,7 @@ import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
 import me.tomassetti.turin.classloading.ClassFileDefinition;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.parser.analysis.Property;
+import me.tomassetti.turin.parser.ast.context.ContextDeclaration;
 import me.tomassetti.turin.resolvers.ResolverRegistry;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.*;
@@ -29,6 +30,7 @@ import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 import org.objectweb.asm.*;
 import turin.compilation.DefaultParam;
+import turin.context.*;
 import turin.relations.ManyToManyRelation;
 import turin.relations.OneToManyRelation;
 import turin.relations.OneToOneRelation;
@@ -84,10 +86,31 @@ public class Compilation {
                 classFileDefinitions.addAll(compile((FunctionDefinitionNode) node, turinFile.getNamespaceDefinition()));
             } else if (node instanceof RelationDefinition) {
                 classFileDefinitions.addAll(compile((RelationDefinition) node, turinFile.getNamespaceDefinition()));
+            } else if (node instanceof ContextDeclaration) {
+                classFileDefinitions.addAll(compile((ContextDeclaration) node, turinFile.getNamespaceDefinition()));
             }
         }
 
         return classFileDefinitions;
+    }
+
+    private Collection<? extends ClassFileDefinition> compile(ContextDeclaration contextDeclaration, NamespaceDefinition namespaceDefinition) {
+        String canonicalClassName = namespaceDefinition.getName() + "." + ContextDeclaration.CLASS_PREFIX + contextDeclaration.getName();
+        String internalClassName = JvmNameUtils.canonicalToInternal(canonicalClassName);
+        String contextInternalName = JvmNameUtils.internalName(Context.class);
+        String classSignature = "L" + contextInternalName + "<" + contextDeclaration.getType().typeUsage().jvmType().getSignature() + ">;";
+
+        // Note that COMPUTE_FRAMES implies COMPUTE_MAXS
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw.visit(JAVA_8_CLASS_VERSION, ACC_PUBLIC + ACC_SUPER, internalClassName, classSignature, contextInternalName, null);
+
+        // Add the static INSTANCE field
+        String fieldDescriptor = "L" + internalClassName + ";";
+        String fieldSignature = fieldDescriptor;
+        final String fieldName = "INSTANCE";
+        cw.visitField(ACC_PUBLIC + ACC_STATIC + ACC_FINAL, fieldName, fieldDescriptor, fieldSignature, null);
+
+        return ImmutableList.of(endClass(canonicalClassName));
     }
 
     private List<ClassFileDefinition> compile(RelationDefinition relationDefinition, NamespaceDefinition namespaceDefinition) {

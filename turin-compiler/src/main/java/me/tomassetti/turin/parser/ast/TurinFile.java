@@ -3,6 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import com.google.common.collect.ImmutableList;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.definitions.TypeDefinition;
+import me.tomassetti.turin.parser.ast.context.ContextDeclaration;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.imports.ImportDeclaration;
 import me.tomassetti.turin.parser.ast.invokables.FunctionDefinitionNode;
@@ -175,5 +176,10 @@ public class TurinFile extends Node {
     public void add(RelationDefinition relationDefinition) {
         topNodes.add(relationDefinition);
         relationDefinition.parent = this;
+    }
+
+    public void add(ContextDeclaration contextDeclaration) {
+        topNodes.add(contextDeclaration);
+        contextDeclaration.parent = this;
     }
 }
