@@ -1,41 +1,40 @@
 package turin.context;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 
-public class Context {
+public abstract class Context<V> {
 
-    private static final ThreadLocal<Stack<Map<String, Object>>> threadContextStack =
-            new ThreadLocal<Stack<Map<String, Object>>>() {
+    private final ThreadLocal<Stack<V>> values =
+            new ThreadLocal<Stack<V>>() {
                 @Override
-                protected Stack<Map<String, Object>> initialValue() {
+                protected Stack<V> initialValue() {
                     return new Stack<>();
                 }
             };
 
-    public static Optional<Object> get(String name) {
-        Stack<Map<String, Object>> ctx = threadContextStack.get();
-        for (int i=ctx.size();i>0;i--) {
-            if (ctx.get(i - 1).containsKey(name)) {
-                return Optional.of(ctx.get(i - 1).get(name));
-            }
+    public Optional<V> get() {
+        Stack<V> ctx = values.get();
+        if (ctx.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(ctx.get(ctx.size() - 1));
         }
-        return Optional.empty();
     }
 
-    public static void enterContext(Map<String, Object> ctxData) {
-        Stack<Map<String, Object>> ctx = threadContextStack.get();
-        ctx.push(ctxData);
+    public void enterContext(V value) {
+        Stack<V> ctx = values.get();
+        ctx.push(value);
     }
 
-    public static void exitContext() {
-        Stack<Map<String, Object>> ctx = threadContextStack.get();
+    public void exitContext() {
+        Stack<V> ctx = values.get();
         ctx.pop();
     }
 
-    public static boolean isEmpty() {
-        return threadContextStack.get().isEmpty();
+    public boolean isEmpty() {
+        Stack<V> ctx = values.get();
+        return ctx.isEmpty();
     }
 
 }

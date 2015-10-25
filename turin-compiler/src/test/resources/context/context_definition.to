@@ -1,0 +1,6 @@
+namespace a
+
+context int a
+context String b
+
+

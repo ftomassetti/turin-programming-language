@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -11,41 +12,61 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class ContextTest {
+
+    class MyContext extends Context<String> {
+
+    }
+
     @After
     public void tearDown() throws Exception {
-        while (!Context.isEmpty()) {
-            Context.exitContext();
-        }
+
     }
 
     @Before
     public void setUp() throws Exception {
-        while (!Context.isEmpty()) {
-            Context.exitContext();
-        }
+
     }
 
     @Test
     public void emptyCase() {
-        assertFalse(Context.get("foo").isPresent());
-        assertFalse(Context.get("bar").isPresent());
+        MyContext ctx = new MyContext();
+        assertFalse(ctx.get().isPresent());
+        assertFalse(ctx.get().isPresent());
     }
 
     @Test
     public void simpleCase() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("foo", 123);
-        Context.enterContext(data);
-        assertEquals(Optional.of(123), Context.get("foo"));
+        MyContext ctx = new MyContext();
+        ctx.enterContext("foo");
+        assertEquals(Optional.of("foo"), ctx.get());
+    }
+
+    @Test
+    public void theMostRecentPrevails() {
+        MyContext ctx = new MyContext();
+        ctx.enterContext("a");
+        ctx.enterContext("b");
+        ctx.enterContext("c");
+        assertEquals(Optional.of("c"), ctx.get());
     }
 
     @Test
     public void testEnterAndExit() {
-        Map<String, Object> data = new HashMap<>();
-        data.put("foo", 123);
-        Context.enterContext(data);
-        Context.exitContext();
-        assertEquals(Optional.empty(), Context.get("foo"));
+        MyContext ctx = new MyContext();
+        ctx.enterContext("foo");
+        ctx.exitContext();
+        assertEquals(Optional.empty(), ctx.get());
+    }
+
+    @Test
+    public void onExitThePreviousValueIsRestores() {
+        MyContext ctx = new MyContext();
+        ctx.enterContext("a");
+        ctx.enterContext("b");
+        ctx.enterContext("c");
+        ctx.exitContext();
+        ctx.exitContext();
+        assertEquals(Optional.of("a"), ctx.get());
     }
 
 }
