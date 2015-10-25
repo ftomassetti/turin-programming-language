@@ -1,0 +1,7 @@
+namespace a
+
+program Foo(String[] args) {
+    val zut = context.a
+    val bar = context.b
+}
+

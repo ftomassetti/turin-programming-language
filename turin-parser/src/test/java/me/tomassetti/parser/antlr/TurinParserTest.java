@@ -145,4 +145,19 @@ public class TurinParserTest {
         TurinParser.TurinFileContext root = parse("relation_subset");
     }
 
+    @Test
+    public void parseContextDefinition() throws IOException {
+        TurinParser.TurinFileContext root = parse("context_definition");
+    }
+
+    @Test
+    public void parseContextScope() throws IOException {
+        TurinParser.TurinFileContext root = parse("context_scope");
+    }
+
+    @Test
+    public void parseContextUsage() throws IOException {
+        TurinParser.TurinFileContext root = parse("context_usage");
+    }
+
 }

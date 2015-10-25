@@ -28,7 +28,7 @@ fileMember:
 // Context
 //
 
-contextDeclaration: CONTEXT_KW type=typeUsage name=VALUE_ID;
+contextDeclaration: CONTEXT_KW type=typeUsage name=VALUE_ID nls;
 
 //
 // Base
@@ -169,7 +169,7 @@ thisReference:
     THIS_KW;
 
 contextAccess:
-    CONTEXT_KW DOT field=VALUE_ID;
+    CONTEXT_KW POINT field=VALUE_ID;
 
 basicExpression:
     booleanLiteral | stringLiteral | interpolatedStringLiteral
