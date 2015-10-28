@@ -69,7 +69,7 @@ public interface TypeUsage {
         return false;
     }
 
-    default InvokableType asInvokable() {
+    default Invokable asInvokable() {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName() + ": " + this);
     }
 
@@ -98,7 +98,7 @@ public interface TypeUsage {
     /// Methods
     ///
 
-    default Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    default Optional<Invokable> getMethod(String method, boolean staticContext) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

@@ -75,7 +75,7 @@ public class FieldAccess extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         if (invokable instanceof Creation) {
             //return Optional.of(typeDefinition.getConstructorParams(invokable.getActualParams(), resolver));
             throw new UnsupportedOperationException();

@@ -1,17 +1,11 @@
 package me.tomassetti.turin.typesystem;
 
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
 import me.tomassetti.turin.definitions.InternalConstructorDefinition;
-import me.tomassetti.turin.definitions.InternalInvokableDefinition;
-import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.definitions.TypeDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.resolvers.jdk.ReflectionTypeDefinitionFactory;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
-import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
 
 import java.util.*;
@@ -124,11 +118,11 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public InvokableType asInvokable() {
+    public Invokable asInvokable() {
         return new AsConstructor();
     }
 
-    class AsConstructor implements InvokableType {
+    class AsConstructor implements Invokable {
 
         @Override
         public Optional<InternalConstructorDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams) {
@@ -224,7 +218,7 @@ public class ReferenceTypeUsage implements TypeUsage {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext) {
         return getTypeDefinition().getMethod(method, staticContext, typeParamsMap());
     }
 

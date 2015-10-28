@@ -521,7 +521,7 @@ public class JavassistTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
         Set<InternalMethodDefinition> methods = Arrays.stream(ctClass.getMethods())
                 .filter((m)->m.getName().equals(method) && Modifier.isStatic(m.getModifiers()) == staticContext)
                 .map((m)->toInternalMethodDefinition(m, resolver))

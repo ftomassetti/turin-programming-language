@@ -3,7 +3,7 @@ package me.tomassetti.turin.parser.ast;
 import me.tomassetti.turin.compiler.errorhandling.ErrorCollector;
 import me.tomassetti.turin.resolvers.ResolverRegistry;
 import me.tomassetti.turin.resolvers.SymbolResolver;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.parser.ast.expressions.InvokableExpr;
 import me.tomassetti.turin.parser.ast.statements.BlockStatement;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -166,7 +166,7 @@ public abstract class Node implements Symbol {
         }
     }
 
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         throw new UnsupportedOperationException(this.getClass().getCanonicalName());
     }
 

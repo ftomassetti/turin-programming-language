@@ -1,12 +1,9 @@
 package me.tomassetti.turin.parser.ast.typeusage;
 
-import me.tomassetti.jvm.JvmMethodDefinition;
 import me.tomassetti.jvm.JvmType;
-import me.tomassetti.turin.parser.ast.expressions.ActualParam;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,7 +12,7 @@ abstract class TypeUsageWrapperNode extends TypeUsageNode {
     protected TypeUsage typeUsage;
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext) {
         return typeUsage().getMethod(method, staticContext);
     }
 

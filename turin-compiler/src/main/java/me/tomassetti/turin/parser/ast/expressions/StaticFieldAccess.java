@@ -62,7 +62,7 @@ public class StaticFieldAccess extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         TypeDefinition typeDefinition = typeDefinition(symbolResolver());
 
         if (invokable instanceof Creation) {

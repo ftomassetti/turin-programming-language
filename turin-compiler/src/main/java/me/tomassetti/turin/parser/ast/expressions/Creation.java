@@ -13,7 +13,7 @@ import me.tomassetti.turin.symbols.FormalParameter;
 import java.util.*;
 
 
-public class Creation extends Invokable {
+public class Creation extends InvokableExpr {
 
     private TypeUsageNode type;
 

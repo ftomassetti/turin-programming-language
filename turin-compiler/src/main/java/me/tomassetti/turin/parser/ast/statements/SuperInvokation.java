@@ -6,14 +6,14 @@ import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.TurinTypeDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.parser.ast.expressions.InvokableExpr;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 
 import java.util.List;
 import java.util.Optional;
 
-public class SuperInvokation extends Invokable {
+public class SuperInvokation extends InvokableExpr {
 
     @Override
     public String toString() {

@@ -7,7 +7,7 @@ import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.expressions.Expression;
 import me.tomassetti.turin.parser.ast.expressions.FunctionCall;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.parser.ast.expressions.InvokableExpr;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
@@ -73,7 +73,7 @@ public class ReflectionBasedSetOfOverloadedMethods extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         if (invokable instanceof FunctionCall) {
             FunctionCall functionCall = (FunctionCall)invokable;
             Optional<Method> method = ReflectionBasedMethodResolution.findMethodAmongActualParams(name, invokable.getActualParams(), symbolResolver, functionCall.isStatic(), methods);

@@ -14,7 +14,7 @@ import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.symbols.FormalParameterSymbol;
 import me.tomassetti.turin.symbols.Symbol;
 import me.tomassetti.turin.typesystem.InvokableReferenceTypeUsage;
-import me.tomassetti.turin.typesystem.InvokableType;
+import me.tomassetti.turin.typesystem.Invokable;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -320,7 +320,7 @@ class ReflectionBasedTypeDefinition implements TypeDefinition {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
         Set<InternalMethodDefinition> methods = Arrays.stream(clazz.getMethods())
                 .filter((m)->m.getName().equals(method) && Modifier.isStatic(m.getModifiers()) == staticContext)
                 .map((m)->toInternalMethodDefinition(m))

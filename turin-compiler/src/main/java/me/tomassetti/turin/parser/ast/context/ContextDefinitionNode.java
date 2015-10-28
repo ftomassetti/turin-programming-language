@@ -38,6 +38,10 @@ public class ContextDefinitionNode extends Node implements ContextDefinition {
         return name;
     }
 
+    public String getClassQualifiedName() {
+        return contextName() + "." + CLASS_PREFIX + name;
+    }
+
     public String getQualifiedName() {
         return contextName() + "." + name;
     }

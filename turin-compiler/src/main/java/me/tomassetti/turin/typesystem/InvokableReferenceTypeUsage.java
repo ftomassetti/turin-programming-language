@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * This could represent a function for example.
  * It represents something not overloaded.
  */
-public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
+public class InvokableReferenceTypeUsage implements TypeUsage, Invokable {
 
     private InternalInvokableDefinition internalInvokableDefinition;
 
@@ -88,7 +88,7 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
     }
 
     @Override
-    public InvokableType asInvokable() {
+    public Invokable asInvokable() {
         return this;
     }
 
@@ -108,7 +108,7 @@ public class InvokableReferenceTypeUsage implements TypeUsage, InvokableType {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext) {
         return Optional.empty();
     }
 

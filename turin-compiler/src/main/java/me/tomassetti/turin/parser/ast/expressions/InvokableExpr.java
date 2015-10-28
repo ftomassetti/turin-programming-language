@@ -13,14 +13,14 @@ import me.tomassetti.turin.util.Either;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class Invokable extends Expression {
+public abstract class InvokableExpr extends Expression {
     protected List<ActualParam> actualParams;
 
     public List<ActualParam> getActualParams() {
         return actualParams;
     }
 
-    public Invokable(List<ActualParam> actualParams) {
+    public InvokableExpr(List<ActualParam> actualParams) {
         this.actualParams = new ArrayList<>();
         this.actualParams.addAll(actualParams);
         this.actualParams.forEach((p) ->p.setParent(this));

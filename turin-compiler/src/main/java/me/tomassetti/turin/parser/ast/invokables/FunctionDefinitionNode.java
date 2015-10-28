@@ -10,7 +10,7 @@ import me.tomassetti.turin.parser.ast.FormalParameterNode;
 import me.tomassetti.turin.parser.ast.Named;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.annotations.AnnotationUsage;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.parser.ast.expressions.InvokableExpr;
 import me.tomassetti.turin.parser.ast.statements.Statement;
 import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
@@ -64,7 +64,7 @@ public class FunctionDefinitionNode extends InvokableDefinitionNode implements N
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         return Optional.of(parameters);
     }
 

@@ -11,7 +11,7 @@ import me.tomassetti.turin.typesystem.TypeUsage;
 import java.util.List;
 
 
-public class FunctionCall extends Invokable {
+public class FunctionCall extends InvokableExpr {
 
     private Expression function;
 

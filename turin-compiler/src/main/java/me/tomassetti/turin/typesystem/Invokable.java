@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is a type which represents something invokable.
+ * This represents something invokable.
  */
-public interface InvokableType {
+public interface Invokable {
 
     Optional<? extends InternalInvokableDefinition> internalInvokableDefinitionFor(List<ActualParam> actualParams);
 

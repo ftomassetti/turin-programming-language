@@ -6,6 +6,7 @@ public interface ContextDefinition {
     String getName();
     TypeUsage getType();
 
-    String getQualifiedName();
+    String getClassQualifiedName();
 
+    String getQualifiedName();
 }

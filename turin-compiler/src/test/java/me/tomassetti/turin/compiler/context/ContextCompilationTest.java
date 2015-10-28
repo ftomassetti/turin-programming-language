@@ -39,7 +39,7 @@ public class ContextCompilationTest extends AbstractCompilerTest {
     }
 
     @Test
-    public void aContextClassHasAStaticFieldNamedInstance() throws IOException, NoSuchFieldException {
+    public void aContextClassHasAStaticFieldNamedInstance() throws IOException, NoSuchFieldException, IllegalAccessException {
         TurinFile turinFile = new Parser().parse(this.getClass().getResourceAsStream("/context/context_definition.to"));
 
         // generate bytecode
@@ -60,6 +60,9 @@ public class ContextCompilationTest extends AbstractCompilerTest {
         assertTrue(ModifierSet.isStatic(contextB.getField("INSTANCE").getModifiers()));
         assertTrue(ModifierSet.isPublic(contextB.getField("INSTANCE").getModifiers()));
         assertTrue(ModifierSet.isFinal(contextB.getField("INSTANCE").getModifiers()));
+
+        assertNotNull(contextA.getField("INSTANCE").get(null));
+        assertNotNull(contextB.getField("INSTANCE").get(null));
     }
 
     @Test
@@ -74,11 +77,16 @@ public class ContextCompilationTest extends AbstractCompilerTest {
 
         TurinClassLoader classLoader = new TurinClassLoader();
         Class contextClass = classLoader.addClass(classDefinitions.get(0));
+        assertEquals("a.Context_worldName", contextClass.getCanonicalName());
         Class worldNameInCtxClass = classLoader.addClass(classDefinitions.get(1));
+        assertEquals("a.Function_worldNameInCtx", worldNameInCtxClass.getCanonicalName());
+        saveClassFile(classDefinitions.get(1), "ctx");
+        saveClassFile(classDefinitions.get(2), "ctx");
         Class worldNameNoCtxClass = classLoader.addClass(classDefinitions.get(2));
+        assertEquals("a.Function_worldNameNoCtx", worldNameNoCtxClass.getCanonicalName());
 
-        assertEquals(Optional.of("Earth"), worldNameInCtxClass.getDeclaredMethod("invoke", new Class[]{}).invoke(null));
-        assertEquals(Optional.empty(), worldNameNoCtxClass.getDeclaredMethod("invoke", new Class[]{}).invoke(null));
+        assertEquals(Optional.of("Earth"), worldNameInCtxClass.getMethod("invoke", new Class[]{}).invoke(null));
+        assertEquals(Optional.empty(), worldNameNoCtxClass.getMethod("invoke", new Class[]{}).invoke(null));
     }
 
 }

@@ -7,14 +7,14 @@ import me.tomassetti.turin.definitions.InternalInvokableDefinition;
 import me.tomassetti.turin.resolvers.SymbolResolver;
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.symbols.FormalParameter;
-import me.tomassetti.turin.typesystem.InvokableType;
+import me.tomassetti.turin.typesystem.Invokable;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class InstanceMethodInvokation extends Invokable {
+public class InstanceMethodInvokation extends InvokableExpr {
 
     private Expression subject;
     private String methodName;
@@ -51,7 +51,7 @@ public class InstanceMethodInvokation extends Invokable {
     public TypeUsage calcType() {
         List<JvmType> paramTypes = getActualParamValuesInOrder().stream().map((ap)->ap.calcType().jvmType()).collect(Collectors.toList());
         TypeUsage subjectType = subject.calcType();
-        InvokableType invokableType = subjectType.getMethod(methodName, false).get();
+        Invokable invokableType = subjectType.getMethod(methodName, false).get();
         InternalInvokableDefinition internalInvokableDefinition = invokableType.internalInvokableDefinitionFor(actualParams).get();
         return internalInvokableDefinition.asMethod().getReturnType();
     }
@@ -63,7 +63,7 @@ public class InstanceMethodInvokation extends Invokable {
             return ap;
         }).collect(Collectors.toList());
         TypeUsage subjectType = subject.calcType();
-        Optional<InvokableType> method = subjectType.getMethod(methodName, false);
+        Optional<Invokable> method = subjectType.getMethod(methodName, false);
         Optional<? extends InternalInvokableDefinition> invokableDefinition = method.get().internalInvokableDefinitionFor(paramTypes);
         if (!invokableDefinition.isPresent()) {
             throw new IllegalStateException("Unable to retrieve the JVM definition: " + method.get().getClass().getCanonicalName());

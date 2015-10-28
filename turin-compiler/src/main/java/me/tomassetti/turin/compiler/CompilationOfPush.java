@@ -279,15 +279,15 @@ public class CompilationOfPush {
                 ContextDefinition contextSymbol = contextAccess.contextSymbol().get();
                 // We need to get the INSTANCE field
                 JvmFieldDefinition fieldDefinition = new JvmFieldDefinition(
-                        JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()),
+                        JvmNameUtils.canonicalToInternal(contextSymbol.getClassQualifiedName()),
                         "INSTANCE",
-                        "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()) + ";",
+                        "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getClassQualifiedName()) + ";",
                         true);
                 new PushStaticField(fieldDefinition).operate(mv);
                 // and then call enterContext
                 JvmMethodDefinition enterContext = new JvmMethodDefinition(
                         JvmNameUtils.internalName(Context.class),
-                        "exitContext",
+                        "get",
                         "()Ljava/util/Optional;",
                         false, false
                 );

@@ -258,7 +258,7 @@ public class PrimitiveTypeUsage implements TypeUsage {
 
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext) {
         return Optional.empty();
     }
 }

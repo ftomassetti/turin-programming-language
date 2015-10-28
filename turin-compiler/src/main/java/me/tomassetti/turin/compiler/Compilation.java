@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.tomassetti.bytecode_generation.*;
 import me.tomassetti.bytecode_generation.pushop.PushLocalVar;
 import me.tomassetti.bytecode_generation.pushop.PushStaticField;
+import me.tomassetti.bytecode_generation.pushop.PushThis;
 import me.tomassetti.bytecode_generation.returnop.ReturnValueBS;
 import me.tomassetti.jvm.*;
 import me.tomassetti.bytecode_generation.returnop.ReturnVoidBS;
@@ -109,6 +110,24 @@ public class Compilation {
         String fieldSignature = fieldDescriptor;
         final String fieldName = "INSTANCE";
         cw.visitField(ACC_PUBLIC + ACC_STATIC + ACC_FINAL, fieldName, fieldDescriptor, fieldSignature, null);
+
+        // TODO generate private constructor just to avoid multiple instantiation
+        MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "<init>", "()V", null, null);
+        PushThis.getInstance().operate(mv);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, contextInternalName, "<init>", "()V", false);
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
+
+        // initialize the field in a static initializer
+        mv = cw.visitMethod(ACC_STATIC, "<clinit>", "()V", null, null);
+        mv.visitTypeInsn(NEW, internalClassName);
+        mv.visitInsn(DUP);
+        mv.visitMethodInsn(INVOKESPECIAL, internalClassName, "<init>", "()V");
+        mv.visitFieldInsn(PUTSTATIC, internalClassName, fieldName, fieldDescriptor);
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
 
         return ImmutableList.of(endClass(canonicalClassName));
     }

@@ -24,7 +24,7 @@ import me.tomassetti.turin.parser.ast.typeusage.TypeUsageNode;
 import me.tomassetti.turin.parser.ast.typeusage.VoidTypeUsageNode;
 import me.tomassetti.turin.symbols.FormalParameter;
 import me.tomassetti.turin.symbols.Symbol;
-import me.tomassetti.turin.typesystem.InvokableType;
+import me.tomassetti.turin.typesystem.Invokable;
 import me.tomassetti.turin.typesystem.ReferenceTypeUsage;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
@@ -519,7 +519,7 @@ public class TurinTypeDefinition extends TypeDefinitionNode {
     }
 
     @Override
-    public Optional<InvokableType> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
+    public Optional<Invokable> getMethod(String method, boolean staticContext, Map<String, TypeUsage> typeParams) {
         ensureIsInitialized(symbolResolver());
         Set<InternalMethodDefinition> methods = Collections.emptySet();
         if (methodsByName.containsKey(method)) {

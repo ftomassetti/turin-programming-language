@@ -54,7 +54,7 @@ public class ValueReference extends Expression {
     }
 
     @Override
-    public Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    public Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         return resolve(symbolResolver()).findFormalParametersFor(invokable);
     }
 

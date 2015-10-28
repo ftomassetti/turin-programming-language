@@ -29,6 +29,8 @@ public class CompilationOfStatements {
         this.compilation = compilation;
     }
 
+    private BytecodeSequence codeToExecuteBeforeReturning;
+
     BytecodeSequence compile(Statement statement) {
         if (statement instanceof VariableDeclaration) {
             VariableDeclaration variableDeclaration = (VariableDeclaration) statement;
@@ -50,9 +52,20 @@ public class CompilationOfStatements {
                 Expression returnedValue = returnStatement.getValue();
                 TypeUsage returnedValueType = returnedValue.calcType();
                 int returnType = returnedValueType.jvmType().returnOpcode();
-                return new ReturnValueBS(returnType, compilation.getPushUtils().pushExpression(returnStatement.getValue()));
+                if (codeToExecuteBeforeReturning == null) {
+                    return new ReturnValueBS(returnType, compilation.getPushUtils().pushExpression(returnStatement.getValue()));
+                } else {
+                    // So we first calculate the value and then we clean the context
+                    return new ReturnValueBS(returnType, new ComposedBytecodeSequence(
+                            compilation.getPushUtils().pushExpression(returnStatement.getValue()),
+                            codeToExecuteBeforeReturning));
+                }
             } else {
-                return new ReturnVoidBS();
+                if (codeToExecuteBeforeReturning == null) {
+                    return new ReturnVoidBS();
+                } else {
+                    return new ComposedBytecodeSequence(codeToExecuteBeforeReturning, new ReturnVoidBS());
+                }
             }
         } else if (statement instanceof IfStatement) {
             IfStatement ifStatement = (IfStatement) statement;
@@ -78,9 +91,35 @@ public class CompilationOfStatements {
         }
     }
 
+    BytecodeSequence codeOnLeavingContextScope(ContextScope contextScope) {
+        return new BytecodeSequence() {
+            @Override
+            public void operate(MethodVisitor mv) {
+                for (ContextAssignment assignment : contextScope.getAssignments()) {
+                    ContextDefinition contextSymbol = assignment.contextSymbol().get();
+                    // We need to get the INSTANCE field
+                    JvmFieldDefinition fieldDefinition = new JvmFieldDefinition(
+                            JvmNameUtils.canonicalToInternal(contextSymbol.getClassQualifiedName()),
+                            "INSTANCE",
+                            "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getClassQualifiedName()) + ";",
+                            true);
+                    new PushStaticField(fieldDefinition).operate(mv);
+                    // and then call enterContext
+                    JvmMethodDefinition enterContext = new JvmMethodDefinition(
+                            JvmNameUtils.internalName(Context.class),
+                            "exitContext",
+                            "()V",
+                            false, false
+                    );
+                    new MethodInvocationBS(enterContext).operate(mv);
+                }
+            }
+        };
+    }
+
     BytecodeSequence compile(ContextScope contextScope) {
-        // TODO catch exceptions and be sure they go over the leave context
-        //      same thing for the returns
+        // TODO catch exceptions just to execute the "leave context" module
+        // TODO before returning execute the leave context instructions
         return new BytecodeSequence() {
             @Override
             public void operate(MethodVisitor mv) {
@@ -93,14 +132,14 @@ public class CompilationOfStatements {
                     ContextDefinition contextSymbol = assignment.contextSymbol().get();
                     // We need to get the INSTANCE field
                     JvmFieldDefinition fieldDefinition = new JvmFieldDefinition(
-                            JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()),
+                            JvmNameUtils.canonicalToInternal(contextSymbol.getClassQualifiedName()),
                             "INSTANCE",
-                            "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getQualifiedName()) + ";",
+                            "L" + JvmNameUtils.canonicalToInternal(contextSymbol.getClassQualifiedName()) + ";",
                             true);
                     new PushStaticField(fieldDefinition).operate(mv);
                     // and then call enterContext
                     // push the parameter
-                    CompilationOfStatements.this.compilation.getPushUtils().pushExpression(assignment.getContextValue());
+                    CompilationOfStatements.this.compilation.getPushUtils().pushExpression(assignment.getContextValue()).operate(mv);
                     JvmMethodDefinition enterContext = new JvmMethodDefinition(
                             JvmNameUtils.internalName(Context.class),
                             "enterContext",
@@ -110,12 +149,14 @@ public class CompilationOfStatements {
                     new MethodInvocationBS(enterContext).operate(mv);
                 }
 
+                CompilationOfStatements.this.codeToExecuteBeforeReturning = codeOnLeavingContextScope(contextScope);
                 contextScope.getStatements().forEach((s)->compile(s).operate(mv));
+                CompilationOfStatements.this.codeToExecuteBeforeReturning = null;
+                codeOnLeavingContextScope(contextScope).operate(mv);
 
                 mv.visitLabel(end);
 
-                for (ContextAssignment assignment : contextScope.getAssignments()) {
-                }
+
             }
         };
     }

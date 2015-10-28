@@ -2,7 +2,7 @@ package me.tomassetti.turin.symbols;
 
 import me.tomassetti.turin.parser.ast.Node;
 import me.tomassetti.turin.parser.ast.QualifiedName;
-import me.tomassetti.turin.parser.ast.expressions.Invokable;
+import me.tomassetti.turin.parser.ast.expressions.InvokableExpr;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public interface Symbol {
         }
     }
 
-    default Optional<List<? extends FormalParameter>> findFormalParametersFor(Invokable invokable) {
+    default Optional<List<? extends FormalParameter>> findFormalParametersFor(InvokableExpr invokable) {
         throw new UnsupportedOperationException();
     }
 }

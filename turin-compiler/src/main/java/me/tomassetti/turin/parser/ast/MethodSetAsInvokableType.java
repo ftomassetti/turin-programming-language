@@ -2,13 +2,13 @@ package me.tomassetti.turin.parser.ast;
 
 import me.tomassetti.turin.definitions.InternalMethodDefinition;
 import me.tomassetti.turin.parser.ast.expressions.ActualParam;
-import me.tomassetti.turin.typesystem.InvokableType;
+import me.tomassetti.turin.typesystem.Invokable;
 import me.tomassetti.turin.typesystem.MethodResolutionLogic;
 import me.tomassetti.turin.typesystem.TypeUsage;
 
 import java.util.*;
 
-public class MethodSetAsInvokableType implements InvokableType {
+public class MethodSetAsInvokableType implements Invokable {
     private Set<InternalMethodDefinition> methodDefinitions;
     private Map<String, TypeUsage> typeParams;
 
